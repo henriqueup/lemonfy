@@ -8,7 +8,7 @@ The Lemonfy Project
 2. [Big Picture](#big-picture)
 
 ## Naming Conventions
-### Trello
+### [Trello](https://trello.com/b/zv4hChoT/kanban)
 Labels (item type):
   - Feature
   - Technical Debt
