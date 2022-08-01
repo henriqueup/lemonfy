@@ -16,17 +16,21 @@ const Home: NextPage = () => {
             </Head>
 
             <main className={styles.main}>
-                <h1 className={styles.title}>
+                <h1 className={styles.title} data-testid="title">
                     Welcome to <a href="https://nextjs.org">Next.js!</a>
                 </h1>
 
-                <p className={styles.description}>
+                <p className={styles.description} data-testid="paragraph">
                     Get started by editing{" "}
                     <code className={styles.code}>pages/index.js</code>
                 </p>
 
                 <div className={styles.grid}>
-                    <a href="https://nextjs.org/docs" className={styles.card}>
+                    <a
+                        href="https://nextjs.org/docs"
+                        className={styles.card}
+                        data-testid="docs"
+                    >
                         <h2>Documentation &rarr;</h2>
                         <p>
                             Find in-depth information about Next.js features and
@@ -34,7 +38,11 @@ const Home: NextPage = () => {
                         </p>
                     </a>
 
-                    <a href="https://nextjs.org/learn" className={styles.card}>
+                    <a
+                        href="https://nextjs.org/learn"
+                        className={styles.card}
+                        data-testid="learn"
+                    >
                         <h2>Learn &rarr;</h2>
                         <p>
                             Learn about Next.js in an interactive course with
@@ -45,6 +53,7 @@ const Home: NextPage = () => {
                     <a
                         href="https://github.com/vercel/next.js/tree/master/examples"
                         className={styles.card}
+                        data-testid="examples"
                     >
                         <h2>Examples &rarr;</h2>
                         <p>
@@ -56,6 +65,7 @@ const Home: NextPage = () => {
                     <a
                         href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
                         className={styles.card}
+                        data-testid="deploy"
                     >
                         <h2>Deploy &rarr;</h2>
                         <p>
@@ -66,7 +76,7 @@ const Home: NextPage = () => {
                 </div>
             </main>
 
-            <footer className={styles.footer}>
+            <footer className={styles.footer} data-testid="footer">
                 <a
                     href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
                     target="_blank"
@@ -79,6 +89,7 @@ const Home: NextPage = () => {
                             alt="Vercel Logo"
                             width={72}
                             height={16}
+                            data-testid="vercel-image"
                         />
                     </span>
                 </a>
