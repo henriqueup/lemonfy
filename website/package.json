@@ -9,9 +9,12 @@
     "lint": "next lint",
     "format": "prettier --write \"{lib,pages,elements,utils,contexts}/**/*.{js,jsx,ts,tsx}\"",
     "storybook": "start-storybook -p 6006 -s ./public",
-    "build-storybook": "build-storybook -s public"
+    "build-storybook": "build-storybook -s public",
+    "test": "jest",
+    "test-watch": "jest --watch"
   },
   "dependencies": {
+    "jest-environment-jsdom": "^28.1.3",
     "next": "12.2.3",
     "prettier": "^2.7.1",
     "react": "18.2.0",
