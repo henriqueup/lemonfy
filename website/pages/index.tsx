@@ -76,7 +76,7 @@ const Home: NextPage = () => {
                     </a>
                 </div>
                 <div data-testid="button-example">
-                    <Button />
+                    <Button variant="success" />
                 </div>
             </main>
             <footer className={styles.footer} data-testid="footer">
