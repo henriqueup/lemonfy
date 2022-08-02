@@ -1,4 +1,4 @@
-import styled from "@emotion/styled";
+import styled from '@emotion/styled';
 export type HexColor = `#${string}`;
 
 export const StyledButton = styled.button<{
@@ -7,13 +7,13 @@ export const StyledButton = styled.button<{
 }>`
     & {
         padding: 32px;
-        background-color: ${(props) => props?.color || "transparent"};
+        background-color: ${props => props?.color || 'transparent'};
         font-size: 24px;
         border-radius: 4px;
         color: white;
         font-weight: bold;
         &:hover {
-            background-color: ${(props) => props?.hoverColor || "transparent"};
+            background-color: ${props => props?.hoverColor || 'transparent'};
         }
     }
 `;

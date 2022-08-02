@@ -1,7 +1,7 @@
-import React, { FunctionComponent } from "react";
-import { css } from "@emotion/css";
-import { StyledButton, HexColor } from "./button.style";
-type VariantOptions = "primary" | "success" | "error" | "";
+import React, { FunctionComponent } from 'react';
+import { css } from '@emotion/css';
+import { StyledButton, HexColor } from './button.style';
+type VariantOptions = 'primary' | 'success' | 'error' | '';
 export type ButtonProps = {
     variant?: VariantOptions;
 };
@@ -11,30 +11,30 @@ function variantMapper(variant: VariantOptions): {
     hoverColor: HexColor;
 } {
     switch (variant) {
-        case "primary":
+        case 'primary':
             return {
-                color: "#0060DF",
-                hoverColor: "#0250BB",
+                color: '#0060DF',
+                hoverColor: '#0250BB',
             };
-        case "success":
+        case 'success':
             return {
-                color: "#4F772D",
-                hoverColor: "#90A955",
+                color: '#4F772D',
+                hoverColor: '#90A955',
             };
-        case "error":
+        case 'error':
             return {
-                color: "#92140C",
-                hoverColor: "#A5243D",
+                color: '#92140C',
+                hoverColor: '#A5243D',
             };
         default:
             return {
-                color: "#EF2D56",
-                hoverColor: "#EA526F",
+                color: '#EF2D56',
+                hoverColor: '#EA526F',
             };
     }
 }
 
-const Button: FunctionComponent<ButtonProps> = ({ variant = "" }) => {
+const Button: FunctionComponent<ButtonProps> = ({ variant = '' }) => {
     const { color, hoverColor } = variantMapper(variant);
     return (
         <StyledButton color={color} hoverColor={hoverColor}>
@@ -43,6 +43,6 @@ const Button: FunctionComponent<ButtonProps> = ({ variant = "" }) => {
     );
 };
 
-Button.displayName = "Button";
+Button.displayName = 'Button';
 
 export { Button };

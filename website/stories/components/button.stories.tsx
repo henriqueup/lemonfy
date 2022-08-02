@@ -1,29 +1,29 @@
-import { Button, ButtonProps } from "../../components/button/button";
-import { Story } from "@storybook/react";
+import { Button, ButtonProps } from '../../components/button/button';
+import { Story } from '@storybook/react';
 
 export default {
-    title: "Button",
+    title: 'Button',
     component: Button,
 };
 
-const Template: Story<ButtonProps> = (args) => <Button {...args} />;
+const Template: Story<ButtonProps> = args => <Button {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {
-    variant: "",
+    variant: '',
 };
 
 export const Primary = Template.bind({});
 Primary.args = {
-    variant: "primary",
+    variant: 'primary',
 };
 
 export const Success = Template.bind({});
 Success.args = {
-    variant: "success",
+    variant: 'success',
 };
 
 export const Error = Template.bind({});
 Error.args = {
-    variant: "error",
+    variant: 'error',
 };
