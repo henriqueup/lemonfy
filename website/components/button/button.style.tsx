@@ -1,15 +1,19 @@
 import styled from "@emotion/styled";
+export type HexColor = `#${string}`;
 
-export const StyledButton = styled.button`
+export const StyledButton = styled.button<{
+    color?: HexColor;
+    hoverColor?: HexColor;
+}>`
     & {
         padding: 32px;
-        background-color: hotpink;
+        background-color: ${(props) => props?.color || "transparent"};
         font-size: 24px;
         border-radius: 4px;
-        color: black;
+        color: white;
         font-weight: bold;
         &:hover {
-            color: white;
+            background-color: ${(props) => props?.hoverColor || "transparent"};
         }
     }
 `;
