@@ -1,8 +1,11 @@
 import { FunctionComponent } from "react";
 import { HexColor, StyledButton } from "./button.style";
+
 type VariantOptions = "primary" | "success" | "error" | "";
 export type ButtonProps = {
   variant?: VariantOptions;
+  text?: string;
+  onClick: () => void;
 };
 
 function variantMapper(variant: VariantOptions): {
@@ -33,11 +36,11 @@ function variantMapper(variant: VariantOptions): {
   }
 }
 
-const Button: FunctionComponent<ButtonProps> = ({ variant = "" }) => {
+const Button: FunctionComponent<ButtonProps> = ({ variant = "", text = "Button Example", onClick }) => {
   const { color, hoverColor } = variantMapper(variant);
   return (
-    <StyledButton color={color} hoverColor={hoverColor}>
-      Button Example
+    <StyledButton color={color} hoverColor={hoverColor} onClick={onClick}>
+      {text}
     </StyledButton>
   );
 };
