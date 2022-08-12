@@ -1,18 +1,20 @@
+import { render, RenderResult, screen } from "@testing-library/react";
+import React from "react";
 import Home from "../../pages/index";
-import "@testing-library/jest-dom";
-import { render, screen } from "@testing-library/react";
+import AudioContextMock from "../mocks/audioContextMock";
+
+jest.mock("../mocks/audioContextMock");
+window.AudioContext = AudioContextMock;
 
 describe("Home page", () => {
-  it("It renders our Home Page", () => {
-    render(<Home />);
-    // check if all components are rendered
-    expect(screen.getByTestId("title")).toBeInTheDocument();
-    expect(screen.getByTestId("paragraph")).toBeInTheDocument();
-    expect(screen.getByTestId("docs")).toBeInTheDocument();
-    expect(screen.getByTestId("learn")).toBeInTheDocument();
-    expect(screen.getByTestId("examples")).toBeInTheDocument();
-    expect(screen.getByTestId("deploy")).toBeInTheDocument();
-    expect(screen.getByTestId("footer")).toBeInTheDocument();
-    expect(screen.getByTestId("vercel-image")).toBeInTheDocument();
+  let component: RenderResult;
+  beforeEach(() => {
+    component = render(<Home audioBufferJSON={{ type: "ArrayBuffer", data: [1, 2] }} />);
+    expect(AudioContextMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("should render both buttons", () => {
+    expect(screen.getByText("MIAU after 1 second")).toBeInTheDocument();
+    expect(screen.getByText("MIAU after 2.5 seconds")).toBeInTheDocument();
   });
 });
