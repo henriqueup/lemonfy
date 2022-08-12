@@ -5,16 +5,11 @@ import { useCallback, useEffect, useState } from "react";
 import { Button } from "../components/button/button";
 import styles from "../styles/Home.module.css";
 
-type BufferJSON = {
-  type: string;
-  data: number[];
-};
 type HomeProps = {
-  audioBufferJSON: BufferJSON;
+  audioBufferJSON: Buffer;
 };
 
-const Home: NextPage<HomeProps> = props => {
-  const { audioBufferJSON } = props;
+const Home: NextPage<HomeProps> = ({ audioBufferJSON }) => {
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
 
   useEffect(() => {
