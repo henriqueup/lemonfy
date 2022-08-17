@@ -3,7 +3,7 @@ import type { NextPage } from "next";
 import path from "path";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "../components/button/button";
-import styles from "../styles/Home.module.css";
+import styles from "../styles/root.module.css";
 
 type HomeProps = {
   audioBufferJSON: Buffer;
@@ -16,30 +16,29 @@ const Home: NextPage<HomeProps> = ({ audioBufferJSON }) => {
     setAudioContext(new AudioContext());
 
     return () => {
-      console.log("closing");
       audioContext?.close();
     };
   }, []);
 
   const playAudio = useCallback(
     async (startTime: number): Promise<void> => {
-      if (audioContext) {
-        const source = audioContext.createBufferSource();
-        const audioBuffer = await audioContext.decodeAudioData(Buffer.from(audioBufferJSON).buffer);
+      if (!audioContext) return;
 
-        source.buffer = audioBuffer;
-        source.connect(audioContext.destination);
-        source.start(audioContext.currentTime + startTime);
-      }
+      const source = audioContext.createBufferSource();
+      const audioBuffer = await audioContext.decodeAudioData(Buffer.from(audioBufferJSON).buffer);
+
+      source.buffer = audioBuffer;
+      source.connect(audioContext.destination);
+      source.start(audioContext.currentTime + startTime);
     },
     [audioContext, audioBufferJSON],
   );
 
   return (
     <div className={styles.container}>
-      <div data-testid="button-example">
-        <Button text={"MIAU after 1 second"} variant="success" onClick={() => playAudio(1)} />
-        <Button text={"MIAU after 2.5 seconds"} variant="success" onClick={() => playAudio(2.5)} />
+      <div>
+        <Button text="MIAU after 1 second" variant="success" onClick={() => playAudio(1)} />
+        <Button text="MIAU after 2.5 seconds" variant="success" onClick={() => playAudio(2.5)} />
       </div>
     </div>
   );
