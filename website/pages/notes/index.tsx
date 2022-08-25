@@ -1,30 +1,19 @@
+import { createGainNode } from "@lemonfy/functions";
+import { useAudioContext } from "@lemonfy/hooks";
 import type { NextPage } from "next";
-import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { MouseEvent, useCallback, useMemo, useState } from "react";
 import { Button } from "../../components/button/button";
 import styles from "../../styles/root.module.css";
 
+enum mouseEvents {
+  MOUSE_LEFT = 1,
+}
+
 const Notes: NextPage = () => {
-  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
+  const audioContext = useAudioContext();
+  const [gainVolume, setGainVolume] = useState<number>(0.5);
   const [oscillators, setOscillators] = useState<Oscillator[] | null>(null);
   const currentTime = useMemo(() => (audioContext ? audioContext.currentTime : 0), [audioContext]);
-
-  useEffect(() => {
-    setAudioContext(new AudioContext());
-
-    return () => {
-      audioContext?.close();
-    };
-  }, []);
-
-  const createGainNode = useCallback(() => {
-    if (!audioContext) return null;
-
-    const node = audioContext.createGain();
-    node.connect(audioContext.destination);
-    node.gain.setValueAtTime(0, audioContext.currentTime);
-
-    return node;
-  }, [audioContext]);
 
   const createOscillators = useCallback(() => {
     if (!audioContext) return null;
@@ -32,14 +21,14 @@ const Notes: NextPage = () => {
     const oscillators: Oscillator[] = [];
     notes.forEach(note => {
       const oscillator = audioContext.createOscillator();
-      const gainNode = createGainNode();
+      const gainNode = createGainNode(audioContext);
       if (!gainNode) return null;
 
       oscillator.connect(gainNode);
 
       //no clue wtf is going on here... gotta learn about sound wave synthesis, I guess
       const sineTerms = new Float32Array([1, 1, 1, 0, 1, 1, 0, 0, 1]);
-      const cosineTerms = new Float32Array([0, 1, 0, 0, 1, 1, 0, 1, 1]);
+      const cosineTerms = new Float32Array([1, 1, 1, 1, 1, 1, 1, 1, 1]);
       const customWaveform = audioContext.createPeriodicWave(cosineTerms, sineTerms);
 
       oscillator.setPeriodicWave(customWaveform);
@@ -58,7 +47,7 @@ const Notes: NextPage = () => {
   }, [audioContext, createGainNode]);
 
   const playNote = (event: MouseEvent, noteId: string) => {
-    if (event.buttons !== 1) return;
+    if (event.buttons !== mouseEvents.MOUSE_LEFT) return;
     let newOscillators = oscillators;
 
     //trigger creation from user gesture
@@ -70,7 +59,7 @@ const Notes: NextPage = () => {
     const oscillator = newOscillators?.find(oscillator => oscillator.id === noteId);
     if (!oscillator) return;
 
-    oscillator.gainNode.gain.setValueAtTime(0.2, currentTime + SMOOTHING_INTERVAL);
+    oscillator.gainNode.gain.setValueAtTime(gainVolume, currentTime + SMOOTHING_INTERVAL);
     oscillator.playing = true;
   };
 
@@ -98,6 +87,20 @@ const Notes: NextPage = () => {
             key={note.id}
           />
         ))}
+      </div>
+      <div>
+        <label htmlFor="gainVol">Gain Volume:</label>
+        <input
+          type="range"
+          id="gainVol"
+          name="gainVol"
+          min="0"
+          max="100"
+          onChange={e => {
+            setGainVolume(Number(e.target.value) / 100);
+            console.log(gainVolume);
+          }}
+        />
       </div>
     </div>
   );
