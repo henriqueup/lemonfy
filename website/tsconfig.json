@@ -1,7 +1,12 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "target": "ES6",
     "lib": ["dom", "dom.iterable", "esnext"],
+    "paths": {
+      "@lemonfy/hooks": ["hooks"],
+      "@lemonfy/functions": ["functions"]
+    },
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
