@@ -37,6 +37,12 @@ export const generateOscillators = (bars: Bar[], audioContext: AudioContext | nu
   }
 };
 
+/*
+sources
+https://www.youtube.com/watch?v=skFugVOqBM4
+https://pages.mtu.edu/~suits/notefreqs.html
+https://musescore.com/classicman/scores/55352
+*/
 export const getMoonlightSonataBars = (): Bar[] => [
   {
     beats: 4,
