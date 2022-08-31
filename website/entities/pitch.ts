@@ -7,7 +7,7 @@ export type PitchKey = `${PitchName}${Octave}`;
 export type Pitch = {
   name: PitchName;
   octave: Octave;
-  key?: PitchKey;
+  key: PitchKey;
   frequency?: number;
 };
 
