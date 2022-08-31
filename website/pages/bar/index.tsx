@@ -1,23 +1,25 @@
 import { NextPage } from "next";
 import { Button } from "../../components/button/button";
-import { generateOscillators, getMoonlightSonataBars } from "../../entities/bar";
+import { Bar, generateOscillators, getMasterOfPuppetsBars, getMoonlightSonataBars } from "../../entities/bar";
 import { useAudioContext } from "../../hooks";
 import styles from "../../styles/root.module.css";
 
-const bars = getMoonlightSonataBars();
+const moonlightSonataBars = getMoonlightSonataBars();
+const masterOfPuppetsBars = getMasterOfPuppetsBars();
 
-const Bar: NextPage = () => {
+const BarPage: NextPage = () => {
   const audioContext = useAudioContext();
 
-  const play = () => {
+  const play = (bars: Bar[]) => {
     generateOscillators(bars, audioContext);
   };
 
   return (
     <div className={styles.container}>
-      <Button text="Play" variant="success" onClick={play} />
+      <Button text="Play Moonlight Sonata" variant="success" onClick={() => play(moonlightSonataBars)} />
+      <Button text="Play Master of Puppets" variant="success" onClick={() => play(masterOfPuppetsBars)} />
     </div>
   );
 };
 
-export default Bar;
+export default BarPage;

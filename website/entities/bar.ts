@@ -9,12 +9,15 @@ export type Bar = {
   tempo: number;
 };
 
+export const getTimeRatio = (tempo: number) => tempo / 60;
+
 export const generateOscillators = (bars: Bar[], audioContext: AudioContext | null): void => {
   if (!audioContext) return;
 
   for (let i = 0; i < bars.length; i++) {
     const bar = bars[i];
-    const baseStart = (bar.tempo / 60) * bar.beats * i;
+    const timeRatio = getTimeRatio(bar.tempo);
+    const baseStart = (bar.beats * i) / timeRatio;
 
     for (let j = 0; j < bar.notes.length; j++) {
       const note = bar.notes[j];
@@ -24,8 +27,8 @@ export const generateOscillators = (bars: Bar[], audioContext: AudioContext | nu
       const gainNode = createGainNode(audioContext);
       if (!gainNode) return;
 
-      gainNode.gain.setValueAtTime(0.5, audioContext.currentTime + baseStart + note.start);
-      gainNode.gain.setValueAtTime(0, audioContext.currentTime + baseStart + note.start + note.duration);
+      gainNode.gain.setValueAtTime(0.5, audioContext.currentTime + baseStart + note.start / timeRatio);
+      gainNode.gain.setValueAtTime(0, audioContext.currentTime + baseStart + (note.start + note.duration) / timeRatio);
       oscillator.connect(gainNode);
 
       //no clue wtf is going on here... gotta learn about sound wave synthesis, I guess
@@ -46,11 +49,12 @@ https://www.youtube.com/watch?v=skFugVOqBM4
 https://pages.mtu.edu/~suits/notefreqs.html
 https://musescore.com/classicman/scores/55352
 */
+const moonlightSonataTempo = 54;
 export const getMoonlightSonataBars = (): Bar[] => [
   {
     beats: 4,
     dibobinador: 4,
-    tempo: 60,
+    tempo: moonlightSonataTempo,
     notes: [
       createNote(4, 0, createPitch("C#", 1)),
       createNote(4, 0, createPitch("C#", 2)),
@@ -71,7 +75,7 @@ export const getMoonlightSonataBars = (): Bar[] => [
   {
     beats: 4,
     dibobinador: 4,
-    tempo: 60,
+    tempo: moonlightSonataTempo,
     notes: [
       createNote(4, 0, createPitch("B", 0)),
       createNote(4, 0, createPitch("B", 1)),
@@ -92,7 +96,7 @@ export const getMoonlightSonataBars = (): Bar[] => [
   {
     beats: 4,
     dibobinador: 4,
-    tempo: 60,
+    tempo: moonlightSonataTempo,
     notes: [
       createNote(4, 0, createPitch("A", 0)),
       createNote(4, 0, createPitch("A", 1)),
@@ -115,7 +119,7 @@ export const getMoonlightSonataBars = (): Bar[] => [
   {
     beats: 4,
     dibobinador: 4,
-    tempo: 60,
+    tempo: moonlightSonataTempo,
     notes: [
       createNote(2, 0, createPitch("G#", 0)),
       createNote(2, 0, createPitch("G#", 1)),
@@ -133,6 +137,121 @@ export const getMoonlightSonataBars = (): Bar[] => [
       createNote(1 / 3, 3, createPitch("F#", 2)),
       createNote(1 / 3, 10 / 3, createPitch("C", 3)),
       createNote(1 / 3, 11 / 3, createPitch("D#", 3)),
+    ],
+  },
+];
+
+const masterOfPuppetsTempo = 212;
+export const getMasterOfPuppetsBars = (): Bar[] => [
+  {
+    beats: 4,
+    dibobinador: 4,
+    tempo: masterOfPuppetsTempo,
+    notes: [createNote(1, 0, createPitch("E", 2)), createNote(1, 0, createPitch("B", 2))],
+  },
+  {
+    beats: 4,
+    dibobinador: 4,
+    tempo: masterOfPuppetsTempo,
+    notes: [
+      createNote(1, 0, createPitch("D", 3)),
+      createNote(1, 0, createPitch("A", 3)),
+      createNote(1, 1, createPitch("C#", 3)),
+      createNote(1, 1, createPitch("G#", 3)),
+      createNote(2, 2, createPitch("C", 3)),
+      createNote(2, 2, createPitch("G", 3)),
+    ],
+  },
+  {
+    beats: 4,
+    dibobinador: 4,
+    tempo: masterOfPuppetsTempo,
+    notes: [createNote(4, 0, createPitch("C", 3)), createNote(4, 0, createPitch("G", 3))],
+  },
+  {
+    beats: 4,
+    dibobinador: 4,
+    tempo: masterOfPuppetsTempo,
+    notes: [
+      createNote(1 / 2, 0, createPitch("E", 2)),
+      createNote(1 / 2, 1 / 2, createPitch("E", 2)),
+      createNote(1 / 2, 1, createPitch("E", 3)),
+      createNote(1 / 2, 3 / 2, createPitch("E", 2)),
+      createNote(1 / 2, 2, createPitch("E", 2)),
+      createNote(1 / 2, 5 / 2, createPitch("D#", 3)),
+      createNote(1 / 2, 3, createPitch("E", 2)),
+      createNote(1 / 2, 7 / 2, createPitch("E", 2)),
+    ],
+  },
+  {
+    beats: 4,
+    dibobinador: 4,
+    tempo: masterOfPuppetsTempo,
+    notes: [
+      createNote(1, 0, createPitch("D", 3)),
+      createNote(1, 0, createPitch("A", 3)),
+      createNote(1, 1, createPitch("C#", 3)),
+      createNote(1, 1, createPitch("G#", 3)),
+      createNote(2, 2, createPitch("C", 3)),
+      createNote(2, 2, createPitch("G", 3)),
+    ],
+  },
+  {
+    beats: 4,
+    dibobinador: 4,
+    tempo: masterOfPuppetsTempo,
+    notes: [
+      createNote(1 / 2, 0, createPitch("E", 2)),
+      createNote(1 / 2, 1 / 2, createPitch("E", 2)),
+      createNote(1 / 2, 1, createPitch("B", 2)),
+      createNote(1 / 2, 3 / 2, createPitch("E", 2)),
+      createNote(1 / 2, 2, createPitch("E", 2)),
+      createNote(1 / 2, 5 / 2, createPitch("A#", 2)),
+      createNote(1 / 2, 3, createPitch("E", 2)),
+      createNote(1 / 2, 7 / 2, createPitch("E", 2)),
+    ],
+  },
+  {
+    beats: 4,
+    dibobinador: 4,
+    tempo: masterOfPuppetsTempo,
+    notes: [
+      createNote(1 / 2, 0, createPitch("A", 2)),
+      createNote(1 / 2, 1 / 2, createPitch("E", 2)),
+      createNote(1 / 2, 1, createPitch("G#", 2)),
+      createNote(1 / 2, 3 / 2, createPitch("E", 2)),
+      createNote(1 / 2, 2, createPitch("G", 2)),
+      createNote(1 / 2, 5 / 2, createPitch("E", 2)),
+      createNote(1 / 2, 3, createPitch("F#", 2)),
+      createNote(1 / 2, 7 / 2, createPitch("F", 2)),
+    ],
+  },
+  {
+    beats: 4,
+    dibobinador: 4,
+    tempo: masterOfPuppetsTempo,
+    notes: [
+      createNote(1 / 2, 0, createPitch("E", 2)),
+      createNote(1 / 2, 1 / 2, createPitch("E", 2)),
+      createNote(1 / 2, 1, createPitch("E", 3)),
+      createNote(1 / 2, 3 / 2, createPitch("E", 2)),
+      createNote(1 / 2, 2, createPitch("E", 2)),
+      createNote(1 / 2, 5 / 2, createPitch("D#", 3)),
+      createNote(1 / 2, 3, createPitch("E", 2)),
+      createNote(1 / 2, 7 / 2, createPitch("E", 2)),
+    ],
+  },
+  {
+    beats: 4,
+    dibobinador: 4,
+    tempo: masterOfPuppetsTempo,
+    notes: [
+      createNote(1, 0, createPitch("D", 3)),
+      createNote(1, 0, createPitch("A", 3)),
+      createNote(1, 1, createPitch("C#", 3)),
+      createNote(1, 1, createPitch("G#", 3)),
+      createNote(2, 2, createPitch("C", 3)),
+      createNote(2, 2, createPitch("G", 3)),
     ],
   },
 ];
