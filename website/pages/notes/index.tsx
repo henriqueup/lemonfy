@@ -22,8 +22,6 @@ const Notes: NextPage = () => {
     notes.forEach(note => {
       const oscillator = audioContext.createOscillator();
       const gainNode = createGainNode(audioContext);
-      if (!gainNode) return null;
-
       oscillator.connect(gainNode);
 
       //no clue wtf is going on here... gotta learn about sound wave synthesis, I guess

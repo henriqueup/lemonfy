@@ -1,17 +1,26 @@
 import { NextPage } from "next";
 import { Button } from "../../components/button/button";
-import { Bar, generateOscillators, getMasterOfPuppetsBars, getMoonlightSonataBars } from "../../entities/bar";
+import {
+  Bar,
+  getMasterOfPuppetsBars,
+  getMoonlightSonataBars,
+  playSong,
+  setNotesTimesInSeconds,
+} from "../../entities/bar";
 import { useAudioContext } from "../../hooks";
 import styles from "../../styles/root.module.css";
 
 const moonlightSonataBars = getMoonlightSonataBars();
+moonlightSonataBars.forEach(bar => setNotesTimesInSeconds(bar));
+
 const masterOfPuppetsBars = getMasterOfPuppetsBars();
+masterOfPuppetsBars.forEach(bar => setNotesTimesInSeconds(bar));
 
 const BarPage: NextPage = () => {
   const audioContext = useAudioContext();
 
   const play = (bars: Bar[]) => {
-    generateOscillators(bars, audioContext);
+    playSong(bars, audioContext);
   };
 
   return (

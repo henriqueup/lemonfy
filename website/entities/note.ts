@@ -13,10 +13,13 @@ export enum NoteDuration {
   SIXTEENTH = 1 / 16,
 }
 
+//note without a pitch is silence
 export type Note = {
   duration: NoteDuration;
   pitch?: Pitch;
   start?: number;
+  durationInSeconds?: number;
+  startInSeconds?: number;
 };
 
 export const createNote = (duration: NoteDuration, pitch?: Pitch): Note => ({

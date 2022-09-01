@@ -9,18 +9,15 @@ export type Bar = {
   tempo: number;
 };
 
-const fillBeat = (dibobinador: number, beat: number, notes: Note[]) => {
+export const fillBeat = (dibobinador: number, beat: number, notes: Note[]) => {
   const notesDurationSum = notes.reduce((currentDuration, currentNote) => currentDuration + currentNote.duration, 0);
 
   if (notesDurationSum != 1 / dibobinador)
     throw new Error(`Invalid beat notes, expected total duration: '${1 / dibobinador}', actual: '${notesDurationSum}'`);
 
   let currentStart = 0 + beat * (1 / dibobinador);
-  for (let i = 0; i < notes.length; i++) {
-    const note = notes[i];
+  for (const note of notes) {
     note.start = currentStart;
-    // not pushing and returning notes for the moment so that bars can be created in place
-    // bar.notes.push(note);
     currentStart += note.duration;
   }
 
@@ -31,7 +28,18 @@ export const getTimeRatio = (tempo: number) => tempo / 60;
 
 export const convertToSeconds = (value: NoteDuration, dibobinador: number) => value * dibobinador;
 
-export const generateOscillators = (bars: Bar[], audioContext: AudioContext | null): void => {
+export const setNotesTimesInSeconds = (bar: Bar) => {
+  for (let i = 0; i < bar.notes.length; i++) {
+    const note = bar.notes[i];
+    if (note.start === undefined) throw new Error(`Invalid note at ${i}, undafined start.`);
+
+    const timeRatio = getTimeRatio(bar.tempo);
+    note.durationInSeconds = convertToSeconds(note.duration, bar.dibobinador) / timeRatio;
+    note.startInSeconds = convertToSeconds(note.start, bar.dibobinador) / timeRatio;
+  }
+};
+
+export const playSong = (bars: Bar[], audioContext: AudioContext | null): void => {
   if (!audioContext) return;
 
   for (let i = 0; i < bars.length; i++) {
@@ -41,20 +49,18 @@ export const generateOscillators = (bars: Bar[], audioContext: AudioContext | nu
 
     for (let j = 0; j < bar.notes.length; j++) {
       const note = bar.notes[j];
-      if (note.start === undefined)
-        throw new Error(`Invalid note: '${j}' at bar '${i}', expected start but got: '${note.start}'`);
+      if (note.startInSeconds === undefined)
+        throw new Error(`Invalid note: '${j}' at bar '${i}', undefined startInSeconds.'`);
+      if (note.durationInSeconds === undefined)
+        throw new Error(`Invalid note: '${j}' at bar '${i}', undefined durationInSeconds.'`);
 
       const oscillator = audioContext.createOscillator();
       const gainNode = createGainNode(audioContext);
-      if (!gainNode) return;
 
-      const startInSeconds = convertToSeconds(note.start, bar.dibobinador);
-      const durationInSeconds = convertToSeconds(note.duration, bar.dibobinador);
-
-      gainNode.gain.setValueAtTime(0.5, audioContext.currentTime + baseStart + startInSeconds / timeRatio);
+      gainNode.gain.setValueAtTime(0.5, audioContext.currentTime + baseStart + note.startInSeconds);
       gainNode.gain.setValueAtTime(
         0,
-        audioContext.currentTime + baseStart + (startInSeconds + durationInSeconds) / timeRatio,
+        audioContext.currentTime + baseStart + note.startInSeconds + note.durationInSeconds,
       );
       oscillator.connect(gainNode);
 
@@ -64,7 +70,7 @@ export const generateOscillators = (bars: Bar[], audioContext: AudioContext | nu
       const customWaveform = audioContext.createPeriodicWave(cosineTerms, sineTerms);
 
       oscillator.setPeriodicWave(customWaveform);
-      oscillator.frequency.value = note.pitch?.key ? PitchDictionary[note.pitch?.key] : 0;
+      oscillator.frequency.value = note.pitch?.key ? PitchDictionary[note.pitch.key] : 0;
       oscillator.start();
     }
   }
