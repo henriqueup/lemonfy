@@ -1,6 +1,7 @@
 import { createGainNode } from "../functions";
 import { createNote, Note, NoteDuration } from "./note";
 import { createPitch, PitchDictionary } from "./pitch";
+const TEMPO_VALUE_IN_SECONDS = 60;
 
 export type Bar = {
   beats: NoteDuration;
@@ -15,7 +16,7 @@ export const fillBeat = (dibobinador: number, beat: number, notes: Note[]) => {
   if (notesDurationSum != 1 / dibobinador)
     throw new Error(`Invalid beat notes, expected total duration: '${1 / dibobinador}', actual: '${notesDurationSum}'`);
 
-  let currentStart = 0 + beat * (1 / dibobinador);
+  let currentStart = beat * (1 / dibobinador);
   for (const note of notes) {
     note.start = currentStart;
     currentStart += note.duration;
@@ -24,14 +25,14 @@ export const fillBeat = (dibobinador: number, beat: number, notes: Note[]) => {
   return notes;
 };
 
-export const getTimeRatio = (tempo: number) => tempo / 60;
+export const getTimeRatio = (tempo: number) => tempo / TEMPO_VALUE_IN_SECONDS;
 
 export const convertToSeconds = (value: NoteDuration, dibobinador: number) => value * dibobinador;
 
 export const setNotesTimesInSeconds = (bar: Bar) => {
   for (let i = 0; i < bar.notes.length; i++) {
     const note = bar.notes[i];
-    if (note.start === undefined) throw new Error(`Invalid note at ${i}, undafined start.`);
+    if (note.start == undefined) throw new Error(`Invalid note at ${i}, undefined start.`);
 
     const timeRatio = getTimeRatio(bar.tempo);
     note.durationInSeconds = convertToSeconds(note.duration, bar.dibobinador) / timeRatio;
@@ -49,9 +50,9 @@ export const playSong = (bars: Bar[], audioContext: AudioContext | null): void =
 
     for (let j = 0; j < bar.notes.length; j++) {
       const note = bar.notes[j];
-      if (note.startInSeconds === undefined)
+      if (note.startInSeconds == undefined)
         throw new Error(`Invalid note: '${j}' at bar '${i}', undefined startInSeconds.'`);
-      if (note.durationInSeconds === undefined)
+      if (note.durationInSeconds == undefined)
         throw new Error(`Invalid note: '${j}' at bar '${i}', undefined durationInSeconds.'`);
 
       const oscillator = audioContext.createOscillator();
