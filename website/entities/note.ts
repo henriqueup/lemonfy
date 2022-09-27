@@ -1,4 +1,4 @@
-import { Pitch } from "./pitch";
+import Pitch from "./pitch";
 
 export enum NoteDuration {
   LONG = 4,
@@ -14,15 +14,15 @@ export enum NoteDuration {
 }
 
 //note without a pitch is silence
-export type Note = {
+export default class Note {
   duration: NoteDuration;
   pitch?: Pitch;
   start?: number;
   durationInSeconds?: number;
   startInSeconds?: number;
-};
 
-export const createNote = (duration: NoteDuration, pitch?: Pitch): Note => ({
-  duration,
-  pitch,
-});
+  constructor(duration: NoteDuration, pitch?: Pitch) {
+    this.duration = duration;
+    this.pitch = pitch;
+  }
+}

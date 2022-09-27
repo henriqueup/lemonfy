@@ -4,20 +4,24 @@ export type Octave = 0 | 1 | 2 | 3 | 4 | 5;
 
 export type PitchKey = `${PitchName}${Octave}`;
 
-export type Pitch = {
+// export const getPitchKey = (name: PitchName, octave: Octave): PitchKey => `${name}${octave}`;
+
+export default class Pitch {
   name: PitchName;
   octave: Octave;
   key: PitchKey;
   frequency?: number;
-};
 
-export const getPitchKey = (name: PitchName, octave: Octave): PitchKey => `${name}${octave}`;
+  constructor(name: PitchName, octave: Octave) {
+    this.name = name;
+    this.octave = octave;
+    this.key = Pitch.getPitchKey(name, octave);
+  }
 
-export const createPitch = (name: PitchName, octave: Octave): Pitch => ({
-  name,
-  octave,
-  key: getPitchKey(name, octave),
-});
+  static getPitchKey(name: PitchName, octave: Octave): PitchKey {
+    return `${name}${octave}`;
+  }
+}
 
 // prettier-ignore
 export const PitchDictionary: Record<PitchKey, number> = {
