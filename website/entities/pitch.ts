@@ -4,8 +4,6 @@ export type Octave = 0 | 1 | 2 | 3 | 4 | 5;
 
 export type PitchKey = `${PitchName}${Octave}`;
 
-// export const getPitchKey = (name: PitchName, octave: Octave): PitchKey => `${name}${octave}`;
-
 export default class Pitch {
   name: PitchName;
   octave: Octave;
