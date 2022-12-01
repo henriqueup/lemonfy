@@ -1,11 +1,10 @@
-import { FunctionComponent } from "react";
+import { ButtonHTMLAttributes, DetailedHTMLProps, FunctionComponent } from "react";
 import { HexColor, StyledButton } from "./button.style";
 
 type VariantOptions = "primary" | "success" | "error" | "";
 export type ButtonProps = {
   variant?: VariantOptions;
   text?: string;
-  onClick: () => void;
 };
 
 function variantMapper(variant: VariantOptions): {
@@ -36,10 +35,12 @@ function variantMapper(variant: VariantOptions): {
   }
 }
 
-const Button: FunctionComponent<ButtonProps> = ({ variant = "", text = "Button Example", onClick }) => {
+const Button: FunctionComponent<
+  ButtonProps & DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>
+> = ({ variant = "", text = "Button Example", ...props }) => {
   const { color, hoverColor } = variantMapper(variant);
   return (
-    <StyledButton color={color} hoverColor={hoverColor} onClick={onClick}>
+    <StyledButton {...props} color={color} hoverColor={hoverColor}>
       {text}
     </StyledButton>
   );
