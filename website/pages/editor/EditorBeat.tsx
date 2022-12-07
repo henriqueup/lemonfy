@@ -1,5 +1,5 @@
-import React, { DragEvent, FunctionComponent, useState } from "react";
-import Bar from "../../entities/bar";
+import React, { DragEvent, FunctionComponent, useContext, useState } from "react";
+import { DraggedNoteContext } from ".";
 import Beat from "../../entities/beat";
 import Note from "../../entities/note";
 
@@ -10,12 +10,10 @@ type BeatProps = {
 
 const EditorBeat: FunctionComponent<BeatProps> = ({ showDivider, beat }) => {
   const [isShowingPreview, setIsShowingPreview] = useState(false);
-  const [previewNote, setPreviewNote] = useState<Note | null>(null);
+  const draggedNote = useContext(DraggedNoteContext);
 
   const handleDragEnter = (event: DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-    console.log(JSON.parse(event.dataTransfer.getData("lemonfy/note")));
-    setPreviewNote(JSON.parse(event.dataTransfer.getData("lemonfy/note")));
     setIsShowingPreview(true);
   };
 
@@ -36,7 +34,7 @@ const EditorBeat: FunctionComponent<BeatProps> = ({ showDivider, beat }) => {
       {isShowingPreview ? (
         <div
           style={{ border: "1px solid lightgray", borderRadius: "4px" }}
-        >{`Preview of note: ${previewNote?.pitch?.name}`}</div>
+        >{`Preview of note: ${draggedNote?.pitch?.name}`}</div>
       ) : null}
     </div>
   );
