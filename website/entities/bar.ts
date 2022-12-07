@@ -10,13 +10,15 @@ export default class Bar {
   tempo: number;
   beats: Beat[];
   timeRatio: number;
+  index?: number;
 
-  constructor(beatCount: number, dibobinador: number, tempo: number) {
+  constructor(beatCount: number, dibobinador: number, tempo: number, index?: number) {
     this.beatCount = beatCount;
     this.dibobinador = dibobinador;
     this.tempo = tempo;
     this.beats = [];
     this.timeRatio = tempo / SECONDS_PER_MINUTE;
+    this.index = index;
 
     for (let i = 0; i < beatCount; i++) {
       this.addBeat(i);

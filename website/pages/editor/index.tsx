@@ -3,15 +3,15 @@ import { createContext, DragEvent, useState } from "react";
 import Bar from "../../entities/bar";
 import Note, { NoteDuration } from "../../entities/note";
 import Pitch, { NUMBER_OF_OCTAVES, NUMBER_OF_PICHES_IN_OCTAVE, Octave, PitchDictionary } from "../../entities/pitch";
+import Sheet from "../../entities/sheet";
 import EditorBeat from "./EditorBeat";
 
-export const DraggedNoteContext = createContext<Note | null>(null);
+export const SheetContext = createContext<Sheet>(new Sheet());
 
 const Editor: NextPage = () => {
-  const [bars, setBars] = useState<Bar[]>([]);
+  const [sheet, setSheet] = useState(new Sheet());
   const [selectedOctave, setSelectedOctave] = useState<Octave>(0);
   const [selectedDuration, setSelectedDuration] = useState<string>("LONG");
-  const [draggedNote, setDraggedNote] = useState<Note | null>(null);
   // const [barMenuIsOpen, setBarMenuIsOpen] = useState(false);
 
   const handleDragStart = (_event: DragEvent<HTMLDivElement>, pitchName: string) => {
@@ -19,25 +19,25 @@ const Editor: NextPage = () => {
       NoteDuration[selectedDuration],
       new Pitch(pitchName.substring(0, pitchName.length - 1), selectedOctave),
     );
-    setDraggedNote(noteData);
+    setSheet({ ...sheet, newNote: noteData });
   };
 
   return (
-    <DraggedNoteContext.Provider value={draggedNote}>
+    <SheetContext.Provider value={sheet}>
       <div style={{ height: "100vh", background: "black", color: "lightgray" }}>
         <div style={{ height: "60%", padding: "16px 16px 8px 16px" }}>
           <fieldset style={{ height: "100%", border: "1px solid lightgray", borderRadius: "4px" }}>
             <legend>Bars</legend>
-            {bars.length === 0 ? (
+            {sheet.bars.length === 0 ? (
               <div
                 style={{ width: "fit-content", margin: "auto", marginTop: "16px", fontSize: "3rem", cursor: "pointer" }}
-                onClick={() => setBars([...bars, new Bar(4, 4, 60)])}
+                onClick={() => setSheet({ ...sheet, bars: [new Bar(4, 4, 60, 0), new Bar(3, 4, 60, 1)] })}
               >
                 +
               </div>
             ) : (
-              <div>
-                {bars.map((bar, i) => (
+              <div style={{ display: "flex" }}>
+                {sheet.bars.map((bar, i) => (
                   <div
                     key={i}
                     style={{
@@ -45,13 +45,14 @@ const Editor: NextPage = () => {
                       padding: "16px",
                       border: "1px solid lightgray",
                       borderRadius: "4px",
-                      width: "25%",
+                      width: "50%",
+                      marginRight: "8px",
                     }}
                   >
                     <span>{`${bar.beatCount}/${bar.dibobinador}`}</span>
                     <div style={{ width: "100%", display: "flex", height: "100px" }}>
                       {bar.beats.map((beat, j) => (
-                        <EditorBeat key={j} showDivider={j < bar.beatCount - 1} beat={beat} />
+                        <EditorBeat key={j} showDivider={j < bar.beatCount - 1} beat={beat} bar={bar} />
                       ))}
                     </div>
                   </div>
@@ -123,7 +124,7 @@ const Editor: NextPage = () => {
           </fieldset>
         </div>
       </div>
-    </DraggedNoteContext.Provider>
+    </SheetContext.Provider>
   );
 };
 
