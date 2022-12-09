@@ -20,11 +20,17 @@ export default class Note {
   duration: NoteDuration;
   pitch?: Pitch;
   start?: number;
+  isSustain: boolean;
   durationInSeconds?: number;
   startInSeconds?: number;
 
-  constructor(duration: NoteDuration, pitch?: Pitch) {
+  constructor(duration: NoteDuration, pitch?: Pitch, isSustain?: boolean) {
     this.duration = duration;
     this.pitch = pitch;
+    this.isSustain = isSustain || false;
+  }
+
+  static sumNotesDuration(notes: Note[]) {
+    return notes.reduce((currentDuration, currentNote) => currentDuration + currentNote.duration, 0);
   }
 }
