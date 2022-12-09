@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, ReactNode, FunctionComponent } from "react";
 import Sheet from "../../entities/sheet";
 
-const SheetContext = createContext<{ sheet: Sheet; refresh: (sheet: Sheet) => void }>({
+const SheetContext = createContext<{ sheet: Sheet; refresh: () => void }>({
   sheet: new Sheet(1),
   refresh: () => {},
 });
@@ -16,8 +16,8 @@ type SheetProviderProps = {
 
 export const SheetProvider: FunctionComponent<SheetProviderProps> = ({ children }) => {
   const [sheet, setSheet] = useState(new Sheet(1));
-  const refresh = (newSheet: Sheet) => {
-    setSheet({ ...newSheet });
+  const refresh = () => {
+    setSheet({ ...sheet, addBar: sheet.addBar, addNote: sheet.addNote });
   };
 
   return <SheetContext.Provider value={{ sheet, refresh }}>{children}</SheetContext.Provider>;

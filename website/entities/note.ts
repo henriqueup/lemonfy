@@ -20,13 +20,15 @@ export default class Note {
   duration: NoteDuration;
   pitch?: Pitch;
   start?: number;
+  hasSustain: boolean;
   isSustain: boolean;
   durationInSeconds?: number;
   startInSeconds?: number;
 
-  constructor(duration: NoteDuration, pitch?: Pitch, isSustain?: boolean) {
+  constructor(duration: NoteDuration, pitch?: Pitch, hasSustain?: boolean, isSustain?: boolean) {
     this.duration = duration;
     this.pitch = pitch;
+    this.hasSustain = hasSustain || false;
     this.isSustain = isSustain || false;
   }
 

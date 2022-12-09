@@ -1,12 +1,15 @@
 import { DragEvent, FunctionComponent, useState } from "react";
 import Note, { NoteDuration } from "../../entities/note";
 import Pitch, { NUMBER_OF_OCTAVES, NUMBER_OF_PICHES_IN_OCTAVE, Octave, PitchDictionary } from "../../entities/pitch";
+import { playSong } from "../../entities/sheet";
+import { useAudioContext } from "../../hooks";
 import { useSheet } from "./SheetContext";
 import Track from "./Track";
 
 type SheetEditorProps = {};
 
 const SheetEditor: FunctionComponent<SheetEditorProps> = ({}) => {
+  const audioContext = useAudioContext();
   const { sheet, refresh: refreshSheet } = useSheet();
   const [selectedOctave, setSelectedOctave] = useState<Octave>(0);
   const [selectedDuration, setSelectedDuration] = useState<string>("LONG");
@@ -17,7 +20,18 @@ const SheetEditor: FunctionComponent<SheetEditorProps> = ({}) => {
       NoteDuration[selectedDuration],
       new Pitch(pitchName.substring(0, pitchName.length - 1), selectedOctave),
     );
-    refreshSheet({ ...sheet, noteToAdd: noteData });
+
+    sheet.noteToAdd = noteData;
+    refreshSheet();
+  };
+
+  const handleAddNote = (barIndex: number, trackIndex: number, note: Note) => {
+    sheet.addNote(barIndex, trackIndex, note);
+    refreshSheet();
+  };
+
+  const handlePlay = () => {
+    playSong(sheet, audioContext);
   };
 
   return (
@@ -30,7 +44,7 @@ const SheetEditor: FunctionComponent<SheetEditorProps> = ({}) => {
               style={{ width: "fit-content", margin: "auto", marginTop: "16px", fontSize: "3rem", cursor: "pointer" }}
               onClick={() => {
                 sheet.addBar(4, 4, 60);
-                refreshSheet(sheet);
+                refreshSheet();
               }}
             >
               +
@@ -60,7 +74,7 @@ const SheetEditor: FunctionComponent<SheetEditorProps> = ({}) => {
                     }}
                   >
                     {bar.tracks.map((track, j) => (
-                      <Track key={j} bar={bar} track={track} />
+                      <Track key={j} bar={bar} track={track} handleAddNote={note => handleAddNote(i, j, note)} />
                     ))}
                   </div>
                 </div>
@@ -102,6 +116,19 @@ const SheetEditor: FunctionComponent<SheetEditorProps> = ({}) => {
                 ))}
               </select>
             </fieldset>
+            <div
+              style={{
+                border: "1px solid lightgray",
+                borderRadius: "8px",
+                padding: "5px",
+                width: "calc(6rem + 16px)",
+                margin: "0px 4px",
+                cursor: "pointer",
+              }}
+              onClick={handlePlay}
+            >
+              Play
+            </div>
           </div>
           <div style={{ display: "flex" }}>
             {Object.keys(PitchDictionary)

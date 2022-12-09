@@ -55,8 +55,8 @@ export default class Bar {
     if (currentTrackNotesDuration + noteToAdd.duration > trackCapacity) {
       const remainingDuration = trackCapacity - currentTrackNotesDuration;
 
-      actualNoteAdded = new Note(remainingDuration, noteToAdd.pitch);
-      leftoverNote = new Note(noteToAdd.duration - remainingDuration, noteToAdd.pitch, true);
+      actualNoteAdded = new Note(remainingDuration, noteToAdd.pitch, true, noteToAdd.isSustain);
+      leftoverNote = new Note(noteToAdd.duration - remainingDuration, noteToAdd.pitch, false, true);
     }
 
     if (targetTrack.length === 0) {
@@ -73,43 +73,6 @@ export default class Bar {
     return leftoverNote;
   }
 }
-
-export const playSong = (bars: Bar[], audioContext: AudioContext | null): void => {
-  if (!audioContext) return;
-
-  for (let i = 0; i < bars.length; i++) {
-    const bar = bars[i];
-    const baseStart = (bar.beatCount * i) / bar.timeRatio;
-
-    const barNotes = bar.tracks.flat();
-    for (let j = 0; j < barNotes.length; j++) {
-      const note = barNotes[j];
-      if (note.startInSeconds == undefined)
-        throw new Error(`Invalid note: '${j}' on bar '${i}', undefined startInSeconds.`);
-      if (note.durationInSeconds == undefined)
-        throw new Error(`Invalid note: '${j}' on bar '${i}', undefined durationInSeconds.`);
-
-      const oscillator = audioContext.createOscillator();
-      const gainNode = createGainNode(audioContext);
-
-      gainNode.gain.setValueAtTime(0.2, audioContext.currentTime + baseStart + note.startInSeconds);
-      gainNode.gain.setValueAtTime(
-        0,
-        audioContext.currentTime + baseStart + note.startInSeconds + note.durationInSeconds,
-      );
-      oscillator.connect(gainNode);
-
-      //no clue wtf is going on here... gotta learn about sound wave synthesis, I guess
-      const sineTerms = new Float32Array([1, 1, 1, 0, 1, 1, 0, 0, 1]);
-      const cosineTerms = new Float32Array([1, 1, 1, 1, 1, 1, 1, 1, 1]);
-      const customWaveform = audioContext.createPeriodicWave(cosineTerms, sineTerms);
-
-      oscillator.setPeriodicWave(customWaveform);
-      oscillator.frequency.value = note.pitch?.key ? PitchDictionary[note.pitch.key] : 0;
-      oscillator.start();
-    }
-  }
-};
 
 /*
 sources
