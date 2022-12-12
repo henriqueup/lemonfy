@@ -31,9 +31,19 @@ const Track: FunctionComponent<TrackProps> = ({ bar, track, handleAddNote }) => 
 
   const getNoteSizePercentage = (noteSize: number) => `${(noteSize * 100) / barSize}%`;
 
+  const fitsAnotherNote = () => remainingSizeInBar > 0;
+
   const handleDragEnter = (event: DragEvent<HTMLDivElement>) => {
     event.preventDefault();
+    if (!fitsAnotherNote()) return;
+
     setIsShowingPreview(true);
+  };
+
+  const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+
+    if (!fitsAnotherNote()) event.dataTransfer.dropEffect = "none";
   };
 
   const handleDragLeave = (event: DragEvent<HTMLDivElement>) => {
@@ -44,7 +54,7 @@ const Track: FunctionComponent<TrackProps> = ({ bar, track, handleAddNote }) => 
 
   const handleDrop = () => {
     setIsShowingPreview(false);
-    if (sheet.noteToAdd === null) return;
+    if (sheet.noteToAdd === null || !fitsAnotherNote()) return;
 
     handleAddNote(sheet.noteToAdd);
   };
@@ -53,7 +63,7 @@ const Track: FunctionComponent<TrackProps> = ({ bar, track, handleAddNote }) => 
     <div
       onDragEnter={event => handleDragEnter(event)}
       onDragLeave={event => handleDragLeave(event)}
-      onDragOver={event => event.preventDefault()}
+      onDragOver={event => handleDragOver(event)}
       onDrop={handleDrop}
       style={{ width: "100%", height: "100%", display: "flex" }}
     >
