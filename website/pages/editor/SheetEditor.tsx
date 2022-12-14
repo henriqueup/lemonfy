@@ -3,6 +3,7 @@ import Note, { NoteDuration } from "../../entities/note";
 import Pitch, { NUMBER_OF_OCTAVES, NUMBER_OF_PICHES_IN_OCTAVE, Octave, PitchDictionary } from "../../entities/pitch";
 import { playSong } from "../../entities/sheet";
 import { useAudioContext } from "../../hooks";
+import { Plus } from "../../icons";
 import { useSheet } from "./SheetContext";
 import Track from "./Track";
 
@@ -40,14 +41,25 @@ const SheetEditor: FunctionComponent<SheetEditorProps> = ({}) => {
         <fieldset style={{ height: "100%", border: "1px solid lightgray", borderRadius: "4px" }}>
           <legend>Bars</legend>
           {sheet.bars.length === 0 ? (
-            <div
-              style={{ width: "fit-content", margin: "auto", marginTop: "16px", fontSize: "3rem", cursor: "pointer" }}
-              onClick={() => {
-                sheet.addBar(4, 4, 60);
-                refreshSheet();
-              }}
-            >
-              +
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignContent: "center",
+                  marginTop: "16px",
+                  padding: "4px",
+                  cursor: "pointer",
+                  border: "1px solid lightgray",
+                  borderRadius: "50%",
+                }}
+                onClick={() => {
+                  sheet.addBar(4, 4, 60);
+                  refreshSheet();
+                }}
+              >
+                <Plus fill="lightgray" />
+              </div>
             </div>
           ) : (
             <div style={{ display: "flex" }}>
