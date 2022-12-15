@@ -15,7 +15,7 @@ type SheetProviderProps = {
 };
 
 export const SheetProvider: FunctionComponent<SheetProviderProps> = ({ children }) => {
-  const [sheet, setSheet] = useState(new Sheet(1));
+  const [sheet, setSheet] = useState(new Sheet(3));
   const refresh = () => {
     setSheet({ ...sheet, addBar: sheet.addBar, addNote: sheet.addNote });
   };

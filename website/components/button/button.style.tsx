@@ -1,19 +1,21 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 export type HexColor = `#${string}`;
 
 export const StyledButton = styled.button<{
-    color?: HexColor;
-    hoverColor?: HexColor;
+  color?: HexColor;
+  hoverColor?: HexColor;
+  disabled?: boolean;
 }>`
-    & {
-        padding: 32px;
-        background-color: ${props => props?.color || 'transparent'};
-        font-size: 24px;
-        border-radius: 4px;
-        color: white;
-        font-weight: bold;
-        &:hover {
-            background-color: ${props => props?.hoverColor || 'transparent'};
-        }
+  & {
+    padding: 8px;
+    background-color: ${props => (props.disabled ? "lightgray" : props?.color || "transparent")};
+    font-size: 24px;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    cursor: ${props => !props.disabled && "pointer"};
+    &:hover {
+      background-color: ${props => (props.disabled ? "lightgray" : props?.hoverColor || "transparent")};
     }
+  }
 `;

@@ -6,6 +6,7 @@ import { useAudioContext } from "../../hooks";
 import { Plus } from "../../icons";
 import { useSheet } from "./SheetContext";
 import Track from "./Track";
+import BarMenu from "./BarMenu";
 
 type SheetEditorProps = {};
 
@@ -14,7 +15,7 @@ const SheetEditor: FunctionComponent<SheetEditorProps> = ({}) => {
   const { sheet, refresh: refreshSheet } = useSheet();
   const [selectedOctave, setSelectedOctave] = useState<Octave>(0);
   const [selectedDuration, setSelectedDuration] = useState<string>("LONG");
-  // const [barMenuIsOpen, setBarMenuIsOpen] = useState(false);
+  const [barMenuIsOpen, setBarMenuIsOpen] = useState(false);
 
   const handleDragStart = (_event: DragEvent<HTMLDivElement>, pitchName: string) => {
     const noteData = new Note(
@@ -35,69 +36,72 @@ const SheetEditor: FunctionComponent<SheetEditorProps> = ({}) => {
     playSong(sheet, audioContext);
   };
 
+  const handleAddBar = (beatCount: number, dibobinador: number, tempo: number) => {
+    sheet.addBar(beatCount, dibobinador, tempo);
+    refreshSheet();
+
+    setBarMenuIsOpen(false);
+  };
+
   return (
     <div style={{ height: "100vh", background: "black", color: "lightgray" }}>
       <div style={{ height: "60%", padding: "16px 16px 8px 16px" }}>
         <fieldset style={{ height: "100%", border: "1px solid lightgray", borderRadius: "4px" }}>
           <legend>Bars</legend>
-          {sheet.bars.length === 0 ? (
-            <div style={{ display: "flex", justifyContent: "center" }}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              maxHeight: "100%",
+              overflowY: "auto",
+              columnGap: "8px",
+              rowGap: "8px",
+            }}
+          >
+            {sheet.bars.map((bar, i) => (
               <div
+                key={i}
                 style={{
                   display: "flex",
-                  justifyContent: "center",
-                  alignContent: "center",
-                  marginTop: "16px",
-                  padding: "4px",
-                  cursor: "pointer",
+                  padding: "16px",
                   border: "1px solid lightgray",
-                  borderRadius: "50%",
-                }}
-                onClick={() => {
-                  sheet.addBar(4, 4, 60);
-                  refreshSheet();
+                  borderRadius: "4px",
                 }}
               >
-                <Plus fill="lightgray" />
-              </div>
-            </div>
-          ) : (
-            <div style={{ display: "flex" }}>
-              {sheet.bars.map((bar, i) => (
+                <span>{`${bar.beatCount}/${bar.dibobinador}`}</span>
                 <div
-                  key={i}
                   style={{
+                    width: "100%",
+                    height: "100px",
                     display: "flex",
-                    padding: "16px",
-                    border: "1px solid lightgray",
-                    borderRadius: "4px",
-                    width: "50%",
-                    marginRight: "8px",
+                    flexDirection: "column",
+                    justifyContent: "space-evenly",
                   }}
                 >
-                  <span>{`${bar.beatCount}/${bar.dibobinador}`}</span>
-                  <div
-                    style={{
-                      width: "100%",
-                      height: "100px",
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "space-evenly",
-                    }}
-                  >
-                    {bar.tracks.map((track, j) => (
-                      <Track key={j} bar={bar} track={track} handleAddNote={note => handleAddNote(i, j, note)} />
-                    ))}
-                  </div>
+                  {bar.tracks.map((track, j) => (
+                    <Track key={j} bar={bar} track={track} handleAddNote={note => handleAddNote(i, j, note)} />
+                  ))}
                 </div>
-              ))}
+              </div>
+            ))}
+          </div>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignContent: "center",
+                marginTop: "16px",
+                padding: "4px",
+                cursor: "pointer",
+                border: "1px solid lightgray",
+                borderRadius: "50%",
+              }}
+              onClick={() => setBarMenuIsOpen(true)}
+            >
+              <Plus fill="lightgray" />
             </div>
-          )}
-          {/* {barMenuIsOpen ? (
-            <div style={{ width: "25vw", border: "1px solid lightgray", borderRadius: "4px", margin: "auto" }}>
-              <h3 style={{ width: "fit-content", margin: "8px auto" }}>New Bar</h3>
-            </div>
-          ) : null} */}
+          </div>
         </fieldset>
       </div>
       <div style={{ height: "40%", padding: "8px 16px 16px 16px" }}>
@@ -170,6 +174,7 @@ const SheetEditor: FunctionComponent<SheetEditorProps> = ({}) => {
           </div>
         </fieldset>
       </div>
+      {barMenuIsOpen ? <BarMenu onAdd={handleAddBar} /> : null}
     </div>
   );
 };

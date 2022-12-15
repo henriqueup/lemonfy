@@ -1,6 +1,4 @@
-import { createGainNode } from "../functions";
 import Note, { NoteDuration } from "./note";
-import { PitchDictionary } from "./pitch";
 const SECONDS_PER_MINUTE = 60;
 
 export default class Bar {
