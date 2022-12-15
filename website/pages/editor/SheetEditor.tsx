@@ -68,7 +68,14 @@ const SheetEditor: FunctionComponent<SheetEditorProps> = ({}) => {
                   borderRadius: "4px",
                 }}
               >
-                <span>{`${bar.beatCount}/${bar.dibobinador}`}</span>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                  <div>
+                    <span>{`${bar.beatCount}/${bar.dibobinador}`}</span>
+                  </div>
+                  <div>
+                    <span>{bar.tempo}</span>
+                  </div>
+                </div>
                 <div
                   style={{
                     width: "100%",
