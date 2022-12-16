@@ -13,7 +13,19 @@ const Editor: NextPage = () => {
   const refreshCurrentSheet = () => {
     if (currentSheet === undefined) return;
 
-    setCurrentSheet({ ...currentSheet, addBar: currentSheet.addBar, addNote: currentSheet.addNote });
+    const newSheet = new Sheet(currentSheet.trackCount);
+    setCurrentSheet(Object.assign(newSheet, currentSheet));
+  };
+
+  const handleLoadSheet = () => {
+    const storageSheetString = localStorage.getItem("sheet");
+    if (storageSheetString === null) return;
+
+    const sheetFromStorage = JSON.parse(storageSheetString) as Sheet;
+    const newSheet = new Sheet(sheetFromStorage.trackCount);
+    setCurrentSheet(Object.assign(newSheet, sheetFromStorage));
+    // hmm, this breaks...
+    // maybe it's time to finally abandon classes
   };
 
   const handleAddSheet = (trackCount: number) => {
@@ -47,7 +59,7 @@ const Editor: NextPage = () => {
         </div>
       ) : (
         <SheetContext.Provider value={{ sheet: currentSheet, refresh: refreshCurrentSheet }}>
-          <SheetEditor />
+          <SheetEditor handleLoad={handleLoadSheet} />
         </SheetContext.Provider>
       )}
       {sheetMenuIsOpen ? <SheetMenu onAdd={handleAddSheet} /> : null}

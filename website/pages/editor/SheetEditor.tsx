@@ -9,9 +9,11 @@ import BarMenu from "./BarMenu";
 import { useSheet } from "./Editor";
 import { Button } from "../../components/button/button";
 
-type SheetEditorProps = {};
+type SheetEditorProps = {
+  handleLoad: () => void;
+};
 
-const SheetEditor: FunctionComponent<SheetEditorProps> = ({}) => {
+const SheetEditor: FunctionComponent<SheetEditorProps> = ({ handleLoad }) => {
   const audioContext = useAudioContext();
   const { sheet, refresh: refreshSheet } = useSheet();
   const [selectedOctave, setSelectedOctave] = useState<Octave>(0);
@@ -35,6 +37,10 @@ const SheetEditor: FunctionComponent<SheetEditorProps> = ({}) => {
 
   const handlePlay = () => {
     playSong(sheet, audioContext);
+  };
+
+  const handleSave = () => {
+    localStorage.setItem("sheet", JSON.stringify(sheet));
   };
 
   const handleAddBar = (beatCount: number, dibobinador: number, tempo: number) => {
@@ -140,7 +146,9 @@ const SheetEditor: FunctionComponent<SheetEditorProps> = ({}) => {
                 ))}
               </select>
             </fieldset>
-            <Button text="Play" style={{ margin: "0px 4px", width: "6rem" }} onClick={handlePlay} />
+            <Button text="Play" variant="success" style={{ margin: "0px 4px", width: "6rem" }} onClick={handlePlay} />
+            <Button text="Save" variant="primary" style={{ margin: "0px 4px", width: "6rem" }} onClick={handleSave} />
+            <Button text="Load" style={{ margin: "0px 4px", width: "6rem" }} onClick={handleLoad} />
           </div>
           <div style={{ display: "flex" }}>
             {Object.keys(PitchDictionary)
