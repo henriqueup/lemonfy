@@ -1,8 +1,8 @@
 import React, { CSSProperties, DragEvent, FunctionComponent, HTMLAttributes, useState } from "react";
 import Bar from "../../entities/bar";
 import NoteEntity from "../../entities/note";
+import { useSheet } from "./Editor";
 import Note from "./Note";
-import { useSheet } from "./SheetContext";
 
 type TrackProps = {
   bar: Bar;
@@ -15,7 +15,6 @@ const Track: FunctionComponent<TrackProps> = ({ bar, track, handleAddNote }) => 
   const { sheet } = useSheet();
   const barSize = bar.beatCount / bar.dibobinador;
   const remainingSizeInBar = barSize - NoteEntity.sumNotesDuration(track);
-  console.log(sheet);
 
   const getNoteToAddSize = () => {
     if (sheet.noteToAdd === null || !isShowingPreview) return 0;

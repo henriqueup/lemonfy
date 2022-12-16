@@ -1,6 +1,10 @@
 import { FunctionComponent, useState } from "react";
 import { Button } from "../../components/button/button";
 
+type Props = {
+  onAdd: (beatCount: number, dibobinador: number, tempo: number) => void;
+};
+
 const BarMenu: FunctionComponent<Props> = ({ onAdd }) => {
   const [beatCount, setBeatCount] = useState<number | undefined>(undefined);
   const [dibobinador, setDibobinador] = useState<number | undefined>(undefined);
@@ -52,10 +56,6 @@ const BarMenu: FunctionComponent<Props> = ({ onAdd }) => {
       </div>
     </div>
   );
-};
-
-type Props = {
-  onAdd: (beatCount: number, dibobinador: number, tempo: number) => void;
 };
 
 export default BarMenu;

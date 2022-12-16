@@ -4,9 +4,9 @@ import Pitch, { NUMBER_OF_OCTAVES, NUMBER_OF_PICHES_IN_OCTAVE, Octave, PitchDict
 import { playSong } from "../../entities/sheet";
 import { useAudioContext } from "../../hooks";
 import { Plus } from "../../icons";
-import { useSheet } from "./SheetContext";
 import Track from "./Track";
 import BarMenu from "./BarMenu";
+import { useSheet } from "./Editor";
 
 type SheetEditorProps = {};
 
@@ -44,7 +44,7 @@ const SheetEditor: FunctionComponent<SheetEditorProps> = ({}) => {
   };
 
   return (
-    <div style={{ height: "100vh", background: "black", color: "lightgray" }}>
+    <>
       <div style={{ height: "60%", padding: "16px 16px 8px 16px" }}>
         <fieldset style={{ height: "100%", border: "1px solid lightgray", borderRadius: "4px" }}>
           <legend>Bars</legend>
@@ -182,7 +182,7 @@ const SheetEditor: FunctionComponent<SheetEditorProps> = ({}) => {
         </fieldset>
       </div>
       {barMenuIsOpen ? <BarMenu onAdd={handleAddBar} /> : null}
-    </div>
+    </>
   );
 };
 

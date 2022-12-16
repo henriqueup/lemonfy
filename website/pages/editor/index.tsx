@@ -1,13 +1,3 @@
-import { NextPage } from "next";
-import { SheetProvider } from "./SheetContext";
-import SheetEditor from "./SheetEditor";
-
-const Editor: NextPage = () => {
-  return (
-    <SheetProvider>
-      <SheetEditor />
-    </SheetProvider>
-  );
-};
+import Editor from "./Editor";
 
 export default Editor;
