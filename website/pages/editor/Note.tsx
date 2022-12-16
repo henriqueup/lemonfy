@@ -31,7 +31,7 @@ const Note: FunctionComponent<NoteProps> = ({ note, style }) => {
         </div>
       ) : null}
       <div style={getNoteStyle(note)}>
-        <span>{note.pitch?.name}</span>
+        <span>{`${note.pitch?.name}${note.pitch?.octave}`}</span>
       </div>
       {note.hasSustain ? (
         <div style={{ width: "50%", display: "flex", justifyContent: "flex-end" }}>
