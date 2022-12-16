@@ -7,6 +7,7 @@ import { Plus } from "../../icons";
 import Track from "./Track";
 import BarMenu from "./BarMenu";
 import { useSheet } from "./Editor";
+import { Button } from "../../components/button/button";
 
 type SheetEditorProps = {};
 
@@ -139,19 +140,7 @@ const SheetEditor: FunctionComponent<SheetEditorProps> = ({}) => {
                 ))}
               </select>
             </fieldset>
-            <div
-              style={{
-                border: "1px solid lightgray",
-                borderRadius: "8px",
-                padding: "5px",
-                width: "calc(6rem + 16px)",
-                margin: "0px 4px",
-                cursor: "pointer",
-              }}
-              onClick={handlePlay}
-            >
-              Play
-            </div>
+            <Button text="Play" style={{ margin: "0px 4px", width: "6rem" }} onClick={handlePlay} />
           </div>
           <div style={{ display: "flex" }}>
             {Object.keys(PitchDictionary)
