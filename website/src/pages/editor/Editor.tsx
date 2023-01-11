@@ -2,12 +2,15 @@ import { type NextPage } from "next";
 import React, { createContext, useContext, useState } from "react";
 import { Plus } from "../../icons";
 import { createSheet, type Sheet } from "../../server/entities/sheet";
+import { classNames } from "../../styles/utils";
+import EditorMenu from "./EditorMenu";
 import SheetEditor from "./SheetEditor";
 import SheetMenu from "./SheetMenu";
 
 const Editor: NextPage = () => {
   const [sheets, setSheets] = useState<Sheet[]>([]);
   const [currentSheet, setCurrentSheet] = useState<Sheet | undefined>();
+  const [editorMenuIsOpen, setEditorMenuIsOpen] = useState(true);
   const [sheetMenuIsOpen, setSheetMenuIsOpen] = useState(false);
 
   const refreshCurrentSheet = () => {
@@ -17,15 +20,10 @@ const Editor: NextPage = () => {
     setCurrentSheet(Object.assign(newSheet, currentSheet));
   };
 
-  const handleLoadSheet = () => {
-    const storageSheetString = localStorage.getItem("sheet");
-    if (storageSheetString === null) return;
-
-    const sheetFromStorage = JSON.parse(storageSheetString) as Sheet;
+  const handleLoadSheet = (sheetFromStorage: Sheet) => {
     const newSheet = createSheet(sheetFromStorage.trackCount);
     setCurrentSheet(Object.assign(newSheet, sheetFromStorage));
-    // hmm, this breaks...
-    // maybe it's time to finally abandon classes
+    setEditorMenuIsOpen(false);
   };
 
   const handleAddSheet = (trackCount: number) => {
@@ -38,36 +36,31 @@ const Editor: NextPage = () => {
   };
 
   return (
-    <div style={{ height: "100vh", background: "black", color: "lightgray" }}>
-      {currentSheet === undefined ? (
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignContent: "center",
-              marginTop: "16px",
-              padding: "4px",
-              cursor: "pointer",
-              border: "1px solid lightgray",
-              borderRadius: "50%",
-            }}
-            onClick={() => setSheetMenuIsOpen(true)}
-          >
-            <Plus fill="lightgray" />
+    <div className="h-screen bg-black text-gray-200">
+      <SheetContext.Provider value={{ sheet: currentSheet, refresh: refreshCurrentSheet }}>
+        {currentSheet === undefined ? (
+          <div className="flex justify-center">
+            <div
+              className={classNames(
+                "mt-4 flex cursor-pointer content-center justify-center",
+                "rounded-full border border-solid border-gray-200 p-4",
+              )}
+              onClick={() => setSheetMenuIsOpen(true)}
+            >
+              <Plus fill="lightgray" />
+            </div>
           </div>
-        </div>
-      ) : (
-        <SheetContext.Provider value={{ sheet: currentSheet, refresh: refreshCurrentSheet }}>
-          <SheetEditor handleLoad={handleLoadSheet} />
-        </SheetContext.Provider>
-      )}
-      {sheetMenuIsOpen ? <SheetMenu onAdd={handleAddSheet} /> : null}
+        ) : (
+          <SheetEditor />
+        )}
+        {editorMenuIsOpen ? <EditorMenu handleLoad={handleLoadSheet} /> : null}
+        {sheetMenuIsOpen ? <SheetMenu onAdd={handleAddSheet} /> : null}
+      </SheetContext.Provider>
     </div>
   );
 };
 
-const SheetContext = createContext<{ sheet: Sheet; refresh: () => void }>({
+const SheetContext = createContext<{ sheet: Sheet | undefined; refresh: () => void }>({
   sheet: createSheet(1),
   refresh: () => {
     return;
