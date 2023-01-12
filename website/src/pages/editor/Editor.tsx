@@ -10,7 +10,6 @@ import SheetMenu from "./SheetMenu";
 const Editor: NextPage = () => {
   const [sheets, setSheets] = useState<Sheet[]>([]);
   const [currentSheet, setCurrentSheet] = useState<Sheet | undefined>();
-  const [editorMenuIsOpen, setEditorMenuIsOpen] = useState(true);
   const [sheetMenuIsOpen, setSheetMenuIsOpen] = useState(false);
 
   const refreshCurrentSheet = () => {
@@ -23,7 +22,6 @@ const Editor: NextPage = () => {
   const handleLoadSheet = (sheetFromStorage: Sheet) => {
     const newSheet = createSheet(sheetFromStorage.trackCount);
     setCurrentSheet(Object.assign(newSheet, sheetFromStorage));
-    setEditorMenuIsOpen(false);
   };
 
   const handleAddSheet = (trackCount: number) => {
@@ -53,8 +51,8 @@ const Editor: NextPage = () => {
         ) : (
           <SheetEditor />
         )}
-        {editorMenuIsOpen ? <EditorMenu handleLoad={handleLoadSheet} /> : null}
-        {sheetMenuIsOpen ? <SheetMenu onAdd={handleAddSheet} /> : null}
+        <EditorMenu handleLoad={handleLoadSheet} />
+        {sheetMenuIsOpen ? <SheetMenu onAdd={handleAddSheet} onClose={() => setSheetMenuIsOpen(false)} /> : null}
       </SheetContext.Provider>
     </div>
   );

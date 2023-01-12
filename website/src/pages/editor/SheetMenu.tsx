@@ -1,11 +1,12 @@
 import { type FunctionComponent, useState } from "react";
-import { Button } from "../../components";
+import { Button, FixedSideMenu } from "../../components";
 
 type Props = {
   onAdd: (trackCount: number) => void;
+  onClose: () => void;
 };
 
-const SheetMenu: FunctionComponent<Props> = ({ onAdd }) => {
+const SheetMenu: FunctionComponent<Props> = ({ onAdd, onClose }) => {
   const [trackCount, setTrackCount] = useState<number | undefined>(undefined);
   const canAdd = trackCount !== undefined;
 
@@ -16,18 +17,7 @@ const SheetMenu: FunctionComponent<Props> = ({ onAdd }) => {
   };
 
   return (
-    <div
-      style={{
-        width: "25vw",
-        height: "100vh",
-        position: "absolute",
-        top: 0,
-        right: 0,
-        borderLeft: "1px solid lightgray",
-        borderRadius: "4px",
-        background: "inherit",
-      }}
-    >
+    <FixedSideMenu rightSide onClose={onClose}>
       <div style={{ display: "flex", flexDirection: "column" }}>
         <div style={{ display: "flex", justifyContent: "center", width: "100%", margin: "8px auto" }}>
           <h3 style={{ margin: "auto" }}>New Sheet</h3>
@@ -44,7 +34,7 @@ const SheetMenu: FunctionComponent<Props> = ({ onAdd }) => {
           className="mt-6 w-2/5 self-center"
         />
       </div>
-    </div>
+    </FixedSideMenu>
   );
 };
 

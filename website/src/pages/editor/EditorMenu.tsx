@@ -1,5 +1,5 @@
 import { type FunctionComponent } from "react";
-import { Button } from "../../components";
+import { Button, CollapsableSideMenu } from "../../components";
 import { type Sheet } from "../../server/entities/sheet";
 import { useSheet } from "./Editor";
 
@@ -23,7 +23,7 @@ const EditorMenu: FunctionComponent<Props> = ({ handleLoad }) => {
   };
 
   return (
-    <div className="absolute top-0 left-0 h-screen w-1/4 rounded border border-l-gray-200 bg-inherit">
+    <CollapsableSideMenu>
       <div className="flex flex-col">
         <div className="mt-2 mb-2 ml-auto mr-auto flex w-full justify-center">
           <h3 className="m-auto">Editor Menu</h3>
@@ -37,7 +37,7 @@ const EditorMenu: FunctionComponent<Props> = ({ handleLoad }) => {
         />
         <Button text="Load" onClick={handleOwnLoad} className="mt-6 w-2/5 self-center" />
       </div>
-    </div>
+    </CollapsableSideMenu>
   );
 };
 

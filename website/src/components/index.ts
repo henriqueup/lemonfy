@@ -1,3 +1,4 @@
-import Button from "./button/button";
+import Button from "./button";
+import { CollapsableSideMenu, FixedSideMenu } from "./sideMenu";
 
-export { Button };
+export { Button, CollapsableSideMenu, FixedSideMenu };

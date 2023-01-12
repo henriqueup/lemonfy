@@ -1,11 +1,12 @@
 import { type FunctionComponent, useState } from "react";
-import { Button } from "../../components";
+import { Button, FixedSideMenu } from "../../components";
 
 type Props = {
   onAdd: (beatCount: number, dibobinador: number, tempo: number) => void;
+  onClose: () => void;
 };
 
-const BarMenu: FunctionComponent<Props> = ({ onAdd }) => {
+const BarMenu: FunctionComponent<Props> = ({ onAdd, onClose }) => {
   const [beatCount, setBeatCount] = useState<number | undefined>(undefined);
   const [dibobinador, setDibobinador] = useState<number | undefined>(undefined);
   const [tempo, setTempo] = useState<number | undefined>(undefined);
@@ -18,18 +19,7 @@ const BarMenu: FunctionComponent<Props> = ({ onAdd }) => {
   };
 
   return (
-    <div
-      style={{
-        width: "25vw",
-        height: "100vh",
-        position: "absolute",
-        top: 0,
-        right: 0,
-        borderLeft: "1px solid lightgray",
-        borderRadius: "4px",
-        background: "inherit",
-      }}
-    >
+    <FixedSideMenu rightSide onClose={onClose}>
       <div style={{ display: "flex", flexDirection: "column" }}>
         <div style={{ display: "flex", justifyContent: "center", width: "100%", margin: "8px auto" }}>
           <h3 style={{ margin: "auto" }}>New Bar</h3>
@@ -54,7 +44,7 @@ const BarMenu: FunctionComponent<Props> = ({ onAdd }) => {
           className="mt-6 w-2/5 self-center"
         />
       </div>
-    </div>
+    </FixedSideMenu>
   );
 };
 

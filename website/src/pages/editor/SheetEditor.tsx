@@ -94,7 +94,7 @@ const SheetEditor: FunctionComponent = () => {
         </fieldset>
       </div>
       <NoteMenu />
-      {barMenuIsOpen ? <BarMenu onAdd={handleAddBar} /> : null}
+      {barMenuIsOpen ? <BarMenu onAdd={handleAddBar} onClose={() => setBarMenuIsOpen(false)} /> : null}
     </>
   );
 };

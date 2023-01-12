@@ -2,7 +2,7 @@ import { createGainNode } from "@lemonfy/functions";
 import { useAudioContext } from "@lemonfy/hooks";
 import type { NextPage } from "next";
 import { MouseEvent, useCallback, useMemo, useState } from "react";
-import { Button } from "../../components/button/button";
+import { Button } from "../../components/button";
 import styles from "../../styles/root.module.css";
 
 enum mouseEvents {
