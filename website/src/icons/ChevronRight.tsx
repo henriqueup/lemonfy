@@ -12,7 +12,7 @@ interface Props {
 const ChevronRight: FunctionComponent<Props> = ({ width, height, stroke, fill, style }) => {
   return (
     <BaseIcon width={width} height={height} viewbox="0 0 24 24" style={style} stroke={stroke} fill={fill}>
-      <path d="M8 24L18 12L8 0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M8 24L18 12L8 0" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
     </BaseIcon>
   );
 };
