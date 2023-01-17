@@ -1,6 +1,6 @@
 import { type DragEvent, useState, type FunctionComponent } from "react";
 import { Button } from "../../components";
-import { useAudioContext } from "../../hooks";
+import { useAudioContext, useShortcuts } from "../../hooks";
 import { createNote, NOTE_DURATION, type NoteDurationName } from "../../server/entities/note";
 import {
   createPitch,
@@ -18,6 +18,8 @@ const NoteMenu: FunctionComponent = () => {
   const { sheet, refresh: refreshSheet } = useSheet();
   const [selectedOctave, setSelectedOctave] = useState<Octave>(0);
   const [selectedDuration, setSelectedDuration] = useState<NoteDurationName>("LONG");
+
+  useShortcuts({});
 
   if (sheet === undefined) return null;
 

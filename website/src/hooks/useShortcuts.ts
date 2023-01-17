@@ -28,6 +28,7 @@ const useShortcuts = (shortcutDictionary: ShortcutDictionary) => {
     if (event.shiftKey) keyCodes.push("SHIFT");
     if (event.altKey) keyCodes.push("ALT");
 
+    console.log(event.key);
     keyCodes.push(event.key);
 
     const resultingKeyCode = keyCodes.join("_");
