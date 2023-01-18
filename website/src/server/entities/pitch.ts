@@ -1,8 +1,7 @@
+import { type Octave } from "./octave";
+
 export type PitchName = "C" | "C#" | "D" | "D#" | "E" | "F" | "F#" | "G" | "G#" | "A" | "A#" | "B";
 export const NUMBER_OF_PICHES_IN_OCTAVE = 12;
-
-export type Octave = 0 | 1 | 2 | 3 | 4 | 5;
-export const NUMBER_OF_OCTAVES = 6;
 
 export type PitchKey = `${PitchName}${Octave}`;
 

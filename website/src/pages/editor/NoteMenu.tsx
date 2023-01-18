@@ -1,15 +1,15 @@
 import { type DragEvent, useState, type FunctionComponent } from "react";
 import { Button } from "../../components";
 import { useAudioContext, useShortcuts } from "../../hooks";
-import { createNote, NOTE_DURATION, type NoteDurationName } from "../../server/entities/note";
 import {
-  createPitch,
-  NUMBER_OF_OCTAVES,
-  NUMBER_OF_PICHES_IN_OCTAVE,
-  PitchDictionary,
-  type PitchName,
-  type Octave,
-} from "../../server/entities/pitch";
+  createNote,
+  lowerNoteDuration,
+  NOTE_DURATIONS,
+  raiseNoteDuration,
+  type NoteDurationName,
+} from "../../server/entities/note";
+import { lowerOctave, NUMBER_OF_OCTAVES, raiseOctave, type Octave } from "../../server/entities/octave";
+import { createPitch, NUMBER_OF_PICHES_IN_OCTAVE, PitchDictionary, type PitchName } from "../../server/entities/pitch";
 import { playSong } from "../../server/entities/sheet";
 import { useSheet } from "./Editor";
 
@@ -19,13 +19,26 @@ const NoteMenu: FunctionComponent = () => {
   const [selectedOctave, setSelectedOctave] = useState<Octave>(0);
   const [selectedDuration, setSelectedDuration] = useState<NoteDurationName>("LONG");
 
-  useShortcuts({});
+  useShortcuts({
+    "octave.lower": {
+      callback: () => setSelectedOctave(curr => lowerOctave(curr)),
+    },
+    "octave.raise": {
+      callback: () => setSelectedOctave(curr => raiseOctave(curr)),
+    },
+    "duration.lower": {
+      callback: () => setSelectedDuration(curr => lowerNoteDuration(curr)),
+    },
+    "duration.raise": {
+      callback: () => setSelectedDuration(curr => raiseNoteDuration(curr)),
+    },
+  });
 
   if (sheet === undefined) return null;
 
   const handleDragStart = (_event: DragEvent<HTMLDivElement>, pitchName: string) => {
     const noteData = createNote(
-      NOTE_DURATION[selectedDuration],
+      NOTE_DURATIONS[selectedDuration],
       createPitch(pitchName.substring(0, pitchName.length - 1) as PitchName, selectedOctave),
     );
 
@@ -47,7 +60,7 @@ const NoteMenu: FunctionComponent = () => {
             <select
               value={selectedOctave}
               onChange={event => setSelectedOctave(Number(event.target.value) as Octave)}
-              style={{ width: "100%", cursor: "pointer" }}
+              style={{ width: "100%", color: "black", cursor: "pointer" }}
             >
               {[...Array(NUMBER_OF_OCTAVES).keys()].map((octave, i) => (
                 <option key={i}>{octave}</option>
@@ -59,9 +72,9 @@ const NoteMenu: FunctionComponent = () => {
             <select
               value={selectedDuration}
               onChange={event => setSelectedDuration(event.target.value as NoteDurationName)}
-              style={{ width: "100%", cursor: "pointer" }}
+              style={{ width: "100%", color: "black", cursor: "pointer" }}
             >
-              {Object.keys(NOTE_DURATION).map((noteDuration, i) => (
+              {Object.keys(NOTE_DURATIONS).map((noteDuration, i) => (
                 <option key={i}>{noteDuration}</option>
               ))}
             </select>

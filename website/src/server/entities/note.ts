@@ -1,17 +1,21 @@
 import { type Pitch } from "./pitch";
 
-export type NoteDurationName =
-  | "LONG"
-  | "DOUBLE_WHOLE"
-  | "WHOLE"
-  | "HALF"
-  | "HALF_TRIPLET"
-  | "QUARTER"
-  | "QUARTER_TRIPLET"
-  | "EIGHTH"
-  | "EIGHTH_TRIPLET"
-  | "SIXTEENTH";
-export const NOTE_DURATION: Record<NoteDurationName, number> = {
+const NOTE_DURATION_NAMES = [
+  "LONG",
+  "DOUBLE_WHOLE",
+  "WHOLE",
+  "HALF",
+  "HALF_TRIPLET",
+  "QUARTER",
+  "QUARTER_TRIPLET",
+  "EIGHTH",
+  "EIGHTH_TRIPLET",
+  "SIXTEENTH",
+] as const;
+
+export type NoteDurationName = (typeof NOTE_DURATION_NAMES)[number];
+
+export const NOTE_DURATIONS: Record<NoteDurationName, number> = {
   LONG: 4,
   DOUBLE_WHOLE: 2,
   WHOLE: 1,
@@ -24,10 +28,26 @@ export const NOTE_DURATION: Record<NoteDurationName, number> = {
   SIXTEENTH: 1 / 16,
 } as const;
 
-//note without a pitch is silence
+const isNoteDuration = (key: string | undefined): key is NoteDurationName =>
+  key ? NOTE_DURATIONS.hasOwnProperty(key) : false;
+
+const getNextNoteDuration = (currentDuration: NoteDurationName, isRaise: boolean) => {
+  const currentDurationIndex = NOTE_DURATION_NAMES.indexOf(currentDuration);
+  const nextNoteDuration = isRaise
+    ? NOTE_DURATION_NAMES[currentDurationIndex - 1]
+    : NOTE_DURATION_NAMES[currentDurationIndex + 1];
+
+  if (isNoteDuration(nextNoteDuration)) return nextNoteDuration;
+
+  return currentDuration;
+};
+
+export const raiseNoteDuration = (currentDuration: NoteDurationName) => getNextNoteDuration(currentDuration, true);
+export const lowerNoteDuration = (currentDuration: NoteDurationName) => getNextNoteDuration(currentDuration, false);
+
 export type Note = {
   duration: number;
-  pitch?: Pitch;
+  pitch?: Pitch; //note without a pitch is silence
   start?: number;
   hasSustain: boolean;
   isSustain: boolean;

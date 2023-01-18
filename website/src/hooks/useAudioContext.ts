@@ -11,7 +11,7 @@ const useAudioContext = () => {
     return () => {
       if (!audioContext) return;
 
-      if (audioContext.state !== "closed") void audioContext.close();
+      // if (audioContext.state !== "closed") void audioContext.close();
     };
   }, [audioContext]);
 
