@@ -35,7 +35,7 @@ const useShortcuts = (shortcutDictionary: ShortcutDictionary) => {
     if (isShortcutKey(resultingKeyCode)) return resultingKeyCode;
   };
 
-  const handleKeyPress = useCallback(
+  const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
       const shortcutKey = getShortcutKey(event);
       if (shortcutKey === undefined) return;
@@ -50,12 +50,12 @@ const useShortcuts = (shortcutDictionary: ShortcutDictionary) => {
   );
 
   useEffect(() => {
-    document.addEventListener("keypress", handleKeyPress);
+    document.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      document.removeEventListener("keypress", handleKeyPress);
+      document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [handleKeyPress]);
+  }, [handleKeyDown]);
 };
 
 export { useShortcuts };
