@@ -1,14 +1,14 @@
 import { type FunctionComponent } from "react";
 import { Button, CollapsableSideMenu } from "../../components";
 import { type Sheet } from "../../server/entities/sheet";
-import { useSheet } from "./Editor";
+import { useEditorStore } from "../../store/editor";
 
 type Props = {
   handleLoad: (sheetFromStorage: Sheet) => void;
 };
 
 const EditorMenu: FunctionComponent<Props> = ({ handleLoad }) => {
-  const { sheet } = useSheet();
+  const currentSheet = useEditorStore(state => state.currentSheet);
 
   const handleOwnLoad = () => {
     const storageSheetString = localStorage.getItem("sheet");
@@ -19,7 +19,7 @@ const EditorMenu: FunctionComponent<Props> = ({ handleLoad }) => {
   };
 
   const handleSave = () => {
-    localStorage.setItem("sheet", JSON.stringify(sheet));
+    localStorage.setItem("sheet", JSON.stringify(currentSheet));
   };
 
   return (
@@ -31,7 +31,7 @@ const EditorMenu: FunctionComponent<Props> = ({ handleLoad }) => {
         <Button
           variant="primary"
           text="Save"
-          disabled={sheet === undefined}
+          disabled={currentSheet === undefined}
           onClick={handleSave}
           className="mt-6 w-2/5 self-center"
         />

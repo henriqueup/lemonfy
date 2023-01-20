@@ -42,8 +42,8 @@ const getNextNoteDuration = (currentDuration: NoteDurationName, isRaise: boolean
   return currentDuration;
 };
 
-export const raiseNoteDuration = (currentDuration: NoteDurationName) => getNextNoteDuration(currentDuration, true);
-export const lowerNoteDuration = (currentDuration: NoteDurationName) => getNextNoteDuration(currentDuration, false);
+export const getHigherNoteDuration = (currentDuration: NoteDurationName) => getNextNoteDuration(currentDuration, true);
+export const getLowerNoteDuration = (currentDuration: NoteDurationName) => getNextNoteDuration(currentDuration, false);
 
 export type Note = {
   duration: number;

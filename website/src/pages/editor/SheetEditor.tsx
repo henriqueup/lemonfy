@@ -1,27 +1,23 @@
 import { type FunctionComponent, useState } from "react";
 import { type Note } from "../../server/entities/note";
-import { addBarToSheet, addNoteToSheet } from "../../server/entities/sheet";
 import { Plus } from "../../icons";
 import Track from "./Track";
 import BarMenu from "./BarMenu";
-import { useSheet } from "./Editor";
 import NoteMenu from "./NoteMenu";
+import { addBar, addNote, useEditorStore } from "../../store/editor";
 
 const SheetEditor: FunctionComponent = () => {
-  const { sheet, refresh: refreshSheet } = useSheet();
+  const currentSheet = useEditorStore(state => state.currentSheet);
   const [barMenuIsOpen, setBarMenuIsOpen] = useState(false);
 
-  if (sheet === undefined) return null;
+  if (currentSheet === undefined) return null;
 
   const handleAddNote = (barIndex: number, trackIndex: number, note: Note) => {
-    addNoteToSheet(sheet, barIndex, trackIndex, note);
-    refreshSheet();
+    addNote(barIndex, trackIndex, note);
   };
 
   const handleAddBar = (beatCount: number, dibobinador: number, tempo: number) => {
-    addBarToSheet(sheet, beatCount, dibobinador, tempo);
-    refreshSheet();
-
+    addBar(beatCount, dibobinador, tempo);
     setBarMenuIsOpen(false);
   };
 
@@ -40,7 +36,7 @@ const SheetEditor: FunctionComponent = () => {
               rowGap: "8px",
             }}
           >
-            {sheet.bars.map((bar, i) => (
+            {currentSheet.bars.map((bar, i) => (
               <div
                 key={i}
                 style={{

@@ -2,52 +2,46 @@ import { type DragEvent, useState, type FunctionComponent } from "react";
 import { Button } from "../../components";
 import { useAudioContext, useShortcuts } from "../../hooks";
 import {
-  createNote,
-  lowerNoteDuration,
+  getLowerNoteDuration,
   NOTE_DURATIONS,
-  raiseNoteDuration,
+  getHigherNoteDuration,
   type NoteDurationName,
 } from "../../server/entities/note";
-import { lowerOctave, NUMBER_OF_OCTAVES, raiseOctave, type Octave } from "../../server/entities/octave";
-import { createPitch, NUMBER_OF_PICHES_IN_OCTAVE, PitchDictionary, type PitchName } from "../../server/entities/pitch";
+import { getLowerOctave, NUMBER_OF_OCTAVES, getHigherOctave, type Octave } from "../../server/entities/octave";
+import { NUMBER_OF_PICHES_IN_OCTAVE, PitchDictionary } from "../../server/entities/pitch";
 import { playSong } from "../../server/entities/sheet";
-import { useSheet } from "./Editor";
+import { setNoteToAdd, useEditorStore } from "../../store/editor";
 
 const NoteMenu: FunctionComponent = () => {
   const audioContext = useAudioContext();
-  const { sheet, refresh: refreshSheet } = useSheet();
+  const currentSheet = useEditorStore(state => state.currentSheet);
+
   const [selectedOctave, setSelectedOctave] = useState<Octave>(0);
   const [selectedDuration, setSelectedDuration] = useState<NoteDurationName>("LONG");
 
   useShortcuts({
     "octave.lower": {
-      callback: () => setSelectedOctave(curr => lowerOctave(curr)),
+      callback: () => setSelectedOctave(curr => getLowerOctave(curr)),
     },
     "octave.raise": {
-      callback: () => setSelectedOctave(curr => raiseOctave(curr)),
+      callback: () => setSelectedOctave(curr => getHigherOctave(curr)),
     },
     "duration.lower": {
-      callback: () => setSelectedDuration(curr => lowerNoteDuration(curr)),
+      callback: () => setSelectedDuration(curr => getLowerNoteDuration(curr)),
     },
     "duration.raise": {
-      callback: () => setSelectedDuration(curr => raiseNoteDuration(curr)),
+      callback: () => setSelectedDuration(curr => getHigherNoteDuration(curr)),
     },
   });
 
-  if (sheet === undefined) return null;
+  if (currentSheet === undefined) return null;
 
   const handleDragStart = (_event: DragEvent<HTMLDivElement>, pitchName: string) => {
-    const noteData = createNote(
-      NOTE_DURATIONS[selectedDuration],
-      createPitch(pitchName.substring(0, pitchName.length - 1) as PitchName, selectedOctave),
-    );
-
-    sheet.noteToAdd = noteData;
-    refreshSheet();
+    setNoteToAdd(NOTE_DURATIONS[selectedDuration], pitchName, selectedOctave);
   };
 
   const handlePlay = () => {
-    playSong(sheet, audioContext);
+    playSong(currentSheet, audioContext);
   };
 
   return (

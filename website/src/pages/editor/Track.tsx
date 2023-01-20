@@ -1,7 +1,7 @@
 import React, { type DragEvent, type FunctionComponent, useState } from "react";
 import { type Bar } from "../../server/entities/bar";
 import { sumNotesDuration, type Note as NoteEntity } from "../../server/entities/note";
-import { useSheet } from "./Editor";
+import { useEditorStore } from "../../store/editor";
 import Note from "./Note";
 
 type TrackProps = {
@@ -12,17 +12,18 @@ type TrackProps = {
 
 const Track: FunctionComponent<TrackProps> = ({ bar, track, handleAddNote }) => {
   const [isShowingPreview, setIsShowingPreview] = useState(false);
-  const { sheet } = useSheet();
+  const noteToAdd = useEditorStore(state => state.noteToAdd);
+
   const barSize = bar.beatCount / bar.dibobinador;
   const remainingSizeInBar = barSize - sumNotesDuration(track);
 
   const getNoteToAddSize = () => {
-    if (sheet.noteToAdd === null || !isShowingPreview) return 0;
+    if (noteToAdd === null || !isShowingPreview) return 0;
 
-    let noteSize = sheet.noteToAdd.duration;
+    let noteSize = noteToAdd.duration;
     if (noteSize > remainingSizeInBar) {
       noteSize = remainingSizeInBar;
-      sheet.noteToAdd.hasSustain = true;
+      noteToAdd.hasSustain = true;
     }
 
     return noteSize;
@@ -53,9 +54,9 @@ const Track: FunctionComponent<TrackProps> = ({ bar, track, handleAddNote }) => 
 
   const handleDrop = () => {
     setIsShowingPreview(false);
-    if (sheet.noteToAdd === null || !fitsAnotherNote()) return;
+    if (noteToAdd === null || !fitsAnotherNote()) return;
 
-    handleAddNote(sheet.noteToAdd);
+    handleAddNote(noteToAdd);
   };
 
   return (
@@ -69,8 +70,8 @@ const Track: FunctionComponent<TrackProps> = ({ bar, track, handleAddNote }) => 
       {track.map((note, i) => (
         <Note key={i} note={note} style={{ width: getNoteSizePercentage(note.duration) }} />
       ))}
-      {isShowingPreview && sheet.noteToAdd !== null ? (
-        <Note note={sheet.noteToAdd} style={{ width: getNoteSizePercentage(getNoteToAddSize()) }} />
+      {isShowingPreview && noteToAdd !== null ? (
+        <Note note={noteToAdd} style={{ width: getNoteSizePercentage(getNoteToAddSize()) }} />
       ) : null}
       <div
         style={{

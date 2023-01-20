@@ -11,5 +11,5 @@ const getNextOctave = (currentOctave: Octave, isRaise: boolean) => {
   return currentOctave;
 };
 
-export const raiseOctave = (currentOctave: Octave) => getNextOctave(currentOctave, true);
-export const lowerOctave = (currentOctave: Octave) => getNextOctave(currentOctave, false);
+export const getHigherOctave = (currentOctave: Octave) => getNextOctave(currentOctave, true);
+export const getLowerOctave = (currentOctave: Octave) => getNextOctave(currentOctave, false);
