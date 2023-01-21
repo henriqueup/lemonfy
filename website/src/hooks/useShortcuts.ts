@@ -7,6 +7,8 @@ const SHORTCUTS = {
   ArrowLeft: "duration.lower",
   ArrowUp: "octave.raise",
   ArrowDown: "octave.lower",
+  CTRL_ArrowUp: "track.select.above",
+  CTRL_ArrowDown: "track.select.under",
 } as const;
 
 type ShortcutKey = keyof typeof SHORTCUTS;

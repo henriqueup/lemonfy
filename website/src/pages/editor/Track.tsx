@@ -2,18 +2,22 @@ import React, { type DragEvent, type FunctionComponent, useState } from "react";
 import { type Bar } from "../../server/entities/bar";
 import { sumNotesDuration, type Note as NoteEntity } from "../../server/entities/note";
 import { useEditorStore } from "../../store/editor";
+import { classNames } from "../../styles/utils";
 import Note from "./Note";
 
-type TrackProps = {
+interface TrackProps {
+  index: number;
   bar: Bar;
   track: NoteEntity[];
   handleAddNote: (note: NoteEntity) => void;
-};
+}
 
-const Track: FunctionComponent<TrackProps> = ({ bar, track, handleAddNote }) => {
+const Track: FunctionComponent<TrackProps> = ({ index, bar, track, handleAddNote }) => {
   const [isShowingPreview, setIsShowingPreview] = useState(false);
   const noteToAdd = useEditorStore(state => state.noteToAdd);
+  const selectedTrackIndex = useEditorStore(state => state.selectedTrackIndex);
 
+  const isSelectedTrack = index === selectedTrackIndex;
   const barSize = bar.beatCount / bar.dibobinador;
   const remainingSizeInBar = barSize - sumNotesDuration(track);
 
@@ -29,7 +33,7 @@ const Track: FunctionComponent<TrackProps> = ({ bar, track, handleAddNote }) => 
     return noteSize;
   };
 
-  const getNoteSizePercentage = (noteSize: number) => `${(noteSize * 100) / barSize}%`;
+  const getNoteWidth = (noteSize: number) => noteSize / barSize;
 
   const fitsAnotherNote = () => remainingSizeInBar > 0;
 
@@ -65,22 +69,25 @@ const Track: FunctionComponent<TrackProps> = ({ bar, track, handleAddNote }) => 
       onDragLeave={event => handleDragLeave(event)}
       onDragOver={event => handleDragOver(event)}
       onDrop={handleDrop}
-      style={{ width: "100%", height: "100%", display: "flex" }}
+      className={classNames(
+        "mt-0.5 mb-0.5 flex h-full w-full",
+        isSelectedTrack ? "border-lime-600 text-lime-600" : "border-gray-200 text-gray-200",
+      )}
     >
-      {track.map((note, i) => (
-        <Note key={i} note={note} style={{ width: getNoteSizePercentage(note.duration) }} />
-      ))}
-      {isShowingPreview && noteToAdd !== null ? (
-        <Note note={noteToAdd} style={{ width: getNoteSizePercentage(getNoteToAddSize()) }} />
-      ) : null}
-      <div
-        style={{
-          flexGrow: 1,
-          margin: "auto 0px",
-          height: "1px",
-          border: "1px solid lightgray",
-        }}
-      />
+      <div className="flex border-inherit p-2 text-inherit">
+        <div
+          className={classNames("rounded border-2 border-solid border-inherit p-2", isSelectedTrack && "bg-lime-400")}
+        />
+      </div>
+      <div className="flex w-full border-inherit">
+        {track.map((note, i) => (
+          <Note key={i} note={note} width={getNoteWidth(note.duration)} />
+        ))}
+        {isShowingPreview && noteToAdd !== null ? (
+          <Note note={noteToAdd} width={getNoteWidth(getNoteToAddSize())} />
+        ) : null}
+        <div className="m-auto mr-0 ml-0 h-px flex-grow border border-solid border-inherit" />
+      </div>
     </div>
   );
 };

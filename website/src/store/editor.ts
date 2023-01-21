@@ -8,12 +8,14 @@ export interface EditorStore {
   sheets: Sheet[];
   currentSheet: Sheet | undefined;
   noteToAdd: Note | null;
+  selectedTrackIndex: number;
 }
 
 export const useEditorStore = create<EditorStore>(() => ({
   sheets: [],
   currentSheet: undefined,
   noteToAdd: null,
+  selectedTrackIndex: 0,
 }));
 
 export const loadSheet = (sheet: Sheet) => useEditorStore.setState({ currentSheet: sheet });
@@ -51,4 +53,20 @@ export const setNoteToAdd = (duration: number, pitchName: string, octave: Octave
     const noteToAdd = createNote(duration, pitch);
 
     return { noteToAdd };
+  });
+
+export const increaseSelectedTrackIndex = () =>
+  useEditorStore.setState(state => {
+    if (state.currentSheet === undefined) return {};
+    if (state.selectedTrackIndex === state.currentSheet?.trackCount - 1) return {};
+
+    return { selectedTrackIndex: state.selectedTrackIndex + 1 };
+  });
+
+export const decreaseSelectedTrackIndex = () =>
+  useEditorStore.setState(state => {
+    if (state.currentSheet === undefined) return {};
+    if (state.selectedTrackIndex === 0) return {};
+
+    return { selectedTrackIndex: state.selectedTrackIndex - 1 };
   });

@@ -10,7 +10,12 @@ import {
 import { getLowerOctave, NUMBER_OF_OCTAVES, getHigherOctave, type Octave } from "../../server/entities/octave";
 import { NUMBER_OF_PICHES_IN_OCTAVE, PitchDictionary } from "../../server/entities/pitch";
 import { playSong } from "../../server/entities/sheet";
-import { setNoteToAdd, useEditorStore } from "../../store/editor";
+import {
+  decreaseSelectedTrackIndex,
+  increaseSelectedTrackIndex,
+  setNoteToAdd,
+  useEditorStore,
+} from "../../store/editor";
 
 const NoteMenu: FunctionComponent = () => {
   const audioContext = useAudioContext();
@@ -31,6 +36,12 @@ const NoteMenu: FunctionComponent = () => {
     },
     "duration.raise": {
       callback: () => setSelectedDuration(curr => getHigherNoteDuration(curr)),
+    },
+    "track.select.above": {
+      callback: decreaseSelectedTrackIndex,
+    },
+    "track.select.under": {
+      callback: increaseSelectedTrackIndex,
     },
   });
 

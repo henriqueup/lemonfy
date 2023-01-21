@@ -1,40 +1,34 @@
-import { type CSSProperties, type FunctionComponent } from "react";
+import { type FunctionComponent } from "react";
 import { type Note as NoteEntity } from "../../server/entities/note";
 
-type NoteProps = {
+interface Props {
   note: NoteEntity;
-  style?: CSSProperties;
-};
+  width: number;
+}
 
-const Note: FunctionComponent<NoteProps> = ({ note, style }) => {
-  const getNoteStyle = (note: NoteEntity): CSSProperties | undefined => {
+const Note: FunctionComponent<Props> = ({ note, width }) => {
+  const getNoteClassName = (note: NoteEntity): string | undefined => {
     if ((!note.isSustain && !note.hasSustain) || (note.isSustain && note.hasSustain)) return;
 
-    if (note.isSustain) return { width: "50%", display: "flex", justifyContent: "flex-start" };
-    if (note.hasSustain) return { width: "50%", display: "flex", justifyContent: "flex-end" };
+    if (note.isSustain) return "w-1/2 flex justify-start";
+    if (note.hasSustain) return "w-1/2 flex justify-end";
   };
 
   return (
     <div
-      style={{
-        border: "1px solid lightgray",
-        borderRadius: "4px",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        ...style,
-      }}
+      className="flex items-center justify-center rounded border border-solid border-inherit"
+      style={{ width: `${width * 100}%` }}
     >
       {note.isSustain ? (
-        <div style={{ width: "50%", display: "flex", justifyContent: "flex-start" }}>
+        <div className="flex w-1/2 justify-start">
           <span>...</span>
         </div>
       ) : null}
-      <div style={getNoteStyle(note)}>
+      <div className={getNoteClassName(note)}>
         <span>{`${note.pitch?.name || ""}${note.pitch?.octave || ""}`}</span>
       </div>
       {note.hasSustain ? (
-        <div style={{ width: "50%", display: "flex", justifyContent: "flex-end" }}>
+        <div className="flex w-1/2 justify-end">
           <span>...</span>
         </div>
       ) : null}

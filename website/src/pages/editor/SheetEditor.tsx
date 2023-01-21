@@ -64,7 +64,13 @@ const SheetEditor: FunctionComponent = () => {
                   }}
                 >
                   {bar.tracks.map((track, j) => (
-                    <Track key={j} bar={bar} track={track} handleAddNote={note => handleAddNote(i, j, note)} />
+                    <Track
+                      key={j}
+                      index={j}
+                      bar={bar}
+                      track={track}
+                      handleAddNote={note => handleAddNote(i, j, note)}
+                    />
                   ))}
                 </div>
               </div>
