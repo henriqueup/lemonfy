@@ -1,4 +1,5 @@
 import Button from "./button";
 import { CollapsableSideMenu, FixedSideMenu } from "./sideMenu";
+import ClickAwayListener from "./clickAwayListener/ClickAwayListener";
 
-export { Button, CollapsableSideMenu, FixedSideMenu };
+export { Button, ClickAwayListener, CollapsableSideMenu, FixedSideMenu };
