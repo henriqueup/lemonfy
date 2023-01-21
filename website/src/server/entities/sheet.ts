@@ -1,7 +1,7 @@
 import { addGainNode } from "../../utils/audioContext";
 import { addNoteToBar, createBar, setBarNotesTimesInSeconds, type Bar } from "./bar";
 import { type Note } from "./note";
-import { PitchDictionary } from "./pitch";
+import { FrequencyDictionary } from "./pitch";
 
 export type Sheet = {
   bars: Bar[];
@@ -36,6 +36,12 @@ export const addNoteToSheet = (sheet: Sheet, barIndex: number, trackIndex: numbe
   }
 };
 
+export const removeLastNote = (sheet: Sheet, trackIndex: number) => {
+  if (trackIndex >= sheet.trackCount) throw new Error("Invalid track index.");
+
+  //TODO: implement note removal logic
+};
+
 export const playSong = (sheet: Sheet, audioContext: AudioContext | null): void => {
   if (!audioContext) return;
 
@@ -68,7 +74,7 @@ export const playSong = (sheet: Sheet, audioContext: AudioContext | null): void 
       const customWaveform = audioContext.createPeriodicWave(cosineTerms, sineTerms);
 
       oscillator.setPeriodicWave(customWaveform);
-      oscillator.frequency.value = note.pitch?.key ? PitchDictionary[note.pitch.key] : 0;
+      oscillator.frequency.value = note.pitch?.key ? FrequencyDictionary[note.pitch.key] : 0;
       oscillator.start();
     }
   }

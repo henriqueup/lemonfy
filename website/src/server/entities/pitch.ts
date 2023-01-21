@@ -1,6 +1,8 @@
 import { type Octave } from "./octave";
 
-export type PitchName = "C" | "C#" | "D" | "D#" | "E" | "F" | "F#" | "G" | "G#" | "A" | "A#" | "B";
+export const PITCH_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B", "X"] as const;
+
+export type PitchName = (typeof PITCH_NAMES)[number];
 export const NUMBER_OF_PICHES_IN_OCTAVE = 12;
 
 export type PitchKey = `${PitchName}${Octave}`;
@@ -21,7 +23,8 @@ export const createPitch = (name: PitchName, octave: Octave) => ({
 export const getPitchKey = (name: PitchName, octave: Octave): PitchKey => `${name}${octave}`;
 
 // prettier-ignore
-export const PitchDictionary: Record<PitchKey, number> = {
+export const FrequencyDictionary: Record<PitchKey, number> = {
+  "X0": 0,
   "C0": 16.35,
   "C#0": 17.32,
   "D0": 18.35,
@@ -34,6 +37,7 @@ export const PitchDictionary: Record<PitchKey, number> = {
   "A0": 27.5,
   "A#0": 29.14,
   "B0": 30.87,
+  "X1": 0,
   "C1": 32.7,
   "C#1": 34.65,
   "D1": 36.71,
@@ -46,6 +50,7 @@ export const PitchDictionary: Record<PitchKey, number> = {
   "A1": 55.0,
   "A#1": 58.27,
   "B1": 61.74,
+  "X2": 0,
   "C2": 65.41,
   "C#2": 69.3,
   "D2": 73.42,
@@ -58,6 +63,7 @@ export const PitchDictionary: Record<PitchKey, number> = {
   "A2": 110.0,
   "A#2": 116.54,
   "B2": 123.47,
+  "X3": 0,
   "C3": 130.81,
   "C#3": 138.59,
   "D3": 146.83,
@@ -70,6 +76,7 @@ export const PitchDictionary: Record<PitchKey, number> = {
   "A3": 220.0,
   "A#3": 233.08,
   "B3": 246.94,
+  "X4": 0,
   "C4": 261.63,
   "C#4": 277.18,
   "D4": 293.66,
@@ -82,6 +89,7 @@ export const PitchDictionary: Record<PitchKey, number> = {
   "A4": 440.0,
   "A#4": 466.16,
   "B4": 493.88,
+  "X5": 0,
   "C5": 523.25,
   "C#5": 554.37,
   "D5": 587.33,
@@ -94,4 +102,4 @@ export const PitchDictionary: Record<PitchKey, number> = {
   "A5": 880.0,
   "A#5": 932.33,
   "B5": 987.77,
-};
+} as const;

@@ -62,8 +62,10 @@ export const addNoteToBar = (bar: Bar, trackIndex: number, noteToAdd: Note): Not
   if (currentTrackNotesDuration + noteToAdd.duration > trackCapacity) {
     const remainingDuration = trackCapacity - currentTrackNotesDuration;
 
-    actualNoteAdded = createNote(remainingDuration, noteToAdd.pitch, true, noteToAdd.isSustain);
     leftoverNote = createNote(noteToAdd.duration - remainingDuration, noteToAdd.pitch, false, true);
+    if (remainingDuration === 0) return leftoverNote;
+
+    actualNoteAdded = createNote(remainingDuration, noteToAdd.pitch, true, noteToAdd.isSustain);
   }
 
   if (targetTrack.length === 0) {

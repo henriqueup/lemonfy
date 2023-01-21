@@ -1,14 +1,24 @@
 import { useCallback, useEffect } from "react";
 
 const SHORTCUTS = {
-  CTRL_A: "bars.add",
-  CTRL_N: "notes.add",
   ArrowRight: "duration.raise",
   ArrowLeft: "duration.lower",
   ArrowUp: "octave.raise",
   ArrowDown: "octave.lower",
   CTRL_ArrowUp: "track.select.above",
   CTRL_ArrowDown: "track.select.under",
+  c: "notes.add.C",
+  SHIFT_C: "notes.add.C#",
+  d: "notes.add.D",
+  SHIFT_D: "notes.add.D#",
+  e: "notes.add.E",
+  F: "notes.add.F",
+  SHIFT_F: "notes.add.F#",
+  g: "notes.add.G",
+  SHIFT_G: "notes.add.G#",
+  a: "notes.add.A",
+  SHIFT_A: "notes.add.A#",
+  b: "notes.add.B",
 } as const;
 
 type ShortcutKey = keyof typeof SHORTCUTS;

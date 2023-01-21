@@ -4,16 +4,16 @@ import { Plus } from "../../icons";
 import Track from "./Track";
 import BarMenu from "./BarMenu";
 import NoteMenu from "./NoteMenu";
-import { addBar, addNote, useEditorStore } from "../../store/editor";
+import { addBar, addNoteFromDrop, useEditorStore } from "../../store/editor";
 
 const SheetEditor: FunctionComponent = () => {
-  const currentSheet = useEditorStore(state => state.currentSheet);
+  const bars = useEditorStore(state => state.currentSheet?.bars);
   const [barMenuIsOpen, setBarMenuIsOpen] = useState(false);
 
-  if (currentSheet === undefined) return null;
+  if (bars === undefined) return null;
 
   const handleAddNote = (barIndex: number, trackIndex: number, note: Note) => {
-    addNote(barIndex, trackIndex, note);
+    addNoteFromDrop(barIndex, trackIndex, note);
   };
 
   const handleAddBar = (beatCount: number, dibobinador: number, tempo: number) => {
@@ -21,6 +21,7 @@ const SheetEditor: FunctionComponent = () => {
     setBarMenuIsOpen(false);
   };
 
+  console.log(bars);
   return (
     <>
       <div style={{ height: "60%", padding: "16px 16px 8px 16px" }}>
@@ -36,7 +37,7 @@ const SheetEditor: FunctionComponent = () => {
               rowGap: "8px",
             }}
           >
-            {currentSheet.bars.map((bar, i) => (
+            {bars.map((bar, i) => (
               <div
                 key={i}
                 style={{

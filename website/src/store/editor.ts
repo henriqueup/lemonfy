@@ -38,18 +38,28 @@ export const addBar = (beatCount: number, dibobinador: number, tempo: number) =>
     return { currentSheet: state.currentSheet };
   });
 
-export const addNote = (barIndex: number, trackIndex: number, note: Note) =>
+export const addNote = (duration: number, pitchName: PitchName, octave: Octave) =>
+  useEditorStore.setState(state => {
+    if (state.currentSheet === undefined) return {};
+
+    const pitch = createPitch(pitchName, octave);
+    const noteToAdd = createNote(duration, pitch);
+
+    addNoteToSheet(state.currentSheet, 0, state.selectedTrackIndex, noteToAdd);
+    return { currentSheet: { ...state.currentSheet, bars: [...state.currentSheet.bars] } };
+  });
+
+export const addNoteFromDrop = (barIndex: number, trackIndex: number, note: Note) =>
   useEditorStore.setState(state => {
     if (state.currentSheet === undefined) return {};
 
     addNoteToSheet(state.currentSheet, barIndex, trackIndex, note);
-    return { currentSheet: state.currentSheet };
+    return { currentSheet: { ...state.currentSheet, bars: [...state.currentSheet.bars] } };
   });
 
-export const setNoteToAdd = (duration: number, pitchName: string, octave: Octave) =>
+export const setNoteToAdd = (duration: number, pitchName: PitchName, octave: Octave) =>
   useEditorStore.setState(() => {
-    // TODO: create type for pitchName with octave and method to get pitchName from octave
-    const pitch = createPitch(pitchName.substring(0, pitchName.length - 1) as PitchName, octave);
+    const pitch = createPitch(pitchName, octave);
     const noteToAdd = createNote(duration, pitch);
 
     return { noteToAdd };

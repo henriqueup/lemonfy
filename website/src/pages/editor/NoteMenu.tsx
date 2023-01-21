@@ -8,9 +8,10 @@ import {
   type NoteDurationName,
 } from "../../server/entities/note";
 import { getLowerOctave, NUMBER_OF_OCTAVES, getHigherOctave, type Octave } from "../../server/entities/octave";
-import { NUMBER_OF_PICHES_IN_OCTAVE, PitchDictionary } from "../../server/entities/pitch";
+import { type PitchName, PITCH_NAMES } from "../../server/entities/pitch";
 import { playSong } from "../../server/entities/sheet";
 import {
+  addNote,
   decreaseSelectedTrackIndex,
   increaseSelectedTrackIndex,
   setNoteToAdd,
@@ -43,11 +44,47 @@ const NoteMenu: FunctionComponent = () => {
     "track.select.under": {
       callback: increaseSelectedTrackIndex,
     },
+    "notes.add.C": {
+      callback: () => addNote(NOTE_DURATIONS[selectedDuration], "C", selectedOctave),
+    },
+    "notes.add.C#": {
+      callback: () => addNote(NOTE_DURATIONS[selectedDuration], "C#", selectedOctave),
+    },
+    "notes.add.D": {
+      callback: () => addNote(NOTE_DURATIONS[selectedDuration], "D", selectedOctave),
+    },
+    "notes.add.D#": {
+      callback: () => addNote(NOTE_DURATIONS[selectedDuration], "D#", selectedOctave),
+    },
+    "notes.add.E": {
+      callback: () => addNote(NOTE_DURATIONS[selectedDuration], "E", selectedOctave),
+    },
+    "notes.add.F": {
+      callback: () => addNote(NOTE_DURATIONS[selectedDuration], "F", selectedOctave),
+    },
+    "notes.add.F#": {
+      callback: () => addNote(NOTE_DURATIONS[selectedDuration], "F#", selectedOctave),
+    },
+    "notes.add.G": {
+      callback: () => addNote(NOTE_DURATIONS[selectedDuration], "G", selectedOctave),
+    },
+    "notes.add.G#": {
+      callback: () => addNote(NOTE_DURATIONS[selectedDuration], "G#", selectedOctave),
+    },
+    "notes.add.A": {
+      callback: () => addNote(NOTE_DURATIONS[selectedDuration], "A", selectedOctave),
+    },
+    "notes.add.A#": {
+      callback: () => addNote(NOTE_DURATIONS[selectedDuration], "A#", selectedOctave),
+    },
+    "notes.add.B": {
+      callback: () => addNote(NOTE_DURATIONS[selectedDuration], "B", selectedOctave),
+    },
   });
 
   if (currentSheet === undefined) return null;
 
-  const handleDragStart = (_event: DragEvent<HTMLDivElement>, pitchName: string) => {
+  const handleDragStart = (_event: DragEvent<HTMLDivElement>, pitchName: PitchName) => {
     setNoteToAdd(NOTE_DURATIONS[selectedDuration], pitchName, selectedOctave);
   };
 
@@ -87,30 +124,27 @@ const NoteMenu: FunctionComponent = () => {
           <Button text="Play" variant="success" style={{ margin: "0px 4px", width: "6rem" }} onClick={handlePlay} />
         </div>
         <div style={{ display: "flex" }}>
-          {Object.keys(PitchDictionary)
-            .slice(0, NUMBER_OF_PICHES_IN_OCTAVE)
-            .concat(["XX"])
-            .map((pitchName, i) => (
-              <div
-                key={i}
-                draggable={true}
-                onDragStart={event => handleDragStart(event, pitchName)}
-                style={{
-                  display: "flex",
-                  alignContent: "center",
-                  justifyContent: "center",
-                  fontSize: "4rem",
-                  minWidth: "6rem",
-                  minHeight: "6rem",
-                  margin: "4px",
-                  border: "1px solid lightgray",
-                  borderRadius: "16px",
-                  cursor: "pointer",
-                }}
-              >
-                {pitchName.substring(0, pitchName.length - 1)}
-              </div>
-            ))}
+          {PITCH_NAMES.map((pitchName, i) => (
+            <div
+              key={i}
+              draggable={true}
+              onDragStart={event => handleDragStart(event, pitchName)}
+              style={{
+                display: "flex",
+                alignContent: "center",
+                justifyContent: "center",
+                fontSize: "4rem",
+                minWidth: "6rem",
+                minHeight: "6rem",
+                margin: "4px",
+                border: "1px solid lightgray",
+                borderRadius: "16px",
+                cursor: "pointer",
+              }}
+            >
+              {pitchName}
+            </div>
+          ))}
         </div>
       </fieldset>
     </div>
