@@ -1,48 +1,72 @@
-import { type DragEvent, useState, type FunctionComponent } from "react";
+import { type DragEvent, type FunctionComponent } from "react";
 import { Button } from "../../components";
 import { useAudioContext, useShortcuts } from "../../hooks";
-import {
-  getLowerNoteDuration,
-  NOTE_DURATIONS,
-  getHigherNoteDuration,
-  type NoteDurationName,
-} from "../../server/entities/note";
-import { getLowerOctave, NUMBER_OF_OCTAVES, getHigherOctave, type Octave } from "../../server/entities/octave";
+import { NOTE_DURATIONS, type NoteDurationName } from "../../server/entities/note";
+import { NUMBER_OF_OCTAVES, type Octave } from "../../server/entities/octave";
 import { type PitchName, PITCH_NAMES } from "../../server/entities/pitch";
 import { playSong } from "../../server/entities/sheet";
 import {
   addNote,
-  decreaseSelectedTrackIndex,
-  increaseSelectedTrackIndex,
+  decreaseCursorBarIndex,
+  decreaseCursorPosition,
+  decreaseCursorTrackIndex,
+  decreseSelectedNoteDuration,
+  decreseSelectedOctave,
+  increaseCursorBarIndex,
+  increaseCursorPosition,
+  increaseCursorTrackIndex,
+  increaseSelectedNoteDuration,
+  increaseSelectedOctave,
+  moveCursorToEndOfBar,
+  moveCursorToStartOfBar,
   setNoteToAdd,
+  setSelectedNoteDuration,
+  setSelectedOctave,
   useEditorStore,
 } from "../../store/editor";
 
 const NoteMenu: FunctionComponent = () => {
   const audioContext = useAudioContext();
   const currentSheet = useEditorStore(state => state.currentSheet);
-
-  const [selectedOctave, setSelectedOctave] = useState<Octave>(0);
-  const [selectedDuration, setSelectedDuration] = useState<NoteDurationName>("LONG");
+  const selectedOctave = useEditorStore(state => state.selectedOctave);
+  const selectedDuration = useEditorStore(state => state.selectedNoteDuration);
 
   useShortcuts({
     "octave.lower": {
-      callback: () => setSelectedOctave(curr => getLowerOctave(curr)),
+      callback: decreseSelectedOctave,
     },
     "octave.raise": {
-      callback: () => setSelectedOctave(curr => getHigherOctave(curr)),
+      callback: increaseSelectedOctave,
     },
     "duration.lower": {
-      callback: () => setSelectedDuration(curr => getLowerNoteDuration(curr)),
+      callback: decreseSelectedNoteDuration,
     },
     "duration.raise": {
-      callback: () => setSelectedDuration(curr => getHigherNoteDuration(curr)),
+      callback: increaseSelectedNoteDuration,
     },
-    "track.select.above": {
-      callback: decreaseSelectedTrackIndex,
+    "cursor.track.above": {
+      callback: decreaseCursorTrackIndex,
     },
-    "track.select.under": {
-      callback: increaseSelectedTrackIndex,
+    "cursor.track.under": {
+      callback: increaseCursorTrackIndex,
+    },
+    "cursor.bar.left": {
+      callback: decreaseCursorBarIndex,
+    },
+    "cursor.bar.right": {
+      callback: increaseCursorBarIndex,
+    },
+    "cursor.position.left": {
+      callback: decreaseCursorPosition,
+    },
+    "cursor.position.right": {
+      callback: increaseCursorPosition,
+    },
+    "cursor.position.startOfBar": {
+      callback: moveCursorToStartOfBar,
+    },
+    "cursor.position.endOfBar": {
+      callback: moveCursorToEndOfBar,
     },
     "notes.add.C": {
       callback: () => addNote(NOTE_DURATIONS[selectedDuration], "C", selectedOctave),
@@ -113,7 +137,7 @@ const NoteMenu: FunctionComponent = () => {
             <legend>Duration</legend>
             <select
               value={selectedDuration}
-              onChange={event => setSelectedDuration(event.target.value as NoteDurationName)}
+              onChange={event => setSelectedNoteDuration(event.target.value as NoteDurationName)}
               style={{ width: "100%", color: "black", cursor: "pointer" }}
             >
               {Object.keys(NOTE_DURATIONS).map((noteDuration, i) => (

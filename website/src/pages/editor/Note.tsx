@@ -16,7 +16,7 @@ const Note: FunctionComponent<Props> = ({ note, width }) => {
 
   return (
     <div
-      className="flex items-center justify-center rounded border border-solid border-inherit"
+      className="flex items-center justify-center rounded border border-solid border-gray-200"
       style={{ width: `${width * 100}%` }}
     >
       {note.isSustain ? (
