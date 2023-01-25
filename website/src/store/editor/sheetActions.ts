@@ -1,3 +1,4 @@
+import { findNoteByTime, removeNotesFromBar } from "../../server/entities/bar";
 import { createNote, type Note } from "../../server/entities/note";
 import { type Octave } from "../../server/entities/octave";
 import { createPitch, type PitchName } from "../../server/entities/pitch";
@@ -44,4 +45,27 @@ export const addNoteFromDrop = (barIndex: number, trackIndex: number, note: Note
 
     addNoteToSheet(state.currentSheet, barIndex, trackIndex, note);
     return { currentSheet: { ...state.currentSheet, bars: [...state.currentSheet.bars] } };
+  });
+
+export const removeNextNoteFromBar = (lookForward = true) =>
+  useEditorStore.setState(state => {
+    if (state.currentSheet === undefined) return {};
+
+    const barWithCursor = state.currentSheet.bars[state.cursor.barIndex];
+
+    if (barWithCursor === undefined) return {};
+    if (state.cursor.position === barWithCursor.capacity) return {};
+
+    const noteToRemove = findNoteByTime(barWithCursor, state.cursor.trackIndex, state.cursor.position, lookForward);
+    if (noteToRemove === null) return {};
+
+    removeNotesFromBar(barWithCursor, state.cursor.trackIndex, [noteToRemove]);
+    let newCursorPosition = state.cursor.position;
+
+    if (!lookForward) newCursorPosition -= noteToRemove.duration;
+
+    return {
+      currentSheet: { ...state.currentSheet, bars: [...state.currentSheet.bars] },
+      cursor: { ...state.cursor, position: newCursorPosition },
+    };
   });

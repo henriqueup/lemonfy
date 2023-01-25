@@ -25,6 +25,8 @@ const SHORTCUTS = {
   a: "notes.add.A",
   SHIFT_A: "notes.add.A#",
   b: "notes.add.B",
+  Backspace: "notes.remove.left",
+  Delete: "notes.remove.right",
 } as const;
 
 type ShortcutKey = keyof typeof SHORTCUTS;

@@ -19,6 +19,7 @@ import {
   increaseSelectedOctave,
   moveCursorToEndOfBar,
   moveCursorToStartOfBar,
+  removeNextNoteFromBar,
   setNoteToAdd,
   setSelectedNoteDuration,
   setSelectedOctave,
@@ -103,6 +104,12 @@ const NoteMenu: FunctionComponent = () => {
     },
     "notes.add.B": {
       callback: () => addNote(NOTE_DURATIONS[selectedDuration], "B", selectedOctave),
+    },
+    "notes.remove.left": {
+      callback: () => removeNextNoteFromBar(false),
+    },
+    "notes.remove.right": {
+      callback: removeNextNoteFromBar,
     },
   });
 

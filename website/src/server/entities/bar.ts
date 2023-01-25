@@ -42,23 +42,26 @@ export const setBarNotesTimesInSeconds = (bar: Bar) => {
 
   for (let i = 0; i < notes.length; i++) {
     const note = notes[i];
-    if (note.start == undefined) throw new Error(`Invalid note at ${i}, undefined start.`);
+    if (note === undefined || note.start == undefined) throw new Error(`The note at ${i} must exist and have a start.`);
 
     note.durationInSeconds = convertBarNoteDurationToSeconds(bar, note.duration) / bar.timeRatio;
     note.startInSeconds = convertBarNoteDurationToSeconds(bar, note.start) / bar.timeRatio;
   }
 };
 
-const validateTrackIndex = (bar: Bar, trackIndex: number) => {
+const getTrackFromIndex = (bar: Bar, trackIndex: number) => {
   if (trackIndex >= bar.tracks.length || trackIndex < 0) throw new Error("Invalid track index.");
+
+  const targetTrack = bar.tracks[trackIndex];
+  if (targetTrack === undefined) throw new Error(`Invalid track at index: ${trackIndex}.`);
+
+  return targetTrack;
 };
 
 export const convertBarNoteDurationToSeconds = (bar: Bar, duration: number) => duration * bar.dibobinador;
 
 export const addNoteToBar = (bar: Bar, trackIndex: number, noteToAdd: Note): Note | null => {
-  validateTrackIndex(bar, trackIndex);
-
-  const targetTrack = bar.tracks[trackIndex];
+  const targetTrack = getTrackFromIndex(bar, trackIndex);
   const currentTrackNotesDuration = sumNotesDuration(targetTrack);
 
   let actualNoteAdded = noteToAdd;
@@ -78,7 +81,8 @@ export const addNoteToBar = (bar: Bar, trackIndex: number, noteToAdd: Note): Not
   } else {
     const previousNote = targetTrack[targetTrack.length - 1];
 
-    if (previousNote.start == null) throw new Error("The previous note must have it's start set.");
+    if (previousNote === undefined || previousNote.start == null)
+      throw new Error("The previous note must exist and have it's start set.");
 
     actualNoteAdded.start = previousNote.start + previousNote.duration;
   }
@@ -88,10 +92,7 @@ export const addNoteToBar = (bar: Bar, trackIndex: number, noteToAdd: Note): Not
 };
 
 export const findNoteByTime = (bar: Bar, trackIndex: number, time: number, lookForward = true): Note | null => {
-  validateTrackIndex(bar, trackIndex);
-
-  const track = bar.tracks[trackIndex];
-  if (track === undefined) return null;
+  const track = getTrackFromIndex(bar, trackIndex);
 
   const targetNote = track.find(note => {
     if (note.start === undefined) return false;
@@ -103,6 +104,12 @@ export const findNoteByTime = (bar: Bar, trackIndex: number, time: number, lookF
   });
 
   return targetNote ?? null;
+};
+
+export const removeNotesFromBar = (bar: Bar, trackIndex: number, notesToRemove: Note[]): void => {
+  const track = getTrackFromIndex(bar, trackIndex);
+
+  bar.tracks[trackIndex] = track.filter(note => !notesToRemove.includes(note));
 };
 
 /*
