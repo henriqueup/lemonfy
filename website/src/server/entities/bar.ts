@@ -1,6 +1,6 @@
 import { createNote, type Note } from "./note";
 import { findSheetNoteByTime, type Sheet } from "./sheet";
-const SECONDS_PER_MINUTE = 60;
+export const SECONDS_PER_MINUTE = 60;
 
 export type Bar = {
   trackCount: number;
