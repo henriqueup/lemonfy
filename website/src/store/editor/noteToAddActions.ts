@@ -11,7 +11,7 @@ import { useEditorStore } from "./editorStore";
 export const setNoteToAdd = (duration: number, pitchName: PitchName, octave: Octave) =>
   useEditorStore.setState(() => {
     const pitch = createPitch(pitchName, octave);
-    const noteToAdd = createNote(duration, pitch);
+    const noteToAdd = createNote(duration, -1, pitch);
 
     return { noteToAdd };
   });

@@ -1,6 +1,6 @@
 import { useEditorStore } from "./editorStore";
 import { NOTE_DURATIONS } from "../../server/entities/note";
-import { findNoteByTime } from "../../server/entities/bar";
+import { findBarNoteByTime } from "../../server/entities/bar";
 
 export const increaseCursorTrackIndex = () =>
   useEditorStore.setState(state => {
@@ -39,12 +39,11 @@ export const increaseCursorPosition = () =>
     if (state.currentSheet === undefined) return {};
 
     const barWithCursor = state.currentSheet.bars[state.cursor.barIndex];
-
     if (barWithCursor === undefined) return {};
     if (state.cursor.position === barWithCursor.capacity) return {};
 
     let amountToIncrease = NOTE_DURATIONS[state.selectedNoteDuration];
-    const nextNote = findNoteByTime(barWithCursor, state.cursor.trackIndex, state.cursor.position);
+    const nextNote = findBarNoteByTime(barWithCursor, state.cursor.trackIndex, state.cursor.position);
 
     if (nextNote && nextNote.start !== undefined) {
       amountToIncrease = nextNote.start + nextNote.duration - state.cursor.position;
@@ -62,11 +61,10 @@ export const decreaseCursorPosition = () =>
     if (state.cursor.position === 0) return {};
 
     const barWithCursor = state.currentSheet.bars[state.cursor.barIndex];
-
     if (barWithCursor === undefined) return {};
 
     let amountToDecrease = NOTE_DURATIONS[state.selectedNoteDuration];
-    const previousNote = findNoteByTime(barWithCursor, state.cursor.trackIndex, state.cursor.position, false);
+    const previousNote = findBarNoteByTime(barWithCursor, state.cursor.trackIndex, state.cursor.position, false);
 
     if (previousNote && previousNote.start !== undefined) {
       amountToDecrease = state.cursor.position - previousNote.start;
@@ -83,7 +81,6 @@ export const moveCursorToEndOfBar = () =>
     if (state.currentSheet === undefined) return {};
 
     const barWithCursor = state.currentSheet.bars[state.cursor.barIndex];
-
     if (barWithCursor === undefined) return {};
 
     return { cursor: { ...state.cursor, position: barWithCursor.capacity } };

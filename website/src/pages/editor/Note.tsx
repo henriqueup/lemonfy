@@ -3,11 +3,11 @@ import { type Note as NoteEntity } from "../../server/entities/note";
 
 interface Props {
   note: NoteEntity;
-  width: number;
+  barCapacity: number;
 }
 
-const Note: FunctionComponent<Props> = ({ note, width }) => {
-  const getNoteClassName = (note: NoteEntity): string | undefined => {
+const Note: FunctionComponent<Props> = ({ note, barCapacity }) => {
+  const getNoteClassName = (): string | undefined => {
     if ((!note.isSustain && !note.hasSustain) || (note.isSustain && note.hasSustain)) return;
 
     if (note.isSustain) return "w-1/2 flex justify-start";
@@ -16,15 +16,15 @@ const Note: FunctionComponent<Props> = ({ note, width }) => {
 
   return (
     <div
-      className="flex items-center justify-center rounded border border-solid border-gray-200"
-      style={{ width: `${width * 100}%` }}
+      className="absolute flex h-full items-center justify-center rounded border border-solid border-gray-200 bg-black"
+      style={{ width: `${note.duration * barCapacity * 100}%`, left: `${(note.start * 100) / barCapacity}%` }}
     >
       {note.isSustain ? (
         <div className="flex w-1/2 justify-start">
           <span>...</span>
         </div>
       ) : null}
-      <div className={getNoteClassName(note)}>
+      <div className={getNoteClassName()}>
         <span>{`${note.pitch?.name || ""}${note.pitch?.octave || ""}`}</span>
       </div>
       {note.hasSustain ? (

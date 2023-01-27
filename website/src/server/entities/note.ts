@@ -47,16 +47,23 @@ export const getLowerNoteDuration = (currentDuration: NoteDurationName) => getNe
 
 export type Note = {
   duration: number;
+  start: number;
   pitch?: Pitch; //note without a pitch is silence
-  start?: number;
   hasSustain: boolean;
   isSustain: boolean;
   durationInSeconds?: number;
   startInSeconds?: number;
 };
 
-export const createNote = (duration: number, pitch?: Pitch, hasSustain?: boolean, isSustain?: boolean) => ({
+export const createNote = (
+  duration: number,
+  start: number,
+  pitch?: Pitch,
+  hasSustain?: boolean,
+  isSustain?: boolean,
+): Note => ({
   duration,
+  start,
   pitch,
   hasSustain: hasSustain || false,
   isSustain: isSustain || false,

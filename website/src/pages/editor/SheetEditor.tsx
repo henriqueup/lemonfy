@@ -1,20 +1,15 @@
 import { type FunctionComponent, useState } from "react";
-import { type Note } from "../../server/entities/note";
 import { Plus } from "../../icons";
-import Track from "./Track";
 import BarMenu from "./BarMenu";
 import NoteMenu from "./NoteMenu";
-import { addBar, addNoteFromDrop, useEditorStore } from "../../store/editor";
+import { addBar, useEditorStore } from "../../store/editor";
+import Bar from "./Bar";
 
 const SheetEditor: FunctionComponent = () => {
   const bars = useEditorStore(state => state.currentSheet?.bars);
   const [barMenuIsOpen, setBarMenuIsOpen] = useState(false);
 
   if (bars === undefined) return null;
-
-  const handleAddNote = (barIndex: number, trackIndex: number, note: Note) => {
-    addNoteFromDrop(barIndex, trackIndex, note);
-  };
 
   const handleAddBar = (beatCount: number, dibobinador: number, tempo: number) => {
     addBar(beatCount, dibobinador, tempo);
@@ -38,43 +33,7 @@ const SheetEditor: FunctionComponent = () => {
             }}
           >
             {bars.map((bar, i) => (
-              <div
-                key={i}
-                style={{
-                  display: "flex",
-                  padding: "16px",
-                  border: "1px solid lightgray",
-                  borderRadius: "4px",
-                }}
-              >
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-                  <div>
-                    <span>{`${bar.beatCount}/${bar.dibobinador}`}</span>
-                  </div>
-                  <div>
-                    <span>{bar.tempo}</span>
-                  </div>
-                </div>
-                <div
-                  style={{
-                    width: "100%",
-                    height: "100px",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-evenly",
-                  }}
-                >
-                  {bar.tracks.map((track, j) => (
-                    <Track
-                      key={j}
-                      index={j}
-                      bar={bar}
-                      track={track}
-                      handleAddNote={note => handleAddNote(i, j, note)}
-                    />
-                  ))}
-                </div>
-              </div>
+              <Bar key={i} bar={bar} />
             ))}
           </div>
           <div style={{ display: "flex", justifyContent: "center" }}>

@@ -1,10 +1,12 @@
-import { createNote, sumNotesDuration, type Note } from "./note";
+import { createNote, type Note } from "./note";
+import { findSheetNoteByTime, type Sheet } from "./sheet";
 const SECONDS_PER_MINUTE = 60;
 
 export type Bar = {
   trackCount: number;
   beatCount: number;
   dibobinador: number;
+  start: number;
   capacity: number;
   tempo: number;
   tracks: Note[][];
@@ -16,6 +18,7 @@ export const createBar = (
   trackCount: number,
   beatCount: number,
   dibobinador: number,
+  start: number,
   tempo: number,
   index?: number,
 ) => {
@@ -23,6 +26,7 @@ export const createBar = (
     trackCount,
     beatCount,
     dibobinador,
+    start,
     capacity: beatCount / dibobinador,
     tempo,
     tracks: [],
@@ -37,6 +41,9 @@ export const createBar = (
   return newBar;
 };
 
+export const sumBarsCapacity = (bars: Bar[]) =>
+  bars.reduce((currentCapacity, currentBar) => currentCapacity + currentBar.capacity, 0);
+
 export const setBarNotesTimesInSeconds = (bar: Bar) => {
   const notes = bar.tracks.flat();
 
@@ -49,6 +56,53 @@ export const setBarNotesTimesInSeconds = (bar: Bar) => {
   }
 };
 
+export const convertBarNoteDurationToSeconds = (bar: Bar, duration: number) => duration * bar.dibobinador;
+
+export const fillBarTrackFromSheet = (sheet: Sheet, barIndex: number, trackIndex: number) => {
+  const targetBar = sheet.bars[barIndex];
+  if (targetBar === undefined) throw new Error(`Bar at index ${barIndex} should exist.`);
+
+  const sheetTrack = sheet.tracks[trackIndex];
+  if (sheetTrack === undefined) throw new Error(`Track at ${trackIndex} should exist.`);
+
+  if (sheetTrack.length === 0) return;
+
+  const targetBarEnd = targetBar.start + targetBar.capacity;
+  const notesInside = sheetTrack.filter(
+    note => note.start > targetBar.start && note.start + note.duration < targetBarEnd,
+  );
+
+  let barTrack = notesInside;
+
+  const firstNote = findSheetNoteByTime(sheet, trackIndex, targetBar.start);
+  const lastNote = findSheetNoteByTime(sheet, trackIndex, targetBarEnd, false);
+
+  if (firstNote !== null) {
+    const firstNoteEnd = firstNote.start + firstNote.duration;
+    const targetBarEnd = targetBar.start + targetBar.capacity;
+    const duration = firstNoteEnd - targetBar.start;
+    const shouldHaveSustain = firstNoteEnd > targetBarEnd;
+    const shouldBeSustain = firstNote.start < targetBar.start;
+
+    const actualFirstNote = createNote(duration, targetBar.start, firstNote.pitch, shouldHaveSustain, shouldBeSustain);
+
+    barTrack = [actualFirstNote, ...barTrack];
+  }
+
+  if (lastNote !== null && lastNote !== firstNote) {
+    const lastNoteEnd = lastNote.start + lastNote.duration;
+    const targetBarEnd = targetBar.start + targetBar.capacity;
+    const duration = lastNoteEnd - targetBarEnd;
+    const shouldHaveSustain = lastNoteEnd > targetBarEnd;
+
+    const actualLastNote = createNote(duration, lastNote.start, lastNote.pitch, shouldHaveSustain, false);
+
+    barTrack = [...barTrack, actualLastNote];
+  }
+
+  targetBar.tracks[trackIndex] = barTrack.map(note => ({ ...note, start: note.start - targetBar.start }));
+};
+
 const getTrackFromIndex = (bar: Bar, trackIndex: number) => {
   if (trackIndex >= bar.tracks.length || trackIndex < 0) throw new Error("Invalid track index.");
 
@@ -58,45 +112,10 @@ const getTrackFromIndex = (bar: Bar, trackIndex: number) => {
   return targetTrack;
 };
 
-export const convertBarNoteDurationToSeconds = (bar: Bar, duration: number) => duration * bar.dibobinador;
-
-export const addNoteToBar = (bar: Bar, trackIndex: number, noteToAdd: Note): Note | null => {
-  const targetTrack = getTrackFromIndex(bar, trackIndex);
-  const currentTrackNotesDuration = sumNotesDuration(targetTrack);
-
-  let actualNoteAdded = noteToAdd;
-  let leftoverNote: Note | null = null;
-
-  if (currentTrackNotesDuration + noteToAdd.duration > bar.capacity) {
-    const remainingDuration = bar.capacity - currentTrackNotesDuration;
-
-    leftoverNote = createNote(noteToAdd.duration - remainingDuration, noteToAdd.pitch, false, true);
-    if (remainingDuration === 0) return leftoverNote;
-
-    actualNoteAdded = createNote(remainingDuration, noteToAdd.pitch, true, noteToAdd.isSustain);
-  }
-
-  if (targetTrack.length === 0) {
-    actualNoteAdded.start = 0;
-  } else {
-    const previousNote = targetTrack[targetTrack.length - 1];
-
-    if (previousNote === undefined || previousNote.start == null)
-      throw new Error("The previous note must exist and have it's start set.");
-
-    actualNoteAdded.start = previousNote.start + previousNote.duration;
-  }
-
-  targetTrack.push(actualNoteAdded);
-  return leftoverNote;
-};
-
-export const findNoteByTime = (bar: Bar, trackIndex: number, time: number, lookForward = true): Note | null => {
+export const findBarNoteByTime = (bar: Bar, trackIndex: number, time: number, lookForward = true): Note | null => {
   const track = getTrackFromIndex(bar, trackIndex);
 
   const targetNote = track.find(note => {
-    if (note.start === undefined) return false;
-
     const noteEnd = note.start + note.duration;
     if (lookForward) return note.start <= time && time < noteEnd;
 
@@ -104,12 +123,6 @@ export const findNoteByTime = (bar: Bar, trackIndex: number, time: number, lookF
   });
 
   return targetNote ?? null;
-};
-
-export const removeNotesFromBar = (bar: Bar, trackIndex: number, notesToRemove: Note[]): void => {
-  const track = getTrackFromIndex(bar, trackIndex);
-
-  bar.tracks[trackIndex] = track.filter(note => !notesToRemove.includes(note));
 };
 
 /*

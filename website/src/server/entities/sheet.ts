@@ -1,49 +1,138 @@
 import { addGainNode } from "../../utils/audioContext";
-import { addNoteToBar, createBar, setBarNotesTimesInSeconds, type Bar } from "./bar";
-import { type Note } from "./note";
+import { createBar, fillBarTrackFromSheet, setBarNotesTimesInSeconds, sumBarsCapacity, type Bar } from "./bar";
+import { sumNotesDuration, type Note } from "./note";
 import { FrequencyDictionary } from "./pitch";
 
 export type Sheet = {
   bars: Bar[];
+  tracks: Note[][];
   trackCount: number;
   noteToAdd: Note | null;
 };
 
-export const createSheet = (trackCount: number) => ({
-  bars: [],
-  trackCount,
-  noteToAdd: null,
-});
+export const createSheet = (trackCount: number): Sheet => {
+  const newSheet: Sheet = {
+    bars: [],
+    tracks: [],
+    trackCount,
+    noteToAdd: null,
+  };
 
-export const addBarToSheet = (sheet: Sheet, beatCount: number, dibobinador: number, tempo: number) => {
-  sheet.bars.push(createBar(sheet.trackCount, beatCount, dibobinador, tempo, sheet.bars.length));
+  for (let i = 0; i < trackCount; i++) {
+    newSheet.tracks[i] = [];
+  }
+
+  return newSheet;
 };
 
-export const addNoteToSheet = (sheet: Sheet, barIndex: number, trackIndex: number, note: Note) => {
-  const targetBar = sheet.bars[barIndex];
-  if (targetBar === undefined) throw new Error("Invalid bar index.");
+export const addBarToSheet = (sheet: Sheet, beatCount: number, dibobinador: number, tempo: number) => {
+  const newBarStart = sumBarsCapacity(sheet.bars);
 
-  let leftoverNote = addNoteToBar(targetBar, trackIndex, note);
-  let currentBarIndex = barIndex;
-  while (leftoverNote !== null) {
-    currentBarIndex++;
+  sheet.bars.push(createBar(sheet.trackCount, beatCount, dibobinador, newBarStart, tempo, sheet.bars.length));
+};
 
-    if (currentBarIndex >= sheet.bars.length) {
-      const lastBar = sheet.bars[currentBarIndex - 1];
-      if (lastBar === undefined) throw new Error("Invalid bars.");
+const getTrackFromIndex = (sheet: Sheet, trackIndex: number) => {
+  if (trackIndex >= sheet.tracks.length || trackIndex < 0) throw new Error("Invalid track index.");
 
-      addBarToSheet(sheet, lastBar.beatCount, lastBar.dibobinador, lastBar.tempo);
-    }
+  const targetTrack = sheet.tracks[trackIndex];
+  if (targetTrack === undefined) throw new Error(`Invalid track at index: ${trackIndex}.`);
 
-    const currentBar = sheet.bars[currentBarIndex];
-    if (currentBar === undefined) throw new Error(`Invalid bar at index ${currentBarIndex}.`);
+  return targetTrack;
+};
 
-    leftoverNote = addNoteToBar(currentBar, trackIndex, leftoverNote);
+const addExtraBarsIfNeeded = (sheet: Sheet, trackIndex: number) => {
+  const targetTrack = getTrackFromIndex(sheet, trackIndex);
+
+  const lastNote = targetTrack[targetTrack.length - 1];
+  if (lastNote === undefined) return;
+
+  let lastBar = sheet.bars[sheet.bars.length - 1];
+  if (lastBar === undefined) return;
+
+  const lastNoteEnd = lastNote.start + lastNote.duration;
+  let lastBarEnd = lastBar.start + lastBar.capacity;
+
+  while (lastNoteEnd > lastBarEnd) {
+    addBarToSheet(sheet, lastBar.beatCount, lastBar.dibobinador, lastBar.tempo);
+
+    lastBar = sheet.bars[sheet.bars.length - 1];
+    if (lastBar === undefined) return;
+
+    lastBarEnd = lastBar.start + lastBar.capacity;
+  }
+};
+
+export const addNoteToSheet = (sheet: Sheet, trackIndex: number, noteToAdd: Note) => {
+  const startOfNoteToAdd = noteToAdd.start;
+  if (startOfNoteToAdd === undefined) throw new Error("Start is required to add the note.");
+
+  const targetTrack = getTrackFromIndex(sheet, trackIndex);
+
+  const notesBeforeNoteToAdd = targetTrack.filter(note => note.start < startOfNoteToAdd);
+
+  let noteToAddIndex = 0;
+  if (notesBeforeNoteToAdd.length > 0) {
+    const lastNoteBeforeNoteToAdd = notesBeforeNoteToAdd[notesBeforeNoteToAdd.length - 1];
+
+    if (lastNoteBeforeNoteToAdd === undefined)
+      throw new Error(`Note at index ${notesBeforeNoteToAdd.length - 1} should exist.`);
+
+    noteToAddIndex = targetTrack.indexOf(lastNoteBeforeNoteToAdd) + 1;
+  }
+
+  const resultingTrack = [...targetTrack.slice(0, noteToAddIndex), noteToAdd, ...targetTrack.slice(noteToAddIndex)];
+
+  for (let i = noteToAddIndex + 1; i < resultingTrack.length; i++) {
+    const currentNote = resultingTrack[i];
+    if (currentNote === undefined) throw new Error(`The note at ${i} must exist.`);
+
+    currentNote.start += noteToAdd.duration;
+  }
+
+  sheet.tracks[trackIndex] = resultingTrack;
+  addExtraBarsIfNeeded(sheet, trackIndex);
+};
+
+export const findSheetNoteByTime = (
+  sheet: Sheet,
+  trackIndex: number,
+  time: number,
+  lookForward = true,
+): Note | null => {
+  const track = getTrackFromIndex(sheet, trackIndex);
+
+  const targetNote = track.find(note => {
+    const noteEnd = note.start + note.duration;
+    if (lookForward) return note.start <= time && time < noteEnd;
+
+    return note.start < time && time <= noteEnd;
+  });
+
+  return targetNote ?? null;
+};
+
+export const removeNotesFromSheet = (sheet: Sheet, trackIndex: number, notesToRemove: Note[]): void => {
+  const track = getTrackFromIndex(sheet, trackIndex);
+
+  sheet.tracks[trackIndex] = track.filter(note => !notesToRemove.includes(note));
+};
+
+export const fillBarTracksInSheet = (sheet: Sheet, trackIndex: number) => {
+  for (let i = 0; i < sheet.bars.length; i++) {
+    fillBarTrackFromSheet(sheet, i, trackIndex);
+  }
+};
+
+const fillBarsInSheet = (sheet: Sheet) => {
+  for (let i = 0; i < sheet.tracks.length; i++) {
+    fillBarTracksInSheet(sheet, i);
   }
 };
 
 export const playSong = (sheet: Sheet, audioContext: AudioContext | null): void => {
   if (!audioContext) return;
+
+  fillBarsInSheet(sheet);
 
   for (let i = 0; i < sheet.bars.length; i++) {
     const bar = sheet.bars[i];

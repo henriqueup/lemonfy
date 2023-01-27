@@ -34,8 +34,6 @@ const Track: FunctionComponent<TrackProps> = ({ index, bar, track, handleAddNote
     return noteSize;
   };
 
-  const getNoteWidth = (noteSize: number) => noteSize / bar.capacity;
-
   const fitsAnotherNote = () => remainingSizeInBar > 0;
 
   const handleDragEnter = (event: DragEvent<HTMLDivElement>) => {
@@ -83,11 +81,9 @@ const Track: FunctionComponent<TrackProps> = ({ index, bar, track, handleAddNote
       </div>
       <div className="relative flex w-full">
         {track.map((note, i) => (
-          <Note key={i} note={note} width={getNoteWidth(note.duration)} />
+          <Note key={i} note={note} barCapacity={bar.capacity} />
         ))}
-        {isShowingPreview && noteToAdd !== null ? (
-          <Note note={noteToAdd} width={getNoteWidth(getNoteToAddSize())} />
-        ) : null}
+        {isShowingPreview && noteToAdd !== null ? <Note note={noteToAdd} barCapacity={bar.capacity} /> : null}
         <div className="m-auto mr-0 ml-0 h-px flex-grow border border-solid border-gray-200" />
         {isSelectedTrack && isSelectedBar ? <Cursor position={cursor.position} barCapacity={bar.capacity} /> : null}
       </div>

@@ -1,8 +1,15 @@
-import { findNoteByTime, removeNotesFromBar } from "../../server/entities/bar";
 import { createNote, type Note } from "../../server/entities/note";
 import { type Octave } from "../../server/entities/octave";
 import { createPitch, type PitchName } from "../../server/entities/pitch";
-import { addBarToSheet, addNoteToSheet, createSheet, type Sheet } from "../../server/entities/sheet";
+import {
+  addBarToSheet,
+  addNoteToSheet,
+  createSheet,
+  fillBarTracksInSheet,
+  findSheetNoteByTime,
+  removeNotesFromSheet,
+  type Sheet,
+} from "../../server/entities/sheet";
 import { useEditorStore } from "./editorStore";
 
 export const loadSheet = (sheet: Sheet) => useEditorStore.setState({ currentSheet: sheet });
@@ -29,13 +36,19 @@ export const addNote = (duration: number, pitchName: PitchName, octave: Octave) 
   useEditorStore.setState(state => {
     if (state.currentSheet === undefined) return {};
 
-    const pitch = createPitch(pitchName, octave);
-    const noteToAdd = createNote(duration, pitch);
+    const barWithCursor = state.currentSheet.bars[state.cursor.barIndex];
+    if (barWithCursor === undefined) return {};
 
-    addNoteToSheet(state.currentSheet, 0, state.cursor.trackIndex, noteToAdd);
+    const pitch = createPitch(pitchName, octave);
+    const noteToAdd = createNote(duration, state.cursor.position, pitch);
+
+    addNoteToSheet(state.currentSheet, state.cursor.trackIndex, noteToAdd);
+    fillBarTracksInSheet(state.currentSheet, state.cursor.trackIndex);
+
+    const barWithCursorEnd = barWithCursor.start + barWithCursor.capacity;
     return {
       currentSheet: { ...state.currentSheet, bars: [...state.currentSheet.bars] },
-      cursor: { ...state.cursor, position: state.cursor.position + noteToAdd.duration },
+      cursor: { ...state.cursor, position: Math.min(state.cursor.position + noteToAdd.duration, barWithCursorEnd) },
     };
   });
 
@@ -43,7 +56,19 @@ export const addNoteFromDrop = (barIndex: number, trackIndex: number, note: Note
   useEditorStore.setState(state => {
     if (state.currentSheet === undefined) return {};
 
-    addNoteToSheet(state.currentSheet, barIndex, trackIndex, note);
+    addNoteToSheet(state.currentSheet, trackIndex, note);
+    fillBarTracksInSheet(state.currentSheet, state.cursor.trackIndex);
+
+    return { currentSheet: { ...state.currentSheet, bars: [...state.currentSheet.bars] } };
+  });
+
+export const removeNoteFromBar = (noteToRemove: Note) =>
+  useEditorStore.setState(state => {
+    if (state.currentSheet === undefined) return {};
+
+    removeNotesFromSheet(state.currentSheet, state.cursor.trackIndex, [noteToRemove]);
+    fillBarTracksInSheet(state.currentSheet, state.cursor.trackIndex);
+
     return { currentSheet: { ...state.currentSheet, bars: [...state.currentSheet.bars] } };
   });
 
@@ -52,16 +77,20 @@ export const removeNextNoteFromBar = (lookForward = true) =>
     if (state.currentSheet === undefined) return {};
 
     const barWithCursor = state.currentSheet.bars[state.cursor.barIndex];
-
     if (barWithCursor === undefined) return {};
-    if (state.cursor.position === barWithCursor.capacity) return {};
 
-    const noteToRemove = findNoteByTime(barWithCursor, state.cursor.trackIndex, state.cursor.position, lookForward);
+    const noteToRemove = findSheetNoteByTime(
+      state.currentSheet,
+      state.cursor.trackIndex,
+      barWithCursor.start + state.cursor.position,
+      lookForward,
+    );
     if (noteToRemove === null) return {};
 
-    removeNotesFromBar(barWithCursor, state.cursor.trackIndex, [noteToRemove]);
-    let newCursorPosition = state.cursor.position;
+    removeNotesFromSheet(state.currentSheet, state.cursor.trackIndex, [noteToRemove]);
+    fillBarTracksInSheet(state.currentSheet, state.cursor.trackIndex);
 
+    let newCursorPosition = state.cursor.position;
     if (!lookForward) newCursorPosition -= noteToRemove.duration;
 
     return {
