@@ -92,7 +92,7 @@ export const fillBarTrackFromSheet = (sheet: Sheet, barIndex: number, trackIndex
   if (lastNote !== null && lastNote !== firstNote) {
     const lastNoteEnd = lastNote.start + lastNote.duration;
     const targetBarEnd = targetBar.start + targetBar.capacity;
-    const duration = lastNoteEnd - targetBarEnd;
+    const duration = targetBarEnd - lastNote.start;
     const shouldHaveSustain = lastNoteEnd > targetBarEnd;
 
     const actualLastNote = createNote(duration, lastNote.start, lastNote.pitch, shouldHaveSustain, false);
