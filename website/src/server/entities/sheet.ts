@@ -62,6 +62,23 @@ const addExtraBarsIfNeeded = (sheet: Sheet, trackIndex: number) => {
   }
 };
 
+const adjustNoteStartsAfterNewNote = (track: Note[], newNote: Note, newNoteIndex: number) => {
+  let amountToIncrease: number | undefined;
+  let previousNote = newNote;
+
+  for (let i = newNoteIndex + 1; i < track.length; i++) {
+    const currentNote = track[i];
+    if (currentNote === undefined) throw new Error(`The note at ${i} must exist.`);
+
+    const startDifference = currentNote.start - previousNote.start;
+    amountToIncrease = previousNote.duration - startDifference;
+    if (amountToIncrease <= 0) break;
+
+    currentNote.start += amountToIncrease;
+    previousNote = currentNote;
+  }
+};
+
 export const addNoteToSheet = (sheet: Sheet, trackIndex: number, noteToAdd: Note) => {
   const startOfNoteToAdd = noteToAdd.start;
   if (startOfNoteToAdd === undefined) throw new Error("Start is required to add the note.");
@@ -81,13 +98,7 @@ export const addNoteToSheet = (sheet: Sheet, trackIndex: number, noteToAdd: Note
   }
 
   const resultingTrack = [...targetTrack.slice(0, noteToAddIndex), noteToAdd, ...targetTrack.slice(noteToAddIndex)];
-
-  for (let i = noteToAddIndex + 1; i < resultingTrack.length; i++) {
-    const currentNote = resultingTrack[i];
-    if (currentNote === undefined) throw new Error(`The note at ${i} must exist.`);
-
-    currentNote.start += noteToAdd.duration;
-  }
+  adjustNoteStartsAfterNewNote(resultingTrack, noteToAdd, noteToAddIndex);
 
   sheet.tracks[trackIndex] = resultingTrack;
   addExtraBarsIfNeeded(sheet, trackIndex);
