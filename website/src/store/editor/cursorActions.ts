@@ -1,6 +1,7 @@
 import { useEditorStore } from "./editorStore";
 import { NOTE_DURATIONS } from "../../server/entities/note";
 import { findBarNoteByTime } from "../../server/entities/bar";
+import { TimeEvaluation } from "../../server/entities/timeEvaluation";
 
 export const increaseCursorTrackIndex = () =>
   useEditorStore.setState(state => {
@@ -40,7 +41,7 @@ export const increaseCursorPosition = () =>
 
     const barWithCursor = state.currentSheet.bars[state.cursor.barIndex];
     if (barWithCursor === undefined) return {};
-    if (state.cursor.position === barWithCursor.capacity) return {};
+    if (TimeEvaluation.IsEqualTo(state.cursor.position, barWithCursor.capacity)) return {};
 
     let amountToIncrease = NOTE_DURATIONS[state.selectedNoteDuration];
     const nextNote = findBarNoteByTime(barWithCursor, state.cursor.trackIndex, state.cursor.position);
@@ -50,7 +51,7 @@ export const increaseCursorPosition = () =>
     }
     let resultPosition = state.cursor.position + amountToIncrease;
 
-    if (resultPosition > barWithCursor.capacity) resultPosition = barWithCursor.capacity;
+    if (TimeEvaluation.IsGreaterThan(resultPosition, barWithCursor.capacity)) resultPosition = barWithCursor.capacity;
 
     return { cursor: { ...state.cursor, position: resultPosition } };
   });
@@ -58,7 +59,7 @@ export const increaseCursorPosition = () =>
 export const decreaseCursorPosition = () =>
   useEditorStore.setState(state => {
     if (state.currentSheet === undefined) return {};
-    if (state.cursor.position === 0) return {};
+    if (TimeEvaluation.IsEqualTo(state.cursor.position, 0)) return {};
 
     const barWithCursor = state.currentSheet.bars[state.cursor.barIndex];
     if (barWithCursor === undefined) return {};

@@ -1,6 +1,7 @@
 import React, { type DragEvent, type FunctionComponent, useState } from "react";
 import { type Bar } from "../../server/entities/bar";
 import { sumNotesDuration, type Note as NoteEntity } from "../../server/entities/note";
+import { TimeEvaluation } from "../../server/entities/timeEvaluation";
 import { useEditorStore } from "../../store/editor";
 import { classNames } from "../../styles/utils";
 import Cursor from "./Cursor";
@@ -26,7 +27,7 @@ const Track: FunctionComponent<TrackProps> = ({ index, bar, track, handleAddNote
     if (noteToAdd === null || !isShowingPreview) return 0;
 
     let noteSize = noteToAdd.duration;
-    if (noteSize > remainingSizeInBar) {
+    if (TimeEvaluation.IsGreaterThan(noteSize, remainingSizeInBar)) {
       noteSize = remainingSizeInBar;
       noteToAdd.hasSustain = true;
     }

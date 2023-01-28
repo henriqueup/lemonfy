@@ -2,6 +2,7 @@ import { addGainNode } from "../../utils/audioContext";
 import { createBar, fillBarTrackFromSheet, setBarNotesTimesInSeconds, sumBarsCapacity, type Bar } from "./bar";
 import { sumNotesDuration, type Note } from "./note";
 import { FrequencyDictionary } from "./pitch";
+import { TimeEvaluation } from "./timeEvaluation";
 
 export type Sheet = {
   bars: Bar[];
@@ -72,7 +73,7 @@ const adjustNoteStartsAfterNewNote = (track: Note[], newNote: Note, newNoteIndex
 
     const startDifference = currentNote.start - previousNote.start;
     amountToIncrease = previousNote.duration - startDifference;
-    if (amountToIncrease <= 0) break;
+    if (TimeEvaluation.IsSmallerOrEqualTo(amountToIncrease, 0)) break;
 
     currentNote.start += amountToIncrease;
     previousNote = currentNote;
@@ -85,7 +86,7 @@ export const addNoteToSheet = (sheet: Sheet, trackIndex: number, noteToAdd: Note
 
   const targetTrack = getTrackFromIndex(sheet, trackIndex);
 
-  const notesBeforeNoteToAdd = targetTrack.filter(note => note.start < startOfNoteToAdd);
+  const notesBeforeNoteToAdd = targetTrack.filter(note => TimeEvaluation.IsSmallerThan(note.start, startOfNoteToAdd));
 
   let noteToAddIndex = 0;
   if (notesBeforeNoteToAdd.length > 0) {
@@ -114,9 +115,10 @@ export const findSheetNoteByTime = (
 
   const targetNote = track.find(note => {
     const noteEnd = note.start + note.duration;
-    if (lookForward) return note.start <= time && time < noteEnd;
+    if (lookForward)
+      return TimeEvaluation.IsSmallerOrEqualTo(note.start, time) && TimeEvaluation.IsSmallerThan(time, noteEnd);
 
-    return note.start < time && time <= noteEnd;
+    return TimeEvaluation.IsSmallerThan(note.start, time) && TimeEvaluation.IsSmallerOrEqualTo(time, noteEnd);
   });
 
   return targetNote ?? null;

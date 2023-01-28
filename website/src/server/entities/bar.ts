@@ -1,5 +1,6 @@
 import { createNote, type Note } from "./note";
 import { findSheetNoteByTime, type Sheet } from "./sheet";
+import { TimeEvaluation } from "./timeEvaluation";
 export const SECONDS_PER_MINUTE = 60;
 
 export type Bar = {
@@ -69,7 +70,9 @@ export const fillBarTrackFromSheet = (sheet: Sheet, barIndex: number, trackIndex
 
   const targetBarEnd = targetBar.start + targetBar.capacity;
   const notesInside = sheetTrack.filter(
-    note => note.start > targetBar.start && note.start + note.duration < targetBarEnd,
+    note =>
+      TimeEvaluation.IsGreaterThan(note.start, targetBar.start) &&
+      TimeEvaluation.IsSmallerThan(note.start + note.duration, targetBarEnd),
   );
 
   let barTrack = notesInside;
@@ -81,8 +84,8 @@ export const fillBarTrackFromSheet = (sheet: Sheet, barIndex: number, trackIndex
     const firstNoteEnd = firstNote.start + firstNote.duration;
     const targetBarEnd = targetBar.start + targetBar.capacity;
     const duration = firstNoteEnd - targetBar.start;
-    const shouldHaveSustain = firstNoteEnd > targetBarEnd;
-    const shouldBeSustain = firstNote.start < targetBar.start;
+    const shouldHaveSustain = TimeEvaluation.IsGreaterThan(firstNoteEnd, targetBarEnd);
+    const shouldBeSustain = TimeEvaluation.IsSmallerThan(firstNote.start, targetBar.start);
 
     const actualFirstNote = createNote(duration, targetBar.start, firstNote.pitch, shouldHaveSustain, shouldBeSustain);
 
@@ -93,7 +96,7 @@ export const fillBarTrackFromSheet = (sheet: Sheet, barIndex: number, trackIndex
     const lastNoteEnd = lastNote.start + lastNote.duration;
     const targetBarEnd = targetBar.start + targetBar.capacity;
     const duration = targetBarEnd - lastNote.start;
-    const shouldHaveSustain = lastNoteEnd > targetBarEnd;
+    const shouldHaveSustain = TimeEvaluation.IsGreaterThan(lastNoteEnd, targetBarEnd);
 
     const actualLastNote = createNote(duration, lastNote.start, lastNote.pitch, shouldHaveSustain, false);
 
@@ -117,9 +120,10 @@ export const findBarNoteByTime = (bar: Bar, trackIndex: number, time: number, lo
 
   const targetNote = track.find(note => {
     const noteEnd = note.start + note.duration;
-    if (lookForward) return note.start <= time && time < noteEnd;
+    if (lookForward)
+      return TimeEvaluation.IsSmallerOrEqualTo(note.start, time) && TimeEvaluation.IsSmallerThan(time, noteEnd);
 
-    return note.start < time && time <= noteEnd;
+    return TimeEvaluation.IsSmallerThan(note.start, time) && TimeEvaluation.IsSmallerOrEqualTo(time, noteEnd);
   });
 
   return targetNote ?? null;
