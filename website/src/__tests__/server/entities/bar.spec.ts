@@ -1,4 +1,4 @@
-import { createBar, SECONDS_PER_MINUTE } from "../../../server/entities/bar";
+import { createBar, SECONDS_PER_MINUTE } from "@entities/bar";
 
 describe("Bar entity tests", () => {
   it("Creates bars with initial values", () => {
