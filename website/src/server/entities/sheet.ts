@@ -1,6 +1,6 @@
 import { addGainNode } from "../../utils/audioContext";
 import { createBar, fillBarTrackFromSheet, setBarNotesTimesInSeconds, sumBarsCapacity, type Bar } from "./bar";
-import { sumNotesDuration, type Note } from "./note";
+import { type Note } from "./note";
 import { FrequencyDictionary } from "./pitch";
 import { TimeEvaluation } from "./timeEvaluation";
 
