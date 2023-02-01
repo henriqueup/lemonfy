@@ -14,13 +14,13 @@ export type Pitch = {
   frequency?: number;
 };
 
-export const createPitch = (name: PitchName, octave: Octave) => ({
+const getPitchKey = (name: PitchName, octave: Octave): PitchKey => `${name}${octave}`;
+
+export const createPitch = (name: PitchName, octave: Octave): Pitch => ({
   name,
   octave,
   key: getPitchKey(name, octave),
 });
-
-export const getPitchKey = (name: PitchName, octave: Octave): PitchKey => `${name}${octave}`;
 
 // prettier-ignore
 export const FrequencyDictionary: Record<PitchKey, number> = {

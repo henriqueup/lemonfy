@@ -1,6 +1,6 @@
-import { createNote, type Note } from "../../server/entities/note";
-import { type Octave } from "../../server/entities/octave";
-import { createPitch, type PitchName } from "../../server/entities/pitch";
+import { createNote, type Note } from "@entities/note";
+import { type Octave } from "@entities/octave";
+import { createPitch, type PitchName } from "@entities/pitch";
 import {
   addBarToSheet,
   addNoteToSheet,
@@ -9,7 +9,7 @@ import {
   findSheetNoteByTime,
   removeNotesFromSheet,
   type Sheet,
-} from "../../server/entities/sheet";
+} from "@entities/sheet";
 import { useEditorStore } from "./editorStore";
 
 export const loadSheet = (sheet: Sheet) => useEditorStore.setState({ currentSheet: sheet });

@@ -50,7 +50,7 @@ export const setBarNotesTimesInSeconds = (bar: Bar) => {
 
   for (let i = 0; i < notes.length; i++) {
     const note = notes[i];
-    if (note === undefined || note.start == undefined) throw new Error(`The note at ${i} must exist and have a start.`);
+    if (note === undefined) throw new Error(`The note at index ${i} should exist.`);
 
     note.durationInSeconds = convertBarNoteDurationToSeconds(bar, note.duration) / bar.timeRatio;
     note.startInSeconds = convertBarNoteDurationToSeconds(bar, note.start) / bar.timeRatio;
