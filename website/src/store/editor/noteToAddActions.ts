@@ -21,7 +21,7 @@ export const setSelectedOctave = (octave: Octave) => useEditorStore.setState(() 
 export const increaseSelectedOctave = () =>
   useEditorStore.setState(state => ({ selectedOctave: getHigherOctave(state.selectedOctave) }));
 
-export const decreseSelectedOctave = () =>
+export const decreaseSelectedOctave = () =>
   useEditorStore.setState(state => ({ selectedOctave: getLowerOctave(state.selectedOctave) }));
 
 export const setSelectedNoteDuration = (duration: NoteDurationName) =>
@@ -30,5 +30,5 @@ export const setSelectedNoteDuration = (duration: NoteDurationName) =>
 export const increaseSelectedNoteDuration = () =>
   useEditorStore.setState(state => ({ selectedNoteDuration: getHigherNoteDuration(state.selectedNoteDuration) }));
 
-export const decreseSelectedNoteDuration = () =>
+export const decreaseSelectedNoteDuration = () =>
   useEditorStore.setState(state => ({ selectedNoteDuration: getLowerNoteDuration(state.selectedNoteDuration) }));

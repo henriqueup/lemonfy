@@ -1,7 +1,7 @@
 import { create } from "zustand";
-import { type NoteDurationName, type Note } from "../../server/entities/note";
-import { type Octave } from "../../server/entities/octave";
-import { type Sheet } from "../../server/entities/sheet";
+import { type NoteDurationName, type Note } from "@entities/note";
+import { type Octave } from "@entities/octave";
+import { type Sheet } from "@entities/sheet";
 
 export interface Cursor {
   trackIndex: number;
@@ -18,7 +18,7 @@ export interface EditorStore {
   cursor: Cursor;
 }
 
-export const useEditorStore = create<EditorStore>(() => ({
+export const INITIAL_STATE: EditorStore = {
   sheets: [],
   currentSheet: undefined,
   selectedOctave: 0,
@@ -29,4 +29,6 @@ export const useEditorStore = create<EditorStore>(() => ({
     barIndex: 0,
     position: 0,
   },
-}));
+};
+
+export const useEditorStore = create<EditorStore>(() => INITIAL_STATE);

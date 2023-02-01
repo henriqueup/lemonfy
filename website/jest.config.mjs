@@ -21,6 +21,7 @@ const customJestConfig = {
 
   moduleNameMapper: {
     "@entities/(.*)$": "<rootDir>/src/server/entities/$1",
+    "@store/(.*)$": "<rootDir>/src/store/$1",
   },
   testEnvironment: "jest-environment-jsdom",
   transform: {

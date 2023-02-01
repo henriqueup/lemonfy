@@ -2,7 +2,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@entities/*": ["src/server/entities/*"]
+      "@entities/*": ["src/server/entities/*"],
+      "@store/*": ["src/store/*"]
     },
     "target": "es2017",
     "lib": ["dom", "dom.iterable", "esnext"],

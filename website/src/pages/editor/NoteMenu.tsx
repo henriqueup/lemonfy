@@ -1,30 +1,31 @@
 import { type DragEvent, type FunctionComponent } from "react";
 import { Button } from "../../components";
 import { useAudioContext, useShortcuts } from "../../hooks";
-import { NOTE_DURATIONS, type NoteDurationName } from "../../server/entities/note";
-import { NUMBER_OF_OCTAVES, type Octave } from "../../server/entities/octave";
-import { type PitchName, PITCH_NAMES } from "../../server/entities/pitch";
-import { playSong } from "../../server/entities/sheet";
+import { NOTE_DURATIONS, type NoteDurationName } from "@entities/note";
+import { NUMBER_OF_OCTAVES, type Octave } from "@entities/octave";
+import { type PitchName, PITCH_NAMES } from "@entities/pitch";
+import { playSong } from "@entities/sheet";
+import { useEditorStore } from "@store/editor";
 import {
-  addNote,
-  decreaseCursorBarIndex,
-  decreaseCursorPosition,
-  decreaseCursorTrackIndex,
-  decreseSelectedNoteDuration,
-  decreseSelectedOctave,
-  increaseCursorBarIndex,
-  increaseCursorPosition,
-  increaseCursorTrackIndex,
+  decreaseSelectedNoteDuration,
+  decreaseSelectedOctave,
   increaseSelectedNoteDuration,
   increaseSelectedOctave,
-  moveCursorToEndOfBar,
-  moveCursorToStartOfBar,
-  removeNextNoteFromBar,
   setNoteToAdd,
   setSelectedNoteDuration,
   setSelectedOctave,
-  useEditorStore,
-} from "../../store/editor";
+} from "@store/editor/noteToAddActions";
+import {
+  decreaseCursorBarIndex,
+  decreaseCursorPosition,
+  decreaseCursorTrackIndex,
+  increaseCursorBarIndex,
+  increaseCursorPosition,
+  increaseCursorTrackIndex,
+  moveCursorToEndOfBar,
+  moveCursorToStartOfBar,
+} from "@store/editor/cursorActions";
+import { addNote, removeNextNoteFromBar } from "@store/editor/sheetActions";
 
 const NoteMenu: FunctionComponent = () => {
   const audioContext = useAudioContext();
@@ -34,13 +35,13 @@ const NoteMenu: FunctionComponent = () => {
 
   useShortcuts({
     "octave.lower": {
-      callback: decreseSelectedOctave,
+      callback: decreaseSelectedOctave,
     },
     "octave.raise": {
       callback: increaseSelectedOctave,
     },
     "duration.lower": {
-      callback: decreseSelectedNoteDuration,
+      callback: decreaseSelectedNoteDuration,
     },
     "duration.raise": {
       callback: increaseSelectedNoteDuration,
