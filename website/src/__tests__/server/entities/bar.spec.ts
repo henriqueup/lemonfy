@@ -11,8 +11,8 @@ describe("Create Bar", () => {
     expect(newBar.tempo).toBe(80);
     expect(newBar.timeRatio).toBe(80 / SECONDS_PER_MINUTE);
     expect(newBar.trackCount).toBe(3);
-    expect(newBar.tracks).toHaveLength(3);
 
+    expect(newBar.tracks).toHaveLength(3);
     expect(newBar.tracks[0]).toHaveLength(0);
     expect(newBar.tracks[1]).toHaveLength(0);
     expect(newBar.tracks[2]).toHaveLength(0);

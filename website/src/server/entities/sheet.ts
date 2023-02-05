@@ -45,10 +45,10 @@ const addExtraBarsIfNeeded = (sheet: Sheet, trackIndex: number) => {
   const targetTrack = getTrackFromIndex(sheet, trackIndex);
 
   const lastNote = targetTrack[targetTrack.length - 1];
-  if (lastNote === undefined) return;
+  if (lastNote === undefined) throw new Error("Track should have at least one Note.");
 
   let lastBar = sheet.bars[sheet.bars.length - 1];
-  if (lastBar === undefined) return;
+  if (lastBar === undefined) throw new Error("Sheet should have ate least one Bar.");
 
   const lastNoteEnd = lastNote.start + lastNote.duration;
   let lastBarEnd = lastBar.start + lastBar.capacity;
@@ -81,12 +81,8 @@ const adjustNoteStartsAfterNewNote = (track: Note[], newNote: Note, newNoteIndex
 };
 
 export const addNoteToSheet = (sheet: Sheet, trackIndex: number, noteToAdd: Note) => {
-  const startOfNoteToAdd = noteToAdd.start;
-  if (startOfNoteToAdd === undefined) throw new Error("Start is required to add the note.");
-
   const targetTrack = getTrackFromIndex(sheet, trackIndex);
-
-  const notesBeforeNoteToAdd = targetTrack.filter(note => TimeEvaluation.IsSmallerThan(note.start, startOfNoteToAdd));
+  const notesBeforeNoteToAdd = targetTrack.filter(note => TimeEvaluation.IsSmallerThan(note.start, noteToAdd.start));
 
   let noteToAddIndex = 0;
   if (notesBeforeNoteToAdd.length > 0) {
