@@ -45,6 +45,8 @@ export const createBar = (
 export const sumBarsCapacity = (bars: Bar[]) =>
   bars.reduce((currentCapacity, currentBar) => currentCapacity + currentBar.capacity, 0);
 
+const convertBarNoteDurationToSeconds = (bar: Bar, duration: number) => duration * bar.dibobinador;
+
 export const setBarNotesTimesInSeconds = (bar: Bar) => {
   const notes = bar.tracks.flat();
 
@@ -57,14 +59,12 @@ export const setBarNotesTimesInSeconds = (bar: Bar) => {
   }
 };
 
-export const convertBarNoteDurationToSeconds = (bar: Bar, duration: number) => duration * bar.dibobinador;
-
 export const fillBarTrackFromSheet = (sheet: Sheet, barIndex: number, trackIndex: number) => {
   const targetBar = sheet.bars[barIndex];
   if (targetBar === undefined) throw new Error(`Bar at index ${barIndex} should exist.`);
 
   const sheetTrack = sheet.tracks[trackIndex];
-  if (sheetTrack === undefined) throw new Error(`Track at ${trackIndex} should exist.`);
+  if (sheetTrack === undefined) throw new Error(`Track at index ${trackIndex} should exist.`);
 
   if (sheetTrack.length === 0) return;
 
@@ -83,7 +83,7 @@ export const fillBarTrackFromSheet = (sheet: Sheet, barIndex: number, trackIndex
   if (firstNote !== null) {
     const firstNoteEnd = firstNote.start + firstNote.duration;
     const targetBarEnd = targetBar.start + targetBar.capacity;
-    const duration = firstNoteEnd - targetBar.start;
+    const duration = Math.min(firstNoteEnd - targetBar.start, targetBar.capacity);
     const shouldHaveSustain = TimeEvaluation.IsGreaterThan(firstNoteEnd, targetBarEnd);
     const shouldBeSustain = TimeEvaluation.IsSmallerThan(firstNote.start, targetBar.start);
 
