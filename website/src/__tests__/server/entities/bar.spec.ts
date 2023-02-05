@@ -10,6 +10,12 @@ import {
 import { createNote, NOTE_DURATIONS } from "@entities/note";
 import { getFilledMockBar } from "src/mocks/entities/bar";
 import { getEmptyMockSheet, getMockSheetWithBars } from "src/mocks/entities/sheet";
+import * as SheetModule from "@entities/sheet";
+
+jest.mock<typeof SheetModule>("@entities/sheet", () => ({
+  ...jest.requireActual("@entities/sheet"),
+  findSheetNoteByTime: jest.fn(),
+}));
 
 describe("Create Bar", () => {
   it("Creates Bar with initial values", () => {
@@ -102,6 +108,9 @@ describe("Fill track from Sheet", () => {
     sheet.tracks[0]!.push(createNote(NOTE_DURATIONS["HALF"], 0));
     sheet.tracks[0]!.push(createNote(NOTE_DURATIONS["HALF"], 1 + 3 / 4));
 
+    const spy = jest.spyOn(SheetModule, "findSheetNoteByTime");
+    spy.mockImplementationOnce(() => null).mockImplementationOnce(() => null);
+
     fillBarTrackFromSheet(sheet, 1, 0);
 
     expect(sheet.bars[1]!.tracks[0]).toHaveLength(0);
@@ -111,6 +120,9 @@ describe("Fill track from Sheet", () => {
     const sheet = getMockSheetWithBars();
     sheet.tracks[0]!.push(createNote(NOTE_DURATIONS["EIGHTH"], 7 / 8));
     sheet.tracks[0]!.push(createNote(NOTE_DURATIONS["HALF"], 8 / 8));
+
+    const spy = jest.spyOn(SheetModule, "findSheetNoteByTime");
+    spy.mockImplementationOnce(() => null).mockImplementationOnce(() => null);
 
     fillBarTrackFromSheet(sheet, 1, 0);
 
@@ -132,8 +144,14 @@ describe("Fill track from Sheet", () => {
 
   it("Fills entire Bar without sustains", () => {
     const sheet = getMockSheetWithBars();
-    sheet.tracks[0]!.push(createNote(NOTE_DURATIONS["HALF"], 3 / 4));
-    sheet.tracks[0]!.push(createNote(NOTE_DURATIONS["HALF"], 5 / 4));
+    const startNote = createNote(NOTE_DURATIONS["HALF"], 3 / 4);
+    const endNote = createNote(NOTE_DURATIONS["HALF"], 5 / 4);
+
+    sheet.tracks[0]!.push(startNote);
+    sheet.tracks[0]!.push(endNote);
+
+    const spy = jest.spyOn(SheetModule, "findSheetNoteByTime");
+    spy.mockImplementationOnce(() => startNote).mockImplementationOnce(() => endNote);
 
     fillBarTrackFromSheet(sheet, 1, 0);
 
@@ -155,8 +173,14 @@ describe("Fill track from Sheet", () => {
 
   it("Fills entire Bar with sustains", () => {
     const sheet = getMockSheetWithBars();
-    sheet.tracks[0]!.push(createNote(NOTE_DURATIONS["WHOLE"], 1 / 4));
-    sheet.tracks[0]!.push(createNote(NOTE_DURATIONS["WHOLE"], 5 / 4));
+    const startNote = createNote(NOTE_DURATIONS["WHOLE"], 1 / 4);
+    const endNote = createNote(NOTE_DURATIONS["WHOLE"], 5 / 4);
+
+    sheet.tracks[0]!.push(startNote);
+    sheet.tracks[0]!.push(endNote);
+
+    const spy = jest.spyOn(SheetModule, "findSheetNoteByTime");
+    spy.mockImplementationOnce(() => startNote).mockImplementationOnce(() => endNote);
 
     fillBarTrackFromSheet(sheet, 1, 0);
 
@@ -178,7 +202,11 @@ describe("Fill track from Sheet", () => {
 
   it("Fills entire Bar with one Note which is and has sustain", () => {
     const sheet = getMockSheetWithBars();
-    sheet.tracks[0]!.push(createNote(NOTE_DURATIONS["DOUBLE_WHOLE"], 1 / 4));
+    const note = createNote(NOTE_DURATIONS["DOUBLE_WHOLE"], 1 / 4);
+    sheet.tracks[0]!.push(note);
+
+    const spy = jest.spyOn(SheetModule, "findSheetNoteByTime");
+    spy.mockImplementationOnce(() => note).mockImplementationOnce(() => note);
 
     fillBarTrackFromSheet(sheet, 1, 0);
 
