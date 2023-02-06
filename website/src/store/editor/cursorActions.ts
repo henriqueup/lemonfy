@@ -1,7 +1,7 @@
 import { useEditorStore } from "./editorStore";
-import { NOTE_DURATIONS } from "../../server/entities/note";
-import { findBarNoteByTime } from "../../server/entities/bar";
-import { TimeEvaluation } from "../../server/entities/timeEvaluation";
+import { NOTE_DURATIONS } from "@entities/note";
+import { findBarNoteByTime } from "@entities/bar";
+import { TimeEvaluation } from "@entities/timeEvaluation";
 
 export const increaseCursorTrackIndex = () =>
   useEditorStore.setState(state => {

@@ -1,11 +1,6 @@
-import {
-  createNote,
-  getHigherNoteDuration,
-  getLowerNoteDuration,
-  type NoteDurationName,
-} from "../../server/entities/note";
-import { getHigherOctave, getLowerOctave, type Octave } from "../../server/entities/octave";
-import { createPitch, type PitchName } from "../../server/entities/pitch";
+import { createNote, getHigherNoteDuration, getLowerNoteDuration, type NoteDurationName } from "@entities/note";
+import { getHigherOctave, getLowerOctave, type Octave } from "@entities/octave";
+import { createPitch, type PitchName } from "@entities/pitch";
 import { useEditorStore } from "./editorStore";
 
 export const setNoteToAdd = (duration: number, pitchName: PitchName, octave: Octave) =>
