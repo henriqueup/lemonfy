@@ -1,6 +1,6 @@
 import { addGainNode } from "../../utils/audioContext";
-import { createBar, fillBarTrackFromSheet, setBarNotesTimesInSeconds, sumBarsCapacity, type Bar } from "./bar";
-import { type Note } from "./note";
+import { createBar, fillBarTrack, setBarNotesTimesInSeconds, sumBarsCapacity, type Bar } from "./bar";
+import type { Note } from "./note";
 import { FrequencyDictionary } from "./pitch";
 import { TimeEvaluation } from "./timeEvaluation";
 
@@ -126,9 +126,28 @@ export const removeNotesFromSheet = (sheet: Sheet, trackIndex: number, notesToRe
   sheet.tracks[trackIndex] = track.filter(note => !notesToRemove.includes(note));
 };
 
+const fillBarTrackInSheet = (sheet: Sheet, barIndex: number, trackIndex: number) => {
+  const targetBar = sheet.bars[barIndex];
+  if (targetBar === undefined) throw new Error(`Bar at index ${barIndex} should exist.`);
+
+  const sheetTrack = sheet.tracks[trackIndex];
+  if (sheetTrack === undefined) throw new Error(`Track at index ${trackIndex} should exist.`);
+
+  if (sheetTrack.length === 0) return;
+
+  const targetBarEnd = targetBar.start + targetBar.capacity;
+  const notesInside = sheetTrack.filter(
+    note =>
+      TimeEvaluation.IsGreaterThan(note.start + note.duration, targetBar.start) &&
+      TimeEvaluation.IsSmallerThan(note.start, targetBarEnd),
+  );
+
+  fillBarTrack(targetBar, notesInside, trackIndex);
+};
+
 export const fillBarTracksInSheet = (sheet: Sheet, trackIndex: number) => {
   for (let i = 0; i < sheet.bars.length; i++) {
-    fillBarTrackFromSheet(sheet, i, trackIndex);
+    fillBarTrackInSheet(sheet, i, trackIndex);
   }
 };
 

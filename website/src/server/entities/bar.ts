@@ -1,7 +1,5 @@
 import { createNote, type Note } from "./note";
-import { findSheetNoteByTime, type Sheet } from "./sheet";
-import { TimeEvaluation } from "./timeEvaluation";
-export const SECONDS_PER_MINUTE = 60;
+import { SECONDS_PER_MINUTE, TimeEvaluation } from "./timeEvaluation";
 
 export type Bar = {
   trackCount: number;
@@ -22,25 +20,17 @@ export const createBar = (
   start: number,
   tempo: number,
   index?: number,
-) => {
-  const newBar: Bar = {
-    trackCount,
-    beatCount,
-    dibobinador,
-    start,
-    capacity: beatCount / dibobinador,
-    tempo,
-    tracks: [],
-    timeRatio: tempo / SECONDS_PER_MINUTE,
-    index,
-  };
-
-  for (let i = 0; i < trackCount; i++) {
-    newBar.tracks[i] = [];
-  }
-
-  return newBar;
-};
+): Bar => ({
+  trackCount,
+  beatCount,
+  dibobinador,
+  start,
+  capacity: beatCount / dibobinador,
+  tempo,
+  tracks: Array.from({ length: trackCount }, (): Note[] => []),
+  timeRatio: tempo / SECONDS_PER_MINUTE,
+  index,
+});
 
 export const sumBarsCapacity = (bars: Bar[]) =>
   bars.reduce((currentCapacity, currentBar) => currentCapacity + currentBar.capacity, 0);
@@ -59,42 +49,32 @@ export const setBarNotesTimesInSeconds = (bar: Bar) => {
   }
 };
 
-export const fillBarTrackFromSheet = (sheet: Sheet, barIndex: number, trackIndex: number) => {
-  const targetBar = sheet.bars[barIndex];
-  if (targetBar === undefined) throw new Error(`Bar at index ${barIndex} should exist.`);
+export const fillBarTrack = (bar: Bar, track: Note[], trackIndex: number) => {
+  if (track.length === 0) return;
 
-  const sheetTrack = sheet.tracks[trackIndex];
-  if (sheetTrack === undefined) throw new Error(`Track at index ${trackIndex} should exist.`);
+  const firstNote = track[0];
+  if (firstNote === undefined) throw Error("Invalid first Note of track.");
 
-  if (sheetTrack.length === 0) return;
+  const lastNote = track[track.length - 1];
+  if (lastNote === undefined) throw Error("Invalid last Note of track.");
 
-  const targetBarEnd = targetBar.start + targetBar.capacity;
-  const notesInside = sheetTrack.filter(
-    note =>
-      TimeEvaluation.IsGreaterThan(note.start, targetBar.start) &&
-      TimeEvaluation.IsSmallerThan(note.start + note.duration, targetBarEnd),
-  );
-
-  let barTrack = notesInside;
-
-  const firstNote = findSheetNoteByTime(sheet, trackIndex, targetBar.start);
-  const lastNote = findSheetNoteByTime(sheet, trackIndex, targetBarEnd, false);
+  let barTrack = track.filter((_, i) => i !== 0 && i !== track.length - 1);
 
   if (firstNote !== null) {
     const firstNoteEnd = firstNote.start + firstNote.duration;
-    const targetBarEnd = targetBar.start + targetBar.capacity;
-    const duration = Math.min(firstNoteEnd - targetBar.start, targetBar.capacity);
+    const targetBarEnd = bar.start + bar.capacity;
+    const duration = Math.min(firstNoteEnd - bar.start, bar.capacity);
     const shouldHaveSustain = TimeEvaluation.IsGreaterThan(firstNoteEnd, targetBarEnd);
-    const shouldBeSustain = TimeEvaluation.IsSmallerThan(firstNote.start, targetBar.start);
+    const shouldBeSustain = TimeEvaluation.IsSmallerThan(firstNote.start, bar.start);
 
-    const actualFirstNote = createNote(duration, targetBar.start, firstNote.pitch, shouldHaveSustain, shouldBeSustain);
+    const actualFirstNote = createNote(duration, bar.start, firstNote.pitch, shouldHaveSustain, shouldBeSustain);
 
     barTrack = [actualFirstNote, ...barTrack];
   }
 
   if (lastNote !== null && lastNote !== firstNote) {
     const lastNoteEnd = lastNote.start + lastNote.duration;
-    const targetBarEnd = targetBar.start + targetBar.capacity;
+    const targetBarEnd = bar.start + bar.capacity;
     const duration = targetBarEnd - lastNote.start;
     const shouldHaveSustain = TimeEvaluation.IsGreaterThan(lastNoteEnd, targetBarEnd);
 
@@ -103,7 +83,7 @@ export const fillBarTrackFromSheet = (sheet: Sheet, barIndex: number, trackIndex
     barTrack = [...barTrack, actualLastNote];
   }
 
-  targetBar.tracks[trackIndex] = barTrack.map(note => ({ ...note, start: note.start - targetBar.start }));
+  bar.tracks[trackIndex] = barTrack.map(note => ({ ...note, start: note.start - bar.start }));
 };
 
 const getTrackFromIndex = (bar: Bar, trackIndex: number) => {

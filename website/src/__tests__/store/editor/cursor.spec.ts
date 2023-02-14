@@ -1,14 +1,25 @@
 import { type Cursor, INITIAL_STATE, useEditorStore } from "@store/editor";
 import {
   decreaseCursorBarIndex,
+  decreaseCursorPosition,
   decreaseCursorTrackIndex,
   increaseCursorBarIndex,
+  increaseCursorPosition,
   increaseCursorTrackIndex,
 } from "@store/editor/cursorActions";
-import { getEmptyMockSheet, getMockSheetWithBars } from "src/mocks/entities/sheet";
+import { getEmptyMockSheet, getMockSheetWithBars, getMockSheetWithGap } from "src/mocks/entities/sheet";
+import * as BarModule from "@entities/bar";
+import * as MockUtilsModule from "src/mocks/utils";
+import { createNoteMock } from "src/mocks/entities/note";
+import { NOTE_DURATIONS } from "@entities/note";
+
+jest.mock<typeof BarModule>("@entities/bar", () => {
+  const mockUtils = jest.requireActual<typeof MockUtilsModule>("src/mocks/utils");
+  return mockUtils.mockModuleFunctions(jest.requireActual("@entities/bar"));
+});
 
 describe("Increase track index", () => {
-  it("Does nothing with undefined sheet", () => {
+  it("Does nothing with undefined Sheet", () => {
     increaseCursorTrackIndex();
 
     expect(useEditorStore.getState().cursor).toBe(INITIAL_STATE.cursor);
@@ -36,7 +47,7 @@ describe("Increase track index", () => {
 });
 
 describe("Decrease track index", () => {
-  it("Does nothing with undefined sheet", () => {
+  it("Does nothing with undefined Sheet", () => {
     decreaseCursorTrackIndex();
 
     expect(useEditorStore.getState().cursor).toBe(INITIAL_STATE.cursor);
@@ -63,7 +74,7 @@ describe("Decrease track index", () => {
 });
 
 describe("Increase Bar index", () => {
-  it("Does nothing with undefined sheet", () => {
+  it("Does nothing with undefined Sheet", () => {
     increaseCursorBarIndex();
 
     expect(useEditorStore.getState().cursor).toBe(INITIAL_STATE.cursor);
@@ -79,10 +90,10 @@ describe("Increase Bar index", () => {
     expect(useEditorStore.getState().cursor).toStrictEqual<Cursor>({ ...INITIAL_STATE.cursor, barIndex: 2 });
   });
 
-  it("Increases the Bar index", () => {
+  it("Increases the Bar index and sets position to 0", () => {
     useEditorStore.setState(state => ({
       currentSheet: getMockSheetWithBars(),
-      cursor: { ...state.cursor, barIndex: 1 },
+      cursor: { ...state.cursor, barIndex: 1, position: 1 },
     }));
     increaseCursorBarIndex();
 
@@ -91,7 +102,7 @@ describe("Increase Bar index", () => {
 });
 
 describe("Decrease Bar index", () => {
-  it("Does nothing with undefined sheet", () => {
+  it("Does nothing with undefined Sheet", () => {
     decreaseCursorBarIndex();
 
     expect(useEditorStore.getState().cursor).toBe(INITIAL_STATE.cursor);
@@ -106,13 +117,221 @@ describe("Decrease Bar index", () => {
     expect(useEditorStore.getState().cursor).toStrictEqual<Cursor>({ ...INITIAL_STATE.cursor });
   });
 
-  it("Decreases the Bar index", () => {
+  it("Decreases the Bar index and sets position to 0", () => {
     useEditorStore.setState(state => ({
       currentSheet: getMockSheetWithBars(),
-      cursor: { ...state.cursor, barIndex: 1 },
+      cursor: { ...state.cursor, barIndex: 1, position: 1 },
     }));
     decreaseCursorBarIndex();
 
     expect(useEditorStore.getState().cursor).toStrictEqual<Cursor>({ ...INITIAL_STATE.cursor, barIndex: 0 });
+  });
+});
+
+describe("Increase cursor position", () => {
+  const moduleWithMocks = BarModule as MockUtilsModule.WithMockedFunctions<typeof BarModule>;
+
+  beforeEach(() => {
+    MockUtilsModule.restoreMocks(moduleWithMocks);
+  });
+
+  it("Does nothing with undefined Sheet", () => {
+    increaseCursorPosition();
+
+    expect(useEditorStore.getState().cursor).toBe(INITIAL_STATE.cursor);
+  });
+
+  it("Does nothing with undefined Bar", () => {
+    useEditorStore.setState(state => ({
+      currentSheet: getMockSheetWithBars(),
+      cursor: { ...state.cursor, barIndex: 4 },
+    }));
+    increaseCursorPosition();
+
+    expect(useEditorStore.getState().cursor).toStrictEqual<Cursor>({ ...INITIAL_STATE.cursor, barIndex: 4 });
+  });
+
+  it("Does nothing when position is end of Bar", () => {
+    useEditorStore.setState(state => ({
+      currentSheet: getMockSheetWithBars(),
+      cursor: { ...state.cursor, position: 3 / 4 },
+    }));
+    increaseCursorPosition();
+
+    expect(useEditorStore.getState().cursor).toStrictEqual<Cursor>({ ...INITIAL_STATE.cursor, position: 3 / 4 });
+  });
+
+  it("Increases position without next Note and no Note within selected duration", () => {
+    useEditorStore.setState(state => ({
+      currentSheet: getMockSheetWithGap(),
+      cursor: { ...state.cursor, position: 1 / 4 },
+      selectedNoteDuration: "HALF",
+    }));
+    increaseCursorPosition();
+
+    expect(useEditorStore.getState().cursor).toStrictEqual<Cursor>({ ...INITIAL_STATE.cursor, position: 3 / 4 });
+  });
+
+  it("Increases position with resulting position larger than Bar", () => {
+    useEditorStore.setState(state => ({
+      currentSheet: getMockSheetWithGap(),
+      cursor: { ...state.cursor, position: 1 / 4 },
+      selectedNoteDuration: "WHOLE",
+    }));
+    increaseCursorPosition();
+
+    expect(useEditorStore.getState().cursor).toStrictEqual<Cursor>({ ...INITIAL_STATE.cursor, position: 3 / 4 });
+  });
+
+  it("Increases position without next Note but with Note within selected duration", () => {
+    useEditorStore.setState(state => ({
+      currentSheet: getMockSheetWithGap(),
+      cursor: { ...state.cursor, trackIndex: 1, position: 1 / 4 },
+      selectedNoteDuration: "HALF",
+    }));
+    increaseCursorPosition();
+
+    expect(useEditorStore.getState().cursor).toStrictEqual<Cursor>({
+      ...INITIAL_STATE.cursor,
+      trackIndex: 1,
+      position: 3 / 4,
+    });
+  });
+
+  it("Increases position with next Note smaller than selected duration", () => {
+    moduleWithMocks.findBarNoteByTime.mockImplementation(() => createNoteMock(NOTE_DURATIONS["QUARTER"], 0));
+    useEditorStore.setState(state => ({
+      currentSheet: getMockSheetWithGap(),
+      cursor: { ...state.cursor, trackIndex: 1 },
+      selectedNoteDuration: "HALF",
+    }));
+
+    increaseCursorPosition();
+
+    expect(useEditorStore.getState().cursor).toStrictEqual<Cursor>({
+      ...INITIAL_STATE.cursor,
+      trackIndex: 1,
+      position: 1 / 4,
+    });
+  });
+
+  it("Increases position with next Note longer than selected duration", () => {
+    moduleWithMocks.findBarNoteByTime.mockImplementation(() => createNoteMock(NOTE_DURATIONS["QUARTER"], 0));
+    useEditorStore.setState(state => ({
+      currentSheet: getMockSheetWithGap(),
+      cursor: { ...state.cursor, trackIndex: 1 },
+      selectedNoteDuration: "EIGHTH",
+    }));
+
+    increaseCursorPosition();
+
+    expect(useEditorStore.getState().cursor).toStrictEqual<Cursor>({
+      ...INITIAL_STATE.cursor,
+      trackIndex: 1,
+      position: 1 / 4,
+    });
+  });
+});
+
+describe("Decrease cursor position", () => {
+  const moduleWithMocks = BarModule as MockUtilsModule.WithMockedFunctions<typeof BarModule>;
+
+  beforeEach(() => {
+    MockUtilsModule.restoreMocks(moduleWithMocks);
+  });
+
+  it("Does nothing with undefined Sheet", () => {
+    decreaseCursorPosition();
+
+    expect(useEditorStore.getState().cursor).toBe(INITIAL_STATE.cursor);
+  });
+
+  it("Does nothing with undefined Bar", () => {
+    useEditorStore.setState(state => ({
+      currentSheet: getMockSheetWithBars(),
+      cursor: { ...state.cursor, barIndex: 4 },
+    }));
+    decreaseCursorPosition();
+
+    expect(useEditorStore.getState().cursor).toStrictEqual<Cursor>({ ...INITIAL_STATE.cursor, barIndex: 4 });
+  });
+
+  it("Does nothing when position is start of Bar", () => {
+    useEditorStore.setState(() => ({
+      currentSheet: getMockSheetWithBars(),
+    }));
+    decreaseCursorPosition();
+
+    expect(useEditorStore.getState().cursor).toBe(INITIAL_STATE.cursor);
+  });
+
+  it("Decreases position without previous Note and no Note within selected duration", () => {
+    useEditorStore.setState(state => ({
+      currentSheet: getMockSheetWithGap(),
+      cursor: { ...state.cursor, position: 3 / 4 },
+      selectedNoteDuration: "HALF",
+    }));
+    decreaseCursorPosition();
+
+    expect(useEditorStore.getState().cursor).toStrictEqual<Cursor>({ ...INITIAL_STATE.cursor, position: 1 / 4 });
+  });
+
+  it("Decreases position with resulting position smaller than 0", () => {
+    useEditorStore.setState(state => ({
+      currentSheet: getMockSheetWithGap(),
+      cursor: { ...state.cursor, position: 3 / 4 },
+      selectedNoteDuration: "WHOLE",
+    }));
+    decreaseCursorPosition();
+
+    expect(useEditorStore.getState().cursor).toStrictEqual<Cursor>({ ...INITIAL_STATE.cursor });
+  });
+
+  it("Decreases position without previous Note but with Note within selected duration", () => {
+    useEditorStore.setState(state => ({
+      currentSheet: getMockSheetWithGap(),
+      cursor: { ...state.cursor, trackIndex: 1, position: 2 / 4 },
+      selectedNoteDuration: "HALF",
+    }));
+    decreaseCursorPosition();
+
+    expect(useEditorStore.getState().cursor).toStrictEqual<Cursor>({
+      ...INITIAL_STATE.cursor,
+      trackIndex: 1,
+    });
+  });
+
+  it("Decreases position with previous Note smaller than selected duration", () => {
+    moduleWithMocks.findBarNoteByTime.mockImplementation(() => createNoteMock(NOTE_DURATIONS["QUARTER"], 2 / 4));
+    useEditorStore.setState(state => ({
+      currentSheet: getMockSheetWithGap(),
+      cursor: { ...state.cursor, trackIndex: 1, position: 3 / 4 },
+      selectedNoteDuration: "HALF",
+    }));
+
+    decreaseCursorPosition();
+
+    expect(useEditorStore.getState().cursor).toStrictEqual<Cursor>({
+      ...INITIAL_STATE.cursor,
+      trackIndex: 1,
+      position: 2 / 4,
+    });
+  });
+
+  it("Decreases position with previous Note longer than selected duration", () => {
+    moduleWithMocks.findBarNoteByTime.mockImplementation(() => createNoteMock(NOTE_DURATIONS["QUARTER"], 2 / 4));
+    useEditorStore.setState(state => ({
+      currentSheet: getMockSheetWithGap(),
+      cursor: { ...state.cursor, trackIndex: 1, position: 3 / 4 },
+      selectedNoteDuration: "EIGHTH",
+    }));
+
+    decreaseCursorPosition();
+
+    expect(useEditorStore.getState().cursor).toStrictEqual<Cursor>({
+      ...INITIAL_STATE.cursor,
+      trackIndex: 1,
+      position: 2 / 4,
+    });
   });
 });

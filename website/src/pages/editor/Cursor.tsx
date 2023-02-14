@@ -1,6 +1,6 @@
+import { SECONDS_PER_MINUTE } from "@entities/timeEvaluation";
 import { type FunctionComponent } from "react";
-import { SECONDS_PER_MINUTE } from "../../server/entities/bar";
-import { useEditorStore } from "../../store/editor";
+import { useEditorStore } from "@store/editor";
 
 interface Props {
   position: number;

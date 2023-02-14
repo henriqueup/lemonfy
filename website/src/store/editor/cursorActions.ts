@@ -46,7 +46,7 @@ export const increaseCursorPosition = () =>
     let amountToIncrease = NOTE_DURATIONS[state.selectedNoteDuration];
     const nextNote = findBarNoteByTime(barWithCursor, state.cursor.trackIndex, state.cursor.position);
 
-    if (nextNote && nextNote.start !== undefined) {
+    if (nextNote) {
       amountToIncrease = nextNote.start + nextNote.duration - state.cursor.position;
     }
     let resultPosition = state.cursor.position + amountToIncrease;
