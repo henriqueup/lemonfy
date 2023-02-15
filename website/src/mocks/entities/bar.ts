@@ -30,6 +30,18 @@ export const mockDefaultImplementations = (module: typeof BarModule) => {
   moduleWithMocks.sumBarsCapacity.mockImplementation(() => 8);
 };
 
+export const getEmptyMockBar = (): BarModule.Bar => ({
+  index: 0,
+  beatCount: 3,
+  dibobinador: 4,
+  start: 1,
+  capacity: 3 / 4,
+  tempo: 40,
+  timeRatio: 40 / SECONDS_PER_MINUTE,
+  trackCount: 3,
+  tracks: [[], [], []],
+});
+
 export const getFilledMockBar = (): BarModule.Bar => ({
   index: 0,
   beatCount: 4,

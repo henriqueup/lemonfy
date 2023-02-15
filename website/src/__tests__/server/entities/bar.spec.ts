@@ -1,16 +1,14 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { createBar, fillBarTrack, findBarNoteByTime, setBarNotesTimesInSeconds, sumBarsCapacity } from "@entities/bar";
-import { createNote, NOTE_DURATIONS } from "@entities/note";
-import { createBarMock, getFilledMockBar } from "src/mocks/entities/bar";
-import { getEmptyMockSheet, getMockSheetWithBars } from "src/mocks/entities/sheet";
-import * as SheetModule from "@entities/sheet";
-import type * as MockUtilsModule from "src/mocks/utils";
+import * as NoteModule from "@entities/note";
+import { createBarMock, getEmptyMockBar, getFilledMockBar } from "src/mocks/entities/bar";
+import * as MockUtilsModule from "src/mocks/utils";
 import { SECONDS_PER_MINUTE } from "@entities/timeEvaluation";
 import { createNoteMock } from "src/mocks/entities/note";
 
-jest.mock<typeof SheetModule>("@entities/sheet", () => {
+jest.mock<typeof NoteModule>("@entities/note", () => {
   const mockUtils = jest.requireActual<typeof MockUtilsModule>("src/mocks/utils");
-  return mockUtils.mockModuleFunctions(jest.requireActual("@entities/sheet"));
+  return mockUtils.mockModuleFunctions(jest.requireActual("@entities/note"));
 });
 
 describe("Create Bar", () => {
@@ -57,7 +55,7 @@ describe("Sum Bar capacity", () => {
 
 describe("Set Notes times in seconds", () => {
   // it("Fails with invalid Note at index", () => {
-  //   const bar = getBarWithNotes();
+  //   const bar = getFilledMockBar();
   //   delete bar.tracks[1]![1];
 
   //   setBarNotesTimesInSeconds(bar);
@@ -79,107 +77,146 @@ describe("Set Notes times in seconds", () => {
 });
 
 describe("Fill track", () => {
-  // it("Fails with invalid Bar", () => {
-  //   const sheet = getEmptyMockSheet();
-  //   expect(() => fillBarTrackInSheet(sheet, 1, 1)).toThrowError("Bar at index 1 should exist.");
+  const noteModuleWithMocks = MockUtilsModule.getModuleWithMocks(NoteModule);
+
+  beforeEach(() => {
+    noteModuleWithMocks.createNote.mockImplementation(createNoteMock);
+  });
+
+  it("Does nothing with empty track", () => {
+    const bar = getEmptyMockBar();
+    const track: NoteModule.Note[] = [];
+
+    fillBarTrack(bar, track, 0);
+
+    expect(bar.tracks[0]).toHaveLength(0);
+  });
+
+  it("Does nothing with no Notes within Bar", () => {
+    const bar = getEmptyMockBar();
+    const track = [createNoteMock(NoteModule.NOTE_DURATIONS["QUARTER"], 3 / 4)];
+
+    fillBarTrack(bar, track, 0);
+
+    expect(bar.tracks[0]).toHaveLength(0);
+  });
+
+  // it("Fails with invalid first Note", () => {
+  //   const bar = getEmptyMockBar();
+  //   const track = [undefined, createNoteMock(NoteModule.NOTE_DURATIONS["QUARTER"], 0)] as NoteModule.Note[];
+
+  //   expect(() => fillBarTrack(bar, track, 0)).toThrowError("Invalid first Note of track.");
   // });
-  // it("Fails with invalid track", () => {
-  //   const sheet = getMockSheetWithBars();
-  //   expect(() => fillBarTrackInSheet(sheet, 1, 4)).toThrowError("Track at index 4 should exist.");
+
+  // it("Fails with invalid last Note", () => {
+  //   const bar = getEmptyMockBar();
+  //   const track = [createNoteMock(NoteModule.NOTE_DURATIONS["QUARTER"], 0), undefined] as NoteModule.Note[];
+
+  //   expect(() => fillBarTrack(bar, track, 0)).toThrowError("Invalid last Note of track.");
   // });
-  // it("Does nothing with empty track", () => {
-  //   const sheet = getMockSheetWithBars();
-  //   fillBarTrackInSheet(sheet, 1, 0);
-  //   expect(sheet.bars[1]!.tracks[0]).toHaveLength(0);
-  // });
-  // it("Does nothing with no Notes within Bar", () => {
-  //   const sheet = getMockSheetWithBars();
-  //   sheet.tracks[0]!.push(createNote(NOTE_DURATIONS["HALF"], 0));
-  //   sheet.tracks[0]!.push(createNote(NOTE_DURATIONS["HALF"], 1 + 3 / 4));
-  //   const spy = jest.spyOn(SheetModule, "findSheetNoteByTime");
-  //   spy.mockImplementationOnce(() => null).mockImplementationOnce(() => null);
-  //   fillBarTrackInSheet(sheet, 1, 0);
-  //   expect(sheet.bars[1]!.tracks[0]).toHaveLength(0);
-  // });
-  // it("Fills Bar only with Notes inside", () => {
-  //   const sheet = getMockSheetWithBars();
-  //   sheet.tracks[0]!.push(createNote(NOTE_DURATIONS["EIGHTH"], 7 / 8));
-  //   sheet.tracks[0]!.push(createNote(NOTE_DURATIONS["HALF"], 8 / 8));
-  //   const spy = jest.spyOn(SheetModule, "findSheetNoteByTime");
-  //   spy.mockImplementationOnce(() => null).mockImplementationOnce(() => null);
-  //   fillBarTrackInSheet(sheet, 1, 0);
-  //   const barTrack = sheet.bars[1]!.tracks[0]!;
-  //   expect(barTrack).toHaveLength(2);
-  //   const firstNote = barTrack[0]!;
-  //   expect(firstNote.duration).toBe(NOTE_DURATIONS["EIGHTH"]);
-  //   expect(firstNote.start).toBe(1 / 8);
-  //   expect(firstNote.hasSustain).toBe(false);
-  //   expect(firstNote.isSustain).toBe(false);
-  //   const secondNote = barTrack[1]!;
-  //   expect(secondNote.duration).toBe(NOTE_DURATIONS["HALF"]);
-  //   expect(secondNote.start).toBe(2 / 8);
-  //   expect(secondNote.hasSustain).toBe(false);
-  //   expect(secondNote.isSustain).toBe(false);
-  // });
-  // it("Fills entire Bar without sustains", () => {
-  //   const sheet = getMockSheetWithBars();
-  //   const startNote = createNote(NOTE_DURATIONS["HALF"], 3 / 4);
-  //   const endNote = createNote(NOTE_DURATIONS["HALF"], 5 / 4);
-  //   sheet.tracks[0]!.push(startNote);
-  //   sheet.tracks[0]!.push(endNote);
-  //   const spy = jest.spyOn(SheetModule, "findSheetNoteByTime");
-  //   spy.mockImplementationOnce(() => startNote).mockImplementationOnce(() => endNote);
-  //   fillBarTrackInSheet(sheet, 1, 0);
-  //   const barTrack = sheet.bars[1]!.tracks[0]!;
-  //   expect(barTrack).toHaveLength(2);
-  //   const firstNote = barTrack[0]!;
-  //   expect(firstNote.duration).toBe(NOTE_DURATIONS["HALF"]);
-  //   expect(firstNote.start).toBe(0);
-  //   expect(firstNote.hasSustain).toBe(false);
-  //   expect(firstNote.isSustain).toBe(false);
-  //   const secondNote = barTrack[1]!;
-  //   expect(secondNote.duration).toBe(NOTE_DURATIONS["HALF"]);
-  //   expect(secondNote.start).toBe(1 / 2);
-  //   expect(secondNote.hasSustain).toBe(false);
-  //   expect(secondNote.isSustain).toBe(false);
-  // });
-  // it("Fills entire Bar with sustains", () => {
-  //   const sheet = getMockSheetWithBars();
-  //   const startNote = createNote(NOTE_DURATIONS["WHOLE"], 1 / 4);
-  //   const endNote = createNote(NOTE_DURATIONS["WHOLE"], 5 / 4);
-  //   sheet.tracks[0]!.push(startNote);
-  //   sheet.tracks[0]!.push(endNote);
-  //   const spy = jest.spyOn(SheetModule, "findSheetNoteByTime");
-  //   spy.mockImplementationOnce(() => startNote).mockImplementationOnce(() => endNote);
-  //   fillBarTrackInSheet(sheet, 1, 0);
-  //   const barTrack = sheet.bars[1]!.tracks[0]!;
-  //   expect(barTrack).toHaveLength(2);
-  //   const firstNote = barTrack[0]!;
-  //   expect(firstNote.duration).toBe(NOTE_DURATIONS["HALF"]);
-  //   expect(firstNote.start).toBe(0);
-  //   expect(firstNote.hasSustain).toBe(false);
-  //   expect(firstNote.isSustain).toBe(true);
-  //   const secondNote = barTrack[1]!;
-  //   expect(secondNote.duration).toBe(NOTE_DURATIONS["HALF"]);
-  //   expect(secondNote.start).toBe(1 / 2);
-  //   expect(secondNote.hasSustain).toBe(true);
-  //   expect(secondNote.isSustain).toBe(false);
-  // });
-  // it("Fills entire Bar with one Note which is and has sustain", () => {
-  //   const sheet = getMockSheetWithBars();
-  //   const note = createNote(NOTE_DURATIONS["DOUBLE_WHOLE"], 1 / 4);
-  //   sheet.tracks[0]!.push(note);
-  //   const spy = jest.spyOn(SheetModule, "findSheetNoteByTime");
-  //   spy.mockImplementationOnce(() => note).mockImplementationOnce(() => note);
-  //   fillBarTrackInSheet(sheet, 1, 0);
-  //   const barTrack = sheet.bars[1]!.tracks[0]!;
-  //   expect(barTrack).toHaveLength(1);
-  //   const firstNote = barTrack[0]!;
-  //   expect(firstNote.duration).toBe(NOTE_DURATIONS["WHOLE"]);
-  //   expect(firstNote.start).toBe(0);
-  //   expect(firstNote.hasSustain).toBe(true);
-  //   expect(firstNote.isSustain).toBe(true);
-  // });
+
+  it("Fills with fitting Notes", () => {
+    const bar = getEmptyMockBar();
+    const track = [
+      createNoteMock(NoteModule.NOTE_DURATIONS["QUARTER"], 1),
+      createNoteMock(NoteModule.NOTE_DURATIONS["QUARTER"], 5 / 4),
+      createNoteMock(NoteModule.NOTE_DURATIONS["QUARTER"], 6 / 4),
+    ];
+
+    fillBarTrack(bar, track, 0);
+
+    expect(bar.tracks[0]).toHaveLength(3);
+
+    const firstNote = bar.tracks[0]![0]!;
+    expect(firstNote.duration).toBe(NoteModule.NOTE_DURATIONS["QUARTER"]);
+    expect(firstNote.start).toBe(0);
+    expect(firstNote.hasSustain).toBe(false);
+    expect(firstNote.isSustain).toBe(false);
+
+    const secondNote = bar.tracks[0]![1]!;
+    expect(secondNote.duration).toBe(NoteModule.NOTE_DURATIONS["QUARTER"]);
+    expect(secondNote.start).toBe(1 / 4);
+    expect(secondNote.hasSustain).toBe(false);
+    expect(secondNote.isSustain).toBe(false);
+
+    const thirdNote = bar.tracks[0]![2]!;
+    expect(thirdNote.duration).toBe(NoteModule.NOTE_DURATIONS["QUARTER"]);
+    expect(thirdNote.start).toBe(2 / 4);
+    expect(thirdNote.hasSustain).toBe(false);
+    expect(thirdNote.isSustain).toBe(false);
+  });
+
+  it("Fills with empty spaces remaining", () => {
+    const bar = getEmptyMockBar();
+    const track = [
+      createNoteMock(NoteModule.NOTE_DURATIONS["EIGHTH"], 10 / 8),
+      createNoteMock(NoteModule.NOTE_DURATIONS["EIGHTH"], 12 / 8),
+    ];
+
+    fillBarTrack(bar, track, 0);
+
+    expect(bar.tracks[0]).toHaveLength(2);
+
+    const firstNote = bar.tracks[0]![0]!;
+    expect(firstNote.duration).toBe(NoteModule.NOTE_DURATIONS["EIGHTH"]);
+    expect(firstNote.start).toBe(2 / 8);
+    expect(firstNote.hasSustain).toBe(false);
+    expect(firstNote.isSustain).toBe(false);
+
+    const sencondNote = bar.tracks[0]![1]!;
+    expect(sencondNote.duration).toBe(NoteModule.NOTE_DURATIONS["EIGHTH"]);
+    expect(sencondNote.start).toBe(4 / 8);
+    expect(sencondNote.hasSustain).toBe(false);
+    expect(sencondNote.isSustain).toBe(false);
+  });
+
+  it("Considers sustain on first Note", () => {
+    const bar = getEmptyMockBar();
+    const track = [createNoteMock(NoteModule.NOTE_DURATIONS["HALF"], 3 / 4)];
+
+    fillBarTrack(bar, track, 0);
+
+    expect(bar.tracks[0]).toHaveLength(1);
+
+    const actualFirstNote = bar.tracks[0]![0]!;
+    expect(actualFirstNote.duration).toBe(NoteModule.NOTE_DURATIONS["QUARTER"]);
+    expect(actualFirstNote.start).toBe(0);
+    expect(actualFirstNote.hasSustain).toBe(false);
+    expect(actualFirstNote.isSustain).toBe(true);
+  });
+
+  it("Considers sustain on last Note", () => {
+    const bar = getEmptyMockBar();
+    const track = [
+      createNoteMock(NoteModule.NOTE_DURATIONS["QUARTER"], 1),
+      createNoteMock(NoteModule.NOTE_DURATIONS["HALF"], 6 / 4),
+    ];
+
+    fillBarTrack(bar, track, 0);
+
+    expect(bar.tracks[0]).toHaveLength(2);
+
+    const actualLastNote = bar.tracks[0]![1]!;
+    expect(actualLastNote.duration).toBe(NoteModule.NOTE_DURATIONS["QUARTER"]);
+    expect(actualLastNote.start).toBe(2 / 4);
+    expect(actualLastNote.hasSustain).toBe(true);
+    expect(actualLastNote.isSustain).toBe(false);
+  });
+
+  it("Considers sustain on single Note in whole Bar", () => {
+    const bar = getEmptyMockBar();
+    const track = [createNoteMock(NoteModule.NOTE_DURATIONS["DOUBLE_WHOLE"], 3 / 4)];
+
+    fillBarTrack(bar, track, 0);
+
+    expect(bar.tracks[0]).toHaveLength(1);
+
+    const actualFirstNote = bar.tracks[0]![0]!;
+    expect(actualFirstNote.duration).toBe(NoteModule.NOTE_DURATIONS["HALF"] + NoteModule.NOTE_DURATIONS["QUARTER"]);
+    expect(actualFirstNote.start).toBe(0);
+    expect(actualFirstNote.hasSustain).toBe(true);
+    expect(actualFirstNote.isSustain).toBe(true);
+  });
 });
 
 describe("Find Note by time", () => {
@@ -235,7 +272,7 @@ describe("Find Note by time", () => {
 
     expect(result).toBeTruthy();
     expect(result!.start).toBe(2 / 4);
-    expect(result!.duration).toBe(NOTE_DURATIONS["QUARTER"]);
+    expect(result!.duration).toBe(NoteModule.NOTE_DURATIONS["QUARTER"]);
   });
 
   it("Returns Note when looking backward with end of Note", () => {
@@ -245,7 +282,7 @@ describe("Find Note by time", () => {
 
     expect(result).toBeTruthy();
     expect(result!.start).toBe(0);
-    expect(result!.duration).toBe(NOTE_DURATIONS["QUARTER"]);
+    expect(result!.duration).toBe(NoteModule.NOTE_DURATIONS["QUARTER"]);
   });
 
   it("Returns Note when looking forward within Note", () => {
@@ -255,7 +292,7 @@ describe("Find Note by time", () => {
 
     expect(result).toBeTruthy();
     expect(result!.start).toBe(2 / 4);
-    expect(result!.duration).toBe(NOTE_DURATIONS["QUARTER"]);
+    expect(result!.duration).toBe(NoteModule.NOTE_DURATIONS["QUARTER"]);
   });
 
   it("Returns Note when looking backward within Note", () => {
@@ -265,6 +302,6 @@ describe("Find Note by time", () => {
 
     expect(result).toBeTruthy();
     expect(result!.start).toBe(0);
-    expect(result!.duration).toBe(NOTE_DURATIONS["QUARTER"]);
+    expect(result!.duration).toBe(NoteModule.NOTE_DURATIONS["QUARTER"]);
   });
 });

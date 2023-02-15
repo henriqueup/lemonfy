@@ -416,7 +416,7 @@ describe("Fill Bar tracks in Sheet", () => {
     expect(sheet.bars[2]!.tracks[0]).toHaveLength(0);
   });
 
-  it("Fills the track in each Bar with no sustain", () => {
+  it("Fills the track in each Bar", () => {
     const sheet = getMockSheetWithGap();
 
     fillBarTracksInSheet(sheet, 1);
@@ -425,11 +425,9 @@ describe("Fill Bar tracks in Sheet", () => {
 
     const targetTrack = sheet.tracks[1]!;
     const firstBar = sheet.bars[0]!;
-    const firstBarNotes = [targetTrack[0]!, targetTrack[1]!];
-    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(1, firstBar, firstBarNotes, 1);
+    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(1, firstBar, targetTrack, 1);
 
     const secondBar = sheet.bars[1]!;
-    const secondBarNotes = [targetTrack[2]!, targetTrack[3]!];
-    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(2, secondBar, secondBarNotes, 1);
+    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(2, secondBar, targetTrack, 1);
   });
 });

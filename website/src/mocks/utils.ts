@@ -5,17 +5,16 @@ export type WithMockedFunctions<T extends object> = {
 
 export const mockModuleFunctions = <T extends object>(module: T) => {
   const entries = Object.entries(module);
-  const functionEntries = entries.filter(entry => typeof entry[1] === "function") as [
+  const functionEntries = entries.filter(entry => typeof entry[1] === "function" && !jest.isMockFunction(entry[1])) as [
     string,
     (...args: any[]) => any,
   ][];
-  const otherEntries = entries.filter(entry => typeof entry[1] !== "function");
   const functionMockEntries = functionEntries.map(
     f => [f[0], jest.fn()] as [string, jest.MockedFunction<(typeof f)[1]>],
   );
 
   return {
-    ...Object.fromEntries(otherEntries),
+    ...Object.fromEntries(entries),
     ...Object.fromEntries(functionMockEntries),
   } as WithMockedFunctions<T>;
 };
@@ -28,4 +27,14 @@ export const restoreMocks = <T extends object>(module: T) => {
 
     value.mockRestore();
   });
+};
+
+export const getModuleWithMocks = <T extends object>(module: T) => {
+  const moduleWithMocks = mockModuleFunctions(module);
+
+  beforeEach(() => {
+    restoreMocks(moduleWithMocks);
+  });
+
+  return moduleWithMocks;
 };

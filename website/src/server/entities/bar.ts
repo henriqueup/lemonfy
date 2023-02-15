@@ -49,41 +49,66 @@ export const setBarNotesTimesInSeconds = (bar: Bar) => {
   }
 };
 
-export const fillBarTrack = (bar: Bar, track: Note[], trackIndex: number) => {
-  if (track.length === 0) return;
+const getActualFirstNote = (bar: Bar, firstNote: Note) => {
+  const firstNoteEnd = firstNote.start + firstNote.duration;
+  const targetBarEnd = bar.start + bar.capacity;
+  const shouldHaveSustain = TimeEvaluation.IsGreaterThan(firstNoteEnd, targetBarEnd);
+  const shouldBeSustain = TimeEvaluation.IsSmallerThan(firstNote.start, bar.start);
 
-  const firstNote = track[0];
+  let start = firstNote.start;
+  let duration = firstNote.duration;
+
+  if (shouldBeSustain) {
+    start = bar.start;
+    duration = firstNoteEnd - bar.start;
+  }
+
+  if (shouldHaveSustain) {
+    duration = bar.capacity;
+  }
+
+  return createNote(duration, start, firstNote.pitch, shouldHaveSustain, shouldBeSustain);
+};
+
+const getActualLastNote = (bar: Bar, lastNote: Note) => {
+  const lastNoteEnd = lastNote.start + lastNote.duration;
+  const targetBarEnd = bar.start + bar.capacity;
+  const shouldHaveSustain = TimeEvaluation.IsGreaterThan(lastNoteEnd, targetBarEnd);
+  const duration = shouldHaveSustain ? targetBarEnd - lastNote.start : lastNote.duration;
+
+  return createNote(duration, lastNote.start, lastNote.pitch, shouldHaveSustain, false);
+};
+
+export const fillBarTrack = (bar: Bar, track: Note[], trackIndex: number) => {
+  const barEnd = bar.start + bar.capacity;
+  const notesInsideBar = track.filter(
+    note =>
+      TimeEvaluation.IsGreaterThan(note.start + note.duration, bar.start) &&
+      TimeEvaluation.IsSmallerThan(note.start, barEnd),
+  );
+  if (notesInsideBar.length === 0) return;
+
+  const firstNote = notesInsideBar[0];
   if (firstNote === undefined) throw Error("Invalid first Note of track.");
 
-  const lastNote = track[track.length - 1];
+  const lastNote = notesInsideBar[notesInsideBar.length - 1];
   if (lastNote === undefined) throw Error("Invalid last Note of track.");
 
-  let barTrack = track.filter((_, i) => i !== 0 && i !== track.length - 1);
+  const trackWithoutExtremityNotes = notesInsideBar.filter((_, i) => i !== 0 && i !== notesInsideBar.length - 1);
+  const barTrack = trackWithoutExtremityNotes;
 
-  if (firstNote !== null) {
-    const firstNoteEnd = firstNote.start + firstNote.duration;
-    const targetBarEnd = bar.start + bar.capacity;
-    const duration = Math.min(firstNoteEnd - bar.start, bar.capacity);
-    const shouldHaveSustain = TimeEvaluation.IsGreaterThan(firstNoteEnd, targetBarEnd);
-    const shouldBeSustain = TimeEvaluation.IsSmallerThan(firstNote.start, bar.start);
+  const actualFirstNote = getActualFirstNote(bar, firstNote);
+  barTrack.splice(0, 0, actualFirstNote);
 
-    const actualFirstNote = createNote(duration, bar.start, firstNote.pitch, shouldHaveSustain, shouldBeSustain);
-
-    barTrack = [actualFirstNote, ...barTrack];
+  if (lastNote !== firstNote) {
+    const actualLastNote = getActualLastNote(bar, lastNote);
+    barTrack.push(actualLastNote);
   }
 
-  if (lastNote !== null && lastNote !== firstNote) {
-    const lastNoteEnd = lastNote.start + lastNote.duration;
-    const targetBarEnd = bar.start + bar.capacity;
-    const duration = targetBarEnd - lastNote.start;
-    const shouldHaveSustain = TimeEvaluation.IsGreaterThan(lastNoteEnd, targetBarEnd);
-
-    const actualLastNote = createNote(duration, lastNote.start, lastNote.pitch, shouldHaveSustain, false);
-
-    barTrack = [...barTrack, actualLastNote];
-  }
-
-  bar.tracks[trackIndex] = barTrack.map(note => ({ ...note, start: note.start - bar.start }));
+  barTrack.forEach(note => {
+    note.start -= bar.start;
+  });
+  bar.tracks[trackIndex] = barTrack;
 };
 
 const getTrackFromIndex = (bar: Bar, trackIndex: number) => {

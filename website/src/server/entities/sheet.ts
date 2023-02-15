@@ -135,14 +135,7 @@ const fillBarTrackInSheet = (sheet: Sheet, barIndex: number, trackIndex: number)
 
   if (sheetTrack.length === 0) return;
 
-  const targetBarEnd = targetBar.start + targetBar.capacity;
-  const notesInside = sheetTrack.filter(
-    note =>
-      TimeEvaluation.IsGreaterThan(note.start + note.duration, targetBar.start) &&
-      TimeEvaluation.IsSmallerThan(note.start, targetBarEnd),
-  );
-
-  fillBarTrack(targetBar, notesInside, trackIndex);
+  fillBarTrack(targetBar, sheetTrack, trackIndex);
 };
 
 export const fillBarTracksInSheet = (sheet: Sheet, trackIndex: number) => {

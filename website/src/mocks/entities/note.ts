@@ -1,8 +1,16 @@
 import type { Note } from "@entities/note";
+import type { Pitch } from "@entities/pitch";
 
-export const createNoteMock = (duration: number, start: number): Note => ({
+export const createNoteMock = (
+  duration: number,
+  start: number,
+  pitch?: Pitch,
+  hasSustain?: boolean,
+  isSustain?: boolean,
+): Note => ({
   duration,
   start,
-  hasSustain: false,
-  isSustain: false,
+  pitch,
+  hasSustain: hasSustain || false,
+  isSustain: isSustain || false,
 });

@@ -129,11 +129,7 @@ describe("Decrease Bar index", () => {
 });
 
 describe("Increase cursor position", () => {
-  const moduleWithMocks = BarModule as MockUtilsModule.WithMockedFunctions<typeof BarModule>;
-
-  beforeEach(() => {
-    MockUtilsModule.restoreMocks(moduleWithMocks);
-  });
+  const barModuleWithMocks = MockUtilsModule.getModuleWithMocks(BarModule);
 
   it("Does nothing with undefined Sheet", () => {
     increaseCursorPosition();
@@ -199,7 +195,7 @@ describe("Increase cursor position", () => {
   });
 
   it("Increases position with next Note smaller than selected duration", () => {
-    moduleWithMocks.findBarNoteByTime.mockImplementation(() => createNoteMock(NOTE_DURATIONS["QUARTER"], 0));
+    barModuleWithMocks.findBarNoteByTime.mockImplementation(() => createNoteMock(NOTE_DURATIONS["QUARTER"], 0));
     useEditorStore.setState(state => ({
       currentSheet: getMockSheetWithGap(),
       cursor: { ...state.cursor, trackIndex: 1 },
@@ -216,7 +212,7 @@ describe("Increase cursor position", () => {
   });
 
   it("Increases position with next Note longer than selected duration", () => {
-    moduleWithMocks.findBarNoteByTime.mockImplementation(() => createNoteMock(NOTE_DURATIONS["QUARTER"], 0));
+    barModuleWithMocks.findBarNoteByTime.mockImplementation(() => createNoteMock(NOTE_DURATIONS["QUARTER"], 0));
     useEditorStore.setState(state => ({
       currentSheet: getMockSheetWithGap(),
       cursor: { ...state.cursor, trackIndex: 1 },
