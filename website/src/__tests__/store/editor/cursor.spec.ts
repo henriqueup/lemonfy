@@ -6,6 +6,8 @@ import {
   increaseCursorBarIndex,
   increaseCursorPosition,
   increaseCursorTrackIndex,
+  moveCursorToEndOfBar,
+  moveCursorToStartOfBar,
 } from "@store/editor/cursorActions";
 import { getEmptyMockSheet, getMockSheetWithBars, getMockSheetWithGap } from "src/mocks/entities/sheet";
 import * as BarModule from "@entities/bar";
@@ -328,6 +330,72 @@ describe("Decrease cursor position", () => {
       ...INITIAL_STATE.cursor,
       trackIndex: 1,
       position: 2 / 4,
+    });
+  });
+});
+
+describe("Move cursor to end of Bar", () => {
+  it("Does nothing with undefined Sheet", () => {
+    moveCursorToEndOfBar();
+
+    expect(useEditorStore.getState().cursor).toBe(INITIAL_STATE.cursor);
+  });
+
+  it("Does nothing with undefined Bar", () => {
+    useEditorStore.setState(() => ({
+      currentSheet: getEmptyMockSheet(),
+    }));
+    moveCursorToEndOfBar();
+
+    expect(useEditorStore.getState().cursor).toBe(INITIAL_STATE.cursor);
+  });
+
+  it("Moves cursor from 0 to end of Bar", () => {
+    useEditorStore.setState(state => ({
+      currentSheet: getMockSheetWithBars(),
+      cursor: { ...state.cursor, barIndex: 1 },
+    }));
+    moveCursorToEndOfBar();
+
+    expect(useEditorStore.getState().cursor).toStrictEqual<Cursor>({
+      ...INITIAL_STATE.cursor,
+      barIndex: 1,
+      position: 1,
+    });
+  });
+
+  it("Moves cursor from middle to end of Bar", () => {
+    useEditorStore.setState(state => ({
+      currentSheet: getMockSheetWithBars(),
+      cursor: { ...state.cursor, barIndex: 1, position: 1 / 4 },
+    }));
+    moveCursorToEndOfBar();
+
+    expect(useEditorStore.getState().cursor).toStrictEqual<Cursor>({
+      ...INITIAL_STATE.cursor,
+      barIndex: 1,
+      position: 1,
+    });
+  });
+});
+
+describe("Move cursor to start of Bar", () => {
+  it("Does nothing with undefined Sheet", () => {
+    moveCursorToStartOfBar();
+
+    expect(useEditorStore.getState().cursor).toBe(INITIAL_STATE.cursor);
+  });
+
+  it("Moves cursor to start of Bar", () => {
+    useEditorStore.setState(state => ({
+      currentSheet: getMockSheetWithBars(),
+      cursor: { ...state.cursor, barIndex: 1, position: 1 / 4 },
+    }));
+    moveCursorToStartOfBar();
+
+    expect(useEditorStore.getState().cursor).toStrictEqual<Cursor>({
+      ...INITIAL_STATE.cursor,
+      barIndex: 1,
     });
   });
 });
