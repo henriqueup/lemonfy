@@ -34,7 +34,6 @@ describe("Create Sheet", () => {
     const newSheet = createSheet(3);
 
     expect(newSheet.bars).toHaveLength(0);
-    expect(newSheet.noteToAdd).toBeNull();
     expect(newSheet.trackCount).toBe(3);
 
     expect(newSheet.tracks).toHaveLength(3);

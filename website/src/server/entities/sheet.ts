@@ -8,7 +8,6 @@ export type Sheet = {
   bars: Bar[];
   tracks: Note[][];
   trackCount: number;
-  noteToAdd: Note | null;
 };
 
 export const createSheet = (trackCount: number): Sheet => {
@@ -16,7 +15,6 @@ export const createSheet = (trackCount: number): Sheet => {
     bars: [],
     tracks: [],
     trackCount,
-    noteToAdd: null,
   };
 
   for (let i = 0; i < trackCount; i++) {

@@ -12,6 +12,21 @@ import type * as PitchModule from "@entities/pitch";
 import type * as NoteModule from "@entities/note";
 import { useEditorStore } from "@store/editor";
 
+jest.mock<typeof PitchModule>("@entities/pitch", () => ({
+  ...jest.requireActual("@entities/pitch"),
+  createPitch: jest.fn(() => ({ name: "C", octave: 2, key: "C2" })),
+}));
+jest.mock<typeof NoteModule>("@entities/note", () => ({
+  ...jest.requireActual("@entities/note"),
+  createNote: jest.fn((duration: number, start: number, pitch?: PitchModule.Pitch | undefined) => ({
+    duration,
+    start,
+    hasSustain: true,
+    isSustain: false,
+    pitch,
+  })),
+}));
+
 describe("Selected Octave", () => {
   it("Sets the selected Octave", () => {
     setSelectedOctave(2);
@@ -83,18 +98,3 @@ describe("Note to add", () => {
     expect(pitch?.octave).toBe(2);
   });
 });
-
-jest.mock<typeof PitchModule>("@entities/pitch", () => ({
-  ...jest.requireActual("@entities/pitch"),
-  createPitch: jest.fn(() => ({ name: "C", octave: 2, key: "C2" })),
-}));
-jest.mock<typeof NoteModule>("@entities/note", () => ({
-  ...jest.requireActual("@entities/note"),
-  createNote: jest.fn((duration: number, start: number, pitch?: PitchModule.Pitch | undefined) => ({
-    duration,
-    start,
-    hasSustain: true,
-    isSustain: false,
-    pitch,
-  })),
-}));
