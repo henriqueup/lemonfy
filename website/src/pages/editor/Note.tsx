@@ -1,5 +1,5 @@
 import { type FunctionComponent } from "react";
-import { type Note as NoteEntity } from "../../server/entities/note";
+import { type Note as NoteEntity } from "@entities/note";
 
 interface Props {
   note: NoteEntity;

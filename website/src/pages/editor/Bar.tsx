@@ -1,7 +1,7 @@
 import { type FunctionComponent } from "react";
-import { type Bar as BarEntity } from "../../server/entities/bar";
-import { type Note } from "../../server/entities/note";
-import { addNoteFromDrop } from "../../store/editor";
+import { type Bar as BarEntity } from "@entities/bar";
+import { type Note } from "@entities/note";
+import { addNoteFromDrop } from "@store/editor";
 import Track from "./Track";
 
 interface Props {

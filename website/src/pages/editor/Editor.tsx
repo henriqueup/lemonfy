@@ -1,12 +1,13 @@
 import { type NextPage } from "next";
 import { useState } from "react";
 import { Plus } from "../../icons";
-import { type Sheet } from "../../server/entities/sheet";
-import { addSheet, loadSheet, useEditorStore } from "../../store/editor";
+import { type Sheet } from "@entities/sheet";
+import { useEditorStore } from "@store/editor";
 import { classNames } from "../../styles/utils";
 import EditorMenu from "./EditorMenu";
 import SheetEditor from "./SheetEditor";
 import SheetMenu from "./SheetMenu";
+import { addSheet, loadSheet } from "@store/editor/sheetActions";
 
 const Editor: NextPage = () => {
   const currentSheet = useEditorStore(state => state.currentSheet);

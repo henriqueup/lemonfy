@@ -1,7 +1,7 @@
 import { type FunctionComponent } from "react";
 import { Button, CollapsableSideMenu } from "../../components";
-import { type Sheet } from "../../server/entities/sheet";
-import { useEditorStore } from "../../store/editor";
+import { type Sheet } from "@entities/sheet";
+import { useEditorStore } from "@store/editor";
 
 type Props = {
   handleLoad: (sheetFromStorage: Sheet) => void;

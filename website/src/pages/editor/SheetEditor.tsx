@@ -2,8 +2,9 @@ import { type FunctionComponent, useState } from "react";
 import { Plus } from "../../icons";
 import BarMenu from "./BarMenu";
 import NoteMenu from "./NoteMenu";
-import { addBar, useEditorStore } from "../../store/editor";
+import { useEditorStore } from "@store/editor";
 import Bar from "./Bar";
+import { addBar } from "@store/editor/sheetActions";
 
 const SheetEditor: FunctionComponent = () => {
   const bars = useEditorStore(state => state.currentSheet?.bars);
