@@ -35,6 +35,7 @@ export const decreaseCursorBarIndex = () =>
     return { cursor: { ...state.cursor, barIndex: state.cursor.barIndex - 1, position: 0 } };
   });
 
+// TODO: fix tests
 export const increaseCursorPosition = () =>
   useEditorStore.setState(state => {
     if (state.currentSheet === undefined) return {};
@@ -43,11 +44,13 @@ export const increaseCursorPosition = () =>
     if (barWithCursor === undefined) return {};
     if (TimeEvaluation.IsEqualTo(state.cursor.position, barWithCursor.capacity)) return {};
 
+    const nextNote = findBarNoteByTime(barWithCursor, state.cursor.trackIndex, state.cursor.position, true, false);
     let amountToIncrease = NOTE_DURATIONS[state.selectedNoteDuration];
-    const nextNote = findBarNoteByTime(barWithCursor, state.cursor.trackIndex, state.cursor.position);
 
     if (nextNote) {
       amountToIncrease = nextNote.start + nextNote.duration - state.cursor.position;
+
+      if (!TimeEvaluation.IsEqualTo(state.cursor.position, nextNote.start)) amountToIncrease -= nextNote.duration;
     }
     let resultPosition = state.cursor.position + amountToIncrease;
 
@@ -56,6 +59,7 @@ export const increaseCursorPosition = () =>
     return { cursor: { ...state.cursor, position: resultPosition } };
   });
 
+// TODO: fix tests
 export const decreaseCursorPosition = () =>
   useEditorStore.setState(state => {
     if (state.currentSheet === undefined) return {};
@@ -64,11 +68,14 @@ export const decreaseCursorPosition = () =>
     const barWithCursor = state.currentSheet.bars[state.cursor.barIndex];
     if (barWithCursor === undefined) return {};
 
+    const previousNote = findBarNoteByTime(barWithCursor, state.cursor.trackIndex, state.cursor.position, false, false);
     let amountToDecrease = NOTE_DURATIONS[state.selectedNoteDuration];
-    const previousNote = findBarNoteByTime(barWithCursor, state.cursor.trackIndex, state.cursor.position, false);
 
-    if (previousNote && previousNote.start !== undefined) {
+    if (previousNote) {
       amountToDecrease = state.cursor.position - previousNote.start;
+
+      const previousNoteEnd = previousNote.start + previousNote.duration;
+      if (!TimeEvaluation.IsEqualTo(state.cursor.position, previousNoteEnd)) amountToDecrease -= previousNote.duration;
     }
     let resultPosition = state.cursor.position - amountToDecrease;
 

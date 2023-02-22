@@ -120,15 +120,29 @@ const getTrackFromIndex = (bar: Bar, trackIndex: number) => {
   return targetTrack;
 };
 
-export const findBarNoteByTime = (bar: Bar, trackIndex: number, time: number, lookForward = true): Note | null => {
-  const track = getTrackFromIndex(bar, trackIndex);
+export const findBarNoteByTime = (
+  bar: Bar,
+  trackIndex: number,
+  time: number,
+  lookForward = true,
+  shouldContainTime = true,
+): Note | null => {
+  const track = [...getTrackFromIndex(bar, trackIndex)];
+
+  if (!lookForward) track.reverse();
 
   const targetNote = track.find(note => {
     const noteEnd = note.start + note.duration;
     if (lookForward)
-      return TimeEvaluation.IsSmallerOrEqualTo(note.start, time) && TimeEvaluation.IsSmallerThan(time, noteEnd);
+      return (
+        (TimeEvaluation.IsSmallerOrEqualTo(note.start, time) && TimeEvaluation.IsSmallerThan(time, noteEnd)) ||
+        (!shouldContainTime && TimeEvaluation.IsSmallerThan(time, note.start))
+      );
 
-    return TimeEvaluation.IsSmallerThan(note.start, time) && TimeEvaluation.IsSmallerOrEqualTo(time, noteEnd);
+    return (
+      (TimeEvaluation.IsSmallerThan(note.start, time) && TimeEvaluation.IsSmallerOrEqualTo(time, noteEnd)) ||
+      (!shouldContainTime && TimeEvaluation.IsSmallerThan(noteEnd, time))
+    );
   });
 
   return targetNote ?? null;

@@ -304,4 +304,24 @@ describe("Find Note by time", () => {
     expect(result!.start).toBe(0);
     expect(result!.duration).toBe(NoteModule.NOTE_DURATIONS["QUARTER"]);
   });
+
+  it("Returns Note not containing time when looking forward", () => {
+    const bar = getFilledMockBar();
+    bar.tracks[1]!.splice(1, 1);
+    const result = findBarNoteByTime(bar, 1, 3 / 8, true, false);
+
+    expect(result).toBeTruthy();
+    expect(result!.start).toBe(2 / 4);
+    expect(result!.duration).toBe(NoteModule.NOTE_DURATIONS["QUARTER"]);
+  });
+
+  it("Returns Note not containing time when looking backward", () => {
+    const bar = getFilledMockBar();
+    bar.tracks[1]!.splice(2, 1);
+    const result = findBarNoteByTime(bar, 1, 5 / 8, false, false);
+
+    expect(result).toBeTruthy();
+    expect(result!.start).toBe(1 / 4);
+    expect(result!.duration).toBe(NoteModule.NOTE_DURATIONS["QUARTER"]);
+  });
 });
