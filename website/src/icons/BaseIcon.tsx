@@ -24,7 +24,17 @@ const BaseIcon: FunctionComponent<Props> = ({
   children,
 }) => {
   return (
-    <svg x={x} y={y} width={width} height={height} viewBox={viewbox} style={style} stroke={stroke} fill={fill}>
+    <svg
+      role="img"
+      x={x}
+      y={y}
+      width={width}
+      height={height}
+      viewBox={viewbox}
+      style={style}
+      stroke={stroke}
+      fill={fill}
+    >
       {children}
     </svg>
   );

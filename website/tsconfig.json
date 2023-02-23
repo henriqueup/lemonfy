@@ -3,7 +3,8 @@
     "baseUrl": ".",
     "paths": {
       "@entities/*": ["src/server/entities/*"],
-      "@store/*": ["src/store/*"]
+      "@store/*": ["src/store/*"],
+      "@components/*": ["src/components/*"]
     },
     "target": "es2017",
     "lib": ["dom", "dom.iterable", "esnext"],
@@ -21,6 +22,6 @@
     "incremental": true,
     "noUncheckedIndexedAccess": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.cjs", "**/*.mjs"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.cjs", "**/*.mjs", "./jest-setup.ts"],
   "exclude": ["node_modules"]
 }

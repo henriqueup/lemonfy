@@ -18,12 +18,13 @@ const customJestConfig = {
   // you will have to add the moduleNameMapper in order for jest to resolve your absolute paths.
   // The paths have to be matching with the paths option within the compilerOptions in the tsconfig.json
   // For example:
-
   moduleNameMapper: {
     "@entities/(.*)$": "<rootDir>/src/server/entities/$1",
     "@store/(.*)$": "<rootDir>/src/store/$1",
+    "@components/(.*)$": "<rootDir>/src/components/$1",
   },
-  testEnvironment: "jest-environment-jsdom",
+  testEnvironment: "<rootDir>/src/mocks/customEnvironment.ts",
+  setupFilesAfterEnv: ["<rootDir>/setup-jest.ts"],
   transform: {
     "^.+\\.(t|j)sx?$": ["@swc/jest"],
   },
