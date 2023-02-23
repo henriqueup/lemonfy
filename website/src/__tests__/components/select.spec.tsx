@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { render, fireEvent, type RenderResult, cleanup, act } from "@testing-library/react";
+import { render, type RenderResult, cleanup, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Select, type Option } from "@components/select";
 import type { UserEvent } from "@testing-library/user-event/dist/types/setup/setup";
@@ -14,6 +14,7 @@ const mockOptions: Option[] = [
     value: "Fire",
   },
 ];
+const FOCUSED_OPTION_BACKGROUND = "bg-neutral-800";
 
 describe("Select", () => {
   let wrapper: RenderResult;
@@ -26,19 +27,18 @@ describe("Select", () => {
 
     mockOptions.forEach((mockOption, i) => {
       expect(options[i]!.textContent).toBe(mockOption.value);
-      console.log(options[i]!.style);
-      expect(options[i]!).toHaveStyle({ backgroundColor: "black" });
+      expect(options[i]!.className).not.toMatch(FOCUSED_OPTION_BACKGROUND);
     });
   };
 
   const selectsNthOption = async (optionIndex: number) => {
     const input = wrapper.getByRole("textbox") as HTMLInputElement;
-    fireEvent.click(input);
+    await act(() => user.click(input));
 
     let options = wrapper.getAllByRole("listitem");
     const firstOption = options.at(optionIndex)!;
 
-    await act(async () => user.click(firstOption));
+    await act(() => user.click(firstOption));
 
     expect(input.value).toBe(mockOptions[optionIndex]!.value);
     expect(handleChangeMock).toHaveBeenCalledWith(mockOptions[optionIndex]!.key);
@@ -62,23 +62,22 @@ describe("Select", () => {
     expect(input.value).toBe("");
   });
 
-  it("should open options on click", () => {
+  it("should open options on click", async () => {
     const input = wrapper.getByRole("textbox") as HTMLInputElement;
-    fireEvent.click(input);
+    await act(() => user.click(input));
 
     containsInitialOptions();
   });
 
-  it("should open options on chevron down icon click", () => {
+  it("should open options on chevron down icon click", async () => {
     const icon = wrapper.getByRole("img");
-    fireEvent.click(icon);
+    await act(() => user.click(icon));
 
     containsInitialOptions();
   });
 
-  it("should open options on ArrowDown key", () => {
-    const input = wrapper.getByRole("textbox") as HTMLInputElement;
-    fireEvent.keyDown(input, { key: "ArrowDown" });
+  it("should open options on ArrowDown key", async () => {
+    await act(() => user.keyboard("{Tab}{ArrowDown}"));
 
     containsInitialOptions();
   });
@@ -86,7 +85,7 @@ describe("Select", () => {
   it("should shrink label on type", async () => {
     const input = wrapper.getByRole("textbox") as HTMLInputElement;
 
-    await user.type(input, "asf");
+    await act(() => user.type(input, "asf"));
     const legend = wrapper.getByRole("presentation");
 
     expect(legend.textContent).toBe("Test Select");
@@ -106,11 +105,7 @@ describe("Select", () => {
   });
 
   it("should filter options on type", async () => {
-    const input = wrapper.getByRole("textbox") as HTMLInputElement;
-
-    await user.type(input, "f");
-    fireEvent.click(input);
-
+    await act(() => user.keyboard("{Tab}{f}{ArrowDown}"));
     const options = wrapper.getAllByRole("listitem");
 
     expect(options.length).toBe(1);
@@ -132,7 +127,7 @@ describe("Select", () => {
     await selectsNthOption(1);
 
     const icons = wrapper.getAllByRole("img");
-    fireEvent.click(icons[1]!);
+    await act(() => user.click(icons[1]!));
 
     const input = wrapper.getByRole("textbox") as HTMLInputElement;
 
@@ -143,14 +138,47 @@ describe("Select", () => {
     const options = wrapper.queryAllByRole("listitem");
     expect(options.length).toBe(0);
 
-    fireEvent.click(input);
+    await act(() => user.click(input));
     containsInitialOptions();
   });
 
-  it("should navigate options with arrows", () => {
+  it("should navigate options with arrows", async () => {
     const input = wrapper.getByRole("textbox") as HTMLInputElement;
-    fireEvent.click(input);
 
-    containsInitialOptions();
+    await act(() => user.click(input));
+    await act(() => user.keyboard("{ArrowDown}"));
+
+    const options = wrapper.getAllByRole("listitem");
+    expect(options.length).toBe(mockOptions.length);
+
+    expect(options[0]!.className).toMatch(FOCUSED_OPTION_BACKGROUND);
+
+    await act(() => user.keyboard("{ArrowDown}"));
+    expect(options[0]!.className).not.toMatch(FOCUSED_OPTION_BACKGROUND);
+    expect(options[1]!.className).toMatch(FOCUSED_OPTION_BACKGROUND);
+
+    await act(() => user.keyboard("{ArrowUp}"));
+    expect(options[0]!.className).toMatch(FOCUSED_OPTION_BACKGROUND);
+    expect(options[1]!.className).not.toMatch(FOCUSED_OPTION_BACKGROUND);
+  });
+
+  it("should navigate options with tab", async () => {
+    const input = wrapper.getByRole("textbox") as HTMLInputElement;
+
+    await act(() => user.click(input));
+    await act(() => user.keyboard("{ArrowDown}"));
+
+    const options = wrapper.getAllByRole("listitem");
+    expect(options.length).toBe(mockOptions.length);
+
+    expect(options[0]!.className).toMatch(FOCUSED_OPTION_BACKGROUND);
+
+    await act(() => user.keyboard("{Tab}"));
+    expect(options[0]!.className).not.toMatch(FOCUSED_OPTION_BACKGROUND);
+    expect(options[1]!.className).toMatch(FOCUSED_OPTION_BACKGROUND);
+
+    await act(() => user.keyboard("'{Shift>}{Tab}{/Shift}'"));
+    expect(options[0]!.className).toMatch(FOCUSED_OPTION_BACKGROUND);
+    expect(options[1]!.className).not.toMatch(FOCUSED_OPTION_BACKGROUND);
   });
 });

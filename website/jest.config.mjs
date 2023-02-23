@@ -23,7 +23,7 @@ const customJestConfig = {
     "@store/(.*)$": "<rootDir>/src/store/$1",
     "@components/(.*)$": "<rootDir>/src/components/$1",
   },
-  testEnvironment: "<rootDir>/src/mocks/customEnvironment.ts",
+  testEnvironment: "<rootDir>/src/mocks/utils/customEnvironment.ts",
   setupFilesAfterEnv: ["<rootDir>/setup-jest.ts"],
   transform: {
     "^.+\\.(t|j)sx?$": ["@swc/jest"],

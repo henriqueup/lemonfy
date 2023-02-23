@@ -11,12 +11,12 @@ import {
 } from "@store/editor/cursorActions";
 import { getEmptyMockSheet, getMockSheetWithBars, getMockSheetWithGap } from "src/mocks/entities/sheet";
 import * as BarModule from "@entities/bar";
-import * as MockUtilsModule from "src/mocks/utils";
+import * as MockUtilsModule from "src/mocks/utils/moduleUtils";
 import { createNoteMock } from "src/mocks/entities/note";
 import { NOTE_DURATIONS } from "@entities/note";
 
 jest.mock<typeof BarModule>("@entities/bar", () => {
-  const mockUtils = jest.requireActual<typeof MockUtilsModule>("src/mocks/utils");
+  const mockUtils = jest.requireActual<typeof MockUtilsModule>("src/mocks/utils/moduleUtils");
   return mockUtils.mockModuleFunctions(jest.requireActual("@entities/bar"));
 });
 

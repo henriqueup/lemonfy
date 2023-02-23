@@ -61,7 +61,7 @@ const FloatingDropdown = ({ open, options, onChangeOption, onClose }: Props, ref
             tabIndex={0}
             className={classNames(
               "w-full cursor-pointer bg-black text-orange-100 hover:bg-gray-800 focus-visible:outline-none",
-              i === index && "bg-neutral-900",
+              i === index && "bg-neutral-800",
             )}
           >
             {option.value}

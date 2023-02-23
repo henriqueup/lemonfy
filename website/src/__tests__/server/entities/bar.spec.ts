@@ -2,12 +2,12 @@
 import { createBar, fillBarTrack, findBarNoteByTime, setBarNotesTimesInSeconds, sumBarsCapacity } from "@entities/bar";
 import * as NoteModule from "@entities/note";
 import { createBarMock, getEmptyMockBar, getFilledMockBar } from "src/mocks/entities/bar";
-import * as MockUtilsModule from "src/mocks/utils";
+import * as MockUtilsModule from "src/mocks/utils/moduleUtils";
 import { SECONDS_PER_MINUTE } from "@entities/timeEvaluation";
 import { createNoteMock } from "src/mocks/entities/note";
 
 jest.mock<typeof NoteModule>("@entities/note", () => {
-  const mockUtils = jest.requireActual<typeof MockUtilsModule>("src/mocks/utils");
+  const mockUtils = jest.requireActual<typeof MockUtilsModule>("src/mocks/utils/moduleUtils");
   return mockUtils.mockModuleFunctions(jest.requireActual("@entities/note"));
 });
 

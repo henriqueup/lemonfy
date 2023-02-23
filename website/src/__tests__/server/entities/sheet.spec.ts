@@ -15,12 +15,12 @@ import {
   getMockSheetWithGap,
 } from "src/mocks/entities/sheet";
 import * as BarModule from "@entities/bar";
-import * as MockUtilsModule from "src/mocks/utils";
+import * as MockUtilsModule from "src/mocks/utils/moduleUtils";
 import { mockDefaultImplementations } from "src/mocks/entities/bar";
 import { createNoteMock } from "src/mocks/entities/note";
 
 jest.mock<typeof BarModule>("@entities/bar", () => {
-  const mockUtils = jest.requireActual<typeof MockUtilsModule>("src/mocks/utils");
+  const mockUtils = jest.requireActual<typeof MockUtilsModule>("src/mocks/utils/moduleUtils");
   return mockUtils.mockModuleFunctions(jest.requireActual("@entities/bar"));
 });
 

@@ -2,7 +2,7 @@
 import { INITIAL_STATE, useEditorStore } from "@store/editor";
 import { getEmptyMockSheet, getMockSheetWithBars } from "src/mocks/entities/sheet";
 import * as SheetModule from "@entities/sheet";
-import * as MockUtilsModule from "src/mocks/utils";
+import * as MockUtilsModule from "src/mocks/utils/moduleUtils";
 import * as PitchModule from "@entities/pitch";
 import * as NoteModule from "@entities/note";
 import { createNoteMock } from "src/mocks/entities/note";
@@ -18,15 +18,15 @@ import {
 import { createBarMock } from "src/mocks/entities/bar";
 
 jest.mock<typeof SheetModule>("@entities/sheet", () => {
-  const mockUtils = jest.requireActual<typeof MockUtilsModule>("src/mocks/utils");
+  const mockUtils = jest.requireActual<typeof MockUtilsModule>("src/mocks/utils/moduleUtils");
   return mockUtils.mockModuleFunctions(jest.requireActual("@entities/sheet"));
 });
 jest.mock<typeof NoteModule>("@entities/note", () => {
-  const mockUtils = jest.requireActual<typeof MockUtilsModule>("src/mocks/utils");
+  const mockUtils = jest.requireActual<typeof MockUtilsModule>("src/mocks/utils/moduleUtils");
   return mockUtils.mockModuleFunctions(jest.requireActual("@entities/note"));
 });
 jest.mock<typeof PitchModule>("@entities/pitch", () => {
-  const mockUtils = jest.requireActual<typeof MockUtilsModule>("src/mocks/utils");
+  const mockUtils = jest.requireActual<typeof MockUtilsModule>("src/mocks/utils/moduleUtils");
   return mockUtils.mockModuleFunctions(jest.requireActual("@entities/pitch"));
 });
 

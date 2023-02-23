@@ -1,4 +1,4 @@
-import { mockModuleFunctions } from "src/mocks/utils";
+import { mockModuleFunctions } from "src/mocks/utils/moduleUtils";
 
 describe("Mock entire modules", () => {
   it("Returns object with mocked methods", () => {
