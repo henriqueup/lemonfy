@@ -1,4 +1,4 @@
-import React, { type CSSProperties, type FunctionComponent, type ReactNode } from "react";
+import React, { type FunctionComponent, type ReactNode } from "react";
 
 interface Props {
   x?: number | string;
@@ -8,7 +8,7 @@ interface Props {
   viewbox: string;
   stroke?: string;
   fill?: string;
-  style?: CSSProperties;
+  className?: string;
   children: ReactNode;
 }
 
@@ -20,7 +20,7 @@ const BaseIcon: FunctionComponent<Props> = ({
   viewbox,
   stroke = "#000000",
   fill = "#000000",
-  style,
+  className,
   children,
 }) => {
   return (
@@ -31,7 +31,7 @@ const BaseIcon: FunctionComponent<Props> = ({
       width={width}
       height={height}
       viewBox={viewbox}
-      style={style}
+      className={className}
       stroke={stroke}
       fill={fill}
     >

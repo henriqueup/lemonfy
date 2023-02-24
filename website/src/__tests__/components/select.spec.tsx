@@ -14,6 +14,7 @@ const mockOptions: Option[] = [
     value: "Fire",
   },
 ];
+const OPTION_BACKGROUND = "bg-black";
 const FOCUSED_OPTION_BACKGROUND = "bg-neutral-800";
 
 describe("Select", () => {
@@ -27,7 +28,7 @@ describe("Select", () => {
 
     mockOptions.forEach((mockOption, i) => {
       expect(options[i]!.textContent).toBe(mockOption.value);
-      expect(options[i]!.className).not.toMatch(FOCUSED_OPTION_BACKGROUND);
+      expect(options[i]!.className).toMatch(OPTION_BACKGROUND);
     });
   };
 

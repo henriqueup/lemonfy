@@ -51,7 +51,7 @@ const SheetEditor: FunctionComponent = () => {
               }}
               onClick={() => setBarMenuIsOpen(true)}
             >
-              <Plus fill="lightgray" />
+              <Plus height={24} width={24} stroke="lightgray" />
             </div>
           </div>
         </fieldset>

@@ -9,14 +9,14 @@ const Vecna: NextPage = () => {
   }, []);
 
   return (
-    <div>
-      <h1>VECNA</h1>
-      <div className="m-4 w-1/4">
+    <div className="bg-black">
+      <h1 className="text-gray-400">VECNA</h1>
+      <div className="w-1/4 p-4">
         <Select
           label="Time"
           options={Array.from({ length: 12 }, (_, i) => ({ key: i + 1, value: (i + 1).toString() }))}
           handleChange={() => null}
-          className="border border-solid border-black"
+          className="border border-solid border-gray-400"
         />
       </div>
     </div>
