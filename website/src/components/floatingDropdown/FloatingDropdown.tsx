@@ -26,11 +26,16 @@ const FloatingDropdown = ({ open, options, onChangeOption, onClose }: Props, ref
     } else if (event.key === "ArrowUp") {
       setIndex(i => getLoopingIndex(i - 1, options.length));
     } else if (event.key === "Tab") {
+      if ((index === 0 && event.shiftKey) || (index === options.length - 1 && !event.shiftKey)) return;
+
       setIndex(i => getLoopingIndex(event.shiftKey ? i - 1 : i + 1, options.length));
-      event.preventDefault();
     } else if (event.key === "Enter") {
       onChangeOption(options[index]);
     }
+  };
+
+  const handleFocusList = () => {
+    if (index === -1) setIndex(0);
   };
 
   const handleClickOption = (event: MouseEvent, option: Option) => {
@@ -51,7 +56,7 @@ const FloatingDropdown = ({ open, options, onChangeOption, onClose }: Props, ref
         onKeyDown={handleKeyDown}
         ref={ref}
         tabIndex={-1}
-        onFocus={() => setIndex(0)}
+        onFocus={handleFocusList}
       >
         {options.map((option, i) => (
           <li

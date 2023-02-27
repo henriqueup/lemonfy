@@ -6,15 +6,17 @@ import {
   useCallback,
   useRef,
   useState,
+  useMemo,
   type KeyboardEvent,
   type SyntheticEvent,
-  useMemo,
+  type FocusEvent,
 } from "react";
 import { classNames } from "src/styles/utils";
 import ChevronDown from "src/icons/ChevronDown";
 import X from "src/icons/X";
 import { FloatingDropdown } from "src/components/floatingDropdown";
 import { handleKeyDown } from "src/utils/htmlEvents";
+import { ChevronUp } from "src/icons";
 
 export interface Option {
   key: string | number;
@@ -46,8 +48,8 @@ const Select: FunctionComponent<
     [options, filterValue],
   );
 
-  const floatingDropdownRef = useRef<HTMLUListElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const floatingDropdownRef = useRef<HTMLUListElement>(null);
   const shrinkLabel = value || filterValue || placeholder;
 
   const handleCloseOptions = useCallback(
@@ -76,12 +78,10 @@ const Select: FunctionComponent<
 
   const handleFocusInput = () => {
     setInputHasFocus(true);
-    // setFilterValue(value);
   };
 
   const handleBlurInput = () => {
     setInputHasFocus(false);
-    // setFilterValue(value);
   };
 
   const handleKeyDownFieldset = (event: KeyboardEvent<HTMLFieldSetElement>) => {
@@ -99,19 +99,44 @@ const Select: FunctionComponent<
     event.stopPropagation();
   };
 
-  const handleFieldsetClick = () => {
+  const handleClickFieldset = () => {
     setOptionsIsOpen(true);
     inputRef.current?.focus();
   };
 
+  const handleBlurFieldset = (event: FocusEvent) => {
+    if (!event.currentTarget.contains(event.relatedTarget)) {
+      handleCloseOptions();
+    }
+  };
+
+  const handleChevronUp = (event: SyntheticEvent) => {
+    event.stopPropagation();
+    handleCloseOptions();
+  };
+
   return (
     <fieldset
-      className={classNames("rounded pl-1 pr-1 text-gray-400", !shrinkLabel && "mt-4", otherProps.className)}
-      onClick={handleFieldsetClick}
+      className={classNames(
+        "rounded pl-1 pr-1 text-gray-400",
+        shrinkLabel && "-mt-[calc(theme(fontSize.sm[1].lineHeight)_/_2)]", // half of the legend height
+        otherProps.className,
+      )}
+      onClick={handleClickFieldset}
       onKeyDown={handleKeyDownFieldset}
+      onBlur={handleBlurFieldset}
     >
-      {shrinkLabel && <legend role="presentation">{label}</legend>}
-      <div className={classNames("flex cursor-pointer items-center pt-2 pb-2", shrinkLabel && "pt-0")}>
+      {shrinkLabel && (
+        <legend role="presentation" className="text-sm">
+          {label}
+        </legend>
+      )}
+      <div
+        className={classNames(
+          "flex cursor-pointer items-center pb-2",
+          shrinkLabel ? "pt-0" : "pt-[calc(theme(spacing.2)_+_1px)]", // 1 extra pixel because of the border
+        )}
+      >
         <input
           placeholder={placeholder || label}
           className="w-full cursor-pointer bg-inherit focus-visible:outline-none"
@@ -122,9 +147,20 @@ const Select: FunctionComponent<
           tabIndex={0}
           ref={inputRef}
         />
-        <div className={iconClassName} onKeyDown={handleKeyDown("Enter", handleFieldsetClick)} tabIndex={0}>
-          <ChevronDown width={16} height={16} stroke="lightgray" fill="none" strokeWidth={2} />
-        </div>
+        {optionsIsOpen ? (
+          <div
+            className={iconClassName}
+            onKeyDown={handleKeyDown("Enter", handleChevronUp)}
+            onClick={handleChevronUp}
+            tabIndex={0}
+          >
+            <ChevronUp width={16} height={16} stroke="lightgray" fill="none" strokeWidth={2} />
+          </div>
+        ) : (
+          <div className={iconClassName} onKeyDown={handleKeyDown("Enter", handleClickFieldset)} tabIndex={0}>
+            <ChevronDown width={16} height={16} stroke="lightgray" fill="none" strokeWidth={2} />
+          </div>
+        )}
         {value && (
           <div
             className={iconClassName}
