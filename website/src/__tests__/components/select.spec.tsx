@@ -37,9 +37,9 @@ describe("Select", () => {
     await act(() => user.click(input));
 
     let options = wrapper.getAllByRole("listitem");
-    const firstOption = options.at(optionIndex)!;
+    const targetOption = options.at(optionIndex)!;
 
-    await act(() => user.click(firstOption));
+    await act(() => user.click(targetOption));
 
     expect(input.value).toBe(mockOptions[optionIndex]!.value);
     expect(handleChangeMock).toHaveBeenCalledWith(mockOptions[optionIndex]!.key);
@@ -181,5 +181,31 @@ describe("Select", () => {
     await act(() => user.keyboard("'{Shift>}{Tab}{/Shift}'"));
     expect(options[0]!.className).toMatch(FOCUSED_OPTION_BACKGROUND);
     expect(options[1]!.className).not.toMatch(FOCUSED_OPTION_BACKGROUND);
+  });
+
+  it("should select option on Enter press", async () => {
+    const input = wrapper.getByRole("textbox") as HTMLInputElement;
+
+    await act(() => user.click(input));
+    await act(() => user.keyboard("{ArrowDown}"));
+
+    let options = wrapper.getAllByRole("listitem");
+    expect(options.length).toBe(mockOptions.length);
+
+    expect(options[0]!.className).toMatch(FOCUSED_OPTION_BACKGROUND);
+    await act(() => user.keyboard("{Enter}"));
+
+    expect(input.value).toBe(mockOptions[0]!.value);
+    expect(handleChangeMock).toHaveBeenCalledWith(mockOptions[0]!.key);
+
+    options = wrapper.queryAllByRole("listitem");
+    expect(options.length).toBe(0);
+
+    const icons = wrapper.getAllByRole("img");
+    const legend = wrapper.getByRole("presentation");
+
+    expect(icons.length).toBe(2);
+    expect(legend.textContent).toBe("Test Select");
+    expect(handleChangeMock).toHaveBeenCalledTimes(1);
   });
 });

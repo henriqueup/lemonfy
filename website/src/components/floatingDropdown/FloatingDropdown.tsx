@@ -10,7 +10,7 @@ type Props = {
   onClose: () => void;
 };
 
-const FloatingDropdown = ({ open, options, onChangeOption, onClose }: Props, ref: Ref<HTMLUListElement>) => {
+const FloatingDropdown = ({ open, options, onChangeOption, onClose }: Props, listRef: Ref<HTMLUListElement>) => {
   const [index, setIndex] = useState(-1);
 
   const getLoopingIndex = (index: number, length: number) => {
@@ -21,17 +21,32 @@ const FloatingDropdown = ({ open, options, onChangeOption, onClose }: Props, ref
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLUListElement>) => {
+    if (!listRef || !("current" in listRef) || !listRef.current) return;
+
+    if (event.key === "Enter") {
+      onChangeOption(options[index]);
+      return;
+    }
+
+    const listItems = listRef.current.childNodes;
+    let nextIndex = 0;
+
     if (event.key === "ArrowDown") {
-      setIndex(i => getLoopingIndex(i + 1, options.length));
+      nextIndex = getLoopingIndex(index + 1, options.length);
     } else if (event.key === "ArrowUp") {
-      setIndex(i => getLoopingIndex(i - 1, options.length));
+      nextIndex = getLoopingIndex(index - 1, options.length);
     } else if (event.key === "Tab") {
       if ((index === 0 && event.shiftKey) || (index === options.length - 1 && !event.shiftKey)) return;
 
-      setIndex(i => getLoopingIndex(event.shiftKey ? i - 1 : i + 1, options.length));
-    } else if (event.key === "Enter") {
-      onChangeOption(options[index]);
+      nextIndex = getLoopingIndex(event.shiftKey ? index - 1 : index + 1, options.length);
+      event.preventDefault();
     }
+
+    const targetChild = listItems[nextIndex];
+    if (!targetChild) return;
+
+    setIndex(nextIndex);
+    (targetChild as HTMLElement).focus();
   };
 
   const handleFocusList = () => {
@@ -54,7 +69,7 @@ const FloatingDropdown = ({ open, options, onChangeOption, onClose }: Props, ref
       <ul
         className="m-0 list-none rounded p-0 focus-visible:outline-none"
         onKeyDown={handleKeyDown}
-        ref={ref}
+        ref={listRef}
         tabIndex={-1}
         onFocus={handleFocusList}
       >
