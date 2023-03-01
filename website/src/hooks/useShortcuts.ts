@@ -59,6 +59,8 @@ const useShortcuts = (shortcutDictionary: ShortcutDictionary) => {
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
+      if (event.target instanceof HTMLInputElement) return;
+
       const shortcutKey = getShortcutKey(event);
       if (shortcutKey === undefined) return;
 
