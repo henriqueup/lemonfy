@@ -23,8 +23,9 @@ const FloatingContainer = ({ open, onClose, className, children }: Props) => {
       const x = parentRect.x + RECT_PADDING;
       const y = parentRect.y + parentRect.height;
       const width = parentRect.width - RECT_PADDING * 2;
+      const height = window.innerHeight - y - RECT_PADDING * 8;
 
-      setRect(new DOMRect(x, y, width));
+      setRect(new DOMRect(x, y, width, height));
     }
   }, []);
 
@@ -33,8 +34,8 @@ const FloatingContainer = ({ open, onClose, className, children }: Props) => {
   return (
     <ClickAwayListener onClickAway={onClose}>
       <div
-        style={{ top: rect?.top, left: rect?.left, width: rect?.width }}
-        className={classNames("absolute", className)}
+        style={{ top: rect?.top, left: rect?.left, width: rect?.width, maxHeight: rect?.height }}
+        className={classNames(className, "absolute overflow-y-auto")}
         ref={containerCallbackRef}
       >
         {children}

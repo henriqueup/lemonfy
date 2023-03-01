@@ -1,12 +1,12 @@
 import { forwardRef, type Ref, useEffect, useState, type KeyboardEvent, type MouseEvent } from "react";
 import { FloatingContainer } from "src/components/floatingContainer";
-import type { Option } from "src/components/select";
+import type { OptionObject } from "src/components/select";
 import { classNames } from "src/styles/utils";
 
 type Props = {
   open: boolean;
-  options: Option[];
-  onChangeOption: (option: Option | undefined) => void;
+  options: OptionObject[];
+  onChangeOption: (option: OptionObject | undefined) => void;
   onClose: () => void;
 };
 
@@ -22,6 +22,8 @@ const FloatingDropdown = ({ open, options, onChangeOption, onClose }: Props, lis
 
   const handleKeyDown = (event: KeyboardEvent<HTMLUListElement>) => {
     if (!listRef || !("current" in listRef) || !listRef.current) return;
+
+    event.stopPropagation();
 
     if (event.key === "Enter") {
       onChangeOption(options[index]);
@@ -53,7 +55,7 @@ const FloatingDropdown = ({ open, options, onChangeOption, onClose }: Props, lis
     if (index === -1) setIndex(0);
   };
 
-  const handleClickOption = (event: MouseEvent, option: Option) => {
+  const handleClickOption = (event: MouseEvent, option: OptionObject) => {
     event.stopPropagation();
     onChangeOption(option);
   };

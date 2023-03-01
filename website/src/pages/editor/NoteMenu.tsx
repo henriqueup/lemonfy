@@ -26,6 +26,8 @@ import {
   moveCursorToStartOfBar,
 } from "@store/editor/cursorActions";
 import { addNote, removeNextNoteFromBar } from "@store/editor/sheetActions";
+import { Select } from "@components/select";
+import { classNames } from "src/styles/utils";
 
 const NoteMenu: FunctionComponent = () => {
   const audioContext = useAudioContext();
@@ -125,54 +127,38 @@ const NoteMenu: FunctionComponent = () => {
   };
 
   return (
-    <div style={{ height: "40%", padding: "8px 16px 16px 16px" }}>
-      <fieldset style={{ height: "100%", padding: "16px", border: "1px solid lightgray", borderRadius: "4px" }}>
+    <div className="h-2/5 p-4 pt-2 text-gray-400">
+      <fieldset className="h-full rounded border border-solid border-gray-400 p-4">
         <legend>Note Selector</legend>
-        <div style={{ display: "flex", marginBottom: "16px" }}>
-          <fieldset style={{ borderRadius: "8px", padding: "5px", width: "6rem", margin: "0px 4px" }}>
-            <legend>Octave</legend>
-            <select
-              value={selectedOctave}
-              onChange={event => setSelectedOctave(Number(event.target.value) as Octave)}
-              style={{ width: "100%", color: "black", cursor: "pointer" }}
-            >
-              {[...Array(NUMBER_OF_OCTAVES).keys()].map((octave, i) => (
-                <option key={i}>{octave}</option>
-              ))}
-            </select>
-          </fieldset>
-          <fieldset style={{ borderRadius: "8px", padding: "5px", width: "calc(12rem + 8px)", margin: "0px 4px" }}>
-            <legend>Duration</legend>
-            <select
-              value={selectedDuration}
-              onChange={event => setSelectedNoteDuration(event.target.value as NoteDurationName)}
-              style={{ width: "100%", color: "black", cursor: "pointer" }}
-            >
-              {Object.keys(NOTE_DURATIONS).map((noteDuration, i) => (
-                <option key={i}>{noteDuration}</option>
-              ))}
-            </select>
-          </fieldset>
-          <Button text="Play" variant="success" style={{ margin: "0px 4px", width: "6rem" }} onClick={handlePlay} />
+        <div className="mb-4 flex w-full">
+          <Select
+            label="Octave"
+            value={selectedOctave}
+            options={[...Array(NUMBER_OF_OCTAVES).keys()]}
+            handleChange={newKey => setSelectedOctave(Number(newKey) as Octave)}
+            disableClear
+            className="ml-1 mr-1 w-[calc(100%_/_13_-_8px)]"
+          />
+          <Select
+            label="Duration"
+            value={selectedDuration}
+            options={Object.keys(NOTE_DURATIONS)}
+            handleChange={newKey => setSelectedNoteDuration(newKey as NoteDurationName)}
+            // disableClear
+            className="ml-1 mr-1 w-[calc(100%_/_13_*_2_-_8px)]"
+          />
+          <Button text="Play" variant="success" className="ml-1 mr-1 w-[calc(100%_/_13_-_8px)]" onClick={handlePlay} />
         </div>
-        <div style={{ display: "flex" }}>
+        <div className="flex w-full">
           {PITCH_NAMES.map((pitchName, i) => (
             <div
               key={i}
               draggable={true}
               onDragStart={event => handleDragStart(event, pitchName)}
-              style={{
-                display: "flex",
-                alignContent: "center",
-                justifyContent: "center",
-                fontSize: "4rem",
-                minWidth: "6rem",
-                minHeight: "6rem",
-                margin: "4px",
-                border: "1px solid lightgray",
-                borderRadius: "16px",
-                cursor: "pointer",
-              }}
+              className={classNames(
+                "m-1 flex min-h-[5rem] min-w-[calc(100%_/_13_-_8px)] cursor-pointer items-center justify-center",
+                "rounded-2xl border border-solid border-gray-400 text-6xl text-gray-400",
+              )}
             >
               {pitchName}
             </div>
