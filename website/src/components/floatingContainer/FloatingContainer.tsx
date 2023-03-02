@@ -1,3 +1,4 @@
+import { areParentsRelative } from "@components/utils";
 import { type ReactNode, useCallback, useRef, useState, type RefCallback } from "react";
 import { ClickAwayListener } from "src/components/clickAwayListener";
 import { classNames } from "src/styles/utils";
@@ -17,14 +18,24 @@ const FloatingContainer = ({ open, onClose, className, children }: Props) => {
 
   const containerCallbackRef = useCallback<RefCallback<HTMLDivElement>>(ref => {
     containerRef.current = ref;
-    const parentRect = ref?.parentElement?.getBoundingClientRect();
+
+    // take second parent because first is ClickAwayListener
+    const parentElement = ref?.parentElement?.parentElement;
+    const hasRelativeParent = parentElement && areParentsRelative(parentElement);
+    const parentRect = parentElement?.getBoundingClientRect();
 
     if (parentRect) {
-      const x = parentRect.x + RECT_PADDING;
-      const y = parentRect.y + parentRect.height;
+      let x = parentRect.x + RECT_PADDING;
+      let y = parentRect.y + parentRect.height;
       const width = parentRect.width - RECT_PADDING * 2;
       const height = window.innerHeight - y - RECT_PADDING * 8;
 
+      if (hasRelativeParent) {
+        x -= parentRect.x;
+        y -= parentRect.y;
+      }
+
+      console.log(parentRect, new DOMRect(x, y, width, height));
       setRect(new DOMRect(x, y, width, height));
     }
   }, []);

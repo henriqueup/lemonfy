@@ -134,8 +134,8 @@ const Select: FunctionComponent<
   return (
     <fieldset
       className={classNames(
-        "rounded-lg border border-solid border-gray-400 pl-1 pr-1 text-gray-400",
-        shrinkLabel && "-mt-[calc(theme(fontSize.sm[1].lineHeight)_/_2)]", // half of the legend height
+        "relative rounded-lg border border-solid border-gray-400 pl-1 pr-1 text-gray-400",
+        // shrinkLabel && "-mt-[calc(theme(fontSize.sm[1].lineHeight)_/_2)]", // half of the legend height
         otherProps.className,
       )}
       onClick={handleClickFieldset}
@@ -143,14 +143,17 @@ const Select: FunctionComponent<
       onBlur={handleBlurFieldset}
     >
       {shrinkLabel && (
-        <legend role="presentation" className="text-sm">
+        <legend
+          role="presentation"
+          className={classNames("absolute bg-black text-sm", "-top-[calc(theme(fontSize.sm[1].lineHeight)_/_2)]")}
+        >
           {label}
         </legend>
       )}
       <div
         className={classNames(
-          "flex cursor-pointer items-center pb-2",
-          shrinkLabel ? "pt-0" : "pt-[calc(theme(spacing.2)_+_1px)]", // 1 extra pixel because of the border
+          "flex cursor-pointer items-center pb-2 pt-2",
+          // shrinkLabel ? "pt-0" : "pt-[calc(theme(fontSize.sm[1].lineHeight)_/_2_-_1px)]", // 1 less pixel because of the border
         )}
       >
         <input

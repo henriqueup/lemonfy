@@ -136,7 +136,7 @@ const NoteMenu: FunctionComponent = () => {
             value={selectedOctave}
             options={[...Array(NUMBER_OF_OCTAVES).keys()]}
             handleChange={newKey => setSelectedOctave(Number(newKey) as Octave)}
-            disableClear
+            // disableClear
             className="ml-1 mr-1 w-[calc(100%_/_13_-_8px)]"
           />
           <Select
