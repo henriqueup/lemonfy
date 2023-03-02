@@ -41,8 +41,9 @@ const FloatingDropdown = ({ open, options, onChangeOption, onClose }: Props, lis
       if ((index === 0 && event.shiftKey) || (index === options.length - 1 && !event.shiftKey)) return;
 
       nextIndex = getLoopingIndex(event.shiftKey ? index - 1 : index + 1, options.length);
-      event.preventDefault();
     }
+
+    event.preventDefault();
 
     const targetChild = listItems[nextIndex];
     if (!targetChild) return;

@@ -128,12 +128,12 @@ describe("Select", () => {
     await selectsNthOption(1);
 
     const icons = wrapper.getAllByRole("img");
-    await act(() => user.click(icons[1]!));
+    await act(() => user.click(icons[0]!));
 
     const input = wrapper.getByRole("textbox") as HTMLInputElement;
 
     expect(input.value).toBe("");
-    expect(handleChangeMock).toHaveBeenCalledWith("");
+    expect(handleChangeMock).toHaveBeenCalledWith(undefined);
     expect(handleChangeMock).toHaveBeenCalledTimes(2);
 
     const options = wrapper.queryAllByRole("listitem");

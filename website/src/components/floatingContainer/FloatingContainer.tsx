@@ -35,7 +35,6 @@ const FloatingContainer = ({ open, onClose, className, children }: Props) => {
         y -= parentRect.y;
       }
 
-      console.log(parentRect, new DOMRect(x, y, width, height));
       setRect(new DOMRect(x, y, width, height));
     }
   }, []);

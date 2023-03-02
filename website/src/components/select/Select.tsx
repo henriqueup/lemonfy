@@ -46,7 +46,7 @@ const Select: FunctionComponent<
   const [ownValue, setOwnValue] = useState("");
   const [optionsIsOpen, setOptionsIsOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("");
-  const [inputHasFocus, setInputHasFocus] = useState(false);
+  const [fieldsetHasFocus, setFieldsetHasFocus] = useState(false);
 
   const filteredOptions = useMemo(
     () =>
@@ -92,14 +92,6 @@ const Select: FunctionComponent<
     setFilterValue(newValue);
   };
 
-  const handleFocusInput = () => {
-    setInputHasFocus(true);
-  };
-
-  const handleBlurInput = () => {
-    setInputHasFocus(false);
-  };
-
   const handleKeyDownFieldset = (event: KeyboardEvent<HTMLFieldSetElement>) => {
     if (event.key === "ArrowDown") {
       setOptionsIsOpen(true);
@@ -120,9 +112,14 @@ const Select: FunctionComponent<
     inputRef.current?.focus();
   };
 
+  const handleFocusFieldset = () => {
+    setFieldsetHasFocus(true);
+  };
+
   const handleBlurFieldset = (event: FocusEvent) => {
     if (!event.currentTarget.contains(event.relatedTarget)) {
       handleCloseOptions();
+      setFieldsetHasFocus(false);
     }
   };
 
@@ -134,38 +131,41 @@ const Select: FunctionComponent<
   return (
     <fieldset
       className={classNames(
-        "relative rounded-lg border border-solid border-gray-400 pl-1 pr-1 text-gray-400",
-        // shrinkLabel && "-mt-[calc(theme(fontSize.sm[1].lineHeight)_/_2)]", // half of the legend height
+        "relative rounded-lg border border-solid border-gray-400 bg-inherit pl-1 pr-1 text-gray-400",
         otherProps.className,
       )}
       onClick={handleClickFieldset}
       onKeyDown={handleKeyDownFieldset}
+      onFocus={handleFocusFieldset}
       onBlur={handleBlurFieldset}
     >
       {shrinkLabel && (
         <legend
           role="presentation"
-          className={classNames("absolute bg-black text-sm", "-top-[calc(theme(fontSize.sm[1].lineHeight)_/_2)]")}
+          className={classNames("absolute bg-inherit text-sm", "-top-[calc(theme(fontSize.sm[1].lineHeight)_/_2)]")}
         >
           {label}
         </legend>
       )}
-      <div
-        className={classNames(
-          "flex cursor-pointer items-center pb-2 pt-2",
-          // shrinkLabel ? "pt-0" : "pt-[calc(theme(fontSize.sm[1].lineHeight)_/_2_-_1px)]", // 1 less pixel because of the border
-        )}
-      >
+      <div className="flex cursor-pointer items-center pb-2 pt-2">
         <input
           placeholder={placeholder || label}
           className="w-full cursor-pointer bg-inherit focus-visible:outline-none"
-          value={inputHasFocus ? filterValue : ownValue}
+          value={fieldsetHasFocus ? filterValue : ownValue}
           onInput={handleChangeInput}
-          onFocus={handleFocusInput}
-          onBlur={handleBlurInput}
           tabIndex={0}
           ref={inputRef}
         />
+        {ownValue && !disableClear && (
+          <div
+            className={iconClassName}
+            onClick={event => handleClear(event)}
+            onKeyDown={handleKeyDown("Enter", handleClear)}
+            tabIndex={0}
+          >
+            <X width={16} height={16} stroke="lightgray" strokeWidth={2} />
+          </div>
+        )}
         {optionsIsOpen ? (
           <div
             className={iconClassName}
@@ -178,16 +178,6 @@ const Select: FunctionComponent<
         ) : (
           <div className={iconClassName} onKeyDown={handleKeyDown("Enter", handleClickFieldset)} tabIndex={0}>
             <ChevronDown width={16} height={16} stroke="lightgray" fill="none" strokeWidth={2} />
-          </div>
-        )}
-        {ownValue && !disableClear && (
-          <div
-            className={iconClassName}
-            onClick={event => handleClear(event)}
-            onKeyDown={handleKeyDown("Enter", handleClear)}
-            tabIndex={0}
-          >
-            <X width={16} height={16} stroke="lightgray" strokeWidth={2} />
           </div>
         )}
       </div>

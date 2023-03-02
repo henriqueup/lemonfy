@@ -127,16 +127,16 @@ const NoteMenu: FunctionComponent = () => {
   };
 
   return (
-    <div className="h-2/5 p-4 pt-2 text-gray-400">
-      <fieldset className="h-full rounded border border-solid border-gray-400 p-4">
+    <div className="h-2/5 bg-inherit p-4 pt-2 text-gray-400">
+      <fieldset className="h-full rounded border border-solid border-gray-400 bg-inherit p-4">
         <legend>Note Selector</legend>
-        <div className="mb-4 flex w-full">
+        <div className="mb-4 flex w-full bg-inherit">
           <Select
             label="Octave"
             value={selectedOctave}
             options={[...Array(NUMBER_OF_OCTAVES).keys()]}
             handleChange={newKey => setSelectedOctave(Number(newKey) as Octave)}
-            // disableClear
+            disableClear
             className="ml-1 mr-1 w-[calc(100%_/_13_-_8px)]"
           />
           <Select
@@ -144,7 +144,7 @@ const NoteMenu: FunctionComponent = () => {
             value={selectedDuration}
             options={Object.keys(NOTE_DURATIONS)}
             handleChange={newKey => setSelectedNoteDuration(newKey as NoteDurationName)}
-            // disableClear
+            disableClear
             className="ml-1 mr-1 w-[calc(100%_/_13_*_2_-_8px)]"
           />
           <Button text="Play" variant="success" className="ml-1 mr-1 w-[calc(100%_/_13_-_8px)]" onClick={handlePlay} />
