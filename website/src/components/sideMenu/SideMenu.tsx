@@ -34,7 +34,7 @@ const BaseSideMenu: FunctionComponent<Props> = ({
       <div
         className={classNames(
           "absolute top-0 h-screen rounded bg-inherit",
-          rightSide ? "right-0 border-l border-l-gray-200" : "left-0 border-r border-r-gray-200",
+          rightSide ? "right-0 border-l border-l-gray-400" : "left-0 border-r border-r-gray-400",
           isOpen ? "w-1/4" : "border-r-0 border-l-0",
         )}
       >
@@ -47,7 +47,7 @@ const BaseSideMenu: FunctionComponent<Props> = ({
         {collapsable ? (
           <div
             className={classNames(
-              "absolute top-[calc(50%_-_16px)] flex h-8 w-6 cursor-pointer items-center justify-center rounded border border-gray-200 bg-inherit",
+              "absolute top-[calc(50%_-_16px)] flex h-8 w-6 cursor-pointer items-center justify-center rounded border border-gray-400 bg-inherit",
               rightSide ? "border-r-0" : "border-l-0",
               rightSide ? "right-full" : "left-full",
             )}

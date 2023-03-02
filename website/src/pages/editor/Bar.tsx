@@ -14,7 +14,7 @@ const Bar: FunctionComponent<Props> = ({ bar }) => {
   };
 
   return (
-    <div className="flex rounded border border-solid border-gray-200 p-4">
+    <div className="flex rounded border border-solid border-gray-400 p-4">
       <div className="flex flex-col justify-between">
         <div>
           <span>{`${bar.beatCount}/${bar.dibobinador}`}</span>

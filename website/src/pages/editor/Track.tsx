@@ -74,7 +74,7 @@ const Track: FunctionComponent<TrackProps> = ({ index, bar, track, handleAddNote
       <div className="flex p-2">
         <div
           className={classNames(
-            "rounded border-2 border-solid border-gray-200 p-2",
+            "rounded border-2 border-solid border-gray-400 p-2",
             isSelectedTrack && "border-lime-600",
             isSelectedTrack && "bg-lime-400",
           )}
@@ -85,7 +85,7 @@ const Track: FunctionComponent<TrackProps> = ({ index, bar, track, handleAddNote
           <Note key={i} note={note} barCapacity={bar.capacity} />
         ))}
         {isShowingPreview && noteToAdd !== null ? <Note note={noteToAdd} barCapacity={bar.capacity} /> : null}
-        <div className="m-auto mr-0 ml-0 h-px flex-grow border border-solid border-gray-200" />
+        <div className="m-auto mr-0 ml-0 h-px flex-grow border border-solid border-gray-400" />
         {isSelectedTrack && isSelectedBar ? <Cursor position={cursor.position} barCapacity={bar.capacity} /> : null}
       </div>
     </div>

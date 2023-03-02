@@ -18,11 +18,11 @@ const SheetMenu: FunctionComponent<Props> = ({ onAdd, onClose }) => {
 
   return (
     <FixedSideMenu rightSide onClose={onClose}>
-      <div style={{ display: "flex", flexDirection: "column" }}>
-        <div style={{ display: "flex", justifyContent: "center", width: "100%", margin: "8px auto" }}>
-          <h3 style={{ margin: "auto" }}>New Sheet</h3>
+      <div className="flex flex-col">
+        <div className="m-auto mt-2 mb-2 flex w-full justify-center">
+          <h3 className="m-auto">New Sheet</h3>
         </div>
-        <fieldset style={{ width: "50%", alignSelf: "center", marginTop: "16px" }}>
+        <fieldset className="mt-4 w-1/2 self-center">
           <legend>Number of Tracks</legend>
           <input type="number" value={trackCount} onChange={event => setTrackCount(Number(event.target.value))} />
         </fieldset>

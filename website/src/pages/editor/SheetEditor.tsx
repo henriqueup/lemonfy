@@ -20,35 +20,17 @@ const SheetEditor: FunctionComponent = () => {
   console.log(bars);
   return (
     <>
-      <div style={{ height: "60%", padding: "16px 16px 8px 16px" }}>
-        <fieldset style={{ height: "100%", border: "1px solid lightgray", borderRadius: "4px" }}>
-          <legend>Bars</legend>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              maxHeight: "100%",
-              overflowY: "auto",
-              columnGap: "8px",
-              rowGap: "8px",
-            }}
-          >
+      <div className="h-3/5 p-4 pb-2 text-gray-400">
+        <fieldset className="h-full rounded border border-solid border-gray-400 p-1">
+          <legend className="ml-3">Bars</legend>
+          <div className="grid max-h-full grid-cols-2 gap-2 overflow-y-auto">
             {bars.map((bar, i) => (
               <Bar key={i} bar={bar} />
             ))}
           </div>
-          <div style={{ display: "flex", justifyContent: "center" }}>
+          <div className="flex justify-center">
             <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignContent: "center",
-                marginTop: "16px",
-                padding: "4px",
-                cursor: "pointer",
-                border: "1px solid lightgray",
-                borderRadius: "50%",
-              }}
+              className="mt-4 flex cursor-pointer content-center justify-center rounded-full border border-solid border-gray-400 p-1"
               onClick={() => setBarMenuIsOpen(true)}
             >
               <Plus height={24} width={24} stroke="lightgray" />

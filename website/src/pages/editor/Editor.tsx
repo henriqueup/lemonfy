@@ -23,17 +23,17 @@ const Editor: NextPage = () => {
   };
 
   return (
-    <div className="h-screen bg-black text-gray-200">
+    <div className="h-screen bg-black text-gray-400">
       {currentSheet === undefined ? (
         <div className="flex justify-center">
           <div
             className={classNames(
               "mt-4 flex cursor-pointer content-center justify-center",
-              "rounded-full border border-solid border-gray-200 p-4",
+              "rounded-full border border-solid border-gray-400 p-4",
             )}
             onClick={() => setSheetMenuIsOpen(true)}
           >
-            <Plus fill="lightgray" />
+            <Plus stroke="lightgray" />
           </div>
         </div>
       ) : (
