@@ -1,3 +1,4 @@
+import { play } from "@store/player/playerActions";
 import { addGainNode } from "../../utils/audioContext";
 import { createBar, fillBarTrack, setBarNotesTimesInSeconds, sumBarsCapacity, type Bar } from "./bar";
 import type { Note } from "./note";
@@ -189,5 +190,7 @@ export const playSong = (sheet: Sheet, audioContext: AudioContext | null): void 
       oscillator.frequency.value = note.pitch?.key ? FrequencyDictionary[note.pitch.key] : 0;
       oscillator.start();
     }
+
+    play();
   }
 };

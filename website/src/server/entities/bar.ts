@@ -35,7 +35,8 @@ export const createBar = (
 export const sumBarsCapacity = (bars: Bar[]) =>
   bars.reduce((currentCapacity, currentBar) => currentCapacity + currentBar.capacity, 0);
 
-const convertBarNoteDurationToSeconds = (bar: Bar, duration: number) => duration * bar.dibobinador;
+export const convertDurationInBarToSeconds = (bar: Bar, duration: number) =>
+  (duration * bar.dibobinador) / bar.timeRatio;
 
 export const setBarNotesTimesInSeconds = (bar: Bar) => {
   const notes = bar.tracks.flat();
@@ -44,8 +45,8 @@ export const setBarNotesTimesInSeconds = (bar: Bar) => {
     const note = notes[i];
     if (note === undefined) throw new Error(`The note at index ${i} should exist.`);
 
-    note.durationInSeconds = convertBarNoteDurationToSeconds(bar, note.duration) / bar.timeRatio;
-    note.startInSeconds = convertBarNoteDurationToSeconds(bar, note.start) / bar.timeRatio;
+    note.durationInSeconds = convertDurationInBarToSeconds(bar, note.duration);
+    note.startInSeconds = convertDurationInBarToSeconds(bar, note.start);
   }
 };
 

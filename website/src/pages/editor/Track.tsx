@@ -6,6 +6,7 @@ import { useEditorStore } from "@store/editor";
 import { classNames } from "../../styles/utils";
 import Cursor from "./Cursor";
 import Note from "./Note";
+import { usePlayerStore } from "@store/player";
 
 interface TrackProps {
   index: number;
@@ -18,6 +19,7 @@ const Track: FunctionComponent<TrackProps> = ({ index, bar, track, handleAddNote
   const [isShowingPreview, setIsShowingPreview] = useState(false);
   const noteToAdd = useEditorStore(state => state.noteToAdd);
   const cursor = useEditorStore(state => state.cursor);
+  const isPlaying = usePlayerStore(state => state.isPlaying);
 
   const isSelectedTrack = index === cursor.trackIndex;
   const isSelectedBar = bar.index === cursor.barIndex;
@@ -71,7 +73,7 @@ const Track: FunctionComponent<TrackProps> = ({ index, bar, track, handleAddNote
       onDrop={handleDrop}
       className="mt-0.5 mb-0.5 flex h-full w-full"
     >
-      <div className="flex p-2">
+      {/* <div className="flex p-2">
         <div
           className={classNames(
             "rounded border-2 border-solid border-gray-400 p-2",
@@ -79,14 +81,16 @@ const Track: FunctionComponent<TrackProps> = ({ index, bar, track, handleAddNote
             isSelectedTrack && "bg-lime-400",
           )}
         />
-      </div>
+      </div> */}
       <div className="relative flex w-full">
         {track.map((note, i) => (
           <Note key={i} note={note} barCapacity={bar.capacity} />
         ))}
         {isShowingPreview && noteToAdd !== null ? <Note note={noteToAdd} barCapacity={bar.capacity} /> : null}
         <div className="m-auto mr-0 ml-0 h-px flex-grow border border-solid border-gray-400" />
-        {isSelectedTrack && isSelectedBar ? <Cursor position={cursor.position} barCapacity={bar.capacity} /> : null}
+        {!isPlaying && isSelectedTrack && isSelectedBar ? (
+          <Cursor bar={bar} isPlaying={isPlaying} position={cursor.position} />
+        ) : null}
       </div>
     </div>
   );

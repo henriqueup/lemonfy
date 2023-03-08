@@ -35,7 +35,6 @@ export const decreaseCursorBarIndex = () =>
     return { cursor: { ...state.cursor, barIndex: state.cursor.barIndex - 1, position: 0 } };
   });
 
-// TODO: fix tests
 export const increaseCursorPosition = () =>
   useEditorStore.setState(state => {
     if (state.currentSheet === undefined) return {};
@@ -59,7 +58,6 @@ export const increaseCursorPosition = () =>
     return { cursor: { ...state.cursor, position: resultPosition } };
   });
 
-// TODO: fix tests
 export const decreaseCursorPosition = () =>
   useEditorStore.setState(state => {
     if (state.currentSheet === undefined) return {};
