@@ -95,7 +95,9 @@ export const fillBarTrack = (bar: Bar, track: Note[], trackIndex: number) => {
   const lastNote = notesInsideBar[notesInsideBar.length - 1];
   if (lastNote === undefined) throw Error("Invalid last Note of track.");
 
-  const trackWithoutExtremityNotes = notesInsideBar.filter((_, i) => i !== 0 && i !== notesInsideBar.length - 1);
+  const trackWithoutExtremityNotes = notesInsideBar
+    .filter((_, i) => i !== 0 && i !== notesInsideBar.length - 1)
+    .map(trackNote => createNote(trackNote.duration, trackNote.start, trackNote.pitch));
   const barTrack = trackWithoutExtremityNotes;
 
   const actualFirstNote = getActualFirstNote(bar, firstNote);
