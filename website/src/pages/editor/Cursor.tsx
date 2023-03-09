@@ -3,18 +3,16 @@ import { type FunctionComponent } from "react";
 import { type Bar, convertDurationInBarToSeconds } from "@entities/bar";
 
 interface Props {
-  bar?: Bar;
+  bar: Bar;
   isPlaying: boolean;
   position?: number;
 }
 
 const Cursor: FunctionComponent<Props> = ({ bar, isPlaying, position }) => {
-  if (bar === undefined) return null;
-
   return (
     <div
       style={{
-        left: `calc(${(position || 0 * 100) / bar.capacity}% - 4px)`,
+        left: `calc(${((position || 0) * 100) / bar.capacity}% - 4px)`,
         animation: isPlaying
           ? `moveRight ${convertDurationInBarToSeconds(bar, bar.capacity)}s linear`
           : `blink ${SECONDS_PER_MINUTE / bar.tempo}s step-start infinite`,
