@@ -1,18 +1,18 @@
 import { type Bar, convertDurationInBarToSeconds } from "@entities/bar";
 import { usePlayerStore } from "@store/player/playerStore";
 
-const createNextBarTimeout = (barWithCursor: Bar): NodeJS.Timeout => {
+const createNextBarTimeout = (barWithCursor: Bar | undefined): NodeJS.Timeout | undefined => {
+  if (barWithCursor === undefined) {
+    stop();
+    return undefined;
+  }
+
   const barDurationInSeconds = convertDurationInBarToSeconds(barWithCursor, barWithCursor.capacity);
 
   return setTimeout(() => {
     usePlayerStore.setState(state => {
       const nextBarIndex = state.currentBarIndex + 1;
       const nextBar = state.sheet.bars[nextBarIndex];
-
-      if (nextBar === undefined) {
-        stop();
-        return {};
-      }
 
       const timeout = createNextBarTimeout(nextBar);
 
@@ -27,8 +27,6 @@ const createNextBarTimeout = (barWithCursor: Bar): NodeJS.Timeout => {
 export const play = () =>
   usePlayerStore.setState(state => {
     const barWithCursor = state.sheet.bars[state.currentBarIndex];
-    if (barWithCursor === undefined) return {};
-
     const timeout = createNextBarTimeout(barWithCursor);
 
     return { isPlaying: true, nextBarTimeout: timeout };
