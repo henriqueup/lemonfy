@@ -190,7 +190,8 @@ export const playSong = (sheet: Sheet, audioContext: AudioContext | null): void 
       oscillator.frequency.value = note.pitch?.key ? FrequencyDictionary[note.pitch.key] : 0;
       oscillator.start();
     }
-
-    play();
   }
+
+  console.log("calling play");
+  play();
 };
