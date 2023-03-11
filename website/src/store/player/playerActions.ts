@@ -1,8 +1,8 @@
 import { type Bar, convertDurationInBarToSeconds } from "@entities/bar";
+import { useEditorStore } from "@store/editor";
 import { usePlayerStore } from "@store/player/playerStore";
 
 const createNextBarTimeout = (barWithCursor: Bar | undefined): NodeJS.Timeout | undefined => {
-  console.log("creating timeout", barWithCursor);
   if (barWithCursor === undefined) {
     stop();
     return undefined;
@@ -12,11 +12,13 @@ const createNextBarTimeout = (barWithCursor: Bar | undefined): NodeJS.Timeout | 
 
   return setTimeout(() => {
     usePlayerStore.setState(state => {
+      const currentSheet = useEditorStore.getState().currentSheet;
+      if (currentSheet === undefined) return {};
+
       const nextBarIndex = state.currentBarIndex + 1;
-      const nextBar = state.sheet.bars[nextBarIndex];
+      const nextBar = currentSheet.bars[nextBarIndex];
 
       const timeout = createNextBarTimeout(nextBar);
-
       if (timeout === undefined) return {};
 
       return {
@@ -29,8 +31,10 @@ const createNextBarTimeout = (barWithCursor: Bar | undefined): NodeJS.Timeout | 
 
 export const play = () =>
   usePlayerStore.setState(state => {
-    const barWithCursor = state.sheet.bars[state.currentBarIndex];
-    console.log(state);
+    const currentSheet = useEditorStore.getState().currentSheet;
+    if (currentSheet === undefined) return {};
+
+    const barWithCursor = currentSheet.bars[state.currentBarIndex];
     const timeout = createNextBarTimeout(barWithCursor);
 
     return { isPlaying: true, nextBarTimeout: timeout };
@@ -40,6 +44,5 @@ export const stop = () =>
   usePlayerStore.setState(state => {
     if (state.nextBarTimeout) clearTimeout(state.nextBarTimeout);
 
-    console.log("stopping");
     return { isPlaying: false, nextBarTimeout: undefined, currentBarIndex: 0 };
   });

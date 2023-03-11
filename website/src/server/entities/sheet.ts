@@ -192,6 +192,5 @@ export const playSong = (sheet: Sheet, audioContext: AudioContext | null): void 
     }
   }
 
-  console.log("calling play");
   play();
 };

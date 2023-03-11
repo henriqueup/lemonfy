@@ -10,13 +10,9 @@ import {
   removeNotesFromSheet,
   type Sheet,
 } from "@entities/sheet";
-import { usePlayerStore } from "@store/player";
 import { useEditorStore } from "./editorStore";
 
-export const loadSheet = (sheet: Sheet) => {
-  useEditorStore.setState({ currentSheet: sheet });
-  usePlayerStore.setState({ sheet });
-};
+export const loadSheet = (sheet: Sheet) => useEditorStore.setState({ currentSheet: sheet });
 
 export const addSheet = (trackCount: number) =>
   useEditorStore.setState(state => {
