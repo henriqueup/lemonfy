@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { devtools } from "zustand/middleware";
 
 export interface PlayerStore {
   isPlaying: boolean;
@@ -11,4 +12,4 @@ export const INITIAL_STATE: PlayerStore = {
   currentBarIndex: 0,
 };
 
-export const usePlayerStore = create<PlayerStore>(() => INITIAL_STATE);
+export const usePlayerStore = create<PlayerStore>()(devtools(() => INITIAL_STATE));

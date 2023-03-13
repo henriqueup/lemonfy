@@ -46,11 +46,10 @@ export const addNote = (duration: number, pitchName: PitchName, octave: Octave) 
     addNoteToSheet(state.currentSheet, state.cursor.trackIndex, noteToAdd);
     fillBarTracksInSheet(state.currentSheet, state.cursor.trackIndex);
 
-    const endOfBarWithCursor = barWithCursor.start + barWithCursor.capacity;
     const endOfAddedNote = state.cursor.position + noteToAdd.duration;
     return {
       currentSheet: { ...state.currentSheet, bars: [...state.currentSheet.bars] },
-      cursor: { ...state.cursor, position: Math.min(endOfAddedNote, endOfBarWithCursor) },
+      cursor: { ...state.cursor, position: Math.min(endOfAddedNote, barWithCursor.capacity) },
     };
   });
 

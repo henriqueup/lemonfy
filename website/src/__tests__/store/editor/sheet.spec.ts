@@ -125,9 +125,9 @@ describe("Add Note", () => {
   it.each<[NoteModule.NoteDurationName, number]>([
     ["QUARTER", 1 / 4],
     ["LONG", 3 / 4],
-  ])("Adds %p Note", (durationName: NoteModule.NoteDurationName, expectedPosition: number) => {
+  ])("Adds %p Note to first Bar", (durationName: NoteModule.NoteDurationName, expectedPosition: number) => {
     const pitch: PitchModule.Pitch = { name: "C", octave: 3, key: "C3" };
-    const note = createNoteMock(NOTE_DURATIONS[durationName], 1 / 4, pitch);
+    const note = createNoteMock(NOTE_DURATIONS[durationName], 8, pitch);
     pitchModuleWithMocks.createPitch.mockImplementation(() => pitch);
     noteModuleWithMocks.createNote.mockImplementation(() => note);
 
@@ -154,6 +154,48 @@ describe("Add Note", () => {
       bars: [{ ...sheet.bars[0], tracks: [[note], [], []] }, sheet.bars[1], sheet.bars[2]],
     });
     expect(useEditorStore.getState().cursor).toMatchObject({ ...INITIAL_STATE.cursor, position: expectedPosition });
+  });
+
+  it.each<[NoteModule.NoteDurationName, number]>([
+    ["QUARTER", 1 / 4],
+    ["LONG", 1],
+  ])("Adds %p Note to second Bar", (durationName: NoteModule.NoteDurationName, expectedPosition: number) => {
+    const pitch: PitchModule.Pitch = { name: "C", octave: 3, key: "C3" };
+    const note = createNoteMock(NOTE_DURATIONS[durationName], 8, pitch);
+    pitchModuleWithMocks.createPitch.mockImplementation(() => pitch);
+    noteModuleWithMocks.createNote.mockImplementation(() => note);
+
+    const sheet = getMockSheetWithBars();
+    useEditorStore.setState(() => ({
+      currentSheet: sheet,
+      cursor: {
+        ...INITIAL_STATE.cursor,
+        barIndex: 1,
+      },
+    }));
+
+    sheetModuleWithMocks.addNoteToSheet.mockImplementation((sheet: SheetModule.Sheet) => sheet.tracks[0]!.push(note));
+    sheetModuleWithMocks.fillBarTracksInSheet.mockImplementation((sheet: SheetModule.Sheet) =>
+      sheet.bars[1]!.tracks[0]!.push(note),
+    );
+
+    addNote(4, "B", 2);
+
+    expect(SheetModule.addNoteToSheet).toBeCalledTimes(1);
+    expect(SheetModule.addNoteToSheet).toBeCalledWith(sheet, 0, note);
+    expect(SheetModule.fillBarTracksInSheet).toBeCalledTimes(1);
+    expect(SheetModule.fillBarTracksInSheet).toBeCalledWith(sheet, 0);
+
+    expect(useEditorStore.getState().currentSheet).toMatchObject({
+      ...sheet,
+      tracks: [[note], [], []],
+      bars: [sheet.bars[0], { ...sheet.bars[1], tracks: [[note], [], []] }, sheet.bars[2]],
+    });
+    expect(useEditorStore.getState().cursor).toMatchObject({
+      ...INITIAL_STATE.cursor,
+      barIndex: 1,
+      position: expectedPosition,
+    });
   });
 });
 

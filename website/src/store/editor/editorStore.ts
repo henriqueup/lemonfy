@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { type NoteDurationName, type Note } from "@entities/note";
 import { type Octave } from "@entities/octave";
 import { type Sheet } from "@entities/sheet";
+import { devtools } from "zustand/middleware";
 
 export interface Cursor {
   trackIndex: number;
@@ -31,4 +32,4 @@ export const INITIAL_STATE: EditorStore = {
   },
 };
 
-export const useEditorStore = create<EditorStore>(() => INITIAL_STATE);
+export const useEditorStore = create<EditorStore>()(devtools(() => INITIAL_STATE));
