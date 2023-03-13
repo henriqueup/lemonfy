@@ -36,6 +36,7 @@ export const play = () =>
 
     const barWithCursor = currentSheet.bars[state.currentBarIndex];
     const timeout = createNextBarTimeout(barWithCursor);
+    if (timeout === undefined) return {};
 
     return { isPlaying: true, nextBarTimeout: timeout };
   });
