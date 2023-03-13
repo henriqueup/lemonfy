@@ -128,6 +128,7 @@ describe("Fill track", () => {
     expect(bar.tracks[0]).toHaveLength(3);
 
     const firstNote = bar.tracks[0]![0]!;
+    expect(firstNote).not.toBe(track[0]);
     expect(firstNote.duration).toBe(NoteModule.NOTE_DURATIONS["QUARTER"]);
     expect(firstNote.start).toBe(0);
     expect(firstNote.hasSustain).toBe(false);
@@ -144,6 +145,22 @@ describe("Fill track", () => {
     expect(thirdNote.start).toBe(2 / 4);
     expect(thirdNote.hasSustain).toBe(false);
     expect(thirdNote.isSustain).toBe(false);
+  });
+
+  it("Fills with new Note objects", () => {
+    const bar = getEmptyMockBar();
+    const track = [
+      createNoteMock(NoteModule.NOTE_DURATIONS["QUARTER"], 1),
+      createNoteMock(NoteModule.NOTE_DURATIONS["QUARTER"], 5 / 4),
+      createNoteMock(NoteModule.NOTE_DURATIONS["QUARTER"], 6 / 4),
+    ];
+
+    fillBarTrack(bar, track, 0);
+
+    expect(bar.tracks[0]).toHaveLength(3);
+    expect(bar.tracks[0]![0]!).not.toBe(track[0]);
+    expect(bar.tracks[0]![1]!).not.toBe(track[1]);
+    expect(bar.tracks[0]![2]!).not.toBe(track[2]);
   });
 
   it("Fills with empty spaces remaining", () => {
