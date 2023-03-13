@@ -27,6 +27,8 @@ const Editor: NextPage = () => {
       {currentSheet === undefined ? (
         <div className="flex justify-center">
           <div
+            role="button"
+            aria-label="new sheet"
             className={classNames(
               "mt-4 flex cursor-pointer content-center justify-center",
               "rounded-full border border-solid border-gray-400 p-4",

@@ -9,6 +9,7 @@ interface Props {
   initiateOpen?: boolean;
   collapsable?: boolean;
   onClose?: () => void;
+  label?: string;
   children: ReactNode;
 }
 
@@ -17,6 +18,7 @@ const BaseSideMenu: FunctionComponent<Props> = ({
   initiateOpen = false,
   collapsable = true,
   onClose,
+  label = "side menu",
   children,
 }) => {
   const [isOpen, setIsOpen] = useState(initiateOpen);
@@ -32,6 +34,7 @@ const BaseSideMenu: FunctionComponent<Props> = ({
   return (
     <ClickAwayListener onClickAway={handleClickAway}>
       <div
+        aria-label={label}
         className={classNames(
           "absolute top-0 h-screen rounded bg-inherit",
           rightSide ? "right-0 border-l border-l-gray-400" : "left-0 border-r border-r-gray-400",
@@ -46,6 +49,8 @@ const BaseSideMenu: FunctionComponent<Props> = ({
         {isOpen ? children : null}
         {collapsable ? (
           <div
+            role="button"
+            aria-label={isOpen ? `close ${label}` : `open ${label}`}
             className={classNames(
               "absolute top-[calc(50%_-_16px)] flex h-8 w-6 cursor-pointer items-center justify-center rounded border border-gray-400 bg-inherit",
               rightSide ? "border-r-0" : "border-l-0",
