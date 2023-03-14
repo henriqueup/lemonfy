@@ -1,5 +1,5 @@
 import { type FunctionComponent, useState } from "react";
-import { Button, FixedSideMenu } from "../../components";
+import { Button, FixedSideMenu, NumberField } from "src/components";
 
 type Props = {
   onAdd: (beatCount: number, dibobinador: number, tempo: number) => void;
@@ -7,10 +7,11 @@ type Props = {
 };
 
 const BarMenu: FunctionComponent<Props> = ({ onAdd, onClose }) => {
-  const [beatCount, setBeatCount] = useState<number | undefined>(undefined);
-  const [dibobinador, setDibobinador] = useState<number | undefined>(undefined);
-  const [tempo, setTempo] = useState<number | undefined>(undefined);
-  const canAdd = beatCount !== undefined && dibobinador !== undefined && tempo !== undefined;
+  const [beatCount, setBeatCount] = useState<number | null>(null);
+  const [dibobinador, setDibobinador] = useState<number | null>(null);
+  const [tempo, setTempo] = useState<number | null>(null);
+  const canAdd = beatCount !== null && dibobinador !== null && tempo !== null;
+  console.log(beatCount);
 
   const handleClickAdd = () => {
     if (!canAdd) return;
@@ -20,22 +21,28 @@ const BarMenu: FunctionComponent<Props> = ({ onAdd, onClose }) => {
 
   return (
     <FixedSideMenu rightSide onClose={onClose}>
-      <div className="flex flex-col">
+      <div className="flex flex-col bg-inherit">
         <div className="m-auto mt-2 mb-2 flex w-full justify-center">
           <h3 className="m-auto">New Bar</h3>
         </div>
-        <fieldset className="mt-4 w-1/2 self-center">
-          <legend>Number of Beats</legend>
-          <input type="number" value={beatCount} onChange={event => setBeatCount(Number(event.target.value))} />
-        </fieldset>
-        <fieldset className="mt-4 w-1/2 self-center">
-          <legend>Dibobinador</legend>
-          <input type="number" value={dibobinador} onChange={event => setDibobinador(Number(event.target.value))} />
-        </fieldset>
-        <fieldset className="mt-4 w-1/2 self-center">
-          <legend>Tempo</legend>
-          <input type="number" value={tempo} onChange={event => setTempo(Number(event.target.value))} />
-        </fieldset>
+        <NumberField
+          label="Number of Beats"
+          value={beatCount}
+          onChange={value => setBeatCount(value)}
+          className="mt-4 w-1/2 self-center"
+        />
+        <NumberField
+          label="Dibobinador"
+          value={dibobinador}
+          onChange={value => setDibobinador(value)}
+          className="mt-4 w-1/2 self-center"
+        />
+        <NumberField
+          label="Tempo"
+          value={tempo}
+          onChange={value => setTempo(value)}
+          className="mt-4 w-1/2 self-center"
+        />
         <Button
           variant="success"
           text="Add"

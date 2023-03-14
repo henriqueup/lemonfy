@@ -26,7 +26,7 @@ import {
   moveCursorToStartOfBar,
 } from "@store/editor/cursorActions";
 import { addNote, removeNextNoteFromBar } from "@store/editor/sheetActions";
-import { Select } from "@components/select";
+import { Select } from "src/components/select";
 import { classNames } from "src/styles/utils";
 
 const NoteMenu: FunctionComponent = () => {
@@ -135,7 +135,7 @@ const NoteMenu: FunctionComponent = () => {
             label="Octave"
             value={selectedOctave}
             options={[...Array(NUMBER_OF_OCTAVES).keys()]}
-            handleChange={newKey => setSelectedOctave(Number(newKey) as Octave)}
+            onChange={newKey => setSelectedOctave(Number(newKey) as Octave)}
             disableClear
             className="ml-1 mr-1 w-[calc(100%_/_13_-_8px)]"
           />
@@ -143,7 +143,7 @@ const NoteMenu: FunctionComponent = () => {
             label="Duration"
             value={selectedDuration}
             options={Object.keys(NOTE_DURATIONS)}
-            handleChange={newKey => setSelectedNoteDuration(newKey as NoteDurationName)}
+            onChange={newKey => setSelectedNoteDuration(newKey as NoteDurationName)}
             disableClear
             className="ml-1 mr-1 w-[calc(100%_/_13_*_2_-_8px)]"
           />

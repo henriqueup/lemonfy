@@ -1,8 +1,6 @@
 import {
   type ChangeEvent,
-  type DetailedHTMLProps,
   type FunctionComponent,
-  type SelectHTMLAttributes,
   useCallback,
   useEffect,
   useRef,
@@ -11,13 +9,15 @@ import {
   type KeyboardEvent,
   type SyntheticEvent,
   type FocusEvent,
+  type FieldsetHTMLAttributes,
 } from "react";
-import { classNames } from "src/styles/utils";
 import ChevronDown from "src/icons/ChevronDown";
 import X from "src/icons/X";
 import { FloatingDropdown } from "src/components/floatingDropdown";
 import { handleKeyDown } from "src/utils/htmlEvents";
 import { ChevronUp } from "src/icons";
+import { Fieldset } from "src/components/fieldset";
+import { iconClassName } from "src/components/utils";
 
 export type OptionObject = {
   key: string | number;
@@ -31,18 +31,19 @@ interface Props {
   value?: Option;
   options: Option[];
   placeholder?: string;
-  handleChange: (key: string | number | undefined) => void;
+  onChange: (key: string | number | undefined) => void;
   disableClear?: boolean;
 }
 
-const iconClassName = classNames(
-  "flex cursor-pointer items-center rounded-full p-1 outline-none",
-  "hover:bg-white hover:bg-opacity-20 focus-visible:bg-white focus-visible:bg-opacity-20",
-);
-
-const Select: FunctionComponent<
-  Props & Omit<DetailedHTMLProps<SelectHTMLAttributes<HTMLSelectElement>, HTMLSelectElement>, "value">
-> = ({ label, value, options, placeholder, handleChange, disableClear, ...otherProps }) => {
+const Select: FunctionComponent<Props & Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "onChange">> = ({
+  label,
+  value,
+  options,
+  placeholder,
+  onChange,
+  disableClear,
+  ...otherProps
+}) => {
   const [ownValue, setOwnValue] = useState("");
   const [optionsIsOpen, setOptionsIsOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("");
@@ -77,18 +78,18 @@ const Select: FunctionComponent<
     [ownValue],
   );
 
-  const handleOwnChange = (option: OptionObject | undefined) => {
+  const handleChange = (option: OptionObject | undefined) => {
     if (option) {
       setOwnValue(option.value);
       setFilterValue(option.value);
-      handleChange(option.key);
+      onChange(option.key);
     }
 
     handleCloseOptions(true);
   };
 
   const handleChangeInput = (event: ChangeEvent<HTMLInputElement>) => {
-    const newValue = event.currentTarget.value;
+    const newValue = event.target.value;
     setFilterValue(newValue);
   };
 
@@ -103,7 +104,7 @@ const Select: FunctionComponent<
   const handleClear = (event: SyntheticEvent) => {
     setOwnValue("");
     setFilterValue("");
-    handleChange(undefined);
+    onChange(undefined);
     event.stopPropagation();
   };
 
@@ -129,30 +130,22 @@ const Select: FunctionComponent<
   };
 
   return (
-    <fieldset
-      className={classNames(
-        "relative rounded-lg border border-solid border-gray-400 bg-inherit pl-1 pr-1 text-gray-400",
-        otherProps.className,
-      )}
+    <Fieldset
+      label={label}
+      shrinkLabel={shrinkLabel}
+      className={otherProps.className}
       onClick={handleClickFieldset}
       onKeyDown={handleKeyDownFieldset}
       onFocus={handleFocusFieldset}
       onBlur={handleBlurFieldset}
     >
-      {shrinkLabel && (
-        <legend
-          role="presentation"
-          className={classNames("absolute bg-inherit text-sm", "-top-[calc(theme(fontSize.sm[1].lineHeight)_/_2)]")}
-        >
-          {label}
-        </legend>
-      )}
       <div className="flex cursor-pointer items-center pb-2 pt-2">
         <input
           placeholder={placeholder || label}
           className="w-full cursor-pointer bg-inherit focus-visible:outline-none"
           value={fieldsetHasFocus ? filterValue : ownValue}
           onInput={handleChangeInput}
+          onFocus={event => event.target.select()}
           tabIndex={0}
           ref={inputRef}
         />
@@ -184,11 +177,11 @@ const Select: FunctionComponent<
       <FloatingDropdown
         open={optionsIsOpen}
         options={filteredOptions}
-        onChangeOption={handleOwnChange}
+        onChangeOption={handleChange}
         onClose={handleCloseOptions}
         ref={floatingDropdownRef}
       />
-    </fieldset>
+    </Fieldset>
   );
 };
 

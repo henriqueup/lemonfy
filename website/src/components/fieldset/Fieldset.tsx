@@ -1,0 +1,37 @@
+import { type FunctionComponent, type FieldsetHTMLAttributes, type ReactNode } from "react";
+import { classNames } from "src/styles/utils";
+
+interface Props {
+  label: string;
+  shrinkLabel: boolean;
+  children: ReactNode;
+}
+
+const Fieldset: FunctionComponent<Props & FieldsetHTMLAttributes<HTMLFieldSetElement>> = ({
+  label,
+  shrinkLabel,
+  children,
+  ...otherProps
+}) => {
+  return (
+    <fieldset
+      {...otherProps}
+      className={classNames(
+        "relative rounded-lg border border-solid border-gray-400 bg-inherit pl-1 pr-1 text-gray-400",
+        otherProps.className,
+      )}
+    >
+      {shrinkLabel && (
+        <legend
+          role="presentation"
+          className={classNames("absolute bg-inherit text-sm", "-top-[calc(theme(fontSize.sm[1].lineHeight)_/_2)]")}
+        >
+          {label}
+        </legend>
+      )}
+      {children}
+    </fieldset>
+  );
+};
+
+export default Fieldset;

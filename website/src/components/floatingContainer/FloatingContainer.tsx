@@ -1,6 +1,6 @@
-import { areParentsRelative } from "@components/utils";
+import { areParentsRelative } from "src/components/utils";
 import { type ReactNode, useCallback, useRef, useState, type RefCallback } from "react";
-import { ClickAwayListener } from "src/components/clickAwayListener";
+import { ClickAwayListener } from "src/components";
 import { classNames } from "src/styles/utils";
 
 interface Props {

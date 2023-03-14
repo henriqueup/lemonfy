@@ -2,7 +2,7 @@
 import { render, type RenderResult, cleanup, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { UserEvent } from "@testing-library/user-event/dist/types/setup/setup";
-import { Select, type OptionObject } from "@components/select";
+import { Select, type OptionObject } from "src/components/select";
 
 const mockOptions: OptionObject[] = [
   {
@@ -51,7 +51,7 @@ describe("Select", () => {
   beforeEach(() => {
     handleChangeMock = jest.fn();
     user = userEvent.setup();
-    rendered = render(<Select label="Test Select" options={mockOptions} handleChange={handleChangeMock} />);
+    rendered = render(<Select label="Test Select" options={mockOptions} onChange={handleChangeMock} />);
   });
 
   afterEach(cleanup);
@@ -95,7 +95,7 @@ describe("Select", () => {
   it("should shrink label with placeholder", () => {
     cleanup();
     rendered = render(
-      <Select label="Test Select" options={mockOptions} handleChange={handleChangeMock} placeholder="Test Field" />,
+      <Select label="Test Select" options={mockOptions} onChange={handleChangeMock} placeholder="Test Field" />,
     );
 
     const input = rendered.getByRole("textbox") as HTMLInputElement;

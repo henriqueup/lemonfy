@@ -1,7 +1,7 @@
 import { type ReactNode, type FunctionComponent, useState, useCallback } from "react";
-import { X } from "../../icons";
-import { classNames } from "../../styles/utils";
-import ClickAwayListener from "../clickAwayListener/ClickAwayListener";
+import { ClickAwayListener } from "src/components";
+import { X } from "src/icons";
+import { classNames } from "src/styles/utils";
 import CollapsableIcon from "./CollapsableIcon";
 
 interface Props {

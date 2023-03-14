@@ -1,4 +1,4 @@
-import { Select } from "@components/select";
+import { Select } from "src/components/select";
 import type { NextPage } from "next";
 import { useEffect } from "react";
 

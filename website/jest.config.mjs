@@ -21,7 +21,6 @@ const customJestConfig = {
   moduleNameMapper: {
     "@entities/(.*)$": "<rootDir>/src/server/entities/$1",
     "@store/(.*)$": "<rootDir>/src/store/$1",
-    "@components/(.*)$": "<rootDir>/src/components/$1",
   },
   testEnvironment: "<rootDir>/src/mocks/utils/customEnvironment.ts",
   setupFilesAfterEnv: ["<rootDir>/setup-jest.ts"],
