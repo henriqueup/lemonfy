@@ -117,19 +117,29 @@ interface NumberFieldProps {
   >;
 }
 
-// TODO: add decimal support
 export const NumberField: FunctionComponent<
   NumberFieldProps & Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "onChange">
 > = ({ label, onChange, ...otherProps }) => {
   const [ownValue, setOwnValue] = useState<number | string | undefined>(otherProps.value);
 
-  const handleChange = (newValue: string | number | undefined) => setOwnValue(newValue);
+  const getActualValue = (value: string | number | undefined) => {
+    let actualValue: number | undefined = Number(value);
+    if (value === "" || value === undefined) actualValue = undefined;
+
+    return actualValue;
+  };
+
+  const handleChange = (newValue: string | number | undefined) => {
+    setOwnValue(newValue);
+
+    const actualValue = getActualValue(newValue);
+    onChange(actualValue);
+  };
 
   const handleBlur = (event: FocusEvent) => {
     if (event.currentTarget.contains(event.relatedTarget)) return;
 
-    let actualValue: number | undefined = Number(ownValue);
-    if (ownValue === "" || ownValue === undefined) actualValue = undefined;
+    const actualValue = getActualValue(ownValue);
 
     onChange(actualValue);
     setOwnValue(actualValue);
