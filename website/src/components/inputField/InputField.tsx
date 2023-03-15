@@ -3,10 +3,12 @@ import {
   type DetailedHTMLProps,
   type FunctionComponent,
   useRef,
+  useState,
   type SyntheticEvent,
   type InputHTMLAttributes,
   type FieldsetHTMLAttributes,
   type KeyboardEvent,
+  type FocusEvent,
 } from "react";
 import X from "src/icons/X";
 import { handleKeyDown } from "src/utils/htmlEvents";
@@ -15,18 +17,16 @@ import { iconClassName } from "src/components/utils";
 
 interface Props {
   label: string;
-  value?: string | number | null;
-  isNumber?: boolean;
+  value?: string | number;
   placeholder?: string;
-  onChange: (key: string | number | null) => void;
+  onChange: (key: string | number | undefined) => void;
   disableClear?: boolean;
   inputProps?: Omit<DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, "value" | "onChange">;
 }
 
 const BaseInputField: FunctionComponent<Props & Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "onChange">> = ({
   label,
-  value = null,
-  isNumber = false,
+  value,
   placeholder,
   onChange,
   disableClear,
@@ -38,17 +38,11 @@ const BaseInputField: FunctionComponent<Props & Omit<FieldsetHTMLAttributes<HTML
 
   const handleChangeInput = (event: ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
-
-    if (isNumber) {
-      onChange(Number(newValue));
-      return;
-    }
-
     onChange(newValue);
   };
 
   const handleClear = (event: SyntheticEvent) => {
-    onChange(null);
+    onChange(undefined);
     event.stopPropagation();
   };
 
@@ -63,13 +57,13 @@ const BaseInputField: FunctionComponent<Props & Omit<FieldsetHTMLAttributes<HTML
           {...inputProps}
           placeholder={placeholder || label}
           className="w-full cursor-pointer bg-inherit focus-visible:outline-none"
-          value={value === null ? "" : value}
+          value={value === undefined ? "" : value}
           onInput={handleChangeInput}
           onFocus={event => event.target.select()}
           tabIndex={0}
           ref={inputRef}
         />
-        {value && !disableClear && (
+        {value !== undefined && !disableClear ? (
           <div
             className={iconClassName}
             onClick={event => handleClear(event)}
@@ -78,7 +72,7 @@ const BaseInputField: FunctionComponent<Props & Omit<FieldsetHTMLAttributes<HTML
           >
             <X width={16} height={16} stroke="lightgray" strokeWidth={2} />
           </div>
-        )}
+        ) : null}
       </div>
     </Fieldset>
   );
@@ -86,9 +80,9 @@ const BaseInputField: FunctionComponent<Props & Omit<FieldsetHTMLAttributes<HTML
 
 interface TextFieldProps {
   label: string;
-  value?: string | null;
+  value?: string;
   placeholder?: string;
-  onChange: (key: string | null) => void;
+  onChange: (key: string | undefined) => void;
   disableClear?: boolean;
   inputProps?: Omit<
     DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>,
@@ -99,7 +93,7 @@ interface TextFieldProps {
 export const TextField: FunctionComponent<
   TextFieldProps & Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "onChange">
 > = ({ label, onChange, ...otherProps }) => {
-  const handleChange = (newValue: string | number | null) => {
+  const handleChange = (newValue: string | number | undefined) => {
     if (typeof newValue === "number") {
       onChange(newValue.toString());
       return;
@@ -113,9 +107,9 @@ export const TextField: FunctionComponent<
 
 interface NumberFieldProps {
   label: string;
-  value?: number | null;
+  value?: number;
   placeholder?: string;
-  onChange: (key: number | null) => void;
+  onChange: (key: number | undefined) => void;
   disableClear?: boolean;
   inputProps?: Omit<
     DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>,
@@ -127,17 +121,24 @@ interface NumberFieldProps {
 export const NumberField: FunctionComponent<
   NumberFieldProps & Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "onChange">
 > = ({ label, onChange, ...otherProps }) => {
-  const handleChange = (newValue: string | number | null) => {
-    if (typeof newValue === "string") {
-      onChange(Number(newValue));
-      return;
-    }
+  const [ownValue, setOwnValue] = useState<number | string | undefined>(otherProps.value);
 
-    onChange(newValue);
+  const handleChange = (newValue: string | number | undefined) => setOwnValue(newValue);
+
+  const handleBlur = (event: FocusEvent) => {
+    if (event.currentTarget.contains(event.relatedTarget)) return;
+
+    let actualValue: number | undefined = Number(ownValue);
+    if (ownValue === "" || ownValue === undefined) actualValue = undefined;
+
+    onChange(actualValue);
+    setOwnValue(actualValue);
   };
 
   const handleKeyDownInput = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (Number.isNaN(Number(event.key))) {
+    const ALLOWED_CHARS = ["Tab", "Backspace", "Delete", "ArrowLeft", "ArrowRight", "-", ".", ","];
+
+    if (Number.isNaN(Number(event.key)) && !ALLOWED_CHARS.includes(event.key)) {
       event.preventDefault();
     }
   };
@@ -145,9 +146,10 @@ export const NumberField: FunctionComponent<
   return (
     <BaseInputField
       {...otherProps}
+      value={ownValue}
       label={label}
       onChange={handleChange}
-      isNumber
+      onBlur={handleBlur}
       inputProps={{ onKeyDown: handleKeyDownInput }}
     />
   );

@@ -118,10 +118,10 @@ const Select: FunctionComponent<Props & Omit<FieldsetHTMLAttributes<HTMLFieldSet
   };
 
   const handleBlurFieldset = (event: FocusEvent) => {
-    if (!event.currentTarget.contains(event.relatedTarget)) {
-      handleCloseOptions();
-      setFieldsetHasFocus(false);
-    }
+    if (event.currentTarget.contains(event.relatedTarget)) return;
+
+    handleCloseOptions();
+    setFieldsetHasFocus(false);
   };
 
   const handleChevronUp = (event: SyntheticEvent) => {
@@ -149,7 +149,7 @@ const Select: FunctionComponent<Props & Omit<FieldsetHTMLAttributes<HTMLFieldSet
           tabIndex={0}
           ref={inputRef}
         />
-        {ownValue && !disableClear && (
+        {ownValue && !disableClear ? (
           <div
             className={iconClassName}
             onClick={event => handleClear(event)}
@@ -158,7 +158,7 @@ const Select: FunctionComponent<Props & Omit<FieldsetHTMLAttributes<HTMLFieldSet
           >
             <X width={16} height={16} stroke="lightgray" strokeWidth={2} />
           </div>
-        )}
+        ) : null}
         {optionsIsOpen ? (
           <div
             className={iconClassName}

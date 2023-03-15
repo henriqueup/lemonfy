@@ -7,11 +7,10 @@ type Props = {
 };
 
 const BarMenu: FunctionComponent<Props> = ({ onAdd, onClose }) => {
-  const [beatCount, setBeatCount] = useState<number | null>(null);
-  const [dibobinador, setDibobinador] = useState<number | null>(null);
-  const [tempo, setTempo] = useState<number | null>(null);
-  const canAdd = beatCount !== null && dibobinador !== null && tempo !== null;
-  console.log(beatCount);
+  const [beatCount, setBeatCount] = useState<number | undefined>();
+  const [dibobinador, setDibobinador] = useState<number | undefined>();
+  const [tempo, setTempo] = useState<number | undefined>();
+  const canAdd = beatCount !== undefined && dibobinador !== undefined && tempo !== undefined;
 
   const handleClickAdd = () => {
     if (!canAdd) return;

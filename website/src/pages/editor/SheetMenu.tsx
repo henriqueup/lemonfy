@@ -1,5 +1,5 @@
 import { type FunctionComponent, useState } from "react";
-import { Button, FixedSideMenu } from "../../components";
+import { Button, FixedSideMenu, NumberField } from "src/components";
 
 type Props = {
   onAdd: (trackCount: number) => void;
@@ -7,7 +7,7 @@ type Props = {
 };
 
 const SheetMenu: FunctionComponent<Props> = ({ onAdd, onClose }) => {
-  const [trackCount, setTrackCount] = useState<number | undefined>(undefined);
+  const [trackCount, setTrackCount] = useState<number | undefined>();
   const canAdd = trackCount !== undefined;
 
   const handleClickAdd = () => {
@@ -18,14 +18,16 @@ const SheetMenu: FunctionComponent<Props> = ({ onAdd, onClose }) => {
 
   return (
     <FixedSideMenu rightSide onClose={onClose}>
-      <div className="flex flex-col">
+      <div className="flex flex-col bg-inherit">
         <div className="m-auto mt-2 mb-2 flex w-full justify-center">
           <h3 className="m-auto">New Sheet</h3>
         </div>
-        <fieldset className="mt-4 w-1/2 self-center">
-          <legend>Number of Tracks</legend>
-          <input type="number" value={trackCount} onChange={event => setTrackCount(Number(event.target.value))} />
-        </fieldset>
+        <NumberField
+          label="Number of Tracks"
+          value={trackCount}
+          onChange={value => setTrackCount(value)}
+          className="mt-4 w-1/2 self-center"
+        />
         <Button
           variant="success"
           text="Add"
