@@ -13,6 +13,7 @@ const customJestConfig = {
   // setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   // if using TypeScript with a baseUrl set to the root directory then you need the below for alias' to work
   moduleDirectories: ["node_modules", "<rootDir>/"],
+  roots: ["<rootDir>"],
 
   // If you're using [Module Path Aliases](https://nextjs.org/docs/advanced-features/module-path-aliases),
   // you will have to add the moduleNameMapper in order for jest to resolve your absolute paths.
@@ -21,8 +22,9 @@ const customJestConfig = {
   moduleNameMapper: {
     "@entities/(.*)$": "<rootDir>/src/server/entities/$1",
     "@store/(.*)$": "<rootDir>/src/store/$1",
+    "@mocks/(.*)$": "<rootDir>/src/mocks/$1",
   },
-  testEnvironment: "<rootDir>/src/mocks/utils/customEnvironment.ts",
+  testEnvironment: "jest-environment-jsdom",
   setupFilesAfterEnv: ["<rootDir>/setup-jest.ts"],
   transform: {
     "^.+\\.(t|j)sx?$": ["@swc/jest"],

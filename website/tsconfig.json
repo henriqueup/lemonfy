@@ -3,7 +3,8 @@
     "baseUrl": ".",
     "paths": {
       "@entities/*": ["src/server/entities/*"],
-      "@store/*": ["src/store/*"]
+      "@store/*": ["src/store/*"],
+      "@mocks/*": ["src/mocks/*"]
     },
     "target": "es2017",
     "lib": ["dom", "dom.iterable", "esnext"],
