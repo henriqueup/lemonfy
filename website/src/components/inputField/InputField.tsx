@@ -21,6 +21,7 @@ interface Props {
   placeholder?: string;
   onChange: (key: string | number | undefined) => void;
   disableClear?: boolean;
+  autoFocus?: boolean;
   inputProps?: Omit<DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, "value" | "onChange">;
 }
 
@@ -31,6 +32,7 @@ const BaseInputField: FunctionComponent<Props & Omit<FieldsetHTMLAttributes<HTML
   onChange,
   disableClear,
   inputProps,
+  autoFocus = false,
   ...otherProps
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -54,6 +56,7 @@ const BaseInputField: FunctionComponent<Props & Omit<FieldsetHTMLAttributes<HTML
     <Fieldset {...otherProps} label={label} shrinkLabel={shrinkLabel} onClick={handleClickFieldset}>
       <div className="flex cursor-pointer items-center pb-2 pt-2">
         <input
+          autoFocus={autoFocus}
           {...inputProps}
           placeholder={placeholder || label}
           className="w-full cursor-pointer bg-inherit focus-visible:outline-none"
@@ -84,6 +87,7 @@ interface TextFieldProps {
   placeholder?: string;
   onChange: (key: string | undefined) => void;
   disableClear?: boolean;
+  autoFocus?: boolean;
   inputProps?: Omit<
     DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>,
     "value" | "onChange" | "type"
@@ -92,7 +96,7 @@ interface TextFieldProps {
 
 export const TextField: FunctionComponent<
   TextFieldProps & Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "onChange">
-> = ({ label, onChange, ...otherProps }) => {
+> = ({ label, onChange, autoFocus, ...otherProps }) => {
   const handleChange = (newValue: string | number | undefined) => {
     if (typeof newValue === "number") {
       onChange(newValue.toString());
@@ -102,7 +106,7 @@ export const TextField: FunctionComponent<
     onChange(newValue);
   };
 
-  return <BaseInputField {...otherProps} label={label} onChange={handleChange} />;
+  return <BaseInputField {...otherProps} autoFocus={autoFocus} label={label} onChange={handleChange} />;
 };
 
 interface NumberFieldProps {
@@ -111,6 +115,7 @@ interface NumberFieldProps {
   placeholder?: string;
   onChange: (key: number | undefined) => void;
   disableClear?: boolean;
+  autoFocus?: boolean;
   inputProps?: Omit<
     DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>,
     "value" | "onChange" | "type"
@@ -119,7 +124,7 @@ interface NumberFieldProps {
 
 export const NumberField: FunctionComponent<
   NumberFieldProps & Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "onChange">
-> = ({ label, onChange, ...otherProps }) => {
+> = ({ label, onChange, autoFocus, ...otherProps }) => {
   const [ownValue, setOwnValue] = useState<number | string | undefined>(otherProps.value);
 
   const getActualValue = (value: string | number | undefined) => {
@@ -156,6 +161,7 @@ export const NumberField: FunctionComponent<
   return (
     <BaseInputField
       {...otherProps}
+      autoFocus={autoFocus}
       value={ownValue}
       label={label}
       onChange={handleChange}

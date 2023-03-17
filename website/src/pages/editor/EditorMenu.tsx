@@ -23,7 +23,7 @@ const EditorMenu: FunctionComponent<Props> = ({ handleLoad }) => {
   };
 
   return (
-    <CollapsableSideMenu>
+    <CollapsableSideMenu label="Editor Menu">
       <div className="flex flex-col">
         <div className="mt-2 mb-2 ml-auto mr-auto flex w-full justify-center">
           <h3 className="m-auto">Editor Menu</h3>

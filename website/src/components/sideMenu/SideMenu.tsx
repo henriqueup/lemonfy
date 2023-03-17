@@ -2,7 +2,7 @@ import { type ReactNode, type FunctionComponent, useState, useCallback } from "r
 import { ClickAwayListener } from "src/components";
 import { X } from "src/icons";
 import { classNames } from "src/styles/utils";
-import CollapsableIcon from "./CollapsableIcon";
+import CollapseButton from "./CollapseButton";
 
 interface Props {
   rightSide?: boolean;
@@ -18,7 +18,7 @@ const BaseSideMenu: FunctionComponent<Props> = ({
   initiateOpen = false,
   collapsable = true,
   onClose,
-  label = "side menu",
+  label = "Side Menu",
   children,
 }) => {
   const [isOpen, setIsOpen] = useState(initiateOpen);
@@ -42,24 +42,23 @@ const BaseSideMenu: FunctionComponent<Props> = ({
         )}
       >
         {isOpen && !collapsable ? (
-          <div className="absolute top-2 right-2 cursor-pointer p-1" onClick={handleClose}>
+          <div
+            role="button"
+            aria-label={`Close ${label}`}
+            className="absolute top-2 right-2 cursor-pointer p-1"
+            onClick={handleClose}
+          >
             <X height={24} width={24} stroke="lightgray" />
           </div>
         ) : null}
         {isOpen ? children : null}
         {collapsable ? (
-          <div
-            role="button"
-            aria-label={isOpen ? `close ${label}` : `open ${label}`}
-            className={classNames(
-              "absolute top-[calc(50%_-_16px)] flex h-8 w-6 cursor-pointer items-center justify-center rounded border border-gray-400 bg-inherit",
-              rightSide ? "border-r-0" : "border-l-0",
-              rightSide ? "right-full" : "left-full",
-            )}
+          <CollapseButton
+            isOpen={isOpen}
+            rightSide={rightSide}
+            menuLabel={label}
             onClick={() => setIsOpen(current => !current)}
-          >
-            <CollapsableIcon isOpen={isOpen} rightSide={rightSide} />
-          </div>
+          />
         ) : null}
       </div>
     </ClickAwayListener>
@@ -68,22 +67,28 @@ const BaseSideMenu: FunctionComponent<Props> = ({
 
 interface CollapsableSideMenuProps {
   rightSide?: boolean;
+  label?: string;
   children: ReactNode;
 }
 
-export const CollapsableSideMenu: FunctionComponent<CollapsableSideMenuProps> = ({ rightSide, children }) => {
-  return <BaseSideMenu rightSide={rightSide}>{children}</BaseSideMenu>;
+export const CollapsableSideMenu: FunctionComponent<CollapsableSideMenuProps> = ({ rightSide, label, children }) => {
+  return (
+    <BaseSideMenu label={label} rightSide={rightSide}>
+      {children}
+    </BaseSideMenu>
+  );
 };
 
 interface FixedSideMenuProps {
   rightSide?: boolean;
+  label?: string;
   onClose: () => void;
   children: ReactNode;
 }
 
-export const FixedSideMenu: FunctionComponent<FixedSideMenuProps> = ({ rightSide, onClose, children }) => {
+export const FixedSideMenu: FunctionComponent<FixedSideMenuProps> = ({ rightSide, label, onClose, children }) => {
   return (
-    <BaseSideMenu rightSide={rightSide} initiateOpen collapsable={false} onClose={onClose}>
+    <BaseSideMenu label={label} rightSide={rightSide} initiateOpen collapsable={false} onClose={onClose}>
       {children}
     </BaseSideMenu>
   );

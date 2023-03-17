@@ -30,6 +30,7 @@ describe("Select", () => {
       expect(options[i]!.textContent).toBe(mockOption.value);
       expect(options[i]!.className).toMatch(OPTION_BACKGROUND);
     });
+    expect(rendered.getByRole("button", { name: "Collapse options" })).toBeInTheDocument();
   };
 
   const selectsNthOption = async (optionIndex: number) => {
@@ -70,11 +71,19 @@ describe("Select", () => {
     containsInitialOptions();
   });
 
-  it("should open options on chevron down icon click", async () => {
-    const icon = rendered.getByRole("img");
-    await act(() => user.click(icon));
+  it("should open and close options on chevron icon click", async () => {
+    const expandIcon = rendered.getByRole("button", { name: "Expand options" });
+    await act(() => user.click(expandIcon));
 
     containsInitialOptions();
+
+    const collapseIcon = rendered.getByRole("button", { name: "Collapse options" });
+    await act(() => user.click(collapseIcon));
+
+    const input = rendered.getByRole("textbox") as HTMLInputElement;
+
+    expect(input.placeholder).toBe("Test Select");
+    expect(input.value).toBe("");
   });
 
   it("should open options on ArrowDown key", async () => {
@@ -116,10 +125,10 @@ describe("Select", () => {
   it("should select option on option click", async () => {
     await selectsNthOption(0);
 
-    const icons = rendered.getAllByRole("img");
     const legend = rendered.getByRole("presentation");
 
-    expect(icons.length).toBe(2);
+    expect(rendered.getByRole("button", { name: "Expand options" })).toBeInTheDocument();
+    expect(rendered.getByRole("button", { name: "Clear" })).toBeInTheDocument();
     expect(legend.textContent).toBe("Test Select");
     expect(handleChangeMock).toHaveBeenCalledTimes(1);
   });
@@ -127,8 +136,8 @@ describe("Select", () => {
   it("should clear selection on clear icon click", async () => {
     await selectsNthOption(1);
 
-    const icons = rendered.getAllByRole("img");
-    await act(() => user.click(icons[0]!));
+    const clearIcon = rendered.getByRole("button", { name: "Clear" });
+    await act(() => user.click(clearIcon));
 
     const input = rendered.getByRole("textbox") as HTMLInputElement;
 
@@ -201,10 +210,10 @@ describe("Select", () => {
     options = rendered.queryAllByRole("listitem");
     expect(options.length).toBe(0);
 
-    const icons = rendered.getAllByRole("img");
     const legend = rendered.getByRole("presentation");
 
-    expect(icons.length).toBe(2);
+    expect(rendered.getByRole("button", { name: "Expand options" })).toBeInTheDocument();
+    expect(rendered.getByRole("button", { name: "Clear" })).toBeInTheDocument();
     expect(legend.textContent).toBe("Test Select");
     expect(handleChangeMock).toHaveBeenCalledTimes(1);
   });

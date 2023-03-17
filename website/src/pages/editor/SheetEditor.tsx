@@ -30,6 +30,8 @@ const SheetEditor: FunctionComponent = () => {
           </div>
           <div className="flex justify-center">
             <div
+              role="button"
+              aria-label="New Bar"
               className="mt-4 flex cursor-pointer content-center justify-center rounded-full border border-solid border-gray-400 p-1"
               onClick={() => setBarMenuIsOpen(true)}
             >

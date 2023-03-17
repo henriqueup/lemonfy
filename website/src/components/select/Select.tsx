@@ -131,6 +131,8 @@ const Select: FunctionComponent<Props & Omit<FieldsetHTMLAttributes<HTMLFieldSet
 
   return (
     <Fieldset
+      role="combobox"
+      aria-label={`Select ${label}`}
       label={label}
       shrinkLabel={shrinkLabel}
       className={otherProps.className}
@@ -151,6 +153,8 @@ const Select: FunctionComponent<Props & Omit<FieldsetHTMLAttributes<HTMLFieldSet
         />
         {ownValue && !disableClear ? (
           <div
+            role="button"
+            aria-label="Clear"
             className={iconClassName}
             onClick={event => handleClear(event)}
             onKeyDown={handleKeyDown("Enter", handleClear)}
@@ -159,20 +163,22 @@ const Select: FunctionComponent<Props & Omit<FieldsetHTMLAttributes<HTMLFieldSet
             <X width={16} height={16} stroke="lightgray" strokeWidth={2} />
           </div>
         ) : null}
-        {optionsIsOpen ? (
-          <div
-            className={iconClassName}
-            onKeyDown={handleKeyDown("Enter", handleChevronUp)}
-            onClick={handleChevronUp}
-            tabIndex={0}
-          >
+        <div
+          role="button"
+          aria-label={`${optionsIsOpen ? "Collapse" : "Expand"} options`}
+          className={iconClassName}
+          onKeyDown={
+            optionsIsOpen ? handleKeyDown("Enter", handleChevronUp) : handleKeyDown("Enter", handleClickFieldset)
+          }
+          onClick={event => (optionsIsOpen ? handleChevronUp(event) : handleClickFieldset())}
+          tabIndex={0}
+        >
+          {optionsIsOpen ? (
             <ChevronUp width={16} height={16} stroke="lightgray" fill="none" strokeWidth={2} />
-          </div>
-        ) : (
-          <div className={iconClassName} onKeyDown={handleKeyDown("Enter", handleClickFieldset)} tabIndex={0}>
+          ) : (
             <ChevronDown width={16} height={16} stroke="lightgray" fill="none" strokeWidth={2} />
-          </div>
-        )}
+          )}
+        </div>
       </div>
       <FloatingDropdown
         open={optionsIsOpen}

@@ -25,7 +25,7 @@ describe("Navigation", () => {
     const buttons = rendered.getAllByRole("button");
 
     expect(buttons).toHaveLength(2);
-    const editorMenuButton = buttons[1]!;
+    const editorMenuButton = rendered.getByRole("button", { name: "Open Editor Menu" });
 
     await act(() => user.click(editorMenuButton));
 
@@ -35,11 +35,7 @@ describe("Navigation", () => {
   });
 
   it("Opens new sheet menu on click", async () => {
-    const buttons = rendered.getAllByRole("button");
-
-    expect(buttons).toHaveLength(2);
-    const newSheetMenuButton = buttons[0]!;
-
+    const newSheetMenuButton = rendered.getByRole("button", { name: "New Sheet" });
     await act(() => user.click(newSheetMenuButton));
 
     expect(rendered.getByRole("heading", { name: "New Sheet" })).toBeInTheDocument();
@@ -48,22 +44,46 @@ describe("Navigation", () => {
   });
 
   it("Creates new sheet", async () => {
-    const buttons = rendered.getAllByRole("button");
-
-    expect(buttons).toHaveLength(2);
-    const newSheetMenuButton = buttons[0]!;
-
+    const newSheetMenuButton = rendered.getByRole("button", { name: "New Sheet" });
     await act(() => user.click(newSheetMenuButton));
 
-    const sheetNumberInput = rendered.getByPlaceholderText("Number of Tracks");
     const addButton = rendered.getByRole("button", { name: "Add" });
 
     await act(async () => {
-      await user.click(sheetNumberInput);
       await user.keyboard("3");
       await user.click(addButton);
     });
 
     expect(rendered.getByRole("group", { name: "Bars" })).toBeInTheDocument();
+    expect(rendered.getByRole("group", { name: "Note Selector" })).toBeInTheDocument();
+    expect(rendered.getByRole("button", { name: "New Bar" })).toBeInTheDocument();
+    expect(rendered.getByRole("button", { name: "Play" })).toBeInTheDocument();
+    expect(rendered.getByRole("combobox", { name: "Select Octave" })).toBeInTheDocument();
+    expect(rendered.getByRole("combobox", { name: "Select Duration" })).toBeInTheDocument();
+  });
+
+  it("Creates new bar", async () => {
+    const newSheetMenuButton = rendered.getByRole("button", { name: "New Sheet" });
+    await act(() => user.click(newSheetMenuButton));
+
+    let addButton = rendered.getByRole("button", { name: "Add" });
+
+    await act(async () => {
+      await user.keyboard("3");
+      await user.click(addButton);
+    });
+
+    const newBarMenuButton = rendered.getByRole("button", { name: "New Bar" });
+    await act(() => user.click(newBarMenuButton));
+
+    addButton = rendered.getByRole("button", { name: "Add" });
+
+    await act(async () => {
+      await user.keyboard("4{Tab}{Tab}4{Tab}{Tab}60");
+      await user.click(addButton);
+    });
+
+    expect(rendered.getByText("4/4")).toBeInTheDocument();
+    expect(rendered.getByText("60")).toBeInTheDocument();
   });
 });

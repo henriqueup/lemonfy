@@ -17,7 +17,7 @@ const SheetMenu: FunctionComponent<Props> = ({ onAdd, onClose }) => {
   };
 
   return (
-    <FixedSideMenu rightSide onClose={onClose}>
+    <FixedSideMenu label="Sheet Menu" rightSide onClose={onClose}>
       <div className="flex flex-col bg-inherit">
         <div className="m-auto mt-2 mb-2 flex w-full justify-center">
           <h3 className="m-auto">New Sheet</h3>
@@ -25,6 +25,7 @@ const SheetMenu: FunctionComponent<Props> = ({ onAdd, onClose }) => {
         <NumberField
           label="Number of Tracks"
           value={trackCount}
+          autoFocus
           onChange={value => setTrackCount(value)}
           className="mt-4 w-1/2 self-center"
         />

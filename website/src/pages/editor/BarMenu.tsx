@@ -19,12 +19,13 @@ const BarMenu: FunctionComponent<Props> = ({ onAdd, onClose }) => {
   };
 
   return (
-    <FixedSideMenu rightSide onClose={onClose}>
+    <FixedSideMenu label="Bar Menu" rightSide onClose={onClose}>
       <div className="flex flex-col bg-inherit">
         <div className="m-auto mt-2 mb-2 flex w-full justify-center">
           <h3 className="m-auto">New Bar</h3>
         </div>
         <NumberField
+          autoFocus
           label="Number of Beats"
           value={beatCount}
           onChange={value => setBeatCount(value)}
