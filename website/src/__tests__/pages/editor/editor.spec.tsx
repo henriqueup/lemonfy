@@ -87,3 +87,53 @@ describe("Navigation", () => {
     expect(rendered.getByText("60")).toBeInTheDocument();
   });
 });
+
+describe("Song creation", () => {
+  let rendered: RenderResult;
+  let user: UserEvent;
+
+  beforeEach(async () => {
+    user = userEvent.setup();
+    rendered = render(<Editor />);
+
+    const newSheetMenuButton = rendered.getByRole("button", { name: "New Sheet" });
+    await act(() => user.click(newSheetMenuButton));
+
+    let addButton = rendered.getByRole("button", { name: "Add" });
+
+    await act(async () => {
+      await user.keyboard("3");
+      await user.click(addButton);
+    });
+
+    const newBarMenuButton = rendered.getByRole("button", { name: "New Bar" });
+    await act(() => user.click(newBarMenuButton));
+
+    addButton = rendered.getByRole("button", { name: "Add" });
+
+    await act(async () => {
+      await user.keyboard("4{Tab}{Tab}4{Tab}{Tab}60");
+      await user.click(addButton);
+    });
+  });
+
+  afterEach(cleanup);
+
+  it("Changes note octave", async () => {
+    await act(async () => {
+      await user.keyboard("{ArrowUp}{ArrowUp}{ArrowUp}{ArrowDown}");
+    });
+
+    const octaveInput = rendered.getByPlaceholderText("Octave");
+    expect(octaveInput).toHaveValue("2");
+  });
+
+  it("Changes note duration", async () => {
+    await act(async () => {
+      await user.keyboard("{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowRight}");
+    });
+
+    const octaveInput = rendered.getByPlaceholderText("Duration");
+    expect(octaveInput).toHaveValue("WHOLE");
+  });
+});
