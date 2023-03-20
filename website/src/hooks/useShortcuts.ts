@@ -1,3 +1,4 @@
+import { getEventListeners } from "events";
 import { useCallback, useEffect } from "react";
 
 const SHORTCUTS = {
@@ -50,7 +51,7 @@ const useShortcuts = (shortcutDictionary: ShortcutDictionary) => {
     if (event.shiftKey) keys.push("SHIFT");
     if (event.altKey) keys.push("ALT");
 
-    console.log(event.key);
+    // console.log(event.key);
     keys.push(event.key);
 
     const resultingKey = keys.join("_");

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { render, type RenderResult, cleanup, act } from "@testing-library/react";
+import { render, type RenderResult, cleanup, act, prettyDOM } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { UserEvent } from "@testing-library/user-event/dist/types/setup/setup";
 import Editor from "src/pages/editor";
@@ -120,20 +120,57 @@ describe("Song creation", () => {
   afterEach(cleanup);
 
   it("Changes note octave", async () => {
-    await act(async () => {
-      await user.keyboard("{ArrowUp}{ArrowUp}{ArrowUp}{ArrowDown}");
-    });
+    await act(() => user.keyboard("{ArrowUp}{ArrowUp}{ArrowUp}{ArrowDown}"));
 
     const octaveInput = rendered.getByPlaceholderText("Octave");
     expect(octaveInput).toHaveValue("2");
   });
 
   it("Changes note duration", async () => {
-    await act(async () => {
-      await user.keyboard("{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowRight}");
-    });
+    await act(() => user.keyboard("{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowRight}"));
 
     const octaveInput = rendered.getByPlaceholderText("Duration");
     expect(octaveInput).toHaveValue("WHOLE");
+  });
+
+  it("Adds notes", async () => {
+    await act(() => user.keyboard("{ArrowLeft}{ArrowLeft}"));
+    await act(() => user.keyboard("{ArrowUp}"));
+    await act(() => user.keyboard("{Shift>}C{/Shift}"));
+
+    expect(rendered.getByText("C#1")).toBeInTheDocument();
+
+    await act(() => user.keyboard("{Control>}{ArrowDown}{/Control}{Shift>}{ArrowLeft}{/Shift}"));
+    await act(() => user.keyboard("{ArrowUp}"));
+    await act(() => user.keyboard("{Shift>}C{/Shift}"));
+
+    expect(rendered.getByText("C#2")).toBeInTheDocument();
+
+    await act(() => user.keyboard("{Control>}{ArrowDown}{/Control}{Shift>}{ArrowLeft}{/Shift}"));
+    await act(() => user.keyboard("{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}"));
+    await act(() => user.keyboard("{Shift>}G{/Shift}"));
+    await act(() => user.keyboard("{ArrowUp}"));
+    await act(() => user.keyboard("{Shift>}C{/Shift}"));
+    await act(() => user.keyboard("e"));
+    await act(() => user.keyboard("{ArrowDown}"));
+    await act(() => user.keyboard("{Shift>}G{/Shift}"));
+    await act(() => user.keyboard("{ArrowUp}"));
+    await act(() => user.keyboard("{Shift>}C{/Shift}"));
+    await act(() => user.keyboard("e"));
+    await act(() => user.keyboard("{ArrowDown}"));
+    await act(() => user.keyboard("{Shift>}G{/Shift}"));
+    await act(() => user.keyboard("{ArrowUp}"));
+    await act(() => user.keyboard("{Shift>}C{/Shift}"));
+    await act(() => user.keyboard("e"));
+    await act(() => user.keyboard("{ArrowDown}"));
+    await act(() => user.keyboard("{Shift>}G{/Shift}"));
+    await act(() => user.keyboard("{ArrowUp}"));
+    await act(() => user.keyboard("{Shift>}C{/Shift}"));
+    await act(() => user.keyboard("e"));
+
+    console.log(prettyDOM(rendered.baseElement, 99999));
+    expect(rendered.getAllByText("G#2")).toHaveLength(4);
+    expect(rendered.getAllByText("C#3")).toHaveLength(4);
+    expect(rendered.getAllByText("E3")).toHaveLength(4);
   });
 });

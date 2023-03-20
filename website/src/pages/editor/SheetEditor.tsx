@@ -17,7 +17,7 @@ const SheetEditor: FunctionComponent = () => {
     setBarMenuIsOpen(false);
   };
 
-  console.log(bars);
+  // console.log(bars);
   return (
     <>
       <div className="h-3/5 p-4 pb-2 text-gray-400">

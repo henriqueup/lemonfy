@@ -25,7 +25,7 @@ const Note: FunctionComponent<Props> = ({ note, barCapacity }) => {
         </div>
       ) : null}
       <div className={getNoteClassName()}>
-        <span>{`${note.pitch?.name || ""}${note.pitch?.octave || ""}`}</span>
+        <span>{note.pitch?.key}</span>
       </div>
       {note.hasSustain ? (
         <div className="flex w-1/2 justify-end">
