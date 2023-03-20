@@ -132,7 +132,10 @@ const fillBarTrackInSheet = (sheet: Sheet, barIndex: number, trackIndex: number)
   const sheetTrack = sheet.tracks[trackIndex];
   if (sheetTrack === undefined) throw new Error(`Track at index ${trackIndex} should exist.`);
 
-  if (sheetTrack.length === 0) return;
+  if (sheetTrack.length === 0) {
+    targetBar.tracks[trackIndex] = [];
+    return;
+  }
 
   fillBarTrack(targetBar, sheetTrack, trackIndex);
 };

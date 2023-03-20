@@ -101,6 +101,16 @@ describe("Fill track", () => {
     expect(bar.tracks[0]).toHaveLength(0);
   });
 
+  it("Empties the Bar when track has no Notes within it", () => {
+    const bar = getEmptyMockBar();
+    bar.tracks[0]!.push(createNoteMock(NoteModule.NOTE_DURATIONS["QUARTER"], 0));
+    const track = [createNoteMock(NoteModule.NOTE_DURATIONS["QUARTER"], 3 / 4)];
+
+    fillBarTrack(bar, track, 0);
+
+    expect(bar.tracks[0]).toHaveLength(0);
+  });
+
   // it("Fails with invalid first Note", () => {
   //   const bar = getEmptyMockBar();
   //   const track = [undefined, createNoteMock(NoteModule.NOTE_DURATIONS["QUARTER"], 0)] as NoteModule.Note[];

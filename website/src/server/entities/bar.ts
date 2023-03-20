@@ -87,7 +87,10 @@ export const fillBarTrack = (bar: Bar, track: Note[], trackIndex: number) => {
       TimeEvaluation.IsGreaterThan(note.start + note.duration, bar.start) &&
       TimeEvaluation.IsSmallerThan(note.start, barEnd),
   );
-  if (notesInsideBar.length === 0) return;
+  if (notesInsideBar.length === 0) {
+    bar.tracks[trackIndex] = [];
+    return;
+  }
 
   const firstNote = notesInsideBar[0];
   if (firstNote === undefined) throw Error("Invalid first Note of track.");

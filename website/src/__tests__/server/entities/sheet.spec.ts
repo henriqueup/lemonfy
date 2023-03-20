@@ -405,11 +405,15 @@ describe("Fill Bar tracks in Sheet", () => {
     expect(() => fillBarTracksInSheet(sheet, 4)).toThrowError("Track at index 4 should exist.");
   });
 
-  it("Does nothing with empty track", () => {
+  it("Empties Bars with empty track", () => {
     const sheet = getMockSheetWithBars();
+    sheet.bars[0]!.tracks[0]!.push(createNoteMock(NOTE_DURATIONS["QUARTER"], 0));
+    sheet.bars[1]!.tracks[0]!.push(createNoteMock(NOTE_DURATIONS["QUARTER"], 3 / 4));
+    sheet.bars[2]!.tracks[0]!.push(createNoteMock(NOTE_DURATIONS["QUARTER"], 1 + 3 / 4));
 
     fillBarTracksInSheet(sheet, 0);
 
+    expect(BarModule.fillBarTrack).not.toHaveBeenCalled();
     expect(sheet.bars[0]!.tracks[0]).toHaveLength(0);
     expect(sheet.bars[1]!.tracks[0]).toHaveLength(0);
     expect(sheet.bars[2]!.tracks[0]).toHaveLength(0);
