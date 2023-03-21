@@ -6,6 +6,15 @@
       "parserOptions": {
         "project": "website/tsconfig.json"
       }
+    },
+    {
+      "files": ["**/*.spec.ts", "**/*.spec.tsx", "**/*.test.ts", "**/*.test.tsx"],
+      "plugins": ["jest"],
+      "rules": {
+        // you should turn the original rule off *only* for test files
+        "@typescript-eslint/unbound-method": "off",
+        "jest/unbound-method": "error"
+      }
     }
   ],
   "parser": "@typescript-eslint/parser",
