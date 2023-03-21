@@ -1,10 +1,8 @@
 import { type DragEvent, type FunctionComponent } from "react";
-import { Button } from "../../components";
-import { useAudioContext, useShortcuts } from "../../hooks";
+import { useShortcuts } from "../../hooks";
 import { NOTE_DURATIONS, type NoteDurationName } from "@entities/note";
 import { NUMBER_OF_OCTAVES, type Octave } from "@entities/octave";
 import { type PitchName, PITCH_NAMES } from "@entities/pitch";
-import { playSong } from "@entities/sheet";
 import { useEditorStore } from "@store/editor";
 import {
   decreaseSelectedNoteDuration,
@@ -30,7 +28,6 @@ import { Select } from "src/components/select";
 import { classNames } from "src/styles/utils";
 
 const NoteMenu: FunctionComponent = () => {
-  const audioContext = useAudioContext();
   const currentSheet = useEditorStore(state => state.currentSheet);
   const selectedOctave = useEditorStore(state => state.selectedOctave);
   const selectedDuration = useEditorStore(state => state.selectedNoteDuration);
@@ -122,10 +119,6 @@ const NoteMenu: FunctionComponent = () => {
     setNoteToAdd(NOTE_DURATIONS[selectedDuration], pitchName, selectedOctave);
   };
 
-  const handlePlay = () => {
-    playSong(currentSheet, audioContext);
-  };
-
   return (
     <div className="h-2/5 bg-inherit p-4 pt-2 text-gray-400">
       <fieldset className="h-full rounded border border-solid border-gray-400 bg-inherit p-4">
@@ -147,7 +140,6 @@ const NoteMenu: FunctionComponent = () => {
             disableClear
             className="ml-1 mr-1 w-[calc(100%_/_13_*_2_-_8px)]"
           />
-          <Button text="Play" variant="success" className="ml-1 mr-1 w-[calc(100%_/_13_-_8px)]" onClick={handlePlay} />
         </div>
         <div className="flex w-full">
           {PITCH_NAMES.map((pitchName, i) => (
