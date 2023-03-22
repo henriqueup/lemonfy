@@ -154,7 +154,6 @@ const fillBarsInSheet = (sheet: Sheet) => {
 
 export const playSong = (sheet: Sheet, audioContext: AudioContext | null): void => {
   if (!audioContext) return;
-  console.log(audioContext);
 
   fillBarsInSheet(sheet);
 

@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { AudioContextMock } from "@mocks/window";
+import { AudioContextMock, GainNodeMock, OscillatorNodeMock } from "@mocks/window";
 import { render, type RenderResult, cleanup, act, prettyDOM } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { UserEvent } from "@testing-library/user-event/dist/types/setup/setup";
 import Editor from "src/pages/editor";
 
-const mockAudioContext = new AudioContextMock();
+const mockGainNode = new GainNodeMock();
+const mockOscillatorNode = new OscillatorNodeMock();
+var mockAudioContext = new AudioContextMock();
 jest.mock("src/hooks/useAudioContext", () => ({
-  useAudioContext: mockAudioContext,
+  useAudioContext: () => mockAudioContext,
 }));
 
 describe("Navigation", () => {
@@ -173,7 +175,7 @@ describe("Song creation", () => {
     await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
     await act(() => user.keyboard("e")); // add note E
 
-    console.log(prettyDOM(rendered.baseElement, 99999));
+    // console.log(prettyDOM(rendered.baseElement, 99999));
     expect(rendered.getAllByText("G#2")).toHaveLength(4);
     expect(rendered.getAllByText("C#3")).toHaveLength(4);
     expect(rendered.getAllByText("E3")).toHaveLength(3);
@@ -191,6 +193,8 @@ describe("Song creation", () => {
 
   it("Plays song", async () => {
     await addNotesToFirstBar();
+    mockAudioContext.createGain.mockImplementation(() => mockGainNode);
+    mockAudioContext.createOscillator.mockImplementation(() => mockOscillatorNode);
 
     const editorMenuButton = rendered.getByRole("button", { name: "Open Editor Menu" });
     await act(() => user.click(editorMenuButton));
@@ -198,7 +202,10 @@ describe("Song creation", () => {
     const playButton = rendered.getByRole("button", { name: "Play" });
     await act(() => user.click(playButton));
 
-    expect(mockAudioContext.createGain).toHaveBeenCalledTimes(1);
+    expect(mockAudioContext.createGain).toHaveBeenCalledTimes(13);
+    expect(mockAudioContext.createOscillator).toHaveBeenCalledTimes(13);
+    expect(mockGainNode.gain.setValueAtTime).toHaveBeenCalledTimes(39);
+    expect(mockOscillatorNode.start).toHaveBeenCalledTimes(13);
   });
 
   async function addNotesToFirstBar() {
