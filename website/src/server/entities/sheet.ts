@@ -1,6 +1,13 @@
 import { play } from "@store/player/playerActions";
 import { addGainNode } from "../../utils/audioContext";
-import { createBar, fillBarTrack, setBarNotesTimesInSeconds, sumBarsCapacity, type Bar } from "./bar";
+import {
+  convertDurationInBarToSeconds,
+  createBar,
+  fillBarTrack,
+  setBarNotesTimesInSeconds,
+  sumBarsCapacity,
+  type Bar,
+} from "./bar";
 import type { Note } from "./note";
 import { FrequencyDictionary } from "./pitch";
 import { TimeEvaluation } from "./timeEvaluation";
@@ -161,7 +168,7 @@ export const playSong = (sheet: Sheet, audioContext: AudioContext | null): void 
     const bar = sheet.bars[i];
     if (bar === undefined) throw new Error(`Invalid bar at index ${i}.`);
 
-    const baseStart = (bar.beatCount * i) / bar.timeRatio;
+    const barStartInSeconds = convertDurationInBarToSeconds(bar, bar.start);
     setBarNotesTimesInSeconds(bar);
 
     const barNotes = bar.tracks.flat();
@@ -176,12 +183,14 @@ export const playSong = (sheet: Sheet, audioContext: AudioContext | null): void 
 
       const oscillator = audioContext.createOscillator();
       const gainNode = addGainNode(audioContext);
+      const noteEndInSeconds = note.startInSeconds + note.durationInSeconds;
+      const gainValueWhilePlaying = 0.2;
 
-      gainNode.gain.setValueAtTime(0.2, audioContext.currentTime + baseStart + note.startInSeconds);
       gainNode.gain.setValueAtTime(
-        0,
-        audioContext.currentTime + baseStart + note.startInSeconds + note.durationInSeconds,
+        gainValueWhilePlaying,
+        audioContext.currentTime + barStartInSeconds + note.startInSeconds,
       );
+      gainNode.gain.setValueAtTime(0, audioContext.currentTime + barStartInSeconds + noteEndInSeconds);
       oscillator.connect(gainNode);
 
       //no clue wtf is going on here... gotta learn about sound wave synthesis, I guess

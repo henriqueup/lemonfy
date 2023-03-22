@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { AudioContextMock, GainNodeMock, OscillatorNodeMock } from "@mocks/window";
-import { render, type RenderResult, cleanup, act, prettyDOM } from "@testing-library/react";
+import { render, type RenderResult, cleanup, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { UserEvent } from "@testing-library/user-event/dist/types/setup/setup";
 import Editor from "src/pages/editor";
@@ -175,7 +175,6 @@ describe("Song creation", () => {
     await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
     await act(() => user.keyboard("e")); // add note E
 
-    // console.log(prettyDOM(rendered.baseElement, 99999));
     expect(rendered.getAllByText("G#2")).toHaveLength(4);
     expect(rendered.getAllByText("C#3")).toHaveLength(4);
     expect(rendered.getAllByText("E3")).toHaveLength(3);
