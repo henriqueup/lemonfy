@@ -9,7 +9,6 @@ import {
   type Bar,
 } from "./bar";
 import type { Note } from "./note";
-import { FrequencyDictionary } from "./pitch";
 import { TimeEvaluation } from "./timeEvaluation";
 
 export type Sheet = {
@@ -199,7 +198,7 @@ export const playSong = (sheet: Sheet, audioContext: AudioContext | null): void 
       const customWaveform = audioContext.createPeriodicWave(cosineTerms, sineTerms);
 
       oscillator.setPeriodicWave(customWaveform);
-      oscillator.frequency.value = note.pitch?.key ? FrequencyDictionary[note.pitch.key] : 0;
+      oscillator.frequency.value = note.pitch?.frequency || 0;
       oscillator.start();
     }
   }

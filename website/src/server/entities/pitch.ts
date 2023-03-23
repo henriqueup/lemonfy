@@ -11,16 +11,21 @@ export type Pitch = {
   name: PitchName;
   octave: Octave;
   key: PitchKey;
-  frequency?: number;
+  frequency: number;
 };
 
 const getPitchKey = (name: PitchName, octave: Octave): PitchKey => `${name}${octave}`;
 
-export const createPitch = (name: PitchName, octave: Octave): Pitch => ({
-  name,
-  octave,
-  key: getPitchKey(name, octave),
-});
+export const createPitch = (name: PitchName, octave: Octave): Pitch => {
+  const key = getPitchKey(name, octave);
+
+  return {
+    name,
+    octave,
+    key,
+    frequency: FrequencyDictionary[key] || 0,
+  };
+};
 
 // prettier-ignore
 export const FrequencyDictionary: Record<PitchKey, number> = {
