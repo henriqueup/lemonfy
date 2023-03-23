@@ -28,6 +28,7 @@ export const mockDefaultImplementations = (module: typeof BarModule) => {
 
   moduleWithMocks.createBar.mockImplementation(createBarMock);
   moduleWithMocks.sumBarsCapacity.mockImplementation(() => 8);
+  // moduleWithMocks.convertDurationInBarToSeconds.mockImplementation(BarModule.convertDurationInBarToSeconds);
 };
 
 export const getEmptyMockBar = (): BarModule.Bar => ({

@@ -7,17 +7,20 @@ import {
   findSheetNoteByTime,
   removeNotesFromSheet,
   fillBarTracksInSheet,
+  playSong,
 } from "@entities/sheet";
 import {
   getEmptyMockSheet,
   getMockSheetWithNoGap,
   getMockSheetWithBars,
   getMockSheetWithGap,
+  getCompleteMoonlightSonataMockSheet,
 } from "src/mocks/entities/sheet";
 import * as BarModule from "@entities/bar";
 import * as MockUtilsModule from "src/mocks/utils/moduleUtils";
 import { mockDefaultImplementations } from "src/mocks/entities/bar";
 import { createNoteMock } from "src/mocks/entities/note";
+import { AudioContextMock, GainNodeMock, OscillatorNodeMock } from "@mocks/window";
 
 jest.mock<typeof BarModule>("@entities/bar", () => {
   const mockUtils = jest.requireActual<typeof MockUtilsModule>("src/mocks/utils/moduleUtils");
@@ -432,5 +435,35 @@ describe("Fill Bar tracks in Sheet", () => {
 
     const secondBar = sheet.bars[1]!;
     expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(2, secondBar, targetTrack, 1);
+  });
+});
+
+describe("Play song", () => {
+  let audioContextMock: AudioContextMock;
+
+  beforeEach(() => {
+    audioContextMock = new AudioContextMock();
+  });
+
+  it("Plays entire song", () => {
+    const mockGainNodes: GainNodeMock[] = [];
+    audioContextMock.createGain.mockImplementation(() => {
+      const mockGainNode = new GainNodeMock();
+      mockGainNodes.push(mockGainNode);
+      return mockGainNode;
+    });
+
+    const mockOscillatorNodes: OscillatorNodeMock[] = [];
+    audioContextMock.createOscillator.mockImplementation(() => {
+      const mockOscillatorNode = new OscillatorNodeMock();
+      mockOscillatorNodes.push(mockOscillatorNode);
+      return mockOscillatorNode;
+    });
+
+    const sonataSheet = getCompleteMoonlightSonataMockSheet();
+    playSong(sonataSheet, audioContextMock as AudioContext);
+
+    expect(mockGainNodes).toHaveLength(14 + 14 + 16 + 14);
+    expect(mockOscillatorNodes).toHaveLength(14 + 14 + 16 + 14);
   });
 });
