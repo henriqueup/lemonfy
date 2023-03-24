@@ -4,7 +4,7 @@ import {
   convertDurationInBarToSeconds,
   createBar,
   fillBarTrack,
-  setBarNotesTimesInSeconds,
+  setBarTimesInSeconds,
   sumBarsCapacity,
   type Bar,
 } from "./bar";
@@ -167,8 +167,8 @@ export const playSong = (sheet: Sheet, audioContext: AudioContext | null): void 
     const bar = sheet.bars[i];
     if (bar === undefined) throw new Error(`Invalid bar at index ${i}.`);
 
-    const barStartInSeconds = convertDurationInBarToSeconds(bar, bar.start);
-    setBarNotesTimesInSeconds(bar);
+    setBarTimesInSeconds(bar);
+    if (bar.startInSeconds == undefined) throw new Error(`Invalid bar at ${i}: undefined startInSeconds.`);
 
     const barNotes = bar.tracks.flat();
     for (let j = 0; j < barNotes.length; j++) {
@@ -187,9 +187,9 @@ export const playSong = (sheet: Sheet, audioContext: AudioContext | null): void 
 
       gainNode.gain.setValueAtTime(
         gainValueWhilePlaying,
-        audioContext.currentTime + barStartInSeconds + note.startInSeconds,
+        audioContext.currentTime + bar.startInSeconds + note.startInSeconds,
       );
-      gainNode.gain.setValueAtTime(0, audioContext.currentTime + barStartInSeconds + noteEndInSeconds);
+      gainNode.gain.setValueAtTime(0, audioContext.currentTime + bar.startInSeconds + noteEndInSeconds);
       oscillator.connect(gainNode);
 
       //no clue wtf is going on here... gotta learn about sound wave synthesis, I guess

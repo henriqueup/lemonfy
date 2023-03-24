@@ -17,6 +17,7 @@ export const createBarMock = (
   dibobinador,
   capacity: beatCount / dibobinador,
   start,
+  startInSeconds: (start * dibobinador) / (tempo / SECONDS_PER_MINUTE),
   tempo,
   tracks: Array.from({ length: trackCount }, (): Note[] => []),
   timeRatio: tempo / SECONDS_PER_MINUTE,
@@ -28,7 +29,6 @@ export const mockDefaultImplementations = (module: typeof BarModule) => {
 
   moduleWithMocks.createBar.mockImplementation(createBarMock);
   moduleWithMocks.sumBarsCapacity.mockImplementation(() => 8);
-  // moduleWithMocks.convertDurationInBarToSeconds.mockImplementation(BarModule.convertDurationInBarToSeconds);
 };
 
 export const getEmptyMockBar = (): BarModule.Bar => ({

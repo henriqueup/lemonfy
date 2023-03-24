@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { createBar, fillBarTrack, findBarNoteByTime, setBarNotesTimesInSeconds, sumBarsCapacity } from "@entities/bar";
+import { createBar, fillBarTrack, findBarNoteByTime, setBarTimesInSeconds, sumBarsCapacity } from "@entities/bar";
 import * as NoteModule from "@entities/note";
 import { createBarMock, getEmptyMockBar, getFilledMockBar } from "src/mocks/entities/bar";
 import * as MockUtilsModule from "src/mocks/utils/moduleUtils";
@@ -65,7 +65,7 @@ describe("Set Notes times in seconds", () => {
   it("Sets times in seconds of all Notes", () => {
     const bar = getFilledMockBar();
 
-    setBarNotesTimesInSeconds(bar);
+    setBarTimesInSeconds(bar);
 
     bar.tracks.forEach(track => {
       track.forEach(note => {

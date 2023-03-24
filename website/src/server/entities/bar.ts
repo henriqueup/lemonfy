@@ -6,6 +6,7 @@ export type Bar = {
   beatCount: number;
   dibobinador: number;
   start: number;
+  startInSeconds?: number;
   capacity: number;
   tempo: number;
   tracks: Note[][];
@@ -38,8 +39,9 @@ export const sumBarsCapacity = (bars: Bar[]) =>
 export const convertDurationInBarToSeconds = (bar: Bar, duration: number) =>
   (duration * bar.dibobinador) / bar.timeRatio;
 
-export const setBarNotesTimesInSeconds = (bar: Bar) => {
+export const setBarTimesInSeconds = (bar: Bar) => {
   const notes = bar.tracks.flat();
+  bar.startInSeconds = convertDurationInBarToSeconds(bar, bar.start);
 
   for (let i = 0; i < notes.length; i++) {
     const note = notes[i];
