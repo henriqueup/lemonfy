@@ -440,26 +440,70 @@ describe("Fill Bar tracks in Sheet", () => {
 
 describe("Play song", () => {
   let audioContextMock: AudioContextMock;
+  let mockGainNodes: GainNodeMock[];
+  let mockOscillatorNodes: OscillatorNodeMock[];
 
   beforeEach(() => {
     audioContextMock = new AudioContextMock();
-  });
 
-  it("Plays entire song", () => {
-    const mockGainNodes: GainNodeMock[] = [];
+    mockGainNodes = [];
     audioContextMock.createGain.mockImplementation(() => {
       const mockGainNode = new GainNodeMock();
       mockGainNodes.push(mockGainNode);
       return mockGainNode;
     });
 
-    const mockOscillatorNodes: OscillatorNodeMock[] = [];
+    mockOscillatorNodes = [];
     audioContextMock.createOscillator.mockImplementation(() => {
       const mockOscillatorNode = new OscillatorNodeMock();
       mockOscillatorNodes.push(mockOscillatorNode);
       return mockOscillatorNode;
     });
+  });
 
+  it("Does nothing with null audio context", () => {
+    const sonataSheet = getCompleteMoonlightSonataMockSheet();
+    playSong(sonataSheet, null);
+
+    expect(mockGainNodes).toHaveLength(0);
+    expect(mockOscillatorNodes).toHaveLength(0);
+  });
+
+  it("Fails with invalid bar", () => {
+    const sonataSheet = getCompleteMoonlightSonataMockSheet();
+    delete sonataSheet.bars[1];
+
+    expect(() => playSong(sonataSheet, audioContextMock as AudioContext)).toThrowError("Bar at index 1 should exist.");
+  });
+
+  it("Fails with bar without start in seconds", () => {
+    const sonataSheet = getCompleteMoonlightSonataMockSheet();
+    sonataSheet.bars[1]!.startInSeconds = undefined;
+
+    expect(() => playSong(sonataSheet, audioContextMock as AudioContext)).toThrowError(
+      "Invalid bar at 1: undefined startInSeconds.",
+    );
+  });
+
+  it("Fails with note without start in seconds", () => {
+    const sonataSheet = getCompleteMoonlightSonataMockSheet();
+    sonataSheet.bars[1]!.tracks[2]![3]!.startInSeconds = undefined;
+
+    expect(() => playSong(sonataSheet, audioContextMock as AudioContext)).toThrowError(
+      "Invalid note: '5' on bar '1', undefined startInSeconds.",
+    );
+  });
+
+  it("Fails with note without duration in seconds", () => {
+    const sonataSheet = getCompleteMoonlightSonataMockSheet();
+    sonataSheet.bars[1]!.tracks[2]![3]!.durationInSeconds = undefined;
+
+    expect(() => playSong(sonataSheet, audioContextMock as AudioContext)).toThrowError(
+      "Invalid note: '5' on bar '1', undefined durationInSeconds.",
+    );
+  });
+
+  it("Plays entire song", () => {
     const sonataSheet = getCompleteMoonlightSonataMockSheet();
     playSong(sonataSheet, audioContextMock as AudioContext);
 
