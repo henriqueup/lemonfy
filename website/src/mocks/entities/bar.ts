@@ -21,7 +21,7 @@ export const createBarMock = (
   tempo,
   tracks: Array.from({ length: trackCount }, (): Note[] => []),
   timeRatio: tempo / SECONDS_PER_MINUTE,
-  index,
+  index: index || 0,
 });
 
 export const mockDefaultImplementations = (module: typeof BarModule) => {

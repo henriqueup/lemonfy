@@ -156,6 +156,15 @@ export const removeBarInSheetByIndex = (sheet: Sheet, barIndex: number) => {
   if (barToRemove === undefined) throw new Error(`Invalid bar at index ${barIndex}.`);
 
   sheet.bars.splice(barIndex, 1);
+
+  // decrease index of all following bars
+  for (let i = barIndex; i < sheet.bars.length; i++) {
+    const bar = sheet.bars[i];
+    if (bar === undefined) throw new Error(`Invalid bar at index ${i}.`);
+
+    bar.index -= 1;
+  }
+
   sheet.tracks = sheet.tracks.map(track =>
     track.filter(
       note => note.start + note.duration <= barToRemove.start || note.start >= barToRemove.start + barToRemove.capacity,

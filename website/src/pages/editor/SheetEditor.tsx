@@ -25,7 +25,7 @@ const SheetEditor: FunctionComponent = () => {
           <legend className="ml-3">Bars</legend>
           <div className="grid max-h-full grid-cols-2 gap-2 overflow-y-auto">
             {bars.map((bar, i) => (
-              <Bar key={i} bar={bar} index={i} />
+              <Bar key={i} bar={bar} />
             ))}
           </div>
           <div className="flex justify-center">

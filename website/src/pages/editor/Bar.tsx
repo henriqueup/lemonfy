@@ -11,10 +11,9 @@ import { ButtonContainer } from "src/components";
 
 interface Props {
   bar: BarEntity;
-  index: number;
 }
 
-const Bar: FunctionComponent<Props> = ({ bar, index }) => {
+const Bar: FunctionComponent<Props> = ({ bar }) => {
   const isPlaying = usePlayerStore(state => state.isPlaying);
   const playerBarIndex = usePlayerStore(state => state.currentBarIndex);
 
@@ -23,7 +22,7 @@ const Bar: FunctionComponent<Props> = ({ bar, index }) => {
   };
 
   const handleRemoveBar = () => {
-    removeBarFromSheetByIndex(index);
+    removeBarFromSheetByIndex(bar.index);
   };
 
   return (

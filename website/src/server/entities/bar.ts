@@ -11,7 +11,7 @@ export type Bar = {
   tempo: number;
   tracks: Note[][];
   timeRatio: number;
-  index?: number;
+  index: number;
 };
 
 export const createBar = (
@@ -20,7 +20,7 @@ export const createBar = (
   dibobinador: number,
   start: number,
   tempo: number,
-  index?: number,
+  index: number,
 ): Bar => ({
   trackCount,
   beatCount,

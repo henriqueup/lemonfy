@@ -48,10 +48,10 @@ export const getMockSheetWithGap = (): Sheet => ({
 });
 
 export const getCompleteMoonlightSonataMockSheet = (): Sheet => {
-  const bar1: Bar = createBarMock(3, 4, 4, 0, 54);
-  const bar2: Bar = createBarMock(3, 4, 4, 1, 54);
-  const bar3: Bar = createBarMock(3, 4, 4, 2, 54);
-  const bar4: Bar = createBarMock(3, 4, 4, 3, 54);
+  const bar1: Bar = createBarMock(3, 4, 4, 0, 54, 0);
+  const bar2: Bar = createBarMock(3, 4, 4, 1, 54, 1);
+  const bar3: Bar = createBarMock(3, 4, 4, 2, 54, 2);
+  const bar4: Bar = createBarMock(3, 4, 4, 3, 54, 3);
 
   bar1.tracks[0] = [createNoteMock(NOTE_DURATIONS["WHOLE"], 0, createPitch("C#", 1), false, false, bar1)];
   bar1.tracks[1] = [createNoteMock(NOTE_DURATIONS["WHOLE"], 0, createPitch("C#", 2), false, false, bar1)];

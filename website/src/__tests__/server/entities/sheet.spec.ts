@@ -455,6 +455,10 @@ describe("Remove Bar by index", () => {
     removeBarInSheetByIndex(sheet, 1);
 
     expect(sheet.bars).toHaveLength(3);
+    expect(sheet.bars[0]!.index).toBe(0);
+    expect(sheet.bars[1]!.index).toBe(1);
+    expect(sheet.bars[2]!.index).toBe(2);
+
     expect(sheet.tracks[0]).toHaveLength(1 + 2 + 1);
     expect(sheet.tracks[1]).toHaveLength(1 + 2 + 1);
     expect(sheet.tracks[2]).toHaveLength(12 + 12 + 12);
