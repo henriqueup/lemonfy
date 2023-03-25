@@ -7,6 +7,7 @@ import { usePlayerStore } from "@store/player";
 import Cursor from "src/pages/editor/Cursor";
 import { Trash } from "src/icons";
 import { removeBarFromSheetByIndex } from "@store/editor/sheetActions";
+import { ButtonContainer } from "src/components";
 
 interface Props {
   bar: BarEntity;
@@ -33,10 +34,10 @@ const Bar: FunctionComponent<Props> = ({ bar, index }) => {
         ))}
         {isPlaying && playerBarIndex === bar.index && <Cursor bar={bar} isPlaying={isPlaying} />}
       </div>
-      <div className="ml-4 mt-2 mb-2 flex flex-col justify-between">
-        <div className="cursor-pointer" onClick={handleRemoveBar}>
+      <div className="ml-4 mt-2 mb-2 flex flex-col items-center justify-between">
+        <ButtonContainer onClick={handleRemoveBar}>
           <Trash stroke="lightgray" />
-        </div>
+        </ButtonContainer>
         <div>
           <span>{`${bar.beatCount}/${bar.dibobinador}`}</span>
         </div>
