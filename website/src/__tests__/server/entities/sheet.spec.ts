@@ -8,6 +8,7 @@ import {
   removeNotesFromSheet,
   fillBarTracksInSheet,
   playSong,
+  removeBarInSheetByIndex,
 } from "@entities/sheet";
 import {
   getEmptyMockSheet,
@@ -435,6 +436,67 @@ describe("Fill Bar tracks in Sheet", () => {
 
     const secondBar = sheet.bars[1]!;
     expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(2, secondBar, targetTrack, 1);
+  });
+});
+
+describe("Remove Bar by index", () => {
+  it("Fails with invalid Bar", () => {
+    const sheet = getCompleteMoonlightSonataMockSheet();
+
+    expect(() => removeBarInSheetByIndex(sheet, 5)).toThrow("Invalid bar at index 5.");
+
+    delete sheet.bars[1];
+    expect(() => removeBarInSheetByIndex(sheet, 1)).toThrow("Invalid bar at index 1.");
+  });
+
+  it("Removes Bar and all Notes in it", () => {
+    const sheet = getCompleteMoonlightSonataMockSheet();
+
+    removeBarInSheetByIndex(sheet, 1);
+
+    expect(sheet.bars).toHaveLength(3);
+    expect(sheet.tracks[0]).toHaveLength(1 + 2 + 1);
+    expect(sheet.tracks[1]).toHaveLength(1 + 2 + 1);
+    expect(sheet.tracks[2]).toHaveLength(12 + 12 + 12);
+
+    expect(BarModule.fillBarTrack).toHaveBeenCalledTimes(9);
+    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(1, sheet.bars[0], sheet.tracks[0], 0);
+    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(2, sheet.bars[1], sheet.tracks[0], 0);
+    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(3, sheet.bars[2], sheet.tracks[0], 0);
+    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(4, sheet.bars[0], sheet.tracks[1], 1);
+    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(5, sheet.bars[1], sheet.tracks[1], 1);
+    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(6, sheet.bars[2], sheet.tracks[1], 1);
+    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(7, sheet.bars[0], sheet.tracks[2], 2);
+    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(8, sheet.bars[1], sheet.tracks[2], 2);
+    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(9, sheet.bars[2], sheet.tracks[2], 2);
+  });
+
+  it("Removes sustain Notes from remaining Bars", () => {
+    const sheet = getCompleteMoonlightSonataMockSheet();
+
+    sheet.tracks[2]!.splice(12, 1); // delete first note of second bar
+    sheet.tracks[2]![11]!.duration = NOTE_DURATIONS["QUARTER_TRIPLET"]; // make last note of first bar sustain into second bar
+
+    sheet.tracks[2]!.splice(23, 1); // delete first note of third bar
+    sheet.tracks[2]![22]!.duration = NOTE_DURATIONS["QUARTER_TRIPLET"]; // make last note of second bar sustain into third bar
+
+    removeBarInSheetByIndex(sheet, 1);
+
+    expect(sheet.bars).toHaveLength(3);
+    expect(sheet.tracks[0]).toHaveLength(1 + 2 + 1);
+    expect(sheet.tracks[1]).toHaveLength(1 + 2 + 1);
+    expect(sheet.tracks[2]).toHaveLength(11 + 11 + 12);
+
+    expect(BarModule.fillBarTrack).toHaveBeenCalledTimes(9);
+    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(1, sheet.bars[0], sheet.tracks[0], 0);
+    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(2, sheet.bars[1], sheet.tracks[0], 0);
+    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(3, sheet.bars[2], sheet.tracks[0], 0);
+    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(4, sheet.bars[0], sheet.tracks[1], 1);
+    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(5, sheet.bars[1], sheet.tracks[1], 1);
+    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(6, sheet.bars[2], sheet.tracks[1], 1);
+    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(7, sheet.bars[0], sheet.tracks[2], 2);
+    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(8, sheet.bars[1], sheet.tracks[2], 2);
+    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(9, sheet.bars[2], sheet.tracks[2], 2);
   });
 });
 

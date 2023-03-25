@@ -12,6 +12,7 @@ import {
   addNote,
   addSheet,
   loadSheet,
+  removeBarFromSheetByIndex,
   removeNextNoteFromBar,
   removeNoteFromBar,
 } from "@store/editor/sheetActions";
@@ -126,7 +127,7 @@ describe("Add Note", () => {
     ["QUARTER", 1 / 4],
     ["LONG", 3 / 4],
   ])("Adds %p Note to first Bar", (durationName: NoteModule.NoteDurationName, expectedPosition: number) => {
-    const pitch: PitchModule.Pitch = { name: "C", octave: 3, key: "C3" };
+    const pitch: PitchModule.Pitch = { name: "C", octave: 3, key: "C3", frequency: 88 };
     const note = createNoteMock(NOTE_DURATIONS[durationName], 8, pitch);
     pitchModuleWithMocks.createPitch.mockImplementation(() => pitch);
     noteModuleWithMocks.createNote.mockImplementation(() => note);
@@ -160,7 +161,7 @@ describe("Add Note", () => {
     ["QUARTER", 1 / 4],
     ["LONG", 1],
   ])("Adds %p Note to second Bar", (durationName: NoteModule.NoteDurationName, expectedPosition: number) => {
-    const pitch: PitchModule.Pitch = { name: "C", octave: 3, key: "C3" };
+    const pitch: PitchModule.Pitch = { name: "C", octave: 3, key: "C3", frequency: 88 };
     const note = createNoteMock(NOTE_DURATIONS[durationName], 8, pitch);
     pitchModuleWithMocks.createPitch.mockImplementation(() => pitch);
     noteModuleWithMocks.createNote.mockImplementation(() => note);
@@ -299,5 +300,32 @@ describe("Remove next Note from Bar", () => {
       trackIndex: 1,
       position: lookForward ? 2 / 4 : 1 / 4,
     });
+  });
+});
+
+describe("Remove Bar by index", () => {
+  it("Does nothing with undefined Sheet", () => {
+    removeBarFromSheetByIndex(1);
+
+    expect(useEditorStore.getState()).toMatchObject(INITIAL_STATE);
+  });
+
+  it("Removes received Bar", () => {
+    const sheet = getMockSheetWithBars();
+    useEditorStore.setState(() => ({
+      currentSheet: sheet,
+    }));
+
+    sheetModuleWithMocks.removeBarInSheetByIndex.mockImplementation((sheet: SheetModule.Sheet, barIndex: number) =>
+      sheet.bars.splice(barIndex, 1),
+    );
+
+    removeBarFromSheetByIndex(1);
+
+    expect(SheetModule.removeBarInSheetByIndex).toBeCalledTimes(1);
+    expect(SheetModule.removeBarInSheetByIndex).toBeCalledWith(sheet, 1);
+
+    expect(sheet.bars).toHaveLength(2);
+    expect(useEditorStore.getState().currentSheet).toMatchObject(sheet);
   });
 });

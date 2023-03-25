@@ -8,6 +8,7 @@ import {
   fillBarTracksInSheet,
   findSheetNoteByTime,
   removeNotesFromSheet,
+  removeBarInSheetByIndex,
   type Sheet,
 } from "@entities/sheet";
 import { useEditorStore } from "./editorStore";
@@ -98,4 +99,13 @@ export const removeNextNoteFromBar = (lookForward = true) =>
       currentSheet: { ...state.currentSheet, bars: [...state.currentSheet.bars] },
       cursor: { ...state.cursor, position: newCursorPosition },
     };
+  });
+
+export const removeBarFromSheetByIndex = (barIndex: number) =>
+  useEditorStore.setState(state => {
+    if (state.currentSheet === undefined) return {};
+
+    removeBarInSheetByIndex(state.currentSheet, barIndex);
+
+    return { currentSheet: { ...state.currentSheet, bars: [...state.currentSheet.bars] } };
   });

@@ -1,13 +1,6 @@
 import { play } from "@store/player/playerActions";
 import { addGainNode } from "../../utils/audioContext";
-import {
-  convertDurationInBarToSeconds,
-  createBar,
-  fillBarTrack,
-  setBarTimesInSeconds,
-  sumBarsCapacity,
-  type Bar,
-} from "./bar";
+import { createBar, fillBarTrack, setBarTimesInSeconds, sumBarsCapacity, type Bar } from "./bar";
 import type { Note } from "./note";
 import { TimeEvaluation } from "./timeEvaluation";
 
@@ -156,6 +149,20 @@ const fillBarsInSheet = (sheet: Sheet) => {
   for (let i = 0; i < sheet.tracks.length; i++) {
     fillBarTracksInSheet(sheet, i);
   }
+};
+
+export const removeBarInSheetByIndex = (sheet: Sheet, barIndex: number) => {
+  const barToRemove = sheet.bars[barIndex];
+  if (barToRemove === undefined) throw new Error(`Invalid bar at index ${barIndex}.`);
+
+  sheet.bars.splice(barIndex, 1);
+  sheet.tracks = sheet.tracks.map(track =>
+    track.filter(
+      note => note.start + note.duration <= barToRemove.start || note.start >= barToRemove.start + barToRemove.capacity,
+    ),
+  );
+
+  fillBarsInSheet(sheet);
 };
 
 export const playSong = (sheet: Sheet, audioContext: AudioContext | null): void => {
