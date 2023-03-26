@@ -14,7 +14,7 @@ The Lemonfy Project inspired by songsterr app (https://www.songsterr.com/)
 ### TODOs
 
 - <s>Add Bar removal</s>
-- Enable Bar addition in middle of sheet
+- <s>Enable Bar addition in middle of sheet</s>
 - Add pause
 - Enable Bar edition
 - Add mouse support

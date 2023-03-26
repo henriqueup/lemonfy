@@ -68,7 +68,7 @@ describe("Add Bar to Sheet", () => {
     expect(addedBar.tempo).toBe(60);
   });
 
-  it("Adds Bar to Sheet with previous bars", () => {
+  it("Adds Bar to Sheet with previous Bars", () => {
     const sheetWithBars = getMockSheetWithBars();
     addBarToSheet(sheetWithBars, 4, 4, 100);
 
@@ -81,6 +81,35 @@ describe("Add Bar to Sheet", () => {
     expect(addedBar.beatCount).toBe(4);
     expect(addedBar.dibobinador).toBe(4);
     expect(addedBar.tempo).toBe(100);
+  });
+
+  it("Should fail with previous Bar with sustain", () => {
+    const sheetWithBars = getMockSheetWithBars();
+    sheetWithBars.bars[0]!.tracks[1]![0] = createNoteMock(NOTE_DURATIONS["QUARTER"], 2 / 4, undefined, true);
+
+    expect(() => addBarToSheet(sheetWithBars, 4, 4, 100, 0)).toThrowError(
+      "The previous bar can't have any notes with sustain for a new bar to be added after it.",
+    );
+  });
+
+  it("Adds Bar in middle of Sheet", () => {
+    const sheetWithBars = getMockSheetWithBars();
+    sheetWithBars.bars[0]!.tracks[1]![0] = createNoteMock(NOTE_DURATIONS["QUARTER"], 2 / 4);
+
+    addBarToSheet(sheetWithBars, 4, 4, 100, 0);
+
+    expect(sheetWithBars.bars).toHaveLength(4);
+
+    const addedBar = sheetWithBars.bars[1]!;
+    expect(addedBar.trackCount).toBe(sheetWithBars.trackCount);
+    expect(addedBar.start).toBe(8);
+    expect(addedBar.index).toBe(1);
+    expect(addedBar.beatCount).toBe(4);
+    expect(addedBar.dibobinador).toBe(4);
+    expect(addedBar.tempo).toBe(100);
+
+    expect(sheetWithBars.bars[2]!.index).toBe(2);
+    expect(sheetWithBars.bars[3]!.index).toBe(3);
   });
 });
 

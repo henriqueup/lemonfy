@@ -1,4 +1,3 @@
-import { getEventListeners } from "events";
 import { useCallback, useEffect } from "react";
 
 const SHORTCUTS = {
@@ -28,6 +27,7 @@ const SHORTCUTS = {
   b: "notes.add.B",
   Backspace: "notes.remove.left",
   Delete: "notes.remove.right",
+  CTRL_b: "bars.add.copy",
 } as const;
 
 type ShortcutKey = keyof typeof SHORTCUTS;

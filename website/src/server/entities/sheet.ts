@@ -24,10 +24,30 @@ export const createSheet = (trackCount: number): Sheet => {
   return newSheet;
 };
 
-export const addBarToSheet = (sheet: Sheet, beatCount: number, dibobinador: number, tempo: number) => {
-  const newBarStart = sumBarsCapacity(sheet.bars);
+export const addBarToSheet = (sheet: Sheet, beatCount: number, dibobinador: number, tempo: number, index?: number) => {
+  let previousBars = sheet.bars;
+  if (index != undefined) previousBars = previousBars.filter((_, i) => i <= index);
 
-  sheet.bars.push(createBar(sheet.trackCount, beatCount, dibobinador, newBarStart, tempo, sheet.bars.length));
+  const barBeforeNewBar = previousBars[previousBars.length - 1];
+
+  if (barBeforeNewBar !== undefined) {
+    const lastNotesOfBarBeforeNewBar = barBeforeNewBar.tracks.map(track => track[track.length - 1]);
+    const lastNotesWithSustain = lastNotesOfBarBeforeNewBar.filter(note => note?.hasSustain);
+
+    if (lastNotesWithSustain.length > 0)
+      throw new Error("The previous bar can't have any notes with sustain for a new bar to be added after it.");
+  }
+
+  const newBarStart = sumBarsCapacity(previousBars);
+  const newBarIndex = index === undefined ? sheet.bars.length : index + 1;
+  const newBar = createBar(sheet.trackCount, beatCount, dibobinador, newBarStart, tempo, newBarIndex);
+
+  sheet.bars.splice(newBarIndex, 0, newBar);
+
+  const followingBars = sheet.bars.filter((_, i) => i > newBarIndex);
+  followingBars.forEach(bar => {
+    bar.index += 1;
+  });
 };
 
 const getTrackFromIndex = (sheet: Sheet, trackIndex: number) => {

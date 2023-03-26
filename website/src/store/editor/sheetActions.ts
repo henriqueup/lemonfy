@@ -30,7 +30,26 @@ export const addBar = (beatCount: number, dibobinador: number, tempo: number) =>
     if (state.currentSheet === undefined) return {};
 
     addBarToSheet(state.currentSheet, beatCount, dibobinador, tempo);
+
     return { currentSheet: state.currentSheet };
+  });
+
+export const addCopyOfCurrentBar = () =>
+  useEditorStore.setState(state => {
+    if (state.currentSheet === undefined) return {};
+
+    const currentBar = state.currentSheet.bars[state.cursor.barIndex];
+    if (currentBar === undefined) return {};
+
+    addBarToSheet(
+      state.currentSheet,
+      currentBar.beatCount,
+      currentBar.dibobinador,
+      currentBar.tempo,
+      state.cursor.barIndex,
+    );
+
+    return { currentSheet: { ...state.currentSheet, bars: [...state.currentSheet.bars] } };
   });
 
 export const addNote = (duration: number, pitchName: PitchName, octave: Octave) =>

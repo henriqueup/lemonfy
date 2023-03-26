@@ -23,7 +23,7 @@ import {
   moveCursorToEndOfBar,
   moveCursorToStartOfBar,
 } from "@store/editor/cursorActions";
-import { addNote, removeNextNoteFromBar } from "@store/editor/sheetActions";
+import { addCopyOfCurrentBar, addNote, removeNextNoteFromBar } from "@store/editor/sheetActions";
 import { Select } from "src/components/select";
 import { classNames } from "src/styles/utils";
 
@@ -110,6 +110,9 @@ const NoteMenu: FunctionComponent = () => {
     },
     "notes.remove.right": {
       callback: removeNextNoteFromBar,
+    },
+    "bars.add.copy": {
+      callback: addCopyOfCurrentBar,
     },
   });
 

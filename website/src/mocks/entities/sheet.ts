@@ -13,7 +13,11 @@ export const getEmptyMockSheet = (): Sheet => ({
 });
 
 export const getMockSheetWithBars = (): Sheet => ({
-  bars: [createBarMock(3, 3, 4, 0, 70), createBarMock(3, 4, 4, 3 / 4, 50), createBarMock(3, 6, 8, 1 + 3 / 4, 120)],
+  bars: [
+    createBarMock(3, 3, 4, 0, 70, 0),
+    createBarMock(3, 4, 4, 3 / 4, 50, 1),
+    createBarMock(3, 6, 8, 1 + 3 / 4, 120, 2),
+  ],
   trackCount: 3,
   tracks: [[], [], []],
 });

@@ -9,6 +9,7 @@ import { createNoteMock } from "src/mocks/entities/note";
 import { NOTE_DURATIONS } from "@entities/note";
 import {
   addBar,
+  addCopyOfCurrentBar,
   addNote,
   addSheet,
   loadSheet,
@@ -83,7 +84,7 @@ describe("Add Bar", () => {
     expect(useEditorStore.getState()).toMatchObject(INITIAL_STATE);
   });
 
-  it("Adds Bar to current Sheet", () => {
+  it("Adds Bar to end of current Sheet", () => {
     const bar = createBarMock(3, 4, 4, 0, 60);
     sheetModuleWithMocks.addBarToSheet.mockImplementation((sheet: SheetModule.Sheet) => sheet.bars.push(bar));
 
@@ -98,6 +99,40 @@ describe("Add Bar", () => {
     expect(SheetModule.addBarToSheet).toBeCalledWith(sheet, 6, 8, 120);
 
     expect(useEditorStore.getState().currentSheet).toMatchObject({ ...sheet, bars: [bar] });
+  });
+});
+
+describe("Add copy of current Bar", () => {
+  it("Does nothing with undefined Sheet", () => {
+    addCopyOfCurrentBar();
+
+    expect(useEditorStore.getState()).toMatchObject(INITIAL_STATE);
+  });
+
+  it("Does nothing with undefined current Bar", () => {
+    const sheet = getEmptyMockSheet();
+    useEditorStore.setState(() => ({
+      currentSheet: sheet,
+    }));
+
+    addCopyOfCurrentBar();
+
+    expect(useEditorStore.getState()).toMatchObject({
+      ...INITIAL_STATE,
+      currentSheet: sheet,
+    });
+  });
+
+  it("Adds Bar after current Bar", () => {
+    const sheet = getMockSheetWithBars();
+    useEditorStore.setState(() => ({
+      currentSheet: sheet,
+    }));
+
+    addCopyOfCurrentBar();
+
+    expect(SheetModule.addBarToSheet).toBeCalledTimes(1);
+    expect(SheetModule.addBarToSheet).toBeCalledWith(sheet, 3, 4, 70, 0);
   });
 });
 
