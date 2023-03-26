@@ -14,9 +14,10 @@ The Lemonfy Project inspired by songsterr app (https://www.songsterr.com/)
 ### TODOs
 
 - <s>Add Bar removal</s>
-- Add pause
 - Enable Bar addition in middle of sheet
+- Add pause
 - Enable Bar edition
 - Add mouse support
+- Understand zod
 - Add backend and DB integration
 - Add player pages

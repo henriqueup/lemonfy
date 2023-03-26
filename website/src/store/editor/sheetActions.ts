@@ -92,12 +92,31 @@ export const removeNextNoteFromBar = (lookForward = true) =>
     removeNotesFromSheet(state.currentSheet, state.cursor.trackIndex, [noteToRemove]);
     fillBarTracksInSheet(state.currentSheet, state.cursor.trackIndex);
 
-    let newCursorPosition = state.cursor.position;
-    if (!lookForward) newCursorPosition -= noteToRemove.duration;
+    if (lookForward) {
+      return {
+        currentSheet: { ...state.currentSheet, bars: [...state.currentSheet.bars] },
+      };
+    }
+
+    if (state.cursor.position > 0) {
+      return {
+        currentSheet: { ...state.currentSheet, bars: [...state.currentSheet.bars] },
+        cursor: { ...state.cursor, position: state.cursor.position - noteToRemove.duration },
+      };
+    }
+
+    const newBarIndex = state.cursor.barIndex - 1;
+    const previousBar = state.currentSheet.bars[newBarIndex];
+
+    if (previousBar === undefined) throw new Error("There should be a previous bar.");
 
     return {
       currentSheet: { ...state.currentSheet, bars: [...state.currentSheet.bars] },
-      cursor: { ...state.cursor, position: newCursorPosition },
+      cursor: {
+        ...state.cursor,
+        barIndex: newBarIndex,
+        position: previousBar.capacity - noteToRemove.duration,
+      },
     };
   });
 

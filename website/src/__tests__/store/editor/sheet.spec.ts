@@ -301,6 +301,67 @@ describe("Remove next Note from Bar", () => {
       position: lookForward ? 2 / 4 : 1 / 4,
     });
   });
+
+  it("Fails with no previous Bar", () => {
+    const note = createNoteMock(NOTE_DURATIONS["QUARTER"], 2 / 4);
+    const sheet = getMockSheetWithBars();
+    sheet.tracks[1]!.push(note);
+    sheet.bars[0]!.tracks[1]!.push(note);
+
+    useEditorStore.setState(() => ({
+      currentSheet: sheet,
+      cursor: { ...INITIAL_STATE.cursor, trackIndex: 1 },
+    }));
+
+    sheetModuleWithMocks.findSheetNoteByTime.mockImplementation(() => note);
+    sheetModuleWithMocks.removeNotesFromSheet.mockImplementation((sheet: SheetModule.Sheet) => sheet.tracks[1]!.pop());
+    sheetModuleWithMocks.fillBarTracksInSheet.mockImplementation((sheet: SheetModule.Sheet) =>
+      sheet.bars[0]!.tracks[1]!.pop(),
+    );
+
+    expect(() => removeNextNoteFromBar(false)).toThrowError("There should be a previous bar.");
+
+    expect(SheetModule.findSheetNoteByTime).toBeCalledTimes(1);
+    expect(SheetModule.findSheetNoteByTime).toBeCalledWith(sheet, 1, 0, false);
+    expect(SheetModule.removeNotesFromSheet).toBeCalledTimes(1);
+    expect(SheetModule.removeNotesFromSheet).toBeCalledWith(sheet, 1, [note]);
+    expect(SheetModule.fillBarTracksInSheet).toBeCalledTimes(1);
+    expect(SheetModule.fillBarTracksInSheet).toBeCalledWith(sheet, 1);
+  });
+
+  it("Removes Note with cursor at 0 looking forward false", () => {
+    const note = createNoteMock(NOTE_DURATIONS["QUARTER"], 2 / 4);
+    const sheet = getMockSheetWithBars();
+    sheet.tracks[1]!.push(note);
+    sheet.bars[0]!.tracks[1]!.push(note);
+
+    useEditorStore.setState(() => ({
+      currentSheet: sheet,
+      cursor: { ...INITIAL_STATE.cursor, trackIndex: 1, barIndex: 1 },
+    }));
+
+    sheetModuleWithMocks.findSheetNoteByTime.mockImplementation(() => note);
+    sheetModuleWithMocks.removeNotesFromSheet.mockImplementation((sheet: SheetModule.Sheet) => sheet.tracks[1]!.pop());
+    sheetModuleWithMocks.fillBarTracksInSheet.mockImplementation((sheet: SheetModule.Sheet) =>
+      sheet.bars[0]!.tracks[1]!.pop(),
+    );
+
+    removeNextNoteFromBar(false);
+
+    expect(SheetModule.findSheetNoteByTime).toBeCalledTimes(1);
+    expect(SheetModule.findSheetNoteByTime).toBeCalledWith(sheet, 1, 3 / 4, false);
+    expect(SheetModule.removeNotesFromSheet).toBeCalledTimes(1);
+    expect(SheetModule.removeNotesFromSheet).toBeCalledWith(sheet, 1, [note]);
+    expect(SheetModule.fillBarTracksInSheet).toBeCalledTimes(1);
+    expect(SheetModule.fillBarTracksInSheet).toBeCalledWith(sheet, 1);
+
+    expect(useEditorStore.getState().currentSheet).toMatchObject(getMockSheetWithBars());
+    expect(useEditorStore.getState().cursor).toMatchObject({
+      ...INITIAL_STATE.cursor,
+      trackIndex: 1,
+      position: 2 / 4,
+    });
+  });
 });
 
 describe("Remove Bar by index", () => {
