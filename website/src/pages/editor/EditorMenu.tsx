@@ -3,6 +3,7 @@ import { Button, CollapsableSideMenu } from "../../components";
 import { playSong, type Sheet } from "@entities/sheet";
 import { useEditorStore } from "@store/editor";
 import { useAudioContext } from "src/hooks";
+import { pause } from "@store/player/playerActions";
 
 type Props = {
   handleLoad: (sheetFromStorage: Sheet) => void;
@@ -34,6 +35,10 @@ const EditorMenu: FunctionComponent<Props> = ({ handleLoad }) => {
     setIsOpen(false);
   };
 
+  const handlePause = () => {
+    pause();
+  };
+
   return (
     <CollapsableSideMenu isOpen={isOpen} onChangeIsOpen={handleChangeIsOpen} label="Editor Menu">
       <div className="flex flex-col">
@@ -54,6 +59,12 @@ const EditorMenu: FunctionComponent<Props> = ({ handleLoad }) => {
           disabled={currentSheet === undefined}
           className="mt-6 w-2/5 self-center"
           onClick={handlePlay}
+        />
+        <Button
+          text="Pause"
+          disabled={currentSheet === undefined}
+          className="mt-6 w-2/5 self-center"
+          onClick={handlePause}
         />
       </div>
     </CollapsableSideMenu>

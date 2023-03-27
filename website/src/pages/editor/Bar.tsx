@@ -15,6 +15,7 @@ interface Props {
 
 const Bar: FunctionComponent<Props> = ({ bar }) => {
   const isPlaying = usePlayerStore(state => state.isPlaying);
+  const isPaused = usePlayerStore(state => state.isPaused);
   const playerCursor = usePlayerStore(state => state.cursor);
 
   const handleAddNote = (barIndex: number, trackIndex: number, note: Note) => {
@@ -32,7 +33,7 @@ const Bar: FunctionComponent<Props> = ({ bar }) => {
           <Track key={j} index={j} bar={bar} track={track} handleAddNote={note => handleAddNote(0, j, note)} />
         ))}
         {isPlaying && playerCursor.barIndex === bar.index && (
-          <Cursor bar={bar} isPlaying={isPlaying} position={playerCursor.position} />
+          <Cursor bar={bar} isPlaying={isPlaying} isPaused={isPaused} position={playerCursor.position} />
         )}
       </div>
       <div className="ml-4 mt-2 mb-2 flex flex-col items-center justify-between">

@@ -51,9 +51,26 @@ export const play = () => {
     const timeout = createNextBarTimeout(barWithCursor, state.cursor.position);
     if (timeout === undefined) return {};
 
-    return { isPlaying: true, currentTimeoutStartTime: startTime, nextBarTimeout: timeout };
+    return { isPlaying: true, isPaused: false, currentTimeoutStartTime: startTime, nextBarTimeout: timeout };
   });
 };
+
+export const pause = () =>
+  usePlayerStore.setState(state => {
+    if (!state.isPlaying || state.currentTimeoutStartTime === undefined) return {};
+
+    const currentSheet = useEditorStore.getState().currentSheet;
+    if (currentSheet === undefined) return {};
+
+    const barWithCursor = currentSheet.bars[state.cursor.barIndex];
+    if (barWithCursor === undefined) return {};
+
+    const timeElapsed = new Date().getTime() - state.currentTimeoutStartTime.getTime() / 1000;
+    const totalBarTime = convertDurationInBarToSeconds(barWithCursor, barWithCursor.capacity);
+    const currentBarPosition = barWithCursor.capacity * (timeElapsed / totalBarTime);
+
+    return { isPaused: true, cursor: { ...state.cursor, position: currentBarPosition } };
+  });
 
 export const stop = () =>
   usePlayerStore.setState(state => {

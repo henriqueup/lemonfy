@@ -8,6 +8,7 @@ interface Cursor {
 
 export interface PlayerStore {
   isPlaying: boolean;
+  isPaused: boolean;
   currentTimeoutStartTime?: Date;
   nextBarTimeout?: NodeJS.Timeout;
   cursor: Cursor;
@@ -15,6 +16,7 @@ export interface PlayerStore {
 
 export const INITIAL_STATE: PlayerStore = {
   isPlaying: false,
+  isPaused: false,
   cursor: {
     barIndex: 0,
     position: 0,

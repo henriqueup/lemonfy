@@ -5,13 +5,14 @@ import { type Bar, convertDurationInBarToSeconds } from "@entities/bar";
 interface Props {
   bar: Bar;
   isPlaying: boolean;
+  isPaused?: boolean;
   position: number;
 }
 
-const Cursor: FunctionComponent<Props> = ({ bar, isPlaying, position }) => {
+const Cursor: FunctionComponent<Props> = ({ bar, isPlaying, isPaused = false, position }) => {
   const cursorRef = useCallback(
     (divElement: HTMLDivElement | null) => {
-      if (!isPlaying || divElement === null) return;
+      if (!isPlaying || isPaused || divElement === null) return;
 
       const totalBarDurationInSeconds = convertDurationInBarToSeconds(bar, bar.capacity);
       const remainingBarDurationInSeconds = convertDurationInBarToSeconds(bar, bar.capacity - position);
@@ -23,7 +24,7 @@ const Cursor: FunctionComponent<Props> = ({ bar, isPlaying, position }) => {
         easing: "linear",
       });
     },
-    [isPlaying, bar, position],
+    [isPlaying, isPaused, bar, position],
   );
 
   return (
