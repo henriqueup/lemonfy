@@ -111,9 +111,9 @@ interface BaseAudioContext extends EventTarget {
   createConvolver(): ConvolverNode;
   createDelay(maxDelayTime?: number): DelayNode;
   createDynamicsCompressor(): DynamicsCompressorNode;
-  createGain: jest.Mock<GainNode>;
+  createGain(): GainNode;
   createIIRFilter(feedforward: number[], feedback: number[]): IIRFilterNode;
-  createOscillator: jest.Mock<OscillatorNode>;
+  createOscillator(): OscillatorNode;
   createPanner(): PannerNode;
   createPeriodicWave(
     real: number[] | Float32Array,

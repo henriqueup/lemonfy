@@ -45,7 +45,7 @@ describe("Play", () => {
     expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), sheet.bars[0]!.capacity * 1000);
     expect(usePlayerStore.getState().isPlaying).toBe(true);
     expect(usePlayerStore.getState().nextBarTimeout).not.toBeUndefined();
-    expect(usePlayerStore.getState().currentBarIndex).toBe(0);
+    expect(usePlayerStore.getState().cursor.barIndex).toBe(0);
 
     jest.runOnlyPendingTimers();
 
@@ -53,7 +53,7 @@ describe("Play", () => {
     expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), sheet.bars[1]!.capacity * 1000);
     expect(usePlayerStore.getState().isPlaying).toBe(true);
     expect(usePlayerStore.getState().nextBarTimeout).not.toBeUndefined();
-    expect(usePlayerStore.getState().currentBarIndex).toBe(1);
+    expect(usePlayerStore.getState().cursor.barIndex).toBe(1);
 
     jest.runOnlyPendingTimers();
 
@@ -61,13 +61,13 @@ describe("Play", () => {
     expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), sheet.bars[2]!.capacity * 1000);
     expect(usePlayerStore.getState().isPlaying).toBe(true);
     expect(usePlayerStore.getState().nextBarTimeout).not.toBeUndefined();
-    expect(usePlayerStore.getState().currentBarIndex).toBe(2);
+    expect(usePlayerStore.getState().cursor.barIndex).toBe(2);
 
     jest.runOnlyPendingTimers();
 
     expect(usePlayerStore.getState().isPlaying).toBe(false);
     expect(usePlayerStore.getState().nextBarTimeout).toBeUndefined();
-    expect(usePlayerStore.getState().currentBarIndex).toBe(0);
+    expect(usePlayerStore.getState().cursor.barIndex).toBe(0);
   });
 });
 

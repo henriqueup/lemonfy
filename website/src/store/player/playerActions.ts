@@ -1,49 +1,63 @@
 import { type Bar, convertDurationInBarToSeconds } from "@entities/bar";
 import { useEditorStore } from "@store/editor";
-import { usePlayerStore } from "@store/player/playerStore";
+import { INITIAL_STATE, usePlayerStore } from "@store/player";
 
-const createNextBarTimeout = (barWithCursor: Bar | undefined): NodeJS.Timeout | undefined => {
+const createNextBarTimeout = (barWithCursor: Bar | undefined, startPosition = 0): NodeJS.Timeout | undefined => {
   if (barWithCursor === undefined) {
     stop();
     return undefined;
   }
 
-  const barDurationInSeconds = convertDurationInBarToSeconds(barWithCursor, barWithCursor.capacity);
+  const barDurationInSeconds = convertDurationInBarToSeconds(barWithCursor, barWithCursor.capacity - startPosition);
 
   return setTimeout(() => {
     usePlayerStore.setState(state => {
       const currentSheet = useEditorStore.getState().currentSheet;
       if (currentSheet === undefined) return {};
 
-      const nextBarIndex = state.currentBarIndex + 1;
+      const nextBarIndex = state.cursor.barIndex + 1;
       const nextBar = currentSheet.bars[nextBarIndex];
 
+      const startTime = new Date();
       const timeout = createNextBarTimeout(nextBar);
       if (timeout === undefined) return {};
 
       return {
-        currentBarIndex: nextBarIndex,
+        currentTimeoutStartTime: startTime,
+        cursor: {
+          barIndex: nextBarIndex,
+          position: 0,
+        },
         nextBarTimeout: timeout,
       };
     });
   }, barDurationInSeconds * 1000);
 };
 
-export const play = () =>
+export const play = () => {
+  usePlayerStore.setState(() => {
+    const editorCursor = useEditorStore.getState().cursor;
+
+    return { cursor: { barIndex: editorCursor.barIndex, position: editorCursor.position } };
+  });
+
   usePlayerStore.setState(state => {
     const currentSheet = useEditorStore.getState().currentSheet;
     if (currentSheet === undefined) return {};
 
-    const barWithCursor = currentSheet.bars[state.currentBarIndex];
-    const timeout = createNextBarTimeout(barWithCursor);
+    const barWithCursor = currentSheet.bars[state.cursor.barIndex];
+    const startTime = new Date();
+
+    const timeout = createNextBarTimeout(barWithCursor, state.cursor.position);
     if (timeout === undefined) return {};
 
-    return { isPlaying: true, nextBarTimeout: timeout };
+    return { isPlaying: true, currentTimeoutStartTime: startTime, nextBarTimeout: timeout };
   });
+};
 
 export const stop = () =>
   usePlayerStore.setState(state => {
     if (state.nextBarTimeout) clearTimeout(state.nextBarTimeout);
 
-    return { isPlaying: false, nextBarTimeout: undefined, currentBarIndex: 0 };
+    return { ...INITIAL_STATE, nextBarTimeout: undefined };
   });

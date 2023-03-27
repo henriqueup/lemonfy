@@ -192,8 +192,8 @@ describe("Song creation", () => {
 
   it("Plays song", async () => {
     await addNotesToFirstBar();
-    mockAudioContext.createGain.mockImplementation(() => mockGainNode);
-    mockAudioContext.createOscillator.mockImplementation(() => mockOscillatorNode);
+    (mockAudioContext.createGain as jest.Mock).mockImplementation(() => mockGainNode);
+    (mockAudioContext.createOscillator as jest.Mock).mockImplementation(() => mockOscillatorNode);
 
     const editorMenuButton = rendered.getByRole("button", { name: "Open Editor Menu" });
     await act(() => user.click(editorMenuButton));

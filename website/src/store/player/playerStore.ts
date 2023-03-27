@@ -1,15 +1,24 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
+interface Cursor {
+  barIndex: number;
+  position: number;
+}
+
 export interface PlayerStore {
   isPlaying: boolean;
+  currentTimeoutStartTime?: Date;
   nextBarTimeout?: NodeJS.Timeout;
-  currentBarIndex: number;
+  cursor: Cursor;
 }
 
 export const INITIAL_STATE: PlayerStore = {
   isPlaying: false,
-  currentBarIndex: 0,
+  cursor: {
+    barIndex: 0,
+    position: 0,
+  },
 };
 
 export const usePlayerStore = create<PlayerStore>()(devtools(() => INITIAL_STATE));

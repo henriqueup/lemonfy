@@ -17,6 +17,8 @@ The Lemonfy Project inspired by songsterr app (https://www.songsterr.com/)
 - <s>Enable Bar addition in middle of sheet</s>
 - Add pause
 - Enable Bar edition
+- Add Bar copy/paste
+- Add confirmation modal
 - Add mouse support
 - Understand zod
 - Add backend and DB integration
