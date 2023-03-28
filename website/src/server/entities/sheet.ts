@@ -1,6 +1,6 @@
 import { play } from "@store/player/playerActions";
 import { addGainNode } from "../../utils/audioContext";
-import { createBar, fillBarTrack, setBarTimesInSeconds, sumBarsCapacity, type Bar } from "./bar";
+import { createBar, cropBar, fillBarTrack, setBarTimesInSeconds, sumBarsCapacity, type Bar } from "./bar";
 import type { Note } from "./note";
 import { TimeEvaluation } from "./timeEvaluation";
 
@@ -194,16 +194,29 @@ export const removeBarInSheetByIndex = (sheet: Sheet, barIndex: number) => {
   fillBarsInSheet(sheet);
 };
 
-export const playSong = (sheet: Sheet, audioContext: AudioContext | null): void => {
+const createSheetCopy = (originalSheet: Sheet): Sheet => {
+  const newSheet = JSON.parse(JSON.stringify(originalSheet)) as Sheet;
+  return newSheet;
+};
+
+export const playSong = (sheet: Sheet, audioContext: AudioContext | null, start = 0): void => {
   if (!audioContext) return;
 
-  fillBarsInSheet(sheet);
+  const sheetCopyForPlayback = createSheetCopy(sheet);
+  fillBarsInSheet(sheetCopyForPlayback);
 
-  for (let i = 0; i < sheet.bars.length; i++) {
-    const bar = sheet.bars[i];
+  const barsAfterStart = sheetCopyForPlayback.bars.filter(bar => bar.start > start || bar.start + bar.capacity > start);
+  const firstBar = barsAfterStart[0];
+
+  if (firstBar !== undefined && firstBar.start < start) cropBar(firstBar, start);
+
+  for (let i = 0; i < barsAfterStart.length; i++) {
+    const bar = barsAfterStart[i];
     if (bar === undefined) throw new Error(`Invalid bar at index ${i}.`);
 
+    bar.start = Math.max(0, bar.start - start);
     setBarTimesInSeconds(bar);
+    console.log(bar);
     if (bar.startInSeconds == undefined) throw new Error(`Invalid bar at ${i}: undefined startInSeconds.`);
 
     const barNotes = bar.tracks.flat();

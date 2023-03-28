@@ -16,7 +16,7 @@ interface Props {
 const Bar: FunctionComponent<Props> = ({ bar }) => {
   const isPlaying = usePlayerStore(state => state.isPlaying);
   const isPaused = usePlayerStore(state => state.isPaused);
-  const playerCursor = usePlayerStore(state => state.cursor);
+  const cursor = usePlayerStore(state => state.cursor);
 
   const handleAddNote = (barIndex: number, trackIndex: number, note: Note) => {
     // addNoteFromDrop(barIndex, trackIndex, note);
@@ -32,8 +32,8 @@ const Bar: FunctionComponent<Props> = ({ bar }) => {
         {bar.tracks.map((track, j) => (
           <Track key={j} index={j} bar={bar} track={track} handleAddNote={note => handleAddNote(0, j, note)} />
         ))}
-        {isPlaying && playerCursor.barIndex === bar.index && (
-          <Cursor bar={bar} isPlaying={isPlaying} isPaused={isPaused} position={playerCursor.position} />
+        {isPlaying && cursor.barIndex === bar.index && (
+          <Cursor bar={bar} isPlaying={isPlaying} isPaused={isPaused} position={cursor.position} />
         )}
       </div>
       <div className="ml-4 mt-2 mb-2 flex flex-col items-center justify-between">

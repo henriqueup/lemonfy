@@ -237,5 +237,7 @@ describe("Song creation", () => {
     await act(() => user.keyboard("{ArrowUp}")); // raise octave
     await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
     await act(() => user.keyboard("e")); // add note E
+
+    await act(() => user.keyboard("{Control>}{Shift>}{ArrowLeft}{/Shift}{/Control}")); // move cursor to start
   }
 });

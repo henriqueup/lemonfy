@@ -542,14 +542,14 @@ describe("Play song", () => {
     audioContextMock = new AudioContextMock();
 
     mockGainNodes = [];
-    audioContextMock.createGain.mockImplementation(() => {
+    (audioContextMock.createGain as jest.Mock).mockImplementation(() => {
       const mockGainNode = new GainNodeMock();
       mockGainNodes.push(mockGainNode);
       return mockGainNode;
     });
 
     mockOscillatorNodes = [];
-    audioContextMock.createOscillator.mockImplementation(() => {
+    (audioContextMock.createOscillator as jest.Mock).mockImplementation(() => {
       const mockOscillatorNode = new OscillatorNodeMock();
       mockOscillatorNodes.push(mockOscillatorNode);
       return mockOscillatorNode;

@@ -12,6 +12,7 @@ type Props = {
 const EditorMenu: FunctionComponent<Props> = ({ handleLoad }) => {
   const audioContext = useAudioContext();
   const currentSheet = useEditorStore(state => state.currentSheet);
+  const cursor = useEditorStore(state => state.cursor);
   const [isOpen, setIsOpen] = useState(false);
 
   const handleChangeIsOpen = (value: boolean) => setIsOpen(value);
@@ -31,7 +32,10 @@ const EditorMenu: FunctionComponent<Props> = ({ handleLoad }) => {
   const handlePlay = () => {
     if (currentSheet === undefined) return;
 
-    playSong(currentSheet, audioContext);
+    const barWithCursor = currentSheet.bars[cursor.barIndex];
+    if (barWithCursor === undefined) throw new Error(`Invalid bar at ${cursor.barIndex}.`);
+
+    playSong(currentSheet, audioContext, barWithCursor.start + cursor.position);
     setIsOpen(false);
   };
 

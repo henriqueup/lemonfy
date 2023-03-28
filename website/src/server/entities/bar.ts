@@ -156,6 +156,30 @@ export const findBarNoteByTime = (
   return targetNote ?? null;
 };
 
+export const cropBar = (bar: Bar, start: number) => {
+  if (start <= bar.start) return;
+
+  const startAdjustedToBar = start - bar.start;
+  for (let i = 0; i < bar.tracks.length; i++) {
+    const track = bar.tracks[i];
+    if (track === undefined) throw new Error(`Invalid bar track at ${i}.`);
+
+    const noteToCrop = findBarNoteByTime(bar, i, startAdjustedToBar);
+    const croppedNote = noteToCrop;
+
+    if (croppedNote !== null && croppedNote.start < startAdjustedToBar) {
+      croppedNote.duration -= startAdjustedToBar - croppedNote.start;
+      croppedNote.start = startAdjustedToBar;
+    }
+
+    bar.tracks[i] = track
+      .filter(note => note.start >= startAdjustedToBar)
+      .map(note => ({ ...note, start: note.start - startAdjustedToBar }));
+  }
+
+  bar.capacity -= startAdjustedToBar;
+};
+
 /*
 sources
 https://www.youtube.com/watch?v=skFugVOqBM4
