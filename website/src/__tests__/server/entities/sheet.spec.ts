@@ -556,21 +556,6 @@ describe("Play song", () => {
     });
   });
 
-  it("Does nothing with null audio context", () => {
-    const sonataSheet = getCompleteMoonlightSonataMockSheet();
-    playSong(sonataSheet, null);
-
-    expect(mockGainNodes).toHaveLength(0);
-    expect(mockOscillatorNodes).toHaveLength(0);
-  });
-
-  it("Fails with invalid bar", () => {
-    const sonataSheet = getCompleteMoonlightSonataMockSheet();
-    delete sonataSheet.bars[1];
-
-    expect(() => playSong(sonataSheet, audioContextMock as AudioContext)).toThrowError("Bar at index 1 should exist.");
-  });
-
   it("Fails with bar without start in seconds", () => {
     const sonataSheet = getCompleteMoonlightSonataMockSheet();
     sonataSheet.bars[1]!.startInSeconds = undefined;

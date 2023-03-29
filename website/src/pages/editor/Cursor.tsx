@@ -1,5 +1,5 @@
 import { SECONDS_PER_MINUTE } from "@entities/timeEvaluation";
-import { useCallback, type FunctionComponent } from "react";
+import { useCallback, useEffect, useState, type FunctionComponent } from "react";
 import { type Bar, convertDurationInBarToSeconds } from "@entities/bar";
 
 interface Props {
@@ -10,6 +10,8 @@ interface Props {
 }
 
 const Cursor: FunctionComponent<Props> = ({ bar, isPlaying, isPaused = false, position }) => {
+  const [playbackAnimation, setPlaybackAnimation] = useState<Animation>();
+
   const cursorRef = useCallback(
     (divElement: HTMLDivElement | null) => {
       if (!isPlaying || isPaused || divElement === null) return;
@@ -19,13 +21,21 @@ const Cursor: FunctionComponent<Props> = ({ bar, isPlaying, isPaused = false, po
       const startPosition = totalBarDurationInSeconds - remainingBarDurationInSeconds;
       const startPositionPercentage = (startPosition / totalBarDurationInSeconds) * 100;
 
-      divElement.animate([{ left: `${startPositionPercentage}%` }, { left: "100%" }], {
+      const animation = divElement.animate([{ left: `${startPositionPercentage}%` }, { left: "100%" }], {
         duration: remainingBarDurationInSeconds * 1000,
         easing: "linear",
       });
+
+      setPlaybackAnimation(animation);
     },
     [isPlaying, isPaused, bar, position],
   );
+
+  useEffect(() => {
+    if (isPaused) {
+      playbackAnimation?.cancel();
+    }
+  }, [isPaused, playbackAnimation]);
 
   return (
     <div

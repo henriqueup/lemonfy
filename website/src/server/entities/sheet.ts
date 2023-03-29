@@ -1,4 +1,4 @@
-import { play } from "@store/player/playerActions";
+import { pause, play } from "@store/player/playerActions";
 import { addGainNode } from "../../utils/audioContext";
 import { createBar, cropBar, fillBarTrack, setBarTimesInSeconds, sumBarsCapacity, type Bar } from "./bar";
 import type { Note } from "./note";
@@ -199,9 +199,7 @@ const createSheetCopy = (originalSheet: Sheet): Sheet => {
   return newSheet;
 };
 
-export const playSong = (sheet: Sheet, audioContext: AudioContext | null, start = 0): void => {
-  if (!audioContext) return;
-
+export const playSong = (sheet: Sheet, audioContext: AudioContext, start = 0): void => {
   const sheetCopyForPlayback = createSheetCopy(sheet);
   fillBarsInSheet(sheetCopyForPlayback);
 
@@ -210,13 +208,14 @@ export const playSong = (sheet: Sheet, audioContext: AudioContext | null, start 
 
   if (firstBar !== undefined && firstBar.start < start) cropBar(firstBar, start);
 
+  const gainNodes: GainNode[] = [];
+  const oscillatorNodes: OscillatorNode[] = [];
   for (let i = 0; i < barsAfterStart.length; i++) {
     const bar = barsAfterStart[i];
     if (bar === undefined) throw new Error(`Invalid bar at index ${i}.`);
 
     bar.start = Math.max(0, bar.start - start);
     setBarTimesInSeconds(bar);
-    console.log(bar);
     if (bar.startInSeconds == undefined) throw new Error(`Invalid bar at ${i}: undefined startInSeconds.`);
 
     const barNotes = bar.tracks.flat();
@@ -249,8 +248,11 @@ export const playSong = (sheet: Sheet, audioContext: AudioContext | null, start 
       oscillator.setPeriodicWave(customWaveform);
       oscillator.frequency.value = note.pitch?.frequency || 0;
       oscillator.start();
+
+      gainNodes.push(gainNode);
+      oscillatorNodes.push(oscillator);
     }
   }
 
-  play();
+  play(gainNodes, oscillatorNodes);
 };

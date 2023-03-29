@@ -30,6 +30,7 @@ const EditorMenu: FunctionComponent<Props> = ({ handleLoad }) => {
   };
 
   const handlePlay = () => {
+    if (!audioContext) return;
     if (currentSheet === undefined) return;
 
     const barWithCursor = currentSheet.bars[cursor.barIndex];

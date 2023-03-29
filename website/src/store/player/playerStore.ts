@@ -12,6 +12,8 @@ export interface PlayerStore {
   currentTimeoutStartTime?: Date;
   nextBarTimeout?: NodeJS.Timeout;
   cursor: Cursor;
+  gainNodes: GainNode[];
+  oscillatorNodes: OscillatorNode[];
 }
 
 export const INITIAL_STATE: PlayerStore = {
@@ -21,6 +23,8 @@ export const INITIAL_STATE: PlayerStore = {
     barIndex: 0,
     position: 0,
   },
+  gainNodes: [],
+  oscillatorNodes: [],
 };
 
 export const usePlayerStore = create<PlayerStore>()(devtools(() => INITIAL_STATE));
