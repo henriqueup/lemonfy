@@ -1,6 +1,6 @@
-import { pause, play } from "@store/player/playerActions";
+import { play } from "@store/player/playerActions";
 import { addGainNode } from "../../utils/audioContext";
-import { createBar, cropBar, fillBarTrack, setBarTimesInSeconds, sumBarsCapacity, type Bar } from "./bar";
+import { default as BarModule, type Bar } from "./bar";
 import type { Note } from "./note";
 import { TimeEvaluation } from "./timeEvaluation";
 
@@ -38,9 +38,9 @@ export const addBarToSheet = (sheet: Sheet, beatCount: number, dibobinador: numb
       throw new Error("The previous bar can't have any notes with sustain for a new bar to be added after it.");
   }
 
-  const newBarStart = sumBarsCapacity(previousBars);
+  const newBarStart = BarModule.sumBarsCapacity(previousBars);
   const newBarIndex = index === undefined ? sheet.bars.length : index + 1;
-  const newBar = createBar(sheet.trackCount, beatCount, dibobinador, newBarStart, tempo, newBarIndex);
+  const newBar = BarModule.createBar(sheet.trackCount, beatCount, dibobinador, newBarStart, tempo, newBarIndex);
 
   sheet.bars.splice(newBarIndex, 0, newBar);
 
@@ -156,7 +156,7 @@ const fillBarTrackInSheet = (sheet: Sheet, barIndex: number, trackIndex: number)
     return;
   }
 
-  fillBarTrack(targetBar, sheetTrack, trackIndex);
+  BarModule.fillBarTrack(targetBar, sheetTrack, trackIndex);
 };
 
 export const fillBarTracksInSheet = (sheet: Sheet, trackIndex: number) => {
@@ -206,7 +206,7 @@ export const playSong = (sheet: Sheet, audioContext: AudioContext, start = 0): v
   const barsAfterStart = sheetCopyForPlayback.bars.filter(bar => bar.start > start || bar.start + bar.capacity > start);
   const firstBar = barsAfterStart[0];
 
-  if (firstBar !== undefined && firstBar.start < start) cropBar(firstBar, start);
+  if (firstBar !== undefined && firstBar.start < start) BarModule.cropBar(firstBar, start);
 
   const gainNodes: GainNode[] = [];
   const oscillatorNodes: OscillatorNode[] = [];
@@ -215,7 +215,7 @@ export const playSong = (sheet: Sheet, audioContext: AudioContext, start = 0): v
     if (bar === undefined) throw new Error(`Invalid bar at index ${i}.`);
 
     bar.start = Math.max(0, bar.start - start);
-    setBarTimesInSeconds(bar);
+    BarModule.setBarTimesInSeconds(bar);
     if (bar.startInSeconds == undefined) throw new Error(`Invalid bar at ${i}: undefined startInSeconds.`);
 
     const barNotes = bar.tracks.flat();

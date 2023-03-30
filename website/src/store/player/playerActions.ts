@@ -1,4 +1,4 @@
-import { type Bar, convertDurationInBarToSeconds } from "@entities/bar";
+import { default as BarModule, type Bar } from "@entities/bar";
 import { useEditorStore } from "@store/editor";
 import { INITIAL_STATE, usePlayerStore } from "@store/player";
 
@@ -8,7 +8,10 @@ const createNextBarTimeout = (barWithCursor: Bar | undefined, startPosition = 0)
     return undefined;
   }
 
-  const barDurationInSeconds = convertDurationInBarToSeconds(barWithCursor, barWithCursor.capacity - startPosition);
+  const barDurationInSeconds = BarModule.convertDurationInBarToSeconds(
+    barWithCursor,
+    barWithCursor.capacity - startPosition,
+  );
 
   return setTimeout(() => {
     usePlayerStore.setState(state => {
@@ -70,7 +73,7 @@ export const pause = () =>
     if (barWithCursor === undefined) return {};
 
     const timeElapsed = (new Date().getTime() - state.currentTimeoutStartTime.getTime()) / 1000;
-    const totalBarTime = convertDurationInBarToSeconds(barWithCursor, barWithCursor.capacity);
+    const totalBarTime = BarModule.convertDurationInBarToSeconds(barWithCursor, barWithCursor.capacity);
     const currentBarPosition = barWithCursor.capacity * (timeElapsed / totalBarTime);
 
     state.gainNodes.forEach(gainNode => gainNode.disconnect());

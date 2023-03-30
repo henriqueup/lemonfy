@@ -17,7 +17,7 @@ import {
   getMockSheetWithGap,
   getCompleteMoonlightSonataMockSheet,
 } from "src/mocks/entities/sheet";
-import * as BarModule from "@entities/bar";
+import BarModule from "@entities/bar";
 import * as MockUtilsModule from "src/mocks/utils/moduleUtils";
 import { mockDefaultImplementations } from "src/mocks/entities/bar";
 import { createNoteMock } from "src/mocks/entities/note";

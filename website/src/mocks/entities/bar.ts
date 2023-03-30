@@ -1,4 +1,4 @@
-import type * as BarModule from "@entities/bar";
+import type { default as BarModule, Bar } from "@entities/bar";
 import { type Note, NOTE_DURATIONS } from "@entities/note";
 import { SECONDS_PER_MINUTE } from "@entities/timeEvaluation";
 import { createNoteMock } from "src/mocks/entities/note";
@@ -11,7 +11,7 @@ export const createBarMock = (
   start: number,
   tempo: number,
   index?: number,
-): BarModule.Bar => ({
+): Bar => ({
   trackCount,
   beatCount,
   dibobinador,
@@ -31,7 +31,7 @@ export const mockDefaultImplementations = (module: typeof BarModule) => {
   moduleWithMocks.sumBarsCapacity.mockImplementation(() => 8);
 };
 
-export const getEmptyMockBar = (): BarModule.Bar => ({
+export const getEmptyMockBar = (): Bar => ({
   index: 0,
   beatCount: 3,
   dibobinador: 4,
@@ -43,7 +43,7 @@ export const getEmptyMockBar = (): BarModule.Bar => ({
   tracks: [[], [], []],
 });
 
-export const getFilledMockBar = (): BarModule.Bar => ({
+export const getFilledMockBar = (): Bar => ({
   index: 0,
   beatCount: 4,
   dibobinador: 4,

@@ -1,19 +1,25 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { createBar, fillBarTrack, findBarNoteByTime, setBarTimesInSeconds, sumBarsCapacity } from "@entities/bar";
+import BarModule, { Bar } from "@entities/bar";
 import * as NoteModule from "@entities/note";
 import { createBarMock, getEmptyMockBar, getFilledMockBar } from "src/mocks/entities/bar";
 import * as MockUtilsModule from "src/mocks/utils/moduleUtils";
 import { SECONDS_PER_MINUTE } from "@entities/timeEvaluation";
 import { createNoteMock } from "src/mocks/entities/note";
 
+const { createBar, cropBar, fillBarTrack, findBarNoteByTime, setBarTimesInSeconds, sumBarsCapacity } = BarModule;
+
 jest.mock<typeof NoteModule>("@entities/note", () => {
   const mockUtils = jest.requireActual<typeof MockUtilsModule>("src/mocks/utils/moduleUtils");
   return mockUtils.mockModuleFunctions(jest.requireActual("@entities/note"));
 });
+jest.mock<typeof BarModule>("@entities/bar", () => ({
+  __esModule: true,
+  ...jest.requireActual("@entities/bar"),
+}));
 
 describe("Create Bar", () => {
   it("Creates Bar with initial values", () => {
-    const newBar = createBar(3, 3, 4, 3 / 4, 80);
+    const newBar = createBar(3, 3, 4, 3 / 4, 80, 1);
 
     expect(newBar.beatCount).toBe(3);
     expect(newBar.dibobinador).toBe(4);
@@ -22,13 +28,12 @@ describe("Create Bar", () => {
     expect(newBar.tempo).toBe(80);
     expect(newBar.timeRatio).toBe(80 / SECONDS_PER_MINUTE);
     expect(newBar.trackCount).toBe(3);
+    expect(newBar.index).toBe(1);
 
     expect(newBar.tracks).toHaveLength(3);
     expect(newBar.tracks[0]).toHaveLength(0);
     expect(newBar.tracks[1]).toHaveLength(0);
     expect(newBar.tracks[2]).toHaveLength(0);
-
-    expect(newBar.index).toBeUndefined();
   });
 });
 
@@ -350,5 +355,62 @@ describe("Find Note by time", () => {
     expect(result).toBeTruthy();
     expect(result!.start).toBe(1 / 4);
     expect(result!.duration).toBe(NoteModule.NOTE_DURATIONS["QUARTER"]);
+  });
+});
+
+describe("Crop Bar", () => {
+  const findBarNoteSpy = jest.spyOn(BarModule, "findBarNoteByTime");
+
+  beforeEach(() => {
+    findBarNoteSpy.mockClear();
+  });
+
+  it.each([0, 1, 2, 2.1])("Does nothing with start not inside Bar: %p", (start: number) => {
+    const bar = getFilledMockBar();
+    bar.start = 1;
+
+    cropBar(bar, start);
+
+    expect(bar.capacity).toBe(1);
+    expect(findBarNoteSpy).not.toHaveBeenCalled();
+  });
+
+  it("Fails with invalid track", () => {
+    const bar = getFilledMockBar();
+    delete bar.tracks[0];
+
+    expect(() => cropBar(bar, 1 / 8)).toThrowError("Invalid bar track at 0.");
+  });
+
+  it("Shortens the Bar, removing and shortening Notes accordingly", () => {
+    findBarNoteSpy.mockImplementation((bar: Bar, trackIndex: number) => {
+      if (trackIndex === 2) return bar.tracks[2]![1]!;
+
+      return null;
+    });
+    const bar = getFilledMockBar();
+    bar.start = 1;
+
+    cropBar(bar, 3 / 2);
+
+    expect(bar.capacity).toBe(1 / 2);
+
+    expect(bar.tracks[0]).toHaveLength(1);
+    expect(bar.tracks[0]![0]!.start).toBe(0);
+    expect(bar.tracks[0]![0]!.duration).toBe(1 / 2);
+
+    expect(bar.tracks[1]).toHaveLength(2);
+    expect(bar.tracks[1]![0]!.start).toBe(0);
+    expect(bar.tracks[1]![0]!.duration).toBe(1 / 4);
+    expect(bar.tracks[1]![1]!.start).toBe(1 / 4);
+    expect(bar.tracks[1]![1]!.duration).toBe(1 / 4);
+
+    expect(bar.tracks[2]).toHaveLength(2);
+    expect(bar.tracks[2]![0]!.start).toBe(0);
+    expect(bar.tracks[2]![0]!.duration).toBeCloseTo(1 / 6, 8);
+    expect(bar.tracks[2]![1]!.start).toBeCloseTo(1 / 6, 8);
+    expect(bar.tracks[2]![1]!.duration).toBe(1 / 3);
+
+    expect(findBarNoteSpy).toHaveBeenCalledTimes(3);
   });
 });

@@ -1,6 +1,6 @@
 import { useEditorStore } from "./editorStore";
 import { NOTE_DURATIONS } from "@entities/note";
-import { findBarNoteByTime } from "@entities/bar";
+import BarModule from "@entities/bar";
 import { TimeEvaluation } from "@entities/timeEvaluation";
 
 export const increaseCursorTrackIndex = () =>
@@ -43,7 +43,13 @@ export const increaseCursorPosition = () =>
     if (barWithCursor === undefined) return {};
     if (TimeEvaluation.IsEqualTo(state.cursor.position, barWithCursor.capacity)) return {};
 
-    const nextNote = findBarNoteByTime(barWithCursor, state.cursor.trackIndex, state.cursor.position, true, false);
+    const nextNote = BarModule.findBarNoteByTime(
+      barWithCursor,
+      state.cursor.trackIndex,
+      state.cursor.position,
+      true,
+      false,
+    );
     let amountToIncrease = NOTE_DURATIONS[state.selectedNoteDuration];
 
     if (nextNote) {
@@ -66,7 +72,13 @@ export const decreaseCursorPosition = () =>
     const barWithCursor = state.currentSheet.bars[state.cursor.barIndex];
     if (barWithCursor === undefined) return {};
 
-    const previousNote = findBarNoteByTime(barWithCursor, state.cursor.trackIndex, state.cursor.position, false, false);
+    const previousNote = BarModule.findBarNoteByTime(
+      barWithCursor,
+      state.cursor.trackIndex,
+      state.cursor.position,
+      false,
+      false,
+    );
     let amountToDecrease = NOTE_DURATIONS[state.selectedNoteDuration];
 
     if (previousNote) {

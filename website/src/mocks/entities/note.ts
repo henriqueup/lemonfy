@@ -1,4 +1,4 @@
-import type * as BarModule from "@entities/bar";
+import type { default as BarModule, Bar } from "@entities/bar";
 import type { Note } from "@entities/note";
 import type { Pitch } from "@entities/pitch";
 
@@ -8,7 +8,7 @@ export const createNoteMock = (
   pitch?: Pitch,
   hasSustain?: boolean,
   isSustain?: boolean,
-  bar?: BarModule.Bar,
+  bar?: Bar,
 ): Note => {
   let startInSeconds: number | undefined;
   let durationInSeconds: number | undefined;

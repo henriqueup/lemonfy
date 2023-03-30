@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useEditorStore } from "@store/editor";
 import { getEmptyMockSheet, getMockSheetWithBars } from "src/mocks/entities/sheet";
-import * as BarModule from "@entities/bar";
+import BarModule from "@entities/bar";
 import * as MockUtilsModule from "src/mocks/utils/moduleUtils";
 import { INITIAL_STATE, usePlayerStore } from "@store/player";
 import { pause, play, stop } from "@store/player/playerActions";

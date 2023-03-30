@@ -10,7 +10,7 @@ import {
   moveCursorToStartOfBar,
 } from "@store/editor/cursorActions";
 import { getEmptyMockSheet, getMockSheetWithBars, getMockSheetWithGap } from "src/mocks/entities/sheet";
-import * as BarModule from "@entities/bar";
+import BarModule from "@entities/bar";
 import * as MockUtilsModule from "src/mocks/utils/moduleUtils";
 import { createNoteMock } from "src/mocks/entities/note";
 import { NOTE_DURATIONS } from "@entities/note";
