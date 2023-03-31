@@ -17,20 +17,20 @@ import {
   getMockSheetWithGap,
   getCompleteMoonlightSonataMockSheet,
 } from "src/mocks/entities/sheet";
-import BarModule from "@entities/bar";
+import * as BarModule from "@entities/bar";
 import * as MockUtilsModule from "src/mocks/utils/moduleUtils";
 import { mockDefaultImplementations } from "src/mocks/entities/bar";
 import { createNoteMock } from "src/mocks/entities/note";
 import { AudioContextMock, GainNodeMock, OscillatorNodeMock } from "@mocks/window";
 
-jest.mock<typeof BarModule>("@entities/bar", () => {
+jest.mock<typeof BarModule.default>("@entities/bar", () => {
   const mockUtils = jest.requireActual<typeof MockUtilsModule>("src/mocks/utils/moduleUtils");
-  return mockUtils.mockModuleFunctions(jest.requireActual("@entities/bar"));
+  return mockUtils.mockModuleFunctions(jest.requireActual<typeof BarModule>("@entities/bar").default);
 });
 
 beforeEach(() => {
-  MockUtilsModule.restoreMocks(BarModule);
-  mockDefaultImplementations(BarModule);
+  MockUtilsModule.restoreMocks(BarModule.default);
+  mockDefaultImplementations(BarModule.default);
 });
 
 describe("Create Sheet", () => {
@@ -53,9 +53,9 @@ describe("Add Bar to Sheet", () => {
 
     addBarToSheet(emptySheet, 4, 4, 60);
 
-    expect(BarModule.sumBarsCapacity).toBeCalledTimes(1);
-    expect(BarModule.sumBarsCapacity).toBeCalledWith(emptySheet.bars);
-    expect(BarModule.createBar).toBeCalledTimes(1);
+    expect(BarModule.default.sumBarsCapacity).toBeCalledTimes(1);
+    expect(BarModule.default.sumBarsCapacity).toBeCalledWith(emptySheet.bars);
+    expect(BarModule.default.createBar).toBeCalledTimes(1);
 
     expect(emptySheet.bars).toHaveLength(1);
     const addedBar = emptySheet.bars[0]!;
@@ -446,7 +446,7 @@ describe("Fill Bar tracks in Sheet", () => {
 
     fillBarTracksInSheet(sheet, 0);
 
-    expect(BarModule.fillBarTrack).not.toHaveBeenCalled();
+    expect(BarModule.default.fillBarTrack).not.toHaveBeenCalled();
     expect(sheet.bars[0]!.tracks[0]).toHaveLength(0);
     expect(sheet.bars[1]!.tracks[0]).toHaveLength(0);
     expect(sheet.bars[2]!.tracks[0]).toHaveLength(0);
@@ -457,14 +457,14 @@ describe("Fill Bar tracks in Sheet", () => {
 
     fillBarTracksInSheet(sheet, 1);
 
-    expect(BarModule.fillBarTrack).toBeCalledTimes(2);
+    expect(BarModule.default.fillBarTrack).toBeCalledTimes(2);
 
     const targetTrack = sheet.tracks[1]!;
     const firstBar = sheet.bars[0]!;
-    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(1, firstBar, targetTrack, 1);
+    expect(BarModule.default.fillBarTrack).toHaveBeenNthCalledWith(1, firstBar, targetTrack, 1);
 
     const secondBar = sheet.bars[1]!;
-    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(2, secondBar, targetTrack, 1);
+    expect(BarModule.default.fillBarTrack).toHaveBeenNthCalledWith(2, secondBar, targetTrack, 1);
   });
 });
 
@@ -492,16 +492,16 @@ describe("Remove Bar by index", () => {
     expect(sheet.tracks[1]).toHaveLength(1 + 2 + 1);
     expect(sheet.tracks[2]).toHaveLength(12 + 12 + 12);
 
-    expect(BarModule.fillBarTrack).toHaveBeenCalledTimes(9);
-    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(1, sheet.bars[0], sheet.tracks[0], 0);
-    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(2, sheet.bars[1], sheet.tracks[0], 0);
-    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(3, sheet.bars[2], sheet.tracks[0], 0);
-    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(4, sheet.bars[0], sheet.tracks[1], 1);
-    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(5, sheet.bars[1], sheet.tracks[1], 1);
-    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(6, sheet.bars[2], sheet.tracks[1], 1);
-    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(7, sheet.bars[0], sheet.tracks[2], 2);
-    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(8, sheet.bars[1], sheet.tracks[2], 2);
-    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(9, sheet.bars[2], sheet.tracks[2], 2);
+    expect(BarModule.default.fillBarTrack).toHaveBeenCalledTimes(9);
+    expect(BarModule.default.fillBarTrack).toHaveBeenNthCalledWith(1, sheet.bars[0], sheet.tracks[0], 0);
+    expect(BarModule.default.fillBarTrack).toHaveBeenNthCalledWith(2, sheet.bars[1], sheet.tracks[0], 0);
+    expect(BarModule.default.fillBarTrack).toHaveBeenNthCalledWith(3, sheet.bars[2], sheet.tracks[0], 0);
+    expect(BarModule.default.fillBarTrack).toHaveBeenNthCalledWith(4, sheet.bars[0], sheet.tracks[1], 1);
+    expect(BarModule.default.fillBarTrack).toHaveBeenNthCalledWith(5, sheet.bars[1], sheet.tracks[1], 1);
+    expect(BarModule.default.fillBarTrack).toHaveBeenNthCalledWith(6, sheet.bars[2], sheet.tracks[1], 1);
+    expect(BarModule.default.fillBarTrack).toHaveBeenNthCalledWith(7, sheet.bars[0], sheet.tracks[2], 2);
+    expect(BarModule.default.fillBarTrack).toHaveBeenNthCalledWith(8, sheet.bars[1], sheet.tracks[2], 2);
+    expect(BarModule.default.fillBarTrack).toHaveBeenNthCalledWith(9, sheet.bars[2], sheet.tracks[2], 2);
   });
 
   it("Removes sustain Notes from remaining Bars", () => {
@@ -520,16 +520,16 @@ describe("Remove Bar by index", () => {
     expect(sheet.tracks[1]).toHaveLength(1 + 2 + 1);
     expect(sheet.tracks[2]).toHaveLength(11 + 11 + 12);
 
-    expect(BarModule.fillBarTrack).toHaveBeenCalledTimes(9);
-    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(1, sheet.bars[0], sheet.tracks[0], 0);
-    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(2, sheet.bars[1], sheet.tracks[0], 0);
-    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(3, sheet.bars[2], sheet.tracks[0], 0);
-    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(4, sheet.bars[0], sheet.tracks[1], 1);
-    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(5, sheet.bars[1], sheet.tracks[1], 1);
-    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(6, sheet.bars[2], sheet.tracks[1], 1);
-    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(7, sheet.bars[0], sheet.tracks[2], 2);
-    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(8, sheet.bars[1], sheet.tracks[2], 2);
-    expect(BarModule.fillBarTrack).toHaveBeenNthCalledWith(9, sheet.bars[2], sheet.tracks[2], 2);
+    expect(BarModule.default.fillBarTrack).toHaveBeenCalledTimes(9);
+    expect(BarModule.default.fillBarTrack).toHaveBeenNthCalledWith(1, sheet.bars[0], sheet.tracks[0], 0);
+    expect(BarModule.default.fillBarTrack).toHaveBeenNthCalledWith(2, sheet.bars[1], sheet.tracks[0], 0);
+    expect(BarModule.default.fillBarTrack).toHaveBeenNthCalledWith(3, sheet.bars[2], sheet.tracks[0], 0);
+    expect(BarModule.default.fillBarTrack).toHaveBeenNthCalledWith(4, sheet.bars[0], sheet.tracks[1], 1);
+    expect(BarModule.default.fillBarTrack).toHaveBeenNthCalledWith(5, sheet.bars[1], sheet.tracks[1], 1);
+    expect(BarModule.default.fillBarTrack).toHaveBeenNthCalledWith(6, sheet.bars[2], sheet.tracks[1], 1);
+    expect(BarModule.default.fillBarTrack).toHaveBeenNthCalledWith(7, sheet.bars[0], sheet.tracks[2], 2);
+    expect(BarModule.default.fillBarTrack).toHaveBeenNthCalledWith(8, sheet.bars[1], sheet.tracks[2], 2);
+    expect(BarModule.default.fillBarTrack).toHaveBeenNthCalledWith(9, sheet.bars[2], sheet.tracks[2], 2);
   });
 });
 

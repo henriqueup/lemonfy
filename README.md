@@ -15,7 +15,8 @@ The Lemonfy Project inspired by songsterr app (https://www.songsterr.com/)
 
 - <s>Add Bar removal</s>
 - <s>Enable Bar addition in middle of sheet</s>
-- Add pause
+- <s>Add pause</s>
+- <s>Fix tests</s>
 - Refactor sheet.playSong()
 - Enable Bar edition
 - Add Bar copy/paste

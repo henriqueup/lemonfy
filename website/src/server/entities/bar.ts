@@ -15,38 +15,38 @@ export type Bar = {
 };
 
 interface IBarModule {
-  createBar(
+  createBar: (
     trackCount: number,
     beatCount: number,
     dibobinador: number,
     start: number,
     tempo: number,
     index: number,
-  ): Bar;
-  findBarNoteByTime(
+  ) => Bar;
+  findBarNoteByTime: (
     bar: Bar,
     trackIndex: number,
     time: number,
     lookForward?: boolean,
     shouldContainTime?: boolean,
-  ): Note | null;
+  ) => Note | null;
 
-  sumBarsCapacity(bars: Bar[]): number;
-  convertDurationInBarToSeconds(bar: Bar, duration: number): number;
-  setBarTimesInSeconds(bar: Bar): void;
-  fillBarTrack(bar: Bar, track: Note[], trackIndex: number): void;
-  cropBar(bar: Bar, start: number): void;
+  sumBarsCapacity: (bars: Bar[]) => number;
+  convertDurationInBarToSeconds: (bar: Bar, duration: number) => number;
+  setBarTimesInSeconds: (bar: Bar) => void;
+  fillBarTrack: (bar: Bar, track: Note[], trackIndex: number) => void;
+  cropBar: (bar: Bar, start: number) => void;
 }
 
 const BarModule: IBarModule = {
-  createBar(
+  createBar: (
     trackCount: number,
     beatCount: number,
     dibobinador: number,
     start: number,
     tempo: number,
     index: number,
-  ): Bar {
+  ): Bar => {
     return {
       trackCount,
       beatCount,
@@ -60,13 +60,13 @@ const BarModule: IBarModule = {
     };
   },
 
-  findBarNoteByTime(
+  findBarNoteByTime: (
     bar: Bar,
     trackIndex: number,
     time: number,
     lookForward = true,
     shouldContainTime = true,
-  ): Note | null {
+  ): Note | null => {
     const track = [...getTrackFromIndex(bar, trackIndex)];
 
     if (!lookForward) track.reverse();
@@ -88,15 +88,15 @@ const BarModule: IBarModule = {
     return targetNote ?? null;
   },
 
-  sumBarsCapacity(bars: Bar[]): number {
+  sumBarsCapacity: (bars: Bar[]): number => {
     return bars.reduce((currentCapacity, currentBar) => currentCapacity + currentBar.capacity, 0);
   },
 
-  convertDurationInBarToSeconds(bar: Bar, duration: number): number {
+  convertDurationInBarToSeconds: (bar: Bar, duration: number): number => {
     return (duration * bar.dibobinador) / bar.timeRatio;
   },
 
-  setBarTimesInSeconds(bar: Bar): void {
+  setBarTimesInSeconds: (bar: Bar): void => {
     const notes = bar.tracks.flat();
     bar.startInSeconds = BarModule.convertDurationInBarToSeconds(bar, bar.start);
 
@@ -109,7 +109,7 @@ const BarModule: IBarModule = {
     }
   },
 
-  fillBarTrack(bar: Bar, track: Note[], trackIndex: number): void {
+  fillBarTrack: (bar: Bar, track: Note[], trackIndex: number): void => {
     const barEnd = bar.start + bar.capacity;
     const notesInsideBar = track.filter(
       note =>
@@ -146,7 +146,7 @@ const BarModule: IBarModule = {
     bar.tracks[trackIndex] = barTrack;
   },
 
-  cropBar(bar: Bar, start: number): void {
+  cropBar: (bar: Bar, start: number): void => {
     if (bar.start >= start || bar.start + bar.capacity <= start) return;
 
     const startAdjustedToBar = start - bar.start;

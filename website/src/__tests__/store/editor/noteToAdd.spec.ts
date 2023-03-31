@@ -14,7 +14,7 @@ import { useEditorStore } from "@store/editor";
 
 jest.mock<typeof PitchModule>("@entities/pitch", () => ({
   ...jest.requireActual("@entities/pitch"),
-  createPitch: jest.fn(() => ({ name: "C", octave: 2, key: "C2" })),
+  createPitch: jest.fn(() => ({ name: "C", octave: 2, key: "C2", frequency: 123 })),
 }));
 jest.mock<typeof NoteModule>("@entities/note", () => ({
   ...jest.requireActual("@entities/note"),
@@ -96,5 +96,6 @@ describe("Note to add", () => {
     expect(pitch?.key).toBe("C2");
     expect(pitch?.name).toBe("C");
     expect(pitch?.octave).toBe(2);
+    expect(pitch?.frequency).toBe(123);
   });
 });

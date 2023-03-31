@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useEditorStore } from "@store/editor";
 import { getEmptyMockSheet, getMockSheetWithBars } from "src/mocks/entities/sheet";
-import BarModule from "@entities/bar";
+import * as BarModule from "@entities/bar";
 import * as MockUtilsModule from "src/mocks/utils/moduleUtils";
 import { INITIAL_STATE, usePlayerStore } from "@store/player";
 import { pause, play, stop } from "@store/player/playerActions";
@@ -18,11 +18,11 @@ beforeEach(() => {
   clearTimeoutSpy.mockClear();
 });
 
-jest.mock<typeof BarModule>("@entities/bar", () => {
+jest.mock<typeof BarModule.default>("@entities/bar", () => {
   const mockUtils = jest.requireActual<typeof MockUtilsModule>("src/mocks/utils/moduleUtils");
-  return mockUtils.mockModuleFunctions(jest.requireActual("@entities/bar"));
+  return mockUtils.mockModuleFunctions(jest.requireActual<typeof BarModule>("@entities/bar").default);
 });
-const barModuleWithMocks = MockUtilsModule.getModuleWithMocks(BarModule);
+const barModuleWithMocks = MockUtilsModule.getModuleWithMocks(BarModule.default);
 
 describe("Play", () => {
   it("Does nothing with undefined Sheet", () => {
