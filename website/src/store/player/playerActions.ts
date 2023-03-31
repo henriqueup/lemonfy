@@ -37,14 +37,13 @@ const createNextBarTimeout = (barWithCursor: Bar | undefined, startPosition = 0)
   }, barDurationInSeconds * 1000);
 };
 
-export const play = (gainNodes: GainNode[], oscillatorNodes: OscillatorNode[]) => {
+export const play = (audioNodes: AudioNode[]) => {
   usePlayerStore.setState(() => {
     const editorCursor = useEditorStore.getState().cursor;
 
     return {
       cursor: { barIndex: editorCursor.barIndex, position: editorCursor.position },
-      gainNodes,
-      oscillatorNodes,
+      audioNodes,
     };
   });
 
@@ -76,8 +75,7 @@ export const pause = () =>
     const totalBarTime = BarModule.convertDurationInBarToSeconds(barWithCursor, barWithCursor.capacity);
     const currentBarPosition = barWithCursor.capacity * (timeElapsed / totalBarTime);
 
-    state.gainNodes.forEach(gainNode => gainNode.disconnect());
-    state.oscillatorNodes.forEach(oscillatorNode => oscillatorNode.disconnect());
+    state.audioNodes.forEach(audioNode => audioNode.disconnect());
 
     clearTimeout(state.nextBarTimeout);
     useEditorStore.setState(editorState => ({
@@ -87,8 +85,7 @@ export const pause = () =>
     return {
       isPaused: true,
       cursor: { ...state.cursor, position: currentBarPosition },
-      gainNodes: [],
-      oscillatorNodes: [],
+      audioNodes: [],
     };
   });
 

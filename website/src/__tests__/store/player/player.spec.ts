@@ -5,7 +5,7 @@ import * as BarModule from "@entities/bar";
 import * as MockUtilsModule from "src/mocks/utils/moduleUtils";
 import { INITIAL_STATE, usePlayerStore } from "@store/player";
 import { pause, play, stop } from "@store/player/playerActions";
-import { GainNodeMock, OscillatorNodeMock } from "@mocks/window";
+import { AudioNodeMock } from "@mocks/window";
 
 jest.useFakeTimers();
 const setTimeoutSpy = jest.spyOn(global, "setTimeout");
@@ -26,7 +26,7 @@ const barModuleWithMocks = MockUtilsModule.getModuleWithMocks(BarModule.default)
 
 describe("Play", () => {
   it("Does nothing with undefined Sheet", () => {
-    play([], []);
+    play([]);
 
     expect(usePlayerStore.getState()).toMatchObject(INITIAL_STATE);
   });
@@ -35,14 +35,13 @@ describe("Play", () => {
     useEditorStore.setState({
       currentSheet: getEmptyMockSheet(),
     });
-    play([], []);
+    play([]);
 
     expect(usePlayerStore.getState()).toMatchObject(INITIAL_STATE);
   });
 
   it("Loads with audioNodes and editor cursor", () => {
-    const mockGainNodes = [new GainNodeMock()];
-    const mockOscillatorNodes = [new OscillatorNodeMock()];
+    const mockAudioNodes = [new AudioNodeMock()];
 
     const sheet = getMockSheetWithBars();
     useEditorStore.setState({
@@ -52,13 +51,12 @@ describe("Play", () => {
 
     const dateAtStart = new Date(referenceDate);
     jest.setSystemTime(dateAtStart);
-    play(mockGainNodes, mockOscillatorNodes);
+    play(mockAudioNodes);
 
     expect(usePlayerStore.getState().cursor.barIndex).toBe(2);
     expect(usePlayerStore.getState().cursor.position).toBe(1 / 4);
     expect(usePlayerStore.getState().currentTimeoutStartTime).toStrictEqual(dateAtStart);
-    expect(usePlayerStore.getState().gainNodes).toBe(mockGainNodes);
-    expect(usePlayerStore.getState().oscillatorNodes).toBe(mockOscillatorNodes);
+    expect(usePlayerStore.getState().audioNodes).toBe(mockAudioNodes);
   });
 
   it("Creates timeouts for each Bar", () => {
@@ -70,7 +68,7 @@ describe("Play", () => {
 
     const dateAtStart = new Date(referenceDate);
     jest.setSystemTime(dateAtStart);
-    play([], []);
+    play([]);
 
     expect(setTimeout).toHaveBeenCalledTimes(1);
     expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), sheet.bars[0]!.capacity * 1000);
@@ -163,13 +161,11 @@ describe("Pause", () => {
   });
 
   it("Disconnects each audioNode", () => {
-    const gainNodes = [new GainNodeMock(), new GainNodeMock()];
-    const oscillatorNodes = [new OscillatorNodeMock(), new OscillatorNodeMock(), new OscillatorNodeMock()];
+    const audioNodes = [new AudioNodeMock(), new AudioNodeMock()];
     usePlayerStore.setState({
       isPlaying: true,
       currentTimeoutStartTime: referenceDate,
-      gainNodes,
-      oscillatorNodes,
+      audioNodes,
     });
     useEditorStore.setState({
       currentSheet: getMockSheetWithBars(),
@@ -177,15 +173,10 @@ describe("Pause", () => {
 
     pause();
 
-    expect(gainNodes[0]!.disconnect).toHaveBeenCalledTimes(1);
-    expect(gainNodes[1]!.disconnect).toHaveBeenCalledTimes(1);
+    expect(audioNodes[0]!.disconnect).toHaveBeenCalledTimes(1);
+    expect(audioNodes[1]!.disconnect).toHaveBeenCalledTimes(1);
 
-    expect(oscillatorNodes[0]!.disconnect).toHaveBeenCalledTimes(1);
-    expect(oscillatorNodes[1]!.disconnect).toHaveBeenCalledTimes(1);
-    expect(oscillatorNodes[2]!.disconnect).toHaveBeenCalledTimes(1);
-
-    expect(usePlayerStore.getState().gainNodes).toHaveLength(0);
-    expect(usePlayerStore.getState().oscillatorNodes).toHaveLength(0);
+    expect(usePlayerStore.getState().audioNodes).toHaveLength(0);
   });
 
   it("Sets state to paused", () => {

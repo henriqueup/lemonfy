@@ -1,9 +1,10 @@
 import { useState, type FunctionComponent } from "react";
 import { Button, CollapsableSideMenu } from "../../components";
-import { playSong, type Sheet } from "@entities/sheet";
+import { type Sheet } from "@entities/sheet";
 import { useEditorStore } from "@store/editor";
 import { useAudioContext } from "src/hooks";
 import { pause } from "@store/player/playerActions";
+import { playSong } from "src/utils/audioContext";
 
 type Props = {
   handleLoad: (sheetFromStorage: Sheet) => void;

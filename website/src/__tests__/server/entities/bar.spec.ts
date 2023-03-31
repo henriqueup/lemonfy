@@ -1,12 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import BarModule, { Bar } from "@entities/bar";
+import BarModule, { type Bar } from "@entities/bar";
 import * as NoteModule from "@entities/note";
 import { createBarMock, getEmptyMockBar, getFilledMockBar } from "src/mocks/entities/bar";
 import * as MockUtilsModule from "src/mocks/utils/moduleUtils";
 import { SECONDS_PER_MINUTE } from "@entities/timeEvaluation";
 import { createNoteMock } from "src/mocks/entities/note";
-
-const { createBar, cropBar, fillBarTrack, findBarNoteByTime, setBarTimesInSeconds, sumBarsCapacity } = BarModule;
 
 jest.mock<typeof NoteModule>("@entities/note", () => {
   const mockUtils = jest.requireActual<typeof MockUtilsModule>("src/mocks/utils/moduleUtils");
@@ -19,7 +17,7 @@ jest.mock<typeof BarModule>("@entities/bar", () => ({
 
 describe("Create Bar", () => {
   it("Creates Bar with initial values", () => {
-    const newBar = createBar(3, 3, 4, 3 / 4, 80, 1);
+    const newBar = BarModule.createBar(3, 3, 4, 3 / 4, 80, 1);
 
     expect(newBar.beatCount).toBe(3);
     expect(newBar.dibobinador).toBe(4);
@@ -39,7 +37,7 @@ describe("Create Bar", () => {
 
 describe("Sum Bar capacity", () => {
   it("Sums empty Bar array capacity to 0", () => {
-    const totalCapacity = sumBarsCapacity([]);
+    const totalCapacity = BarModule.sumBarsCapacity([]);
 
     expect(totalCapacity).toBe(0);
   });
@@ -52,7 +50,7 @@ describe("Sum Bar capacity", () => {
       createBarMock(3, 6, 8, 3, 60, 3), // capacity = 6 / 8
     ];
 
-    const totalCapacity = sumBarsCapacity(bars);
+    const totalCapacity = BarModule.sumBarsCapacity(bars);
 
     expect(totalCapacity).toBe(1 + 3 / 4 + 5 / 4 + 6 / 8);
   });
@@ -70,7 +68,7 @@ describe("Set Notes times in seconds", () => {
   it("Sets times in seconds of all Notes", () => {
     const bar = getFilledMockBar();
 
-    setBarTimesInSeconds(bar);
+    BarModule.setBarTimesInSeconds(bar);
 
     bar.tracks.forEach(track => {
       track.forEach(note => {
@@ -92,7 +90,7 @@ describe("Fill track", () => {
     const bar = getEmptyMockBar();
     const track: NoteModule.Note[] = [];
 
-    fillBarTrack(bar, track, 0);
+    BarModule.fillBarTrack(bar, track, 0);
 
     expect(bar.tracks[0]).toHaveLength(0);
   });
@@ -101,7 +99,7 @@ describe("Fill track", () => {
     const bar = getEmptyMockBar();
     const track = [createNoteMock(NoteModule.NOTE_DURATIONS["QUARTER"], 3 / 4)];
 
-    fillBarTrack(bar, track, 0);
+    BarModule.fillBarTrack(bar, track, 0);
 
     expect(bar.tracks[0]).toHaveLength(0);
   });
@@ -111,7 +109,7 @@ describe("Fill track", () => {
     bar.tracks[0]!.push(createNoteMock(NoteModule.NOTE_DURATIONS["QUARTER"], 0));
     const track = [createNoteMock(NoteModule.NOTE_DURATIONS["QUARTER"], 3 / 4)];
 
-    fillBarTrack(bar, track, 0);
+    BarModule.fillBarTrack(bar, track, 0);
 
     expect(bar.tracks[0]).toHaveLength(0);
   });
@@ -120,14 +118,14 @@ describe("Fill track", () => {
   //   const bar = getEmptyMockBar();
   //   const track = [undefined, createNoteMock(NoteModule.NOTE_DURATIONS["QUARTER"], 0)] as NoteModule.Note[];
 
-  //   expect(() => fillBarTrack(bar, track, 0)).toThrowError("Invalid first Note of track.");
+  //   expect(() => BarModule.fillBarTrack(bar, track, 0)).toThrowError("Invalid first Note of track.");
   // });
 
   // it("Fails with invalid last Note", () => {
   //   const bar = getEmptyMockBar();
   //   const track = [createNoteMock(NoteModule.NOTE_DURATIONS["QUARTER"], 0), undefined] as NoteModule.Note[];
 
-  //   expect(() => fillBarTrack(bar, track, 0)).toThrowError("Invalid last Note of track.");
+  //   expect(() => BarModule.fillBarTrack(bar, track, 0)).toThrowError("Invalid last Note of track.");
   // });
 
   it("Fills with fitting Notes", () => {
@@ -138,7 +136,7 @@ describe("Fill track", () => {
       createNoteMock(NoteModule.NOTE_DURATIONS["QUARTER"], 6 / 4),
     ];
 
-    fillBarTrack(bar, track, 0);
+    BarModule.fillBarTrack(bar, track, 0);
 
     expect(bar.tracks[0]).toHaveLength(3);
 
@@ -170,7 +168,7 @@ describe("Fill track", () => {
       createNoteMock(NoteModule.NOTE_DURATIONS["QUARTER"], 6 / 4),
     ];
 
-    fillBarTrack(bar, track, 0);
+    BarModule.fillBarTrack(bar, track, 0);
 
     expect(bar.tracks[0]).toHaveLength(3);
     expect(bar.tracks[0]![0]!).not.toBe(track[0]);
@@ -185,7 +183,7 @@ describe("Fill track", () => {
       createNoteMock(NoteModule.NOTE_DURATIONS["EIGHTH"], 12 / 8),
     ];
 
-    fillBarTrack(bar, track, 0);
+    BarModule.fillBarTrack(bar, track, 0);
 
     expect(bar.tracks[0]).toHaveLength(2);
 
@@ -206,7 +204,7 @@ describe("Fill track", () => {
     const bar = getEmptyMockBar();
     const track = [createNoteMock(NoteModule.NOTE_DURATIONS["HALF"], 3 / 4)];
 
-    fillBarTrack(bar, track, 0);
+    BarModule.fillBarTrack(bar, track, 0);
 
     expect(bar.tracks[0]).toHaveLength(1);
 
@@ -224,7 +222,7 @@ describe("Fill track", () => {
       createNoteMock(NoteModule.NOTE_DURATIONS["HALF"], 6 / 4),
     ];
 
-    fillBarTrack(bar, track, 0);
+    BarModule.fillBarTrack(bar, track, 0);
 
     expect(bar.tracks[0]).toHaveLength(2);
 
@@ -239,7 +237,7 @@ describe("Fill track", () => {
     const bar = getEmptyMockBar();
     const track = [createNoteMock(NoteModule.NOTE_DURATIONS["DOUBLE_WHOLE"], 3 / 4)];
 
-    fillBarTrack(bar, track, 0);
+    BarModule.fillBarTrack(bar, track, 0);
 
     expect(bar.tracks[0]).toHaveLength(1);
 
@@ -255,20 +253,20 @@ describe("Find Note by time", () => {
   it("Fails with invalid track index", () => {
     const bar = getFilledMockBar();
 
-    expect(() => findBarNoteByTime(bar, 4, 1)).toThrowError("Invalid track index.");
+    expect(() => BarModule.findBarNoteByTime(bar, 4, 1)).toThrowError("Invalid track index.");
   });
 
   it("Fails with invalid track", () => {
     const bar = getFilledMockBar();
     delete bar.tracks[1];
 
-    expect(() => findBarNoteByTime(bar, 1, 1)).toThrowError("Invalid track at index: 1.");
+    expect(() => BarModule.findBarNoteByTime(bar, 1, 1)).toThrowError("Invalid track at index: 1.");
   });
 
   it("Returns null when looking forward with end of Note", () => {
     const bar = getFilledMockBar();
     bar.tracks[1]!.splice(1, 1);
-    const result = findBarNoteByTime(bar, 1, 1 / 4);
+    const result = BarModule.findBarNoteByTime(bar, 1, 1 / 4);
 
     expect(result).toBeNull();
   });
@@ -276,7 +274,7 @@ describe("Find Note by time", () => {
   it("Returns null when looking backward with start of Note", () => {
     const bar = getFilledMockBar();
     bar.tracks[1]!.splice(1, 1);
-    const result = findBarNoteByTime(bar, 1, 2 / 4, false);
+    const result = BarModule.findBarNoteByTime(bar, 1, 2 / 4, false);
 
     expect(result).toBeNull();
   });
@@ -284,7 +282,7 @@ describe("Find Note by time", () => {
   it("Returns null in time without Notes when looking forward", () => {
     const bar = getFilledMockBar();
     bar.tracks[1]!.splice(1, 1);
-    const result = findBarNoteByTime(bar, 1, 3 / 8);
+    const result = BarModule.findBarNoteByTime(bar, 1, 3 / 8);
 
     expect(result).toBeNull();
   });
@@ -292,7 +290,7 @@ describe("Find Note by time", () => {
   it("Returns null in time without Notes when looking backward", () => {
     const bar = getFilledMockBar();
     bar.tracks[1]!.splice(1, 1);
-    const result = findBarNoteByTime(bar, 1, 3 / 8, false);
+    const result = BarModule.findBarNoteByTime(bar, 1, 3 / 8, false);
 
     expect(result).toBeNull();
   });
@@ -300,7 +298,7 @@ describe("Find Note by time", () => {
   it("Returns Note when looking forward with start of Note", () => {
     const bar = getFilledMockBar();
     bar.tracks[1]!.splice(1, 1);
-    const result = findBarNoteByTime(bar, 1, 2 / 4);
+    const result = BarModule.findBarNoteByTime(bar, 1, 2 / 4);
 
     expect(result).toBeTruthy();
     expect(result!.start).toBe(2 / 4);
@@ -310,7 +308,7 @@ describe("Find Note by time", () => {
   it("Returns Note when looking backward with end of Note", () => {
     const bar = getFilledMockBar();
     bar.tracks[1]!.splice(1, 1);
-    const result = findBarNoteByTime(bar, 1, 1 / 4, false);
+    const result = BarModule.findBarNoteByTime(bar, 1, 1 / 4, false);
 
     expect(result).toBeTruthy();
     expect(result!.start).toBe(0);
@@ -320,7 +318,7 @@ describe("Find Note by time", () => {
   it("Returns Note when looking forward within Note", () => {
     const bar = getFilledMockBar();
     bar.tracks[1]!.splice(1, 1);
-    const result = findBarNoteByTime(bar, 1, 5 / 8);
+    const result = BarModule.findBarNoteByTime(bar, 1, 5 / 8);
 
     expect(result).toBeTruthy();
     expect(result!.start).toBe(2 / 4);
@@ -330,7 +328,7 @@ describe("Find Note by time", () => {
   it("Returns Note when looking backward within Note", () => {
     const bar = getFilledMockBar();
     bar.tracks[1]!.splice(1, 1);
-    const result = findBarNoteByTime(bar, 1, 1 / 8, false);
+    const result = BarModule.findBarNoteByTime(bar, 1, 1 / 8, false);
 
     expect(result).toBeTruthy();
     expect(result!.start).toBe(0);
@@ -340,7 +338,7 @@ describe("Find Note by time", () => {
   it("Returns Note not containing time when looking forward", () => {
     const bar = getFilledMockBar();
     bar.tracks[1]!.splice(1, 1);
-    const result = findBarNoteByTime(bar, 1, 3 / 8, true, false);
+    const result = BarModule.findBarNoteByTime(bar, 1, 3 / 8, true, false);
 
     expect(result).toBeTruthy();
     expect(result!.start).toBe(2 / 4);
@@ -350,7 +348,7 @@ describe("Find Note by time", () => {
   it("Returns Note not containing time when looking backward", () => {
     const bar = getFilledMockBar();
     bar.tracks[1]!.splice(2, 1);
-    const result = findBarNoteByTime(bar, 1, 5 / 8, false, false);
+    const result = BarModule.findBarNoteByTime(bar, 1, 5 / 8, false, false);
 
     expect(result).toBeTruthy();
     expect(result!.start).toBe(1 / 4);
@@ -369,7 +367,7 @@ describe("Crop Bar", () => {
     const bar = getFilledMockBar();
     bar.start = 1;
 
-    cropBar(bar, start);
+    BarModule.cropBar(bar, start);
 
     expect(bar.capacity).toBe(1);
     expect(findBarNoteSpy).not.toHaveBeenCalled();
@@ -379,7 +377,7 @@ describe("Crop Bar", () => {
     const bar = getFilledMockBar();
     delete bar.tracks[0];
 
-    expect(() => cropBar(bar, 1 / 8)).toThrowError("Invalid bar track at 0.");
+    expect(() => BarModule.cropBar(bar, 1 / 8)).toThrowError("Invalid bar track at 0.");
   });
 
   it("Shortens the Bar, removing and shortening Notes accordingly", () => {
@@ -391,7 +389,7 @@ describe("Crop Bar", () => {
     const bar = getFilledMockBar();
     bar.start = 1;
 
-    cropBar(bar, 3 / 2);
+    BarModule.cropBar(bar, 3 / 2);
 
     expect(bar.capacity).toBe(1 / 2);
 

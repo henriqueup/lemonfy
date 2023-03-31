@@ -1,4 +1,4 @@
-import { AudioContextMock, GainNodeMock, OscillatorNodeMock } from "./audioContext";
+import { AudioContextMock, AudioNodeMock, GainNodeMock, OscillatorNodeMock } from "./audioContext";
 import DOMRectMock from "./DOMRect";
 
-export { AudioContextMock, GainNodeMock, OscillatorNodeMock, DOMRectMock };
+export { AudioContextMock, AudioNodeMock, GainNodeMock, OscillatorNodeMock, DOMRectMock };

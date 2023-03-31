@@ -17,7 +17,8 @@ The Lemonfy Project inspired by songsterr app (https://www.songsterr.com/)
 - <s>Enable Bar addition in middle of sheet</s>
 - <s>Add pause</s>
 - <s>Fix tests</s>
-- Refactor sheet.playSong()
+- <s>Refactor sheet.playSong()</s>
+- Fix move cursor when its inside note
 - Enable Bar edition
 - Add Bar copy/paste
 - Add confirmation modal

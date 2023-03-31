@@ -1,15 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { NOTE_DURATIONS } from "@entities/note";
-import {
-  addBarToSheet,
-  createSheet,
-  addNoteToSheet,
-  findSheetNoteByTime,
-  removeNotesFromSheet,
-  fillBarTracksInSheet,
-  playSong,
-  removeBarInSheetByIndex,
-} from "@entities/sheet";
+import { default as SheetModule, type Sheet } from "@entities/sheet";
 import {
   getEmptyMockSheet,
   getMockSheetWithNoGap,
@@ -21,7 +12,6 @@ import * as BarModule from "@entities/bar";
 import * as MockUtilsModule from "src/mocks/utils/moduleUtils";
 import { mockDefaultImplementations } from "src/mocks/entities/bar";
 import { createNoteMock } from "src/mocks/entities/note";
-import { AudioContextMock, GainNodeMock, OscillatorNodeMock } from "@mocks/window";
 
 jest.mock<typeof BarModule.default>("@entities/bar", () => {
   const mockUtils = jest.requireActual<typeof MockUtilsModule>("src/mocks/utils/moduleUtils");
@@ -35,7 +25,7 @@ beforeEach(() => {
 
 describe("Create Sheet", () => {
   it("Creates Sheet with initial values", () => {
-    const newSheet = createSheet(3);
+    const newSheet = SheetModule.createSheet(3);
 
     expect(newSheet.bars).toHaveLength(0);
     expect(newSheet.trackCount).toBe(3);
@@ -51,7 +41,7 @@ describe("Add Bar to Sheet", () => {
   it("Adds Bar to empty Sheet", () => {
     const emptySheet = getEmptyMockSheet();
 
-    addBarToSheet(emptySheet, 4, 4, 60);
+    SheetModule.addBarToSheet(emptySheet, 4, 4, 60);
 
     expect(BarModule.default.sumBarsCapacity).toBeCalledTimes(1);
     expect(BarModule.default.sumBarsCapacity).toBeCalledWith(emptySheet.bars);
@@ -70,7 +60,7 @@ describe("Add Bar to Sheet", () => {
 
   it("Adds Bar to Sheet with previous Bars", () => {
     const sheetWithBars = getMockSheetWithBars();
-    addBarToSheet(sheetWithBars, 4, 4, 100);
+    SheetModule.addBarToSheet(sheetWithBars, 4, 4, 100);
 
     expect(sheetWithBars.bars).toHaveLength(4);
     const addedBar = sheetWithBars.bars[3]!;
@@ -87,7 +77,7 @@ describe("Add Bar to Sheet", () => {
     const sheetWithBars = getMockSheetWithBars();
     sheetWithBars.bars[0]!.tracks[1]![0] = createNoteMock(NOTE_DURATIONS["QUARTER"], 2 / 4, undefined, true);
 
-    expect(() => addBarToSheet(sheetWithBars, 4, 4, 100, 0)).toThrowError(
+    expect(() => SheetModule.addBarToSheet(sheetWithBars, 4, 4, 100, 0)).toThrowError(
       "The previous bar can't have any notes with sustain for a new bar to be added after it.",
     );
   });
@@ -96,7 +86,7 @@ describe("Add Bar to Sheet", () => {
     const sheetWithBars = getMockSheetWithBars();
     sheetWithBars.bars[0]!.tracks[1]![0] = createNoteMock(NOTE_DURATIONS["QUARTER"], 2 / 4);
 
-    addBarToSheet(sheetWithBars, 4, 4, 100, 0);
+    SheetModule.addBarToSheet(sheetWithBars, 4, 4, 100, 0);
 
     expect(sheetWithBars.bars).toHaveLength(4);
 
@@ -114,11 +104,21 @@ describe("Add Bar to Sheet", () => {
 });
 
 describe("Add Note to Sheet", () => {
+  const addBarSpy = jest.spyOn(SheetModule, "addBarToSheet");
+
+  beforeEach(() => {
+    addBarSpy.mockClear();
+    addBarSpy.mockImplementation((sheet: Sheet) => {
+      const lastBar = sheet.bars[sheet.bars.length - 1]!;
+      sheet.bars.push({ ...lastBar, start: lastBar.start + lastBar.capacity });
+    });
+  });
+
   it("Fails with invalid track index", () => {
     const emptySheet = getEmptyMockSheet();
     const noteToAdd = createNoteMock(NOTE_DURATIONS["HALF"], 0);
 
-    expect(() => addNoteToSheet(emptySheet, 4, noteToAdd)).toThrowError("Invalid track index.");
+    expect(() => SheetModule.addNoteToSheet(emptySheet, 4, noteToAdd)).toThrowError("Invalid track index.");
   });
 
   it("Fails with invalid track at index", () => {
@@ -126,21 +126,23 @@ describe("Add Note to Sheet", () => {
     const noteToAdd = createNoteMock(NOTE_DURATIONS["HALF"], 0);
     delete emptySheet.tracks[1];
 
-    expect(() => addNoteToSheet(emptySheet, 1, noteToAdd)).toThrowError("Invalid track at index: 1.");
+    expect(() => SheetModule.addNoteToSheet(emptySheet, 1, noteToAdd)).toThrowError("Invalid track at index: 1.");
   });
 
   it("Fails with Sheet with no Bars", () => {
     const emptySheet = getEmptyMockSheet();
     const noteToAdd = createNoteMock(NOTE_DURATIONS["HALF"], 0);
 
-    expect(() => addNoteToSheet(emptySheet, 1, noteToAdd)).toThrowError("Sheet should have ate least one Bar.");
+    expect(() => SheetModule.addNoteToSheet(emptySheet, 1, noteToAdd)).toThrowError(
+      "Sheet should have ate least one Bar.",
+    );
   });
 
   it("Adds Note within a Bar of Sheet without Notes", () => {
     const sheet = getMockSheetWithBars();
     const noteToAdd = createNoteMock(NOTE_DURATIONS["HALF"], 1);
 
-    addNoteToSheet(sheet, 2, noteToAdd);
+    SheetModule.addNoteToSheet(sheet, 2, noteToAdd);
 
     const trackWithNewNote = sheet.tracks[2]!;
     expect(trackWithNewNote).toHaveLength(1);
@@ -148,6 +150,7 @@ describe("Add Note to Sheet", () => {
     const noteAdded = trackWithNewNote[0]!;
     expect(noteAdded).toBe(noteToAdd);
 
+    expect(addBarSpy).not.toHaveBeenCalled();
     expect(sheet.bars).toHaveLength(3);
   });
 
@@ -155,7 +158,7 @@ describe("Add Note to Sheet", () => {
     const sheet = getMockSheetWithBars();
     const noteToAdd = createNoteMock(NOTE_DURATIONS["QUARTER"], 3);
 
-    addNoteToSheet(sheet, 1, noteToAdd);
+    SheetModule.addNoteToSheet(sheet, 1, noteToAdd);
 
     const trackWithNewNote = sheet.tracks[1]!;
     expect(trackWithNewNote).toHaveLength(1);
@@ -163,23 +166,16 @@ describe("Add Note to Sheet", () => {
     const noteAdded = trackWithNewNote[0]!;
     expect(noteAdded).toBe(noteToAdd);
 
+    expect(addBarSpy).toHaveBeenCalledTimes(1);
+    expect(addBarSpy).toHaveBeenCalledWith(sheet, 6, 8, 120);
     expect(sheet.bars).toHaveLength(4);
-    const previousBar = sheet.bars[2]!;
-    const addedBar = sheet.bars[3]!;
-
-    expect(addedBar.trackCount).toBe(sheet.trackCount);
-    expect(addedBar.start).toBe(8);
-    expect(addedBar.index).toBe(3);
-    expect(addedBar.beatCount).toBe(previousBar.beatCount);
-    expect(addedBar.dibobinador).toBe(previousBar.dibobinador);
-    expect(addedBar.tempo).toBe(previousBar.tempo);
   });
 
   it("Adds Note that doesn't fit last Bar of Sheet", () => {
     const sheet = getMockSheetWithBars();
-    const noteToAdd = createNoteMock(NOTE_DURATIONS["WHOLE"], 2);
+    const noteToAdd = createNoteMock(NOTE_DURATIONS["DOUBLE_WHOLE"], 2);
 
-    addNoteToSheet(sheet, 1, noteToAdd);
+    SheetModule.addNoteToSheet(sheet, 1, noteToAdd);
 
     const trackWithNewNote = sheet.tracks[1]!;
     expect(trackWithNewNote).toHaveLength(1);
@@ -187,23 +183,17 @@ describe("Add Note to Sheet", () => {
     const noteAdded = trackWithNewNote[0]!;
     expect(noteAdded).toBe(noteToAdd);
 
-    expect(sheet.bars).toHaveLength(4);
-    const previousBar = sheet.bars[2]!;
-    const addedBar = sheet.bars[3]!;
-
-    expect(addedBar.trackCount).toBe(sheet.trackCount);
-    expect(addedBar.start).toBe(8);
-    expect(addedBar.index).toBe(3);
-    expect(addedBar.beatCount).toBe(previousBar.beatCount);
-    expect(addedBar.dibobinador).toBe(previousBar.dibobinador);
-    expect(addedBar.tempo).toBe(previousBar.tempo);
+    expect(addBarSpy).toHaveBeenCalledTimes(2);
+    expect(addBarSpy).toHaveBeenNthCalledWith(1, sheet, 6, 8, 120);
+    expect(addBarSpy).toHaveBeenNthCalledWith(2, sheet, 6, 8, 120);
+    expect(sheet.bars).toHaveLength(5);
   });
 
   it("Adds Note between Notes without gaps", () => {
     const sheet = getMockSheetWithNoGap();
     const noteToAdd = createNoteMock(NOTE_DURATIONS["HALF"], 1 / 4);
 
-    addNoteToSheet(sheet, 0, noteToAdd);
+    SheetModule.addNoteToSheet(sheet, 0, noteToAdd);
 
     const trackWithNewNote = sheet.tracks[0]!;
     expect(trackWithNewNote).toHaveLength(4);
@@ -214,23 +204,16 @@ describe("Add Note to Sheet", () => {
     expect(trackWithNewNote[2]!.start).toBe(3 / 4);
     expect(trackWithNewNote[3]!.start).toBe(4 / 4);
 
+    expect(addBarSpy).toHaveBeenCalledTimes(1);
+    expect(addBarSpy).toHaveBeenCalledWith(sheet, 3, 4, 70);
     expect(sheet.bars).toHaveLength(2);
-    const previousBar = sheet.bars[0]!;
-    const addedBar = sheet.bars[1]!;
-
-    expect(addedBar.trackCount).toBe(sheet.trackCount);
-    expect(addedBar.start).toBe(8);
-    expect(addedBar.index).toBe(1);
-    expect(addedBar.beatCount).toBe(previousBar.beatCount);
-    expect(addedBar.dibobinador).toBe(previousBar.dibobinador);
-    expect(addedBar.tempo).toBe(previousBar.tempo);
   });
 
   it("Adds Note between Notes with gap that fits", () => {
     const sheet = getMockSheetWithGap();
     const noteToAdd = createNoteMock(NOTE_DURATIONS["QUARTER"], 1 / 4);
 
-    addNoteToSheet(sheet, 1, noteToAdd);
+    SheetModule.addNoteToSheet(sheet, 1, noteToAdd);
 
     const trackWithNewNote = sheet.tracks[1]!;
     expect(trackWithNewNote).toHaveLength(5);
@@ -242,6 +225,7 @@ describe("Add Note to Sheet", () => {
     expect(trackWithNewNote[3]!.start).toBe(3 / 4);
     expect(trackWithNewNote[4]!.start).toBe(5 / 4);
 
+    expect(addBarSpy).not.toHaveBeenCalled();
     expect(sheet.bars).toHaveLength(2);
   });
 
@@ -249,7 +233,7 @@ describe("Add Note to Sheet", () => {
     const sheet = getMockSheetWithGap();
     const noteToAdd = createNoteMock(NOTE_DURATIONS["WHOLE"], 1 / 4);
 
-    addNoteToSheet(sheet, 1, noteToAdd);
+    SheetModule.addNoteToSheet(sheet, 1, noteToAdd);
 
     const trackWithNewNote = sheet.tracks[1]!;
     expect(trackWithNewNote).toHaveLength(5);
@@ -261,6 +245,8 @@ describe("Add Note to Sheet", () => {
     expect(trackWithNewNote[3]!.start).toBe(6 / 4);
     expect(trackWithNewNote[4]!.start).toBe(7 / 4);
 
+    expect(addBarSpy).toHaveBeenCalledTimes(1);
+    expect(addBarSpy).toHaveBeenCalledWith(sheet, 4, 4, 50);
     expect(sheet.bars).toHaveLength(3);
   });
 
@@ -268,7 +254,7 @@ describe("Add Note to Sheet", () => {
     const sheet = getMockSheetWithGap();
     const noteToAdd = createNoteMock(NOTE_DURATIONS["HALF"], 1 / 4);
 
-    addNoteToSheet(sheet, 1, noteToAdd);
+    SheetModule.addNoteToSheet(sheet, 1, noteToAdd);
 
     const trackWithNewNote = sheet.tracks[1]!;
     expect(trackWithNewNote).toHaveLength(5);
@@ -280,6 +266,7 @@ describe("Add Note to Sheet", () => {
     expect(trackWithNewNote[3]!.start).toBe(4 / 4);
     expect(trackWithNewNote[4]!.start).toBe(5 / 4);
 
+    expect(addBarSpy).not.toHaveBeenCalled();
     expect(sheet.bars).toHaveLength(2);
   });
 });
@@ -288,47 +275,47 @@ describe("Find Note by time", () => {
   it("Fails with invalid track index", () => {
     const emptySheet = getEmptyMockSheet();
 
-    expect(() => findSheetNoteByTime(emptySheet, 4, 1)).toThrowError("Invalid track index.");
+    expect(() => SheetModule.findSheetNoteByTime(emptySheet, 4, 1)).toThrowError("Invalid track index.");
   });
 
   it("Fails with invalid track at index", () => {
     const emptySheet = getEmptyMockSheet();
     delete emptySheet.tracks[1];
 
-    expect(() => findSheetNoteByTime(emptySheet, 1, 1)).toThrowError("Invalid track at index: 1.");
+    expect(() => SheetModule.findSheetNoteByTime(emptySheet, 1, 1)).toThrowError("Invalid track at index: 1.");
   });
 
   it("Returns null when looking forward with end of Note", () => {
     const sheet = getMockSheetWithGap();
-    const result = findSheetNoteByTime(sheet, 1, 1 / 4);
+    const result = SheetModule.findSheetNoteByTime(sheet, 1, 1 / 4);
 
     expect(result).toBeNull();
   });
 
   it("Returns null when looking backward with start of Note", () => {
     const sheet = getMockSheetWithGap();
-    const result = findSheetNoteByTime(sheet, 1, 2 / 4, false);
+    const result = SheetModule.findSheetNoteByTime(sheet, 1, 2 / 4, false);
 
     expect(result).toBeNull();
   });
 
   it("Returns null in time without Notes when looking forward", () => {
     const sheet = getMockSheetWithGap();
-    const result = findSheetNoteByTime(sheet, 1, 3 / 8);
+    const result = SheetModule.findSheetNoteByTime(sheet, 1, 3 / 8);
 
     expect(result).toBeNull();
   });
 
   it("Returns null in time without Notes when looking backward", () => {
     const sheet = getMockSheetWithGap();
-    const result = findSheetNoteByTime(sheet, 1, 3 / 8, false);
+    const result = SheetModule.findSheetNoteByTime(sheet, 1, 3 / 8, false);
 
     expect(result).toBeNull();
   });
 
   it("Returns Note when looking forward with start of Note", () => {
     const sheet = getMockSheetWithGap();
-    const result = findSheetNoteByTime(sheet, 1, 2 / 4);
+    const result = SheetModule.findSheetNoteByTime(sheet, 1, 2 / 4);
 
     expect(result).toBeTruthy();
     expect(result!.start).toBe(2 / 4);
@@ -337,7 +324,7 @@ describe("Find Note by time", () => {
 
   it("Returns Note when looking backward with end of Note", () => {
     const sheet = getMockSheetWithGap();
-    const result = findSheetNoteByTime(sheet, 1, 1 / 4, false);
+    const result = SheetModule.findSheetNoteByTime(sheet, 1, 1 / 4, false);
 
     expect(result).toBeTruthy();
     expect(result!.start).toBe(0);
@@ -346,7 +333,7 @@ describe("Find Note by time", () => {
 
   it("Returns Note when looking forward within Note", () => {
     const sheet = getMockSheetWithGap();
-    const result = findSheetNoteByTime(sheet, 1, 5 / 8);
+    const result = SheetModule.findSheetNoteByTime(sheet, 1, 5 / 8);
 
     expect(result).toBeTruthy();
     expect(result!.start).toBe(2 / 4);
@@ -355,7 +342,7 @@ describe("Find Note by time", () => {
 
   it("Returns Note when looking backward within Note", () => {
     const sheet = getMockSheetWithGap();
-    const result = findSheetNoteByTime(sheet, 1, 1 / 8, false);
+    const result = SheetModule.findSheetNoteByTime(sheet, 1, 1 / 8, false);
 
     expect(result).toBeTruthy();
     expect(result!.start).toBe(0);
@@ -367,20 +354,20 @@ describe("Remove Notes from Sheet", () => {
   it("Fails with invalid track index", () => {
     const emptySheet = getEmptyMockSheet();
 
-    expect(() => removeNotesFromSheet(emptySheet, 4, [])).toThrowError("Invalid track index.");
+    expect(() => SheetModule.removeNotesFromSheet(emptySheet, 4, [])).toThrowError("Invalid track index.");
   });
 
   it("Fails with invalid track at index", () => {
     const emptySheet = getEmptyMockSheet();
     delete emptySheet.tracks[1];
 
-    expect(() => removeNotesFromSheet(emptySheet, 1, [])).toThrowError("Invalid track at index: 1.");
+    expect(() => SheetModule.removeNotesFromSheet(emptySheet, 1, [])).toThrowError("Invalid track at index: 1.");
   });
 
   it("Does nothing with empty array", () => {
     const sheet = getMockSheetWithGap();
 
-    removeNotesFromSheet(sheet, 1, []);
+    SheetModule.removeNotesFromSheet(sheet, 1, []);
 
     expect(sheet.tracks[1]).toHaveLength(4);
   });
@@ -389,7 +376,7 @@ describe("Remove Notes from Sheet", () => {
     const sheet = getMockSheetWithGap();
     const noteToRemove = sheet.tracks[1]![1]!;
 
-    removeNotesFromSheet(sheet, 1, [noteToRemove]);
+    SheetModule.removeNotesFromSheet(sheet, 1, [noteToRemove]);
 
     expect(sheet.tracks[1]).toHaveLength(3);
 
@@ -410,7 +397,7 @@ describe("Remove Notes from Sheet", () => {
     const sheet = getMockSheetWithGap();
     const noteToRemoves = [sheet.tracks[1]![1]!, sheet.tracks[1]![3]!];
 
-    removeNotesFromSheet(sheet, 1, noteToRemoves);
+    SheetModule.removeNotesFromSheet(sheet, 1, noteToRemoves);
 
     expect(sheet.tracks[1]).toHaveLength(2);
 
@@ -429,13 +416,13 @@ describe("Fill Bar tracks in Sheet", () => {
     const sheet = getMockSheetWithBars();
     delete sheet.bars[1];
 
-    expect(() => fillBarTracksInSheet(sheet, 1)).toThrowError("Bar at index 1 should exist.");
+    expect(() => SheetModule.fillBarTracksInSheet(sheet, 1)).toThrowError("Bar at index 1 should exist.");
   });
 
   it("Fails with invalid track", () => {
     const sheet = getMockSheetWithBars();
 
-    expect(() => fillBarTracksInSheet(sheet, 4)).toThrowError("Track at index 4 should exist.");
+    expect(() => SheetModule.fillBarTracksInSheet(sheet, 4)).toThrowError("Track at index 4 should exist.");
   });
 
   it("Empties Bars with empty track", () => {
@@ -444,7 +431,7 @@ describe("Fill Bar tracks in Sheet", () => {
     sheet.bars[1]!.tracks[0]!.push(createNoteMock(NOTE_DURATIONS["QUARTER"], 3 / 4));
     sheet.bars[2]!.tracks[0]!.push(createNoteMock(NOTE_DURATIONS["QUARTER"], 1 + 3 / 4));
 
-    fillBarTracksInSheet(sheet, 0);
+    SheetModule.fillBarTracksInSheet(sheet, 0);
 
     expect(BarModule.default.fillBarTrack).not.toHaveBeenCalled();
     expect(sheet.bars[0]!.tracks[0]).toHaveLength(0);
@@ -455,7 +442,7 @@ describe("Fill Bar tracks in Sheet", () => {
   it("Fills the track in each Bar", () => {
     const sheet = getMockSheetWithGap();
 
-    fillBarTracksInSheet(sheet, 1);
+    SheetModule.fillBarTracksInSheet(sheet, 1);
 
     expect(BarModule.default.fillBarTrack).toBeCalledTimes(2);
 
@@ -472,16 +459,16 @@ describe("Remove Bar by index", () => {
   it("Fails with invalid Bar", () => {
     const sheet = getCompleteMoonlightSonataMockSheet();
 
-    expect(() => removeBarInSheetByIndex(sheet, 5)).toThrow("Invalid bar at index 5.");
+    expect(() => SheetModule.removeBarInSheetByIndex(sheet, 5)).toThrow("Invalid bar at index 5.");
 
     delete sheet.bars[1];
-    expect(() => removeBarInSheetByIndex(sheet, 1)).toThrow("Invalid bar at index 1.");
+    expect(() => SheetModule.removeBarInSheetByIndex(sheet, 1)).toThrow("Invalid bar at index 1.");
   });
 
   it("Removes Bar and all Notes in it", () => {
     const sheet = getCompleteMoonlightSonataMockSheet();
 
-    removeBarInSheetByIndex(sheet, 1);
+    SheetModule.removeBarInSheetByIndex(sheet, 1);
 
     expect(sheet.bars).toHaveLength(3);
     expect(sheet.bars[0]!.index).toBe(0);
@@ -513,7 +500,7 @@ describe("Remove Bar by index", () => {
     sheet.tracks[2]!.splice(23, 1); // delete first note of third bar
     sheet.tracks[2]![22]!.duration = NOTE_DURATIONS["QUARTER_TRIPLET"]; // make last note of second bar sustain into third bar
 
-    removeBarInSheetByIndex(sheet, 1);
+    SheetModule.removeBarInSheetByIndex(sheet, 1);
 
     expect(sheet.bars).toHaveLength(3);
     expect(sheet.tracks[0]).toHaveLength(1 + 2 + 1);
@@ -530,95 +517,5 @@ describe("Remove Bar by index", () => {
     expect(BarModule.default.fillBarTrack).toHaveBeenNthCalledWith(7, sheet.bars[0], sheet.tracks[2], 2);
     expect(BarModule.default.fillBarTrack).toHaveBeenNthCalledWith(8, sheet.bars[1], sheet.tracks[2], 2);
     expect(BarModule.default.fillBarTrack).toHaveBeenNthCalledWith(9, sheet.bars[2], sheet.tracks[2], 2);
-  });
-});
-
-describe("Play song", () => {
-  let audioContextMock: AudioContextMock;
-  let mockGainNodes: GainNodeMock[];
-  let mockOscillatorNodes: OscillatorNodeMock[];
-
-  beforeEach(() => {
-    audioContextMock = new AudioContextMock();
-
-    mockGainNodes = [];
-    (audioContextMock.createGain as jest.Mock).mockImplementation(() => {
-      const mockGainNode = new GainNodeMock();
-      mockGainNodes.push(mockGainNode);
-      return mockGainNode;
-    });
-
-    mockOscillatorNodes = [];
-    (audioContextMock.createOscillator as jest.Mock).mockImplementation(() => {
-      const mockOscillatorNode = new OscillatorNodeMock();
-      mockOscillatorNodes.push(mockOscillatorNode);
-      return mockOscillatorNode;
-    });
-  });
-
-  it("Fails with bar without start in seconds", () => {
-    const sonataSheet = getCompleteMoonlightSonataMockSheet();
-    sonataSheet.bars[1]!.startInSeconds = undefined;
-
-    expect(() => playSong(sonataSheet, audioContextMock as AudioContext)).toThrowError(
-      "Invalid bar at 1: undefined startInSeconds.",
-    );
-  });
-
-  it("Fails with note without start in seconds", () => {
-    const sonataSheet = getCompleteMoonlightSonataMockSheet();
-    sonataSheet.bars[1]!.tracks[2]![3]!.startInSeconds = undefined;
-
-    expect(() => playSong(sonataSheet, audioContextMock as AudioContext)).toThrowError(
-      "Invalid note: '5' on bar '1', undefined startInSeconds.",
-    );
-  });
-
-  it("Fails with note without duration in seconds", () => {
-    const sonataSheet = getCompleteMoonlightSonataMockSheet();
-    sonataSheet.bars[1]!.tracks[2]![3]!.durationInSeconds = undefined;
-
-    expect(() => playSong(sonataSheet, audioContextMock as AudioContext)).toThrowError(
-      "Invalid note: '5' on bar '1', undefined durationInSeconds.",
-    );
-  });
-
-  it("Plays entire song", () => {
-    const sonataSheet = getCompleteMoonlightSonataMockSheet();
-    playSong(sonataSheet, audioContextMock as AudioContext);
-
-    expect(mockGainNodes).toHaveLength(14 + 14 + 16 + 14);
-    expect(mockOscillatorNodes).toHaveLength(14 + 14 + 16 + 14);
-
-    const firstNoteIndexPerBar = [0, 14, 28, 44];
-    for (let barIndex = 0; barIndex < sonataSheet.bars.length; barIndex++) {
-      const bar = sonataSheet.bars[barIndex]!;
-      const notes = bar.tracks.flat();
-
-      for (let noteIndex = 0; noteIndex < notes.length; noteIndex++) {
-        const note = notes[noteIndex]!;
-        const mockNodeIndex = firstNoteIndexPerBar[barIndex]! + noteIndex;
-        const mockGainNode = mockGainNodes[mockNodeIndex]!;
-        const mockOscillatorNode = mockOscillatorNodes[mockNodeIndex]!;
-
-        expect(mockGainNode.gain.setValueAtTime).toBeCalledTimes(3);
-        expect(mockGainNode.gain.setValueAtTime).toHaveBeenNthCalledWith(1, 0, 0);
-        expect(mockGainNode.gain.setValueAtTime).toHaveBeenNthCalledWith(
-          2,
-          0.2,
-          bar.startInSeconds! + note.startInSeconds!,
-        );
-        expect(mockGainNode.gain.setValueAtTime).toHaveBeenNthCalledWith(
-          3,
-          0,
-          bar.startInSeconds! + note.startInSeconds! + note.durationInSeconds!,
-        );
-
-        expect(mockOscillatorNode.connect).toHaveBeenCalledTimes(1);
-        expect(mockOscillatorNode.connect).toHaveBeenCalledWith(mockGainNode);
-        expect(mockOscillatorNode.frequency.value).toBe(note.pitch?.frequency);
-        expect(mockOscillatorNode.start).toHaveBeenCalled();
-      }
-    }
   });
 });

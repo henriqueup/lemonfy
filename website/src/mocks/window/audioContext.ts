@@ -207,6 +207,24 @@ class AudioParam implements AudioParam {
   }
 }
 
+class AudioNode implements AudioNode {
+  constructor() {
+    return {
+      channelCount: 0,
+      channelCountMode: "max",
+      channelInterpretation: "discrete",
+      context: {} as BaseAudioContext,
+      numberOfInputs: 0,
+      numberOfOutputs: 0,
+      connect: jest.fn(),
+      disconnect: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+    };
+  }
+}
+
 class GainNode implements GainNode {
   constructor() {
     return {
@@ -296,4 +314,9 @@ class AudioContext implements AudioContext {
   }
 }
 
-export { AudioContext as AudioContextMock, GainNode as GainNodeMock, OscillatorNode as OscillatorNodeMock };
+export {
+  AudioContext as AudioContextMock,
+  AudioNode as AudioNodeMock,
+  GainNode as GainNodeMock,
+  OscillatorNode as OscillatorNodeMock,
+};

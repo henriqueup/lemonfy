@@ -19,9 +19,9 @@ import {
 } from "@store/editor/sheetActions";
 import { createBarMock } from "src/mocks/entities/bar";
 
-jest.mock<typeof SheetModule>("@entities/sheet", () => {
+jest.mock<typeof SheetModule.default>("@entities/sheet", () => {
   const mockUtils = jest.requireActual<typeof MockUtilsModule>("src/mocks/utils/moduleUtils");
-  return mockUtils.mockModuleFunctions(jest.requireActual("@entities/sheet"));
+  return mockUtils.mockModuleFunctions(jest.requireActual<typeof SheetModule>("@entities/sheet").default);
 });
 jest.mock<typeof NoteModule>("@entities/note", () => {
   const mockUtils = jest.requireActual<typeof MockUtilsModule>("src/mocks/utils/moduleUtils");
@@ -32,7 +32,7 @@ jest.mock<typeof PitchModule>("@entities/pitch", () => {
   return mockUtils.mockModuleFunctions(jest.requireActual("@entities/pitch"));
 });
 
-const sheetModuleWithMocks = MockUtilsModule.getModuleWithMocks(SheetModule);
+const sheetModuleWithMocks = MockUtilsModule.getModuleWithMocks(SheetModule.default);
 
 describe("Load Sheet", () => {
   it("Loads Sheet", () => {
@@ -51,8 +51,8 @@ describe("Add Sheet", () => {
 
     addSheet(8);
 
-    expect(SheetModule.createSheet).toBeCalledTimes(1);
-    expect(SheetModule.createSheet).toBeCalledWith(8);
+    expect(SheetModule.default.createSheet).toBeCalledTimes(1);
+    expect(SheetModule.default.createSheet).toBeCalledWith(8);
 
     expect(useEditorStore.getState().currentSheet).toBe(sheet);
     expect(useEditorStore.getState().sheets).toMatchObject([sheet]);
@@ -69,8 +69,8 @@ describe("Add Sheet", () => {
 
     addSheet(8);
 
-    expect(SheetModule.createSheet).toBeCalledTimes(1);
-    expect(SheetModule.createSheet).toBeCalledWith(8);
+    expect(SheetModule.default.createSheet).toBeCalledTimes(1);
+    expect(SheetModule.default.createSheet).toBeCalledWith(8);
 
     expect(useEditorStore.getState().currentSheet).toBe(sheet);
     expect(useEditorStore.getState().sheets).toMatchObject([initialSheet, sheet]);
@@ -95,8 +95,8 @@ describe("Add Bar", () => {
 
     addBar(6, 8, 120);
 
-    expect(SheetModule.addBarToSheet).toBeCalledTimes(1);
-    expect(SheetModule.addBarToSheet).toBeCalledWith(sheet, 6, 8, 120);
+    expect(SheetModule.default.addBarToSheet).toBeCalledTimes(1);
+    expect(SheetModule.default.addBarToSheet).toBeCalledWith(sheet, 6, 8, 120);
 
     expect(useEditorStore.getState().currentSheet).toMatchObject({ ...sheet, bars: [bar] });
   });
@@ -131,8 +131,8 @@ describe("Add copy of current Bar", () => {
 
     addCopyOfCurrentBar();
 
-    expect(SheetModule.addBarToSheet).toBeCalledTimes(1);
-    expect(SheetModule.addBarToSheet).toBeCalledWith(sheet, 3, 4, 70, 0);
+    expect(SheetModule.default.addBarToSheet).toBeCalledTimes(1);
+    expect(SheetModule.default.addBarToSheet).toBeCalledWith(sheet, 3, 4, 70, 0);
   });
 });
 
@@ -179,10 +179,10 @@ describe("Add Note", () => {
 
     addNote(4, "B", 2);
 
-    expect(SheetModule.addNoteToSheet).toBeCalledTimes(1);
-    expect(SheetModule.addNoteToSheet).toBeCalledWith(sheet, 0, note);
-    expect(SheetModule.fillBarTracksInSheet).toBeCalledTimes(1);
-    expect(SheetModule.fillBarTracksInSheet).toBeCalledWith(sheet, 0);
+    expect(SheetModule.default.addNoteToSheet).toBeCalledTimes(1);
+    expect(SheetModule.default.addNoteToSheet).toBeCalledWith(sheet, 0, note);
+    expect(SheetModule.default.fillBarTracksInSheet).toBeCalledTimes(1);
+    expect(SheetModule.default.fillBarTracksInSheet).toBeCalledWith(sheet, 0);
 
     expect(useEditorStore.getState().currentSheet).toMatchObject({
       ...sheet,
@@ -217,10 +217,10 @@ describe("Add Note", () => {
 
     addNote(4, "B", 2);
 
-    expect(SheetModule.addNoteToSheet).toBeCalledTimes(1);
-    expect(SheetModule.addNoteToSheet).toBeCalledWith(sheet, 0, note);
-    expect(SheetModule.fillBarTracksInSheet).toBeCalledTimes(1);
-    expect(SheetModule.fillBarTracksInSheet).toBeCalledWith(sheet, 0);
+    expect(SheetModule.default.addNoteToSheet).toBeCalledTimes(1);
+    expect(SheetModule.default.addNoteToSheet).toBeCalledWith(sheet, 0, note);
+    expect(SheetModule.default.fillBarTracksInSheet).toBeCalledTimes(1);
+    expect(SheetModule.default.fillBarTracksInSheet).toBeCalledWith(sheet, 0);
 
     expect(useEditorStore.getState().currentSheet).toMatchObject({
       ...sheet,
@@ -260,10 +260,10 @@ describe("Remove Note from Bar", () => {
 
     removeNoteFromBar(note);
 
-    expect(SheetModule.removeNotesFromSheet).toBeCalledTimes(1);
-    expect(SheetModule.removeNotesFromSheet).toBeCalledWith(sheet, 0, [note]);
-    expect(SheetModule.fillBarTracksInSheet).toBeCalledTimes(1);
-    expect(SheetModule.fillBarTracksInSheet).toBeCalledWith(sheet, 0);
+    expect(SheetModule.default.removeNotesFromSheet).toBeCalledTimes(1);
+    expect(SheetModule.default.removeNotesFromSheet).toBeCalledWith(sheet, 0, [note]);
+    expect(SheetModule.default.fillBarTracksInSheet).toBeCalledTimes(1);
+    expect(SheetModule.default.fillBarTracksInSheet).toBeCalledWith(sheet, 0);
 
     expect(useEditorStore.getState().currentSheet).toMatchObject(getMockSheetWithBars());
   });
@@ -297,8 +297,8 @@ describe("Remove next Note from Bar", () => {
 
     removeNextNoteFromBar(lookForward);
 
-    expect(SheetModule.findSheetNoteByTime).toBeCalledTimes(1);
-    expect(SheetModule.findSheetNoteByTime).toBeCalledWith(sheet, 1, 1 / 4, lookForward);
+    expect(SheetModule.default.findSheetNoteByTime).toBeCalledTimes(1);
+    expect(SheetModule.default.findSheetNoteByTime).toBeCalledWith(sheet, 1, 1 / 4, lookForward);
 
     expect(useEditorStore.getState().currentSheet).toMatchObject(sheet);
   });
@@ -322,12 +322,12 @@ describe("Remove next Note from Bar", () => {
 
     removeNextNoteFromBar(lookForward);
 
-    expect(SheetModule.findSheetNoteByTime).toBeCalledTimes(1);
-    expect(SheetModule.findSheetNoteByTime).toBeCalledWith(sheet, 1, 2 / 4, lookForward);
-    expect(SheetModule.removeNotesFromSheet).toBeCalledTimes(1);
-    expect(SheetModule.removeNotesFromSheet).toBeCalledWith(sheet, 1, [note]);
-    expect(SheetModule.fillBarTracksInSheet).toBeCalledTimes(1);
-    expect(SheetModule.fillBarTracksInSheet).toBeCalledWith(sheet, 1);
+    expect(SheetModule.default.findSheetNoteByTime).toBeCalledTimes(1);
+    expect(SheetModule.default.findSheetNoteByTime).toBeCalledWith(sheet, 1, 2 / 4, lookForward);
+    expect(SheetModule.default.removeNotesFromSheet).toBeCalledTimes(1);
+    expect(SheetModule.default.removeNotesFromSheet).toBeCalledWith(sheet, 1, [note]);
+    expect(SheetModule.default.fillBarTracksInSheet).toBeCalledTimes(1);
+    expect(SheetModule.default.fillBarTracksInSheet).toBeCalledWith(sheet, 1);
 
     expect(useEditorStore.getState().currentSheet).toMatchObject(getMockSheetWithBars());
     expect(useEditorStore.getState().cursor).toMatchObject({
@@ -356,12 +356,12 @@ describe("Remove next Note from Bar", () => {
 
     expect(() => removeNextNoteFromBar(false)).toThrowError("There should be a previous bar.");
 
-    expect(SheetModule.findSheetNoteByTime).toBeCalledTimes(1);
-    expect(SheetModule.findSheetNoteByTime).toBeCalledWith(sheet, 1, 0, false);
-    expect(SheetModule.removeNotesFromSheet).toBeCalledTimes(1);
-    expect(SheetModule.removeNotesFromSheet).toBeCalledWith(sheet, 1, [note]);
-    expect(SheetModule.fillBarTracksInSheet).toBeCalledTimes(1);
-    expect(SheetModule.fillBarTracksInSheet).toBeCalledWith(sheet, 1);
+    expect(SheetModule.default.findSheetNoteByTime).toBeCalledTimes(1);
+    expect(SheetModule.default.findSheetNoteByTime).toBeCalledWith(sheet, 1, 0, false);
+    expect(SheetModule.default.removeNotesFromSheet).toBeCalledTimes(1);
+    expect(SheetModule.default.removeNotesFromSheet).toBeCalledWith(sheet, 1, [note]);
+    expect(SheetModule.default.fillBarTracksInSheet).toBeCalledTimes(1);
+    expect(SheetModule.default.fillBarTracksInSheet).toBeCalledWith(sheet, 1);
   });
 
   it("Removes Note with cursor at 0 looking forward false", () => {
@@ -383,12 +383,12 @@ describe("Remove next Note from Bar", () => {
 
     removeNextNoteFromBar(false);
 
-    expect(SheetModule.findSheetNoteByTime).toBeCalledTimes(1);
-    expect(SheetModule.findSheetNoteByTime).toBeCalledWith(sheet, 1, 3 / 4, false);
-    expect(SheetModule.removeNotesFromSheet).toBeCalledTimes(1);
-    expect(SheetModule.removeNotesFromSheet).toBeCalledWith(sheet, 1, [note]);
-    expect(SheetModule.fillBarTracksInSheet).toBeCalledTimes(1);
-    expect(SheetModule.fillBarTracksInSheet).toBeCalledWith(sheet, 1);
+    expect(SheetModule.default.findSheetNoteByTime).toBeCalledTimes(1);
+    expect(SheetModule.default.findSheetNoteByTime).toBeCalledWith(sheet, 1, 3 / 4, false);
+    expect(SheetModule.default.removeNotesFromSheet).toBeCalledTimes(1);
+    expect(SheetModule.default.removeNotesFromSheet).toBeCalledWith(sheet, 1, [note]);
+    expect(SheetModule.default.fillBarTracksInSheet).toBeCalledTimes(1);
+    expect(SheetModule.default.fillBarTracksInSheet).toBeCalledWith(sheet, 1);
 
     expect(useEditorStore.getState().currentSheet).toMatchObject(getMockSheetWithBars());
     expect(useEditorStore.getState().cursor).toMatchObject({
@@ -418,8 +418,8 @@ describe("Remove Bar by index", () => {
 
     removeBarFromSheetByIndex(1);
 
-    expect(SheetModule.removeBarInSheetByIndex).toBeCalledTimes(1);
-    expect(SheetModule.removeBarInSheetByIndex).toBeCalledWith(sheet, 1);
+    expect(SheetModule.default.removeBarInSheetByIndex).toBeCalledTimes(1);
+    expect(SheetModule.default.removeBarInSheetByIndex).toBeCalledWith(sheet, 1);
 
     expect(sheet.bars).toHaveLength(2);
     expect(useEditorStore.getState().currentSheet).toMatchObject(sheet);
