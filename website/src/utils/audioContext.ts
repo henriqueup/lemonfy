@@ -3,7 +3,7 @@ import { type Note } from "@entities/note";
 import SheetModule, { type Sheet } from "@entities/sheet";
 import { play } from "@store/player/playerActions";
 
-export const addGainNode = (audioContext: AudioContext) => {
+const addGainNode = (audioContext: AudioContext) => {
   const node = audioContext.createGain();
   node.connect(audioContext.destination);
   node.gain.setValueAtTime(0, audioContext.currentTime);

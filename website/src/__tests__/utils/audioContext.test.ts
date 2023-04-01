@@ -76,14 +76,68 @@ describe("Play song", () => {
     playSong(sonataSheet, audioContextMock as AudioContext);
 
     expect(SheetModule.default.fillBarsInSheet).toHaveBeenCalledTimes(1);
+    expect(BarModule.default.cropBar).not.toHaveBeenCalled();
+    expect(BarModule.default.setBarTimesInSeconds).toHaveBeenCalledTimes(4);
+
     expect(mockGainNodes).toHaveLength(14 + 14 + 16 + 14);
     expect(mockOscillatorNodes).toHaveLength(14 + 14 + 16 + 14);
 
     const firstNoteIndexPerBar = [0, 14, 28, 44];
     for (let barIndex = 0; barIndex < sonataSheet.bars.length; barIndex++) {
       const bar = sonataSheet.bars[barIndex]!;
-      const notes = bar.tracks.flat();
+      expect(BarModule.default.setBarTimesInSeconds).toHaveBeenNthCalledWith(barIndex + 1, bar);
 
+      const notes = bar.tracks.flat();
+      for (let noteIndex = 0; noteIndex < notes.length; noteIndex++) {
+        const note = notes[noteIndex]!;
+        const mockNodeIndex = firstNoteIndexPerBar[barIndex]! + noteIndex;
+        const mockGainNode = mockGainNodes[mockNodeIndex]!;
+        const mockOscillatorNode = mockOscillatorNodes[mockNodeIndex]!;
+
+        expect(mockGainNode.gain.setValueAtTime).toBeCalledTimes(3);
+        expect(mockGainNode.gain.setValueAtTime).toHaveBeenNthCalledWith(1, 0, 0);
+        expect(mockGainNode.gain.setValueAtTime).toHaveBeenNthCalledWith(
+          2,
+          0.2,
+          bar.startInSeconds! + note.startInSeconds!,
+        );
+        expect(mockGainNode.gain.setValueAtTime).toHaveBeenNthCalledWith(
+          3,
+          0,
+          bar.startInSeconds! + note.startInSeconds! + note.durationInSeconds!,
+        );
+
+        expect(mockOscillatorNode.connect).toHaveBeenCalledTimes(1);
+        expect(mockOscillatorNode.connect).toHaveBeenCalledWith(mockGainNode);
+        expect(mockOscillatorNode.frequency.value).toBe(note.pitch?.frequency);
+        expect(mockOscillatorNode.start).toHaveBeenCalled();
+      }
+    }
+  });
+
+  it("Plays song starting after start", () => {
+    const sonataSheet = getCompleteMoonlightSonataMockSheet();
+    const start = 2 + 2 / 12;
+    playSong(sonataSheet, audioContextMock as AudioContext, start);
+
+    expect(SheetModule.default.fillBarsInSheet).toHaveBeenCalledTimes(1);
+
+    sonataSheet.bars[2]!.start = 0;
+    sonataSheet.bars[3]!.start -= start;
+    expect(BarModule.default.cropBar).toHaveBeenCalledTimes(1);
+    expect(BarModule.default.cropBar).toHaveBeenCalledWith(sonataSheet.bars[2], start);
+    expect(BarModule.default.setBarTimesInSeconds).toHaveBeenCalledTimes(2);
+
+    expect(mockGainNodes).toHaveLength(16 + 14);
+    expect(mockOscillatorNodes).toHaveLength(16 + 14);
+
+    sonataSheet.bars = [sonataSheet.bars[2]!, sonataSheet.bars[3]!];
+    const firstNoteIndexPerBar = [0, 16];
+    for (let barIndex = 0; barIndex < sonataSheet.bars.length; barIndex++) {
+      const bar = sonataSheet.bars[barIndex]!;
+      expect(BarModule.default.setBarTimesInSeconds).toHaveBeenNthCalledWith(barIndex + 1, bar);
+
+      const notes = bar.tracks.flat();
       for (let noteIndex = 0; noteIndex < notes.length; noteIndex++) {
         const note = notes[noteIndex]!;
         const mockNodeIndex = firstNoteIndexPerBar[barIndex]! + noteIndex;

@@ -1,5 +1,3 @@
-import { play } from "@store/player/playerActions";
-import { addGainNode } from "../../utils/audioContext";
 import { default as BarModule, type Bar } from "./bar";
 import type { Note } from "./note";
 import { TimeEvaluation } from "./timeEvaluation";
