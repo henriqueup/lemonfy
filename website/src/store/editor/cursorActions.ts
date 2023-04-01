@@ -55,7 +55,7 @@ export const increaseCursorPosition = () =>
     if (nextNote) {
       amountToIncrease = nextNote.start + nextNote.duration - state.cursor.position;
 
-      if (!TimeEvaluation.IsEqualTo(state.cursor.position, nextNote.start)) amountToIncrease -= nextNote.duration;
+      if (TimeEvaluation.IsSmallerThan(state.cursor.position, nextNote.start)) amountToIncrease -= nextNote.duration;
     }
     let resultPosition = state.cursor.position + amountToIncrease;
 
@@ -85,7 +85,8 @@ export const decreaseCursorPosition = () =>
       amountToDecrease = state.cursor.position - previousNote.start;
 
       const previousNoteEnd = previousNote.start + previousNote.duration;
-      if (!TimeEvaluation.IsEqualTo(state.cursor.position, previousNoteEnd)) amountToDecrease -= previousNote.duration;
+      if (TimeEvaluation.IsGreaterThan(state.cursor.position, previousNoteEnd))
+        amountToDecrease -= previousNote.duration;
     }
     let resultPosition = state.cursor.position - amountToDecrease;
 
