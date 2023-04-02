@@ -1,10 +1,11 @@
 import { type FunctionComponent, useState } from "react";
-import { Plus } from "../../icons";
+import { Plus } from "src/icons";
+import { addBar } from "@store/editor/sheetActions";
+import { useEditorStore } from "@store/editor";
 import BarMenu from "./BarMenu";
 import NoteMenu from "./NoteMenu";
-import { useEditorStore } from "@store/editor";
 import Bar from "./Bar";
-import { addBar } from "@store/editor/sheetActions";
+import PlaybackMenu from "./PlaybackMenu";
 
 const SheetEditor: FunctionComponent = () => {
   const bars = useEditorStore(state => state.currentSheet?.bars);
@@ -19,11 +20,12 @@ const SheetEditor: FunctionComponent = () => {
 
   // console.log(bars);
   return (
-    <>
-      <div className="h-3/5 p-4 pb-2 text-gray-400">
+    <div className="h-screen w-screen bg-inherit">
+      <PlaybackMenu />
+      <div className="h-3/5 bg-inherit p-4 pb-2 text-gray-400">
         <fieldset className="h-full rounded border border-solid border-gray-400 p-1">
           <legend className="ml-3">Bars</legend>
-          <div className="grid max-h-full grid-cols-2 gap-2 overflow-y-auto">
+          <div className="mt-2 grid max-h-full grid-cols-2 gap-2 overflow-y-auto">
             {bars.map((bar, i) => (
               <Bar key={i} bar={bar} />
             ))}
@@ -42,7 +44,7 @@ const SheetEditor: FunctionComponent = () => {
       </div>
       <NoteMenu />
       {barMenuIsOpen ? <BarMenu onAdd={handleAddBar} onClose={() => setBarMenuIsOpen(false)} /> : null}
-    </>
+    </div>
   );
 };
 
