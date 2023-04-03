@@ -10,8 +10,8 @@ import Pause from "./Pause";
 import Stop from "./Stop";
 import Rewind from "./Rewind";
 import RewindFull from "./RewindFull";
-import Wind from "./Wind";
-import WindFull from "./WindFull";
+import WindUp from "./WindUp";
+import WindUpFull from "./WindUpFull";
 
 export {
   Plus,
@@ -26,6 +26,6 @@ export {
   Pause,
   Rewind,
   RewindFull,
-  Wind,
-  WindFull,
+  WindUp,
+  WindUpFull,
 };

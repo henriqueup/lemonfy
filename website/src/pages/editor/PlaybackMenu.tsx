@@ -1,19 +1,21 @@
 import { useEditorStore } from "@store/editor";
-import { pause } from "@store/player/playerActions";
+import { usePlayerStore } from "@store/player";
+import { pause, stop, windUp } from "@store/player/playerActions";
 import { type FunctionComponent } from "react";
 import { ButtonContainer } from "src/components";
 import { useAudioContext } from "src/hooks";
-import { Play, Rewind, RewindFull, Stop, Wind, WindFull } from "src/icons";
+import { Pause, Play, Rewind, RewindFull, Stop, WindUp, WindUpFull } from "src/icons";
 import { playSong } from "src/utils/audioContext";
 
 const PlaybackMenu: FunctionComponent = () => {
   const audioContext = useAudioContext();
   const currentSheet = useEditorStore(state => state.currentSheet);
   const cursor = useEditorStore(state => state.cursor);
+  const isPlaying = usePlayerStore(state => state.isPlaying);
+  const isPaused = usePlayerStore(state => state.isPaused);
 
   const handlePlay = () => {
-    if (!audioContext) return;
-    if (currentSheet === undefined) return;
+    if (!audioContext || currentSheet === undefined || (isPlaying && !isPaused)) return;
 
     const barWithCursor = currentSheet.bars[cursor.barIndex];
     if (barWithCursor === undefined) throw new Error(`Invalid bar at ${cursor.barIndex}.`);
@@ -21,30 +23,32 @@ const PlaybackMenu: FunctionComponent = () => {
     playSong(currentSheet, audioContext, barWithCursor.start + cursor.position);
   };
 
-  const handlePause = () => {
-    pause();
-  };
-
   return (
     <div className="absolute top-3 flex w-full justify-center">
       <div className="flex items-center rounded border border-solid border-gray-400 bg-black">
-        <ButtonContainer className="w-1/6 p-2">
+        <ButtonContainer aria-label="Fully Rewind" className="w-1/6 p-2" onClick={() => windUp(true, true)}>
           <RewindFull stroke="lightgray" />
         </ButtonContainer>
-        <ButtonContainer className="w-1/6 p-2">
+        <ButtonContainer aria-label="Rewind" className="w-1/6 p-2" onClick={() => windUp(true)}>
           <Rewind stroke="lightgray" />
         </ButtonContainer>
-        <ButtonContainer className="w-1/6 p-2" onClick={handlePlay}>
-          <Play stroke="lightgray" />
-        </ButtonContainer>
-        <ButtonContainer className="w-1/6 p-2" onClick={handlePause}>
+        {!isPlaying || isPaused ? (
+          <ButtonContainer aria-label="Play" className="w-1/6 p-2" onClick={handlePlay}>
+            <Play stroke="lightgray" />
+          </ButtonContainer>
+        ) : (
+          <ButtonContainer aria-label="Pause" className="w-1/6 p-2" onClick={pause}>
+            <Pause stroke="lightgray" />
+          </ButtonContainer>
+        )}
+        <ButtonContainer aria-label="Stop" className="w-1/6 p-2" onClick={stop}>
           <Stop stroke="lightgray" />
         </ButtonContainer>
-        <ButtonContainer className="w-1/6 p-2">
-          <Wind stroke="lightgray" />
+        <ButtonContainer aria-label="Wind up" className="w-1/6 p-2" onClick={() => windUp()}>
+          <WindUp stroke="lightgray" />
         </ButtonContainer>
-        <ButtonContainer className="w-1/6 p-2">
-          <WindFull stroke="lightgray" />
+        <ButtonContainer aria-label="Fully Wind up" className="w-1/6 p-2" onClick={() => windUp(false, true)}>
+          <WindUpFull stroke="lightgray" />
         </ButtonContainer>
       </div>
     </div>

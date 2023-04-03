@@ -19,7 +19,7 @@ The Lemonfy Project inspired by songsterr app (https://www.songsterr.com/)
 - <s>Fix tests</s>
 - <s>Refactor sheet.playSong()</s>
 - <s>Fix move cursor when its inside note</s>
-- Add stop and rewind
+- <s>Add stop and rewind</s>
 - Configure basic theme values (bg, border, text...)
 - Enable Bar edition
 - Add Bar copy/paste

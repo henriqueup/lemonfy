@@ -10,7 +10,7 @@ interface Props {
   className?: string;
 }
 
-const Wind: FunctionComponent<Props> = ({ width, height, stroke, strokeWidth = 3, className }) => {
+const WindUp: FunctionComponent<Props> = ({ width, height, stroke, strokeWidth = 3, className }) => {
   return (
     <BaseIcon width={width} height={height} viewbox="0 0 24 24" className={className} stroke={stroke} fill={stroke}>
       <path d="M0 3L13 12L0 21L0 3" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" />
@@ -19,4 +19,4 @@ const Wind: FunctionComponent<Props> = ({ width, height, stroke, strokeWidth = 3
   );
 };
 
-export default Wind;
+export default WindUp;

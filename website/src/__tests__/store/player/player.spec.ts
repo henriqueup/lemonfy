@@ -4,7 +4,7 @@ import { getEmptyMockSheet, getMockSheetWithBars } from "src/mocks/entities/shee
 import * as BarModule from "@entities/bar";
 import * as MockUtilsModule from "src/mocks/utils/moduleUtils";
 import { INITIAL_STATE, usePlayerStore } from "@store/player";
-import { pause, play, stop } from "@store/player/playerActions";
+import { pause, play, stop, windUp } from "@store/player/playerActions";
 import { AudioNodeMock } from "@mocks/window";
 
 jest.useFakeTimers();
@@ -127,6 +127,18 @@ describe("Pause", () => {
     expect(usePlayerStore.getState()).toMatchObject({ ...INITIAL_STATE, isPlaying: true });
   });
 
+  it("Does nothing if already paused", () => {
+    usePlayerStore.setState({
+      isPlaying: true,
+      currentTimeoutStartTime: referenceDate,
+      isPaused: true,
+    });
+
+    pause();
+
+    expect(usePlayerStore.getState()).toMatchObject({ ...INITIAL_STATE, isPlaying: true, isPaused: true });
+  });
+
   it("Does nothing with undefined sheet", () => {
     usePlayerStore.setState({
       isPlaying: true,
@@ -184,7 +196,7 @@ describe("Pause", () => {
     usePlayerStore.setState(state => ({
       isPlaying: true,
       currentTimeoutStartTime: referenceDate,
-      cursor: { ...state.cursor, barIndex: 1 },
+      cursor: { ...state.cursor, barIndex: 1, position: 0.1 },
     }));
     useEditorStore.setState({
       currentSheet: getMockSheetWithBars(),
@@ -197,13 +209,13 @@ describe("Pause", () => {
 
     expect(clearTimeout).toHaveBeenCalledTimes(1);
     expect(useEditorStore.getState().cursor.barIndex).toBe(1);
-    expect(useEditorStore.getState().cursor.position).toBe(0.3);
+    expect(useEditorStore.getState().cursor.position).toBe(0.1 + 0.3);
     expect(usePlayerStore.getState()).toMatchObject({
       ...INITIAL_STATE,
       isPlaying: true,
       isPaused: true,
       currentTimeoutStartTime: referenceDate,
-      cursor: { ...INITIAL_STATE.cursor, barIndex: 1, position: 0.3 },
+      cursor: { ...INITIAL_STATE.cursor, barIndex: 1, position: 0.1 + 0.3 },
     });
   });
 });
@@ -234,5 +246,162 @@ describe("Stop", () => {
     expect(clearTimeout).toHaveBeenCalledTimes(1);
     expect(clearTimeout).toHaveBeenLastCalledWith(timeout);
     expect(usePlayerStore.getState()).toMatchObject(INITIAL_STATE);
+  });
+
+  it("Disconnects each audioNode", () => {
+    const audioNodes = [new AudioNodeMock(), new AudioNodeMock()];
+    usePlayerStore.setState({
+      isPlaying: true,
+      audioNodes,
+    });
+
+    stop();
+
+    expect(audioNodes[0]!.disconnect).toHaveBeenCalledTimes(1);
+    expect(audioNodes[1]!.disconnect).toHaveBeenCalledTimes(1);
+
+    expect(usePlayerStore.getState().audioNodes).toHaveLength(0);
+  });
+});
+
+describe("Wind up", () => {
+  it.each([
+    [false, false],
+    [false, true],
+    [true, false],
+    [true, true],
+  ])("Does nothing with undefined Sheet, isRewind %p1, isFull %p2", (isRewind, isFull) => {
+    windUp(isRewind, isFull);
+
+    expect(usePlayerStore.getState()).toMatchObject(INITIAL_STATE);
+  });
+  it.each([
+    [false, false],
+    [false, true],
+    [true, false],
+    [true, true],
+  ])("Does nothing with invalid cursor, isRewind %p1, isFull %p2", (isRewind, isFull) => {
+    useEditorStore.setState({
+      currentSheet: getEmptyMockSheet(),
+    });
+    windUp(isRewind, isFull);
+
+    expect(usePlayerStore.getState()).toMatchObject(INITIAL_STATE);
+  });
+  it("Winds up to start of next Bar while not playing", () => {
+    const sheet = getMockSheetWithBars();
+    useEditorStore.setState({
+      currentSheet: sheet,
+      cursor: { trackIndex: 0, barIndex: 1, position: 1 / 4 },
+    });
+
+    windUp();
+
+    expect(usePlayerStore.getState()).toMatchObject({ ...INITIAL_STATE, cursor: { barIndex: 2, position: 0 } });
+    expect(useEditorStore.getState().cursor).toMatchObject({ trackIndex: 0, barIndex: 2, position: 0 });
+  });
+  it("Winds up to start of next Bar while playing", () => {
+    const sheet = getMockSheetWithBars();
+    useEditorStore.setState({
+      currentSheet: sheet,
+      cursor: { trackIndex: 0, barIndex: 0, position: 1 / 4 },
+    });
+    usePlayerStore.setState({
+      isPlaying: true,
+      cursor: { barIndex: 1, position: 1 / 2 },
+    });
+
+    windUp();
+
+    expect(usePlayerStore.getState()).toMatchObject({ ...INITIAL_STATE, cursor: { barIndex: 2, position: 0 } });
+    expect(useEditorStore.getState().cursor).toMatchObject({ trackIndex: 0, barIndex: 2, position: 0 });
+  });
+  it.each([true, false])("Winds up to start of last Bar, isPlaying %p", isPlaying => {
+    const sheet = getMockSheetWithBars();
+    useEditorStore.setState({
+      currentSheet: sheet,
+      cursor: { trackIndex: 0, barIndex: 0, position: 1 / 4 },
+    });
+    usePlayerStore.setState({
+      isPlaying,
+      cursor: { barIndex: 1, position: 1 / 2 },
+    });
+
+    windUp(false, true);
+
+    expect(usePlayerStore.getState()).toMatchObject({ ...INITIAL_STATE, cursor: { barIndex: 2, position: 0 } });
+    expect(useEditorStore.getState().cursor).toMatchObject({ trackIndex: 0, barIndex: 2, position: 0 });
+  });
+  it("Rewinds to start of previous Bar while not playing", () => {
+    const sheet = getMockSheetWithBars();
+    useEditorStore.setState({
+      currentSheet: sheet,
+      cursor: { trackIndex: 0, barIndex: 1, position: 0 },
+    });
+
+    windUp(true);
+
+    expect(usePlayerStore.getState()).toMatchObject({ ...INITIAL_STATE, cursor: { barIndex: 0, position: 0 } });
+    expect(useEditorStore.getState().cursor).toMatchObject({ trackIndex: 0, barIndex: 0, position: 0 });
+  });
+  it("Rewinds to start of previous Bar while playing", () => {
+    const sheet = getMockSheetWithBars();
+    useEditorStore.setState({
+      currentSheet: sheet,
+      cursor: { trackIndex: 0, barIndex: 1, position: 1 / 4 },
+    });
+    usePlayerStore.setState({
+      isPlaying: true,
+      cursor: { barIndex: 2, position: 0 },
+    });
+
+    windUp(true);
+
+    expect(usePlayerStore.getState()).toMatchObject({ ...INITIAL_STATE, cursor: { barIndex: 1, position: 0 } });
+    expect(useEditorStore.getState().cursor).toMatchObject({ trackIndex: 0, barIndex: 1, position: 0 });
+  });
+  it("Rewinds to start of current Bar while not playing", () => {
+    const sheet = getMockSheetWithBars();
+    useEditorStore.setState({
+      currentSheet: sheet,
+      cursor: { trackIndex: 0, barIndex: 1, position: 1 / 4 },
+    });
+
+    windUp(true);
+
+    expect(usePlayerStore.getState()).toMatchObject({ ...INITIAL_STATE, cursor: { barIndex: 1, position: 0 } });
+    expect(useEditorStore.getState().cursor).toMatchObject({ trackIndex: 0, barIndex: 1, position: 0 });
+  });
+  it("Rewinds to start of current Bar while playing", () => {
+    const sheet = getMockSheetWithBars();
+    useEditorStore.setState({
+      currentSheet: sheet,
+      cursor: { trackIndex: 0, barIndex: 1, position: 1 / 4 },
+    });
+    usePlayerStore.setState({
+      isPlaying: true,
+      cursor: { barIndex: 2, position: 1 / 2 },
+    });
+
+    windUp(true);
+
+    expect(usePlayerStore.getState()).toMatchObject({ ...INITIAL_STATE, cursor: { barIndex: 2, position: 0 } });
+    expect(useEditorStore.getState().cursor).toMatchObject({ trackIndex: 0, barIndex: 2, position: 0 });
+  });
+  it.each([true, false])("Rewinds to start of first Bar, isPlaying %p", isPlaying => {
+    const sheet = getMockSheetWithBars();
+    useEditorStore.setState({
+      currentSheet: sheet,
+      cursor: { trackIndex: 0, barIndex: 0, position: 1 / 4 },
+    });
+    usePlayerStore.setState({
+      isPlaying,
+      cursor: { barIndex: 2, position: 1 / 2 },
+    });
+
+    windUp(true, true);
+
+    expect(usePlayerStore.getState()).toMatchObject({ ...INITIAL_STATE, cursor: { barIndex: 0, position: 0 } });
+    expect(useEditorStore.getState().cursor).toMatchObject({ trackIndex: 0, barIndex: 0, position: 0 });
   });
 });
