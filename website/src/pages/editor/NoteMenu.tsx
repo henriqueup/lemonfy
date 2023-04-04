@@ -123,8 +123,8 @@ const NoteMenu: FunctionComponent = () => {
   };
 
   return (
-    <div className="h-2/5 bg-inherit p-4 pt-2 text-gray-400">
-      <fieldset className="h-full rounded border border-solid border-gray-400 bg-inherit p-4">
+    <div className="h-2/5 bg-inherit p-4 pt-2 text-stone-600 dark:text-stone-400">
+      <fieldset className="h-full rounded border border-solid border-stone-600 bg-inherit p-4 dark:border-stone-400">
         <legend>Note Selector</legend>
         <div className="mb-4 flex w-full bg-inherit">
           <Select
@@ -152,7 +152,7 @@ const NoteMenu: FunctionComponent = () => {
               onDragStart={event => handleDragStart(event, pitchName)}
               className={classNames(
                 "m-1 flex min-h-[5rem] min-w-[calc(100%_/_13_-_8px)] cursor-pointer items-center justify-center",
-                "rounded-2xl border border-solid border-gray-400 text-6xl text-gray-400",
+                "rounded-2xl border border-solid border-stone-600 text-6xl text-stone-600 dark:border-stone-400 dark:text-stone-400",
               )}
             >
               {pitchName}

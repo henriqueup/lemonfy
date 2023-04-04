@@ -84,7 +84,7 @@ const FloatingDropdown = ({ open, options, onChangeOption, onClose }: Props, lis
             tabIndex={0}
             className={classNames(
               "w-full cursor-pointer text-inherit hover:bg-gray-800 focus-visible:outline-none",
-              i === index ? "bg-neutral-800" : "bg-black",
+              i === index ? "bg-stone-400 dark:bg-stone-700" : "bg-stone-300 dark:bg-stone-900",
             )}
           >
             {option.value}

@@ -14,8 +14,8 @@ const mockOptions: OptionObject[] = [
     value: "Fire",
   },
 ];
-const OPTION_BACKGROUND = "bg-black";
-const FOCUSED_OPTION_BACKGROUND = "bg-neutral-800";
+const OPTION_BACKGROUND = "bg-stone-300";
+const FOCUSED_OPTION_BACKGROUND = "bg-stone-400";
 
 describe("Select", () => {
   let rendered: RenderResult;

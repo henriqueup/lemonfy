@@ -16,7 +16,7 @@ const Note: FunctionComponent<Props> = ({ note, barCapacity }) => {
 
   return (
     <div
-      className="absolute flex h-full items-center justify-center rounded border border-solid border-gray-400 bg-black"
+      className="absolute flex h-full items-center justify-center rounded border border-solid border-stone-600 bg-inherit dark:border-stone-400"
       style={{ width: `${note.duration * barCapacity * 100}%`, left: `${(note.start * 100) / barCapacity}%` }}
     >
       {note.isSustain ? (

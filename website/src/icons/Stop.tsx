@@ -6,7 +6,6 @@ interface Props {
   height?: number | string;
   stroke?: string;
   strokeWidth?: number;
-  fill?: string;
   className?: string;
 }
 

@@ -6,13 +6,12 @@ interface Props {
   height?: number | string;
   stroke?: string;
   strokeWidth?: number;
-  fill?: string;
   className?: string;
 }
 
-const Plus: FunctionComponent<Props> = ({ width, height, stroke, strokeWidth = 3, fill, className }) => {
+const Plus: FunctionComponent<Props> = ({ width, height, stroke, strokeWidth = 3, className }) => {
   return (
-    <BaseIcon width={width} height={height} viewbox="0 0 24 24" className={className} stroke={stroke} fill={fill}>
+    <BaseIcon width={width} height={height} viewbox="0 0 24 24" className={className} stroke={stroke} fill={stroke}>
       <path d="M4 12L20 12M12 20L12 4" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" />
     </BaseIcon>
   );

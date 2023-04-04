@@ -57,7 +57,7 @@ const BaseSideMenu: FunctionComponent<Props> = ({
             className="absolute top-2 right-2 cursor-pointer p-1"
             onClick={() => handleChangeIsOpen(false)}
           >
-            <X height={24} width={24} stroke="lightgray" />
+            <X height={24} width={24} />
           </div>
         ) : null}
         {checkIsOpen() ? children : null}

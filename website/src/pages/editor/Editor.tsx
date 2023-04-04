@@ -23,7 +23,7 @@ const Editor: NextPage = () => {
   };
 
   return (
-    <div className="h-screen bg-black text-gray-400">
+    <div className="h-screen bg-stone-300 text-stone-600 dark:bg-stone-900 dark:text-stone-400">
       {currentSheet === undefined ? (
         <div className="flex justify-center">
           <div
@@ -31,11 +31,11 @@ const Editor: NextPage = () => {
             aria-label="New Sheet"
             className={classNames(
               "mt-4 flex cursor-pointer content-center justify-center",
-              "rounded-full border border-solid border-gray-400 p-4",
+              "rounded-full border border-solid border-stone-600 p-4 dark:border-stone-400",
             )}
             onClick={() => setSheetMenuIsOpen(true)}
           >
-            <Plus stroke="lightgray" />
+            <Plus />
           </div>
         </div>
       ) : (

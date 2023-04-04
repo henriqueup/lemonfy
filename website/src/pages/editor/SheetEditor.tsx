@@ -22,10 +22,10 @@ const SheetEditor: FunctionComponent = () => {
   return (
     <div className="h-screen w-screen bg-inherit">
       <PlaybackMenu />
-      <div className="h-3/5 bg-inherit p-4 pb-2 text-gray-400">
-        <fieldset className="h-full rounded border border-solid border-gray-400 p-1">
+      <div className="h-3/5 bg-inherit p-4 pb-2 text-stone-600 dark:text-stone-400">
+        <fieldset className="h-full rounded border border-solid border-stone-600 bg-inherit p-1 dark:border-stone-400">
           <legend className="ml-3">Bars</legend>
-          <div className="mt-2 grid max-h-full grid-cols-2 gap-2 overflow-y-auto">
+          <div className="mt-2 grid max-h-full grid-cols-2 gap-2 overflow-y-auto bg-inherit">
             {bars.map((bar, i) => (
               <Bar key={i} bar={bar} />
             ))}
@@ -34,10 +34,10 @@ const SheetEditor: FunctionComponent = () => {
             <div
               role="button"
               aria-label="New Bar"
-              className="mt-4 flex cursor-pointer content-center justify-center rounded-full border border-solid border-gray-400 p-1"
+              className="mt-4 flex cursor-pointer content-center justify-center rounded-full border border-solid border-stone-600 p-1 dark:border-stone-400"
               onClick={() => setBarMenuIsOpen(true)}
             >
-              <Plus height={24} width={24} stroke="lightgray" />
+              <Plus height={24} width={24} />
             </div>
           </div>
         </fieldset>

@@ -10,7 +10,7 @@ const Vecna: NextPage = () => {
 
   return (
     <div className="bg-black">
-      <h1 className="text-gray-400">VECNA</h1>
+      <h1 className="text-stone-600 dark:text-stone-400">VECNA</h1>
       <div className="w-1/4 p-4">
         <Play stroke="lightgray" />
       </div>

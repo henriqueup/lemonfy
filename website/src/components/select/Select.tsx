@@ -17,7 +17,7 @@ import { FloatingDropdown } from "src/components/floatingDropdown";
 import { handleKeyDown } from "src/utils/htmlEvents";
 import { ChevronUp } from "src/icons";
 import { Fieldset } from "src/components/fieldset";
-import { iconClassName } from "src/components/utils";
+import { ButtonContainer } from "src/components/buttonContainer";
 
 export type OptionObject = {
   key: string | number;
@@ -152,21 +152,17 @@ const Select: FunctionComponent<Props & Omit<FieldsetHTMLAttributes<HTMLFieldSet
           ref={inputRef}
         />
         {ownValue && !disableClear ? (
-          <div
-            role="button"
+          <ButtonContainer
             aria-label="Clear"
-            className={iconClassName}
             onClick={event => handleClear(event)}
             onKeyDown={handleKeyDown("Enter", handleClear)}
             tabIndex={0}
           >
-            <X width={16} height={16} stroke="lightgray" strokeWidth={2} />
-          </div>
+            <X width={16} height={16} strokeWidth={2} />
+          </ButtonContainer>
         ) : null}
-        <div
-          role="button"
+        <ButtonContainer
           aria-label={`${optionsIsOpen ? "Collapse" : "Expand"} options`}
-          className={iconClassName}
           onKeyDown={
             optionsIsOpen ? handleKeyDown("Enter", handleChevronUp) : handleKeyDown("Enter", handleClickFieldset)
           }
@@ -174,11 +170,11 @@ const Select: FunctionComponent<Props & Omit<FieldsetHTMLAttributes<HTMLFieldSet
           tabIndex={0}
         >
           {optionsIsOpen ? (
-            <ChevronUp width={16} height={16} stroke="lightgray" fill="none" strokeWidth={2} />
+            <ChevronUp width={16} height={16} strokeWidth={2} />
           ) : (
-            <ChevronDown width={16} height={16} stroke="lightgray" fill="none" strokeWidth={2} />
+            <ChevronDown width={16} height={16} strokeWidth={2} />
           )}
-        </div>
+        </ButtonContainer>
       </div>
       <FloatingDropdown
         open={optionsIsOpen}

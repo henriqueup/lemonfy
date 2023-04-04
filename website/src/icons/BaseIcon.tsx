@@ -1,4 +1,5 @@
 import React, { type FunctionComponent, type ReactNode } from "react";
+import { classNames } from "src/styles/utils";
 
 interface Props {
   x?: number | string;
@@ -18,8 +19,8 @@ const BaseIcon: FunctionComponent<Props> = ({
   width = 16,
   height = 16,
   viewbox,
-  stroke = "#000000",
-  fill = "#000000",
+  stroke = "currentColor",
+  fill = "currentColor",
   className,
   children,
 }) => {
@@ -31,7 +32,7 @@ const BaseIcon: FunctionComponent<Props> = ({
       width={width}
       height={height}
       viewBox={viewbox}
-      className={className}
+      className={classNames("text-stone-600 dark:text-stone-400", className)}
       stroke={stroke}
       fill={fill}
     >

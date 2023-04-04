@@ -13,7 +13,7 @@ import {
 import X from "src/icons/X";
 import { handleKeyDown } from "src/utils/htmlEvents";
 import { Fieldset } from "src/components/fieldset";
-import { iconClassName } from "src/components/utils";
+import { ButtonContainer } from "src/components/buttonContainer";
 
 interface Props {
   label: string;
@@ -67,14 +67,13 @@ const BaseInputField: FunctionComponent<Props & Omit<FieldsetHTMLAttributes<HTML
           ref={inputRef}
         />
         {value !== undefined && !disableClear ? (
-          <div
-            className={iconClassName}
+          <ButtonContainer
             onClick={event => handleClear(event)}
             onKeyDown={handleKeyDown("Enter", handleClear)}
             tabIndex={0}
           >
-            <X width={16} height={16} stroke="lightgray" strokeWidth={2} />
-          </div>
+            <X width={16} height={16} strokeWidth={2} />
+          </ButtonContainer>
         ) : null}
       </div>
     </Fieldset>

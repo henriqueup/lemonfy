@@ -12,6 +12,8 @@ import Rewind from "./Rewind";
 import RewindFull from "./RewindFull";
 import WindUp from "./WindUp";
 import WindUpFull from "./WindUpFull";
+import Sun from "./Sun";
+import Moon from "./Moon";
 
 export {
   Plus,
@@ -28,4 +30,6 @@ export {
   RewindFull,
   WindUp,
   WindUpFull,
+  Sun,
+  Moon,
 };

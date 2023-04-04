@@ -27,8 +27,8 @@ const Bar: FunctionComponent<Props> = ({ bar }) => {
   };
 
   return (
-    <div className="flex rounded border border-solid border-gray-400 p-4">
-      <div className="relative flex h-[100px] w-full flex-col justify-evenly">
+    <div className="flex rounded border border-solid border-stone-600 bg-inherit p-4 dark:border-stone-400">
+      <div className="relative flex h-[100px] w-full flex-col justify-evenly bg-inherit">
         {bar.tracks.map((track, j) => (
           <Track key={j} index={j} bar={bar} track={track} handleAddNote={note => handleAddNote(0, j, note)} />
         ))}
@@ -38,7 +38,7 @@ const Bar: FunctionComponent<Props> = ({ bar }) => {
       </div>
       <div className="ml-4 mt-2 mb-2 flex flex-col items-center justify-between">
         <ButtonContainer onClick={handleRemoveBar}>
-          <Trash stroke="lightgray" />
+          <Trash />
         </ButtonContainer>
         <div>
           <span>{`${bar.beatCount}/${bar.dibobinador}`}</span>

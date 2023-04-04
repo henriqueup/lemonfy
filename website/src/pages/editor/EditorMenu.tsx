@@ -1,7 +1,8 @@
-import { useState, type FunctionComponent } from "react";
-import { Button, CollapsableSideMenu } from "../../components";
+import { useState, type FunctionComponent, useEffect } from "react";
+import { Button, ButtonContainer, CollapsableSideMenu } from "src/components";
 import { type Sheet } from "@entities/sheet";
 import { useEditorStore } from "@store/editor";
+import { Moon, Sun } from "src/icons";
 
 type Props = {
   handleLoad: (sheetFromStorage: Sheet) => void;
@@ -10,6 +11,32 @@ type Props = {
 const EditorMenu: FunctionComponent<Props> = ({ handleLoad }) => {
   const currentSheet = useEditorStore(state => state.currentSheet);
   const [isOpen, setIsOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    if (
+      localStorage.theme === "dark" ||
+      (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches)
+    ) {
+      document.documentElement.classList.add("dark");
+      setIsDarkMode(true);
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, []);
+
+  const handleClickDarkMode = () => {
+    if (isDarkMode) {
+      setIsDarkMode(false);
+      localStorage.theme = "light";
+      document.documentElement.classList.remove("dark");
+      return;
+    }
+
+    setIsDarkMode(true);
+    localStorage.theme = "dark";
+    document.documentElement.classList.add("dark");
+  };
 
   const handleChangeIsOpen = (value: boolean) => setIsOpen(value);
 
@@ -27,7 +54,7 @@ const EditorMenu: FunctionComponent<Props> = ({ handleLoad }) => {
 
   return (
     <CollapsableSideMenu isOpen={isOpen} onChangeIsOpen={handleChangeIsOpen} label="Editor Menu">
-      <div className="flex flex-col">
+      <div className="flex h-full flex-col">
         <div className="mt-2 mb-2 ml-auto mr-auto flex w-full justify-center">
           <h3 className="m-auto">Editor Menu</h3>
         </div>
@@ -39,6 +66,11 @@ const EditorMenu: FunctionComponent<Props> = ({ handleLoad }) => {
           className="mt-6 w-2/5 self-center"
         />
         <Button text="Load" onClick={handleOwnLoad} className="mt-6 w-2/5 self-center" />
+        <div className="flex h-full items-end justify-end">
+          <ButtonContainer className="m-3" onClick={handleClickDarkMode}>
+            {isDarkMode ? <Sun width={24} height={24} /> : <Moon width={24} height={24} />}
+          </ButtonContainer>
+        </div>
       </div>
     </CollapsableSideMenu>
   );
