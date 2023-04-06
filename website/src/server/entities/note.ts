@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { type Pitch } from "./pitch";
 
 const NOTE_DURATION_NAMES = [
@@ -44,6 +45,18 @@ const getNextNoteDuration = (currentDuration: NoteDurationName, isRaise: boolean
 
 export const getHigherNoteDuration = (currentDuration: NoteDurationName) => getNextNoteDuration(currentDuration, true);
 export const getLowerNoteDuration = (currentDuration: NoteDurationName) => getNextNoteDuration(currentDuration, false);
+
+const NoteSchema = z.object({
+  duration: z.number().min(0),
+  start: z.number().min(0),
+  // pitch: z.object()
+  hasSustain: z.boolean().default(false),
+  isSustain: z.boolean().default(false),
+  durationInSeconds: z.number().min(0).optional(),
+  startInSeconds: z.number().min(0).optional(),
+});
+
+type NoteFromZod = z.infer<typeof NoteSchema>;
 
 export type Note = {
   duration: number;

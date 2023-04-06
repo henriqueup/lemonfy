@@ -21,11 +21,11 @@ The Lemonfy Project inspired by songsterr app (https://www.songsterr.com/)
 - <s>Fix move cursor when its inside note</s>
 - <s>Add stop and rewind</s>
 - <s>Add dark/light mode</s>
+- Understand zod
 - Enable Bar edition
 - Add Bar copy/paste
 - Add confirmation modal
 - Add mouse support
-- Understand zod
 - Add automatic save
 - Add backend and DB integration
 - Add player pages

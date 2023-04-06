@@ -7,6 +7,8 @@ export const NUMBER_OF_PICHES_IN_OCTAVE = 12;
 
 export type PitchKey = `${PitchName}${Octave}`;
 
+// const PitchSchema
+
 export type Pitch = {
   name: PitchName;
   octave: Octave;
