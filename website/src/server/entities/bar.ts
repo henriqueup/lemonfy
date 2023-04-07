@@ -9,7 +9,7 @@ export const BarSchema = z.object({
   start: z.number().min(0),
   startInSeconds: z.number().min(0).optional(),
   capacity: z.number().gt(0),
-  tempo: z.number().gt(0),
+  tempo: z.number().int().min(1),
   tracks: z.array(z.array(NoteSchema)),
   timeRatio: z.number().gt(0),
   index: z.number().min(0),

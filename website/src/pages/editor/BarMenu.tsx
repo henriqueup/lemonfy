@@ -1,4 +1,6 @@
 import { type FunctionComponent, useState } from "react";
+import type { z } from "zod";
+import { BarSchema } from "@entities/bar";
 import { Button, FixedSideMenu, NumberField } from "src/components";
 
 type Props = {
@@ -6,16 +8,19 @@ type Props = {
   onClose: () => void;
 };
 
+const ValuesSchema = BarSchema.pick({ beatCount: true, dibobinador: true, tempo: true });
+type Values = z.infer<typeof ValuesSchema>;
+
 const BarMenu: FunctionComponent<Props> = ({ onAdd, onClose }) => {
-  const [beatCount, setBeatCount] = useState<number | undefined>();
-  const [dibobinador, setDibobinador] = useState<number | undefined>();
-  const [tempo, setTempo] = useState<number | undefined>();
-  const canAdd = beatCount !== undefined && dibobinador !== undefined && tempo !== undefined;
+  const [values, setValues] = useState<Partial<Values>>({});
+  const parseResult = ValuesSchema.safeParse(values);
+  const parseErrors = !parseResult.success ? parseResult.error.formErrors.fieldErrors : {};
 
   const handleClickAdd = () => {
-    if (!canAdd) return;
+    if (!parseResult.success) return;
 
-    onAdd(beatCount, dibobinador, tempo);
+    const parsedData = parseResult.data;
+    onAdd(parsedData.beatCount, parsedData.dibobinador, parsedData.tempo);
   };
 
   return (
@@ -27,26 +32,29 @@ const BarMenu: FunctionComponent<Props> = ({ onAdd, onClose }) => {
         <NumberField
           autoFocus
           label="Number of Beats"
-          value={beatCount}
-          onChange={value => setBeatCount(value)}
+          value={values.beatCount}
+          errors={parseErrors.beatCount}
+          onChange={value => setValues({ ...values, beatCount: value })}
           className="mt-4 w-1/2 self-center"
         />
         <NumberField
           label="Dibobinador"
-          value={dibobinador}
-          onChange={value => setDibobinador(value)}
+          value={values.dibobinador}
+          errors={parseErrors.dibobinador}
+          onChange={value => setValues({ ...values, dibobinador: value })}
           className="mt-4 w-1/2 self-center"
         />
         <NumberField
           label="Tempo"
-          value={tempo}
-          onChange={value => setTempo(value)}
+          value={values.tempo}
+          errors={parseErrors.tempo}
+          onChange={value => setValues({ ...values, tempo: value })}
           className="mt-4 w-1/2 self-center"
         />
         <Button
           variant="success"
           text="Add"
-          disabled={!canAdd}
+          disabled={!parseResult.success}
           onClick={handleClickAdd}
           className="mt-6 w-2/5 self-center"
         />
