@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { type Pitch } from "./pitch";
+import { PitchSchema, type Pitch } from "./pitch";
 
 const NOTE_DURATION_NAMES = [
   "LONG",
@@ -14,7 +14,8 @@ const NOTE_DURATION_NAMES = [
   "SIXTEENTH",
 ] as const;
 
-export type NoteDurationName = (typeof NOTE_DURATION_NAMES)[number];
+export const NoteDurationNameSchema = z.enum(NOTE_DURATION_NAMES);
+export type NoteDurationName = z.infer<typeof NoteDurationNameSchema>;
 
 export const NOTE_DURATIONS: Record<NoteDurationName, number> = {
   LONG: 4,
@@ -29,16 +30,13 @@ export const NOTE_DURATIONS: Record<NoteDurationName, number> = {
   SIXTEENTH: 1 / 16,
 } as const;
 
-const isNoteDuration = (key: string | undefined): key is NoteDurationName =>
-  key ? NOTE_DURATIONS.hasOwnProperty(key) : false;
-
 const getNextNoteDuration = (currentDuration: NoteDurationName, isRaise: boolean) => {
   const currentDurationIndex = NOTE_DURATION_NAMES.indexOf(currentDuration);
   const nextNoteDuration = isRaise
     ? NOTE_DURATION_NAMES[currentDurationIndex - 1]
     : NOTE_DURATION_NAMES[currentDurationIndex + 1];
 
-  if (isNoteDuration(nextNoteDuration)) return nextNoteDuration;
+  if (NoteDurationNameSchema.safeParse(nextNoteDuration).success) return nextNoteDuration;
 
   return currentDuration;
 };
@@ -46,27 +44,17 @@ const getNextNoteDuration = (currentDuration: NoteDurationName, isRaise: boolean
 export const getHigherNoteDuration = (currentDuration: NoteDurationName) => getNextNoteDuration(currentDuration, true);
 export const getLowerNoteDuration = (currentDuration: NoteDurationName) => getNextNoteDuration(currentDuration, false);
 
-const NoteSchema = z.object({
+export const NoteSchema = z.object({
   duration: z.number().min(0),
   start: z.number().min(0),
-  // pitch: z.object()
+  pitch: PitchSchema.optional(),
   hasSustain: z.boolean().default(false),
   isSustain: z.boolean().default(false),
   durationInSeconds: z.number().min(0).optional(),
   startInSeconds: z.number().min(0).optional(),
 });
 
-type NoteFromZod = z.infer<typeof NoteSchema>;
-
-export type Note = {
-  duration: number;
-  start: number;
-  pitch?: Pitch; //note without a pitch is silence
-  hasSustain: boolean;
-  isSustain: boolean;
-  durationInSeconds?: number;
-  startInSeconds?: number;
-};
+export type Note = z.infer<typeof NoteSchema>;
 
 export const createNote = (
   duration: number,

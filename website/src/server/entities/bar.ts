@@ -1,18 +1,20 @@
-import { createNote, type Note } from "./note";
+import { z } from "zod";
+import { createNote, NoteSchema, type Note } from "./note";
 import { SECONDS_PER_MINUTE, TimeEvaluation } from "./timeEvaluation";
 
-export type Bar = {
-  trackCount: number;
-  beatCount: number;
-  dibobinador: number;
-  start: number;
-  startInSeconds?: number;
-  capacity: number;
-  tempo: number;
-  tracks: Note[][];
-  timeRatio: number;
-  index: number;
-};
+export const BarSchema = z.object({
+  trackCount: z.number().int().min(1),
+  beatCount: z.number().int().min(1),
+  dibobinador: z.number().int().min(1),
+  start: z.number().min(0),
+  startInSeconds: z.number().min(0).optional(),
+  capacity: z.number().gt(0),
+  tempo: z.number().gt(0),
+  tracks: z.array(z.array(NoteSchema)),
+  timeRatio: z.number().gt(0),
+  index: z.number().min(0),
+});
+export type Bar = z.infer<typeof BarSchema>;
 
 interface IBarModule {
   createBar: (

@@ -1,20 +1,23 @@
-import { type Octave } from "./octave";
+import { z } from "zod";
+import { OctaveSchema, type Octave } from "./octave";
 
 export const PITCH_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B", "X"] as const;
 
-export type PitchName = (typeof PITCH_NAMES)[number];
-export const NUMBER_OF_PICHES_IN_OCTAVE = 12;
+export const PitchNameSchema = z.enum(PITCH_NAMES);
+export type PitchName = z.infer<typeof PitchNameSchema>;
 
-export type PitchKey = `${PitchName}${Octave}`;
+export const PitchKeySchema = z.custom<`${PitchName}${Octave}`>(
+  (value: unknown) => typeof value === "string" && (/^[ACDFG]#?[0-5]$/.test(value) || /^[EBX][0-5]$/.test(value)),
+);
+export type PitchKey = z.infer<typeof PitchKeySchema>;
 
-// const PitchSchema
-
-export type Pitch = {
-  name: PitchName;
-  octave: Octave;
-  key: PitchKey;
-  frequency: number;
-};
+export const PitchSchema = z.object({
+  name: PitchNameSchema,
+  octave: OctaveSchema,
+  key: PitchKeySchema,
+  frequency: z.number().min(0),
+});
+export type Pitch = z.infer<typeof PitchSchema>;
 
 const getPitchKey = (name: PitchName, octave: Octave): PitchKey => `${name}${octave}`;
 

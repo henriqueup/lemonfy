@@ -1,12 +1,14 @@
-import { default as BarModule, type Bar } from "./bar";
-import type { Note } from "./note";
+import { z } from "zod";
+import { default as BarModule, BarSchema } from "./bar";
+import { type Note, NoteSchema } from "./note";
 import { TimeEvaluation } from "./timeEvaluation";
 
-export type Sheet = {
-  bars: Bar[];
-  tracks: Note[][];
-  trackCount: number;
-};
+export const SheetSchema = z.object({
+  bars: z.array(BarSchema),
+  tracks: z.array(z.array(NoteSchema)),
+  trackCount: z.number().int().min(1),
+});
+export type Sheet = z.infer<typeof SheetSchema>;
 
 interface ISheetModule {
   findSheetNoteByTime: (sheet: Sheet, trackIndex: number, time: number, lookForward?: boolean) => Note | null;
