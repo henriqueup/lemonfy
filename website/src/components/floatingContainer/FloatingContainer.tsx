@@ -1,10 +1,10 @@
-import { areParentsRelative } from "src/components/utils";
+import { areParentsRelativeOrAbsolute } from "src/components/utils";
 import { type ReactNode, useCallback, useRef, useState, type RefCallback } from "react";
 import { ClickAwayListener } from "src/components";
 import { classNames } from "src/styles/utils";
 
 interface Props {
-  open: boolean;
+  isOpen: boolean;
   onClose: () => void;
   className?: string;
   children: ReactNode;
@@ -12,7 +12,7 @@ interface Props {
 
 const RECT_PADDING = 1;
 
-const FloatingContainer = ({ open, onClose, className, children }: Props) => {
+const FloatingContainer = ({ isOpen, onClose, className, children }: Props) => {
   const [rect, setRect] = useState<DOMRect | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -21,7 +21,7 @@ const FloatingContainer = ({ open, onClose, className, children }: Props) => {
 
     // take second parent because first is ClickAwayListener
     const parentElement = ref?.parentElement?.parentElement;
-    const hasRelativeParent = parentElement && areParentsRelative(parentElement);
+    const hasRelativeParent = parentElement && areParentsRelativeOrAbsolute(parentElement);
     const parentRect = parentElement?.getBoundingClientRect();
 
     if (parentRect) {
@@ -39,7 +39,7 @@ const FloatingContainer = ({ open, onClose, className, children }: Props) => {
     }
   }, []);
 
-  if (!open) return null;
+  if (!isOpen) return null;
 
   return (
     <ClickAwayListener onClickAway={onClose}>

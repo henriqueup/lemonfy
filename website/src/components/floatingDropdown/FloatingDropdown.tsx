@@ -4,13 +4,13 @@ import type { OptionObject } from "src/components/select";
 import { classNames } from "src/styles/utils";
 
 type Props = {
-  open: boolean;
+  isOpen: boolean;
   options: OptionObject[];
   onChangeOption: (option: OptionObject | undefined) => void;
   onClose: () => void;
 };
 
-const FloatingDropdown = ({ open, options, onChangeOption, onClose }: Props, listRef: Ref<HTMLUListElement>) => {
+const FloatingDropdown = ({ isOpen, options, onChangeOption, onClose }: Props, listRef: Ref<HTMLUListElement>) => {
   const [index, setIndex] = useState(-1);
 
   const getLoopingIndex = (index: number, length: number) => {
@@ -62,13 +62,13 @@ const FloatingDropdown = ({ open, options, onChangeOption, onClose }: Props, lis
   };
 
   useEffect(() => {
-    if (open) {
+    if (isOpen) {
       setIndex(-1);
     }
-  }, [open]);
+  }, [isOpen]);
 
   return (
-    <FloatingContainer open={open} onClose={onClose}>
+    <FloatingContainer isOpen={isOpen} onClose={onClose}>
       <ul
         className="m-0 list-none rounded p-0 focus-visible:outline-none"
         onKeyDown={handleKeyDown}

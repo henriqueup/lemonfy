@@ -14,6 +14,7 @@ import X from "src/icons/X";
 import { handleKeyDown } from "src/utils/htmlEvents";
 import { Fieldset } from "src/components/fieldset";
 import { ButtonContainer } from "src/components/buttonContainer";
+import { Tooltip } from "src/components/tooltip";
 
 interface BaseProps {
   label: string;
@@ -33,7 +34,8 @@ const GeneralInputField: FunctionComponent<
   GeneralProps & Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "onChange">
 > = ({ label, value, errors, placeholder, onChange, disableClear, inputProps, autoFocus = false, ...otherProps }) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const shrinkLabel = Boolean(value || placeholder);
+  const shrinkLabel = Boolean(value !== undefined || placeholder);
+  const hasError = Boolean(errors);
 
   const handleChangeInput = (event: ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
@@ -50,14 +52,30 @@ const GeneralInputField: FunctionComponent<
   };
 
   return (
-    <>
-      <Fieldset {...otherProps} label={label} shrinkLabel={shrinkLabel} onClick={handleClickFieldset}>
+    <Tooltip
+      content={
+        errors
+          ? errors.map(error => (
+              <p key={error} className="text-red-600">
+                {error}
+              </p>
+            ))
+          : null
+      }
+    >
+      <Fieldset
+        {...otherProps}
+        label={label}
+        shrinkLabel={shrinkLabel}
+        hasError={hasError}
+        onClick={handleClickFieldset}
+      >
         <div className="flex cursor-pointer items-center pb-2 pt-2">
           <input
             autoFocus={autoFocus}
             {...inputProps}
             placeholder={placeholder || label}
-            className="w-full cursor-pointer bg-inherit focus-visible:outline-none"
+            className="w-full cursor-pointer bg-inherit placeholder:text-inherit focus-visible:outline-none"
             value={value === undefined ? "" : value}
             onInput={handleChangeInput}
             onFocus={event => event.target.select()}
@@ -70,19 +88,17 @@ const GeneralInputField: FunctionComponent<
               onKeyDown={handleKeyDown("Enter", handleClear)}
               tabIndex={0}
             >
-              <X width={16} height={16} strokeWidth={2} />
+              <X
+                width={16}
+                height={16}
+                strokeWidth={2}
+                className={hasError ? "text-red-600 dark:text-red-600" : undefined}
+              />
             </ButtonContainer>
           ) : null}
         </div>
       </Fieldset>
-      {errors
-        ? errors.map(error => (
-            <p key={error} className="self-center text-red-600">
-              {error}
-            </p>
-          ))
-        : null}
-    </>
+    </Tooltip>
   );
 };
 

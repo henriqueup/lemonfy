@@ -177,7 +177,7 @@ const Select: FunctionComponent<Props & Omit<FieldsetHTMLAttributes<HTMLFieldSet
         </ButtonContainer>
       </div>
       <FloatingDropdown
-        open={optionsIsOpen}
+        isOpen={optionsIsOpen}
         options={filteredOptions}
         onChangeOption={handleChange}
         onClose={handleCloseOptions}
