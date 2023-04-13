@@ -9,6 +9,8 @@ import {
   type FieldsetHTMLAttributes,
   type KeyboardEvent,
   type FocusEvent,
+  type HTMLAttributes,
+  type MouseEvent,
 } from "react";
 import X from "src/icons/X";
 import { handleKeyDown } from "src/utils/htmlEvents";
@@ -23,6 +25,7 @@ interface BaseProps {
   placeholder?: string;
   disableClear?: boolean;
   autoFocus?: boolean;
+  fieldsetProps?: FieldsetHTMLAttributes<HTMLFieldSetElement>;
   inputProps?: Omit<DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, "value" | "onChange">;
 }
 
@@ -31,8 +34,19 @@ interface GeneralProps extends BaseProps {
 }
 
 const GeneralInputField: FunctionComponent<
-  GeneralProps & Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "onChange">
-> = ({ label, value, errors, placeholder, onChange, disableClear, inputProps, autoFocus = false, ...otherProps }) => {
+  GeneralProps & Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "onChange">
+> = ({
+  label,
+  value,
+  errors,
+  placeholder,
+  onChange,
+  disableClear,
+  inputProps,
+  autoFocus = false,
+  fieldsetProps,
+  ...otherProps
+}) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const shrinkLabel = Boolean(value !== undefined || placeholder);
   const hasError = Boolean(errors);
@@ -47,12 +61,15 @@ const GeneralInputField: FunctionComponent<
     event.stopPropagation();
   };
 
-  const handleClickFieldset = () => {
+  const handleClickFieldset = (event: MouseEvent<HTMLFieldSetElement, globalThis.MouseEvent>) => {
     inputRef.current?.focus();
+
+    if (fieldsetProps?.onClick) fieldsetProps.onClick(event);
   };
 
   return (
     <Tooltip
+      {...otherProps}
       content={
         errors
           ? errors.map(error => (
@@ -64,11 +81,11 @@ const GeneralInputField: FunctionComponent<
       }
     >
       <Fieldset
-        {...otherProps}
+        {...fieldsetProps}
         label={label}
         shrinkLabel={shrinkLabel}
         hasError={hasError}
-        onClick={handleClickFieldset}
+        onClick={event => handleClickFieldset(event)}
       >
         <div className="flex cursor-pointer items-center pb-2 pt-2">
           <input
@@ -112,7 +129,7 @@ interface TextFieldProps extends BaseProps {
 }
 
 export const TextField: FunctionComponent<
-  TextFieldProps & Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "onChange">
+  TextFieldProps & Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "onChange">
 > = ({ label, onChange, autoFocus, ...otherProps }) => {
   const handleChange = (newValue: string | number | undefined) => {
     if (typeof newValue === "number") {
@@ -136,7 +153,7 @@ interface NumberFieldProps extends BaseProps {
 }
 
 export const NumberField: FunctionComponent<
-  NumberFieldProps & Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "onChange">
+  NumberFieldProps & Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "onChange">
 > = ({ label, onChange, autoFocus, ...otherProps }) => {
   const [ownValue, setOwnValue] = useState<number | string | undefined>(otherProps.value);
 

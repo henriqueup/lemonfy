@@ -32,7 +32,7 @@ const BaseIcon: FunctionComponent<Props> = ({
       width={width}
       height={height}
       viewBox={viewbox}
-      className={classNames("text-stone-600 dark:text-stone-400", className)}
+      className={classNames("text-inherit", className)}
       stroke={stroke}
       fill={fill}
     >

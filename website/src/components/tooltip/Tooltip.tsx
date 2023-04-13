@@ -1,13 +1,18 @@
-import { type ReactNode, type FunctionComponent, useState } from "react";
+import { type ReactNode, type FunctionComponent, useState, type DetailedHTMLProps, type HTMLAttributes } from "react";
 import { FloatingContainer } from "src/components/floatingContainer";
+import { classNames } from "src/styles/utils";
 
 interface Props {
   content: ReactNode;
   children: ReactNode;
 }
 
-const Tooltip: FunctionComponent<Props> = ({ content, children }) => {
-  const [isOpen, setIsOpen] = useState(true);
+const Tooltip: FunctionComponent<Props & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>> = ({
+  content,
+  children,
+  ...otherProps
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleMouseEnter = () => {
     setIsOpen(true);
@@ -17,17 +22,22 @@ const Tooltip: FunctionComponent<Props> = ({ content, children }) => {
     setIsOpen(false);
   };
 
-  if (!content) return <>{children}</>;
+  if (!children) return null;
 
   return (
-    <>
-      <div className="relative bg-inherit" onMouseEnter={handleMouseEnter} onMouseLeave={handleClose}>
-        {children}
-        <FloatingContainer className="z-50 bg-inherit" isOpen={true} onClose={handleClose}>
+    <div
+      {...otherProps}
+      className={classNames(otherProps.className, "relative bg-inherit")}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleClose}
+    >
+      {children}
+      {content ? (
+        <FloatingContainer className="z-50 bg-inherit" isOpen={isOpen} onClose={handleClose}>
           {content}
         </FloatingContainer>
-      </div>
-    </>
+      ) : null}
+    </div>
   );
 };
 

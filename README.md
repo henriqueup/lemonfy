@@ -23,6 +23,8 @@ The Lemonfy Project inspired by songsterr app (https://www.songsterr.com/)
 - <s>Add dark/light mode</s>
 - <s>Understand zod</s>
 - Use form with zod
+  - Complete other forms
+  - Only error when dirty
 - Enable Bar edition
 - Add Bar copy/paste
 - Add confirmation modal

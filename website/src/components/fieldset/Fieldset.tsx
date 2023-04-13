@@ -29,7 +29,10 @@ const Fieldset: FunctionComponent<Props & FieldsetHTMLAttributes<HTMLFieldSetEle
       {shrinkLabel ? (
         <legend
           role="presentation"
-          className={classNames("absolute bg-inherit text-sm", "-top-[calc(theme(fontSize.sm[1].lineHeight)_/_2)]")}
+          className={classNames(
+            "absolute z-50 bg-inherit text-sm",
+            "-top-[calc(theme(fontSize.sm[1].lineHeight)_/_2)]",
+          )}
         >
           {label}
         </legend>
