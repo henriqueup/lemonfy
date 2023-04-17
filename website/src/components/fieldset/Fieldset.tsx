@@ -30,7 +30,7 @@ const Fieldset: FunctionComponent<Props & FieldsetHTMLAttributes<HTMLFieldSetEle
         <legend
           role="presentation"
           className={classNames(
-            "absolute z-40 bg-inherit text-sm",
+            "absolute z-10 bg-inherit text-sm",
             "-top-[calc(theme(fontSize.sm[1].lineHeight)_/_2)]",
           )}
         >

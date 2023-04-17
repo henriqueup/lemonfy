@@ -109,6 +109,7 @@ const GeneralInputField: FunctionComponent<
           />
           {value !== undefined && !disableClear ? (
             <ButtonContainer
+              aria-label="Clear"
               onClick={event => handleClear(event)}
               onKeyDown={handleKeyDown("Enter", handleClear)}
               tabIndex={0}

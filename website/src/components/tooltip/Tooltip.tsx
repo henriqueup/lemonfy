@@ -33,7 +33,7 @@ const Tooltip: FunctionComponent<Props & DetailedHTMLProps<HTMLAttributes<HTMLDi
     >
       {children}
       {content ? (
-        <FloatingContainer className="z-50 bg-inherit" isOpen={isOpen} onClose={handleClose}>
+        <FloatingContainer className="z-20 bg-inherit" isOpen={isOpen} onClose={handleClose}>
           {content}
         </FloatingContainer>
       ) : null}

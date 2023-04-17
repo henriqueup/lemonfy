@@ -57,11 +57,24 @@ describe("Select", () => {
 
   afterEach(cleanup);
 
-  it("should render with label", () => {
+  it("should initially render with label as placeholder", () => {
     const input = rendered.getByRole("textbox") as HTMLInputElement;
 
     expect(input.placeholder).toBe("Test Select");
     expect(input.value).toBe("");
+  });
+
+  it("should shrink label with placeholder", () => {
+    cleanup();
+    rendered = render(
+      <Select label="Test Select" options={mockOptions} onChange={handleChangeMock} placeholder="Test Field" />,
+    );
+
+    const input = rendered.getByRole("textbox") as HTMLInputElement;
+    const legend = rendered.getByRole("presentation");
+
+    expect(input.placeholder).toBe("Test Field");
+    expect(legend.textContent).toBe("Test Select");
   });
 
   it("should open options on click", async () => {
@@ -98,19 +111,6 @@ describe("Select", () => {
     await act(() => user.type(input, "asf"));
     const legend = rendered.getByRole("presentation");
 
-    expect(legend.textContent).toBe("Test Select");
-  });
-
-  it("should shrink label with placeholder", () => {
-    cleanup();
-    rendered = render(
-      <Select label="Test Select" options={mockOptions} onChange={handleChangeMock} placeholder="Test Field" />,
-    );
-
-    const input = rendered.getByRole("textbox") as HTMLInputElement;
-    const legend = rendered.getByRole("presentation");
-
-    expect(input.placeholder).toBe("Test Field");
     expect(legend.textContent).toBe("Test Select");
   });
 

@@ -22,13 +22,14 @@ The Lemonfy Project inspired by songsterr app (https://www.songsterr.com/)
 - <s>Add stop and rewind</s>
 - <s>Add dark/light mode</s>
 - <s>Understand zod</s>
-- Use form with zod
-  - Complete other forms
-  - Only error when dirty
+- <s>Use form with zod</s>
+  - <s>Complete other forms</s>
+  - <s>Only error when dirty</s>
+- Add modal component
 - Enable Bar edition
 - Add Bar copy/paste
-- Add confirmation modal
 - Add mouse support
 - Add automatic save
 - Add backend and DB integration
 - Add player pages
+- Add component animations
