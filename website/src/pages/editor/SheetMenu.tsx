@@ -1,19 +1,26 @@
+import { SheetSchema } from "@entities/sheet";
 import { type FunctionComponent, useState } from "react";
 import { Button, FixedSideMenu, NumberField } from "src/components";
+import { type z } from "zod";
 
 type Props = {
   onAdd: (trackCount: number) => void;
   onClose: () => void;
 };
 
+const ValuesSchema = SheetSchema.pick({ trackCount: true });
+type Values = z.infer<typeof ValuesSchema>;
+
 const SheetMenu: FunctionComponent<Props> = ({ onAdd, onClose }) => {
-  const [trackCount, setTrackCount] = useState<number | undefined>();
-  const canAdd = trackCount !== undefined;
+  const [values, setValues] = useState<Partial<Values>>({});
+  const parseResult = ValuesSchema.safeParse(values);
+  const parseErrors = !parseResult.success ? parseResult.error.formErrors.fieldErrors : {};
 
   const handleClickAdd = () => {
-    if (!canAdd) return;
+    if (!parseResult.success) return;
 
-    onAdd(trackCount);
+    const parsedData = parseResult.data;
+    onAdd(parsedData.trackCount);
   };
 
   return (
@@ -23,16 +30,17 @@ const SheetMenu: FunctionComponent<Props> = ({ onAdd, onClose }) => {
           <h3 className="m-auto">New Sheet</h3>
         </div>
         <NumberField
-          label="Number of Tracks"
-          value={trackCount}
           autoFocus
-          onChange={value => setTrackCount(value)}
+          label="Number of Tracks"
+          value={values.trackCount}
+          errors={parseErrors.trackCount}
+          onChange={value => setValues({ ...values, trackCount: value })}
           className="mt-4 w-1/2 self-center"
         />
         <Button
           variant="success"
           text="Add"
-          disabled={!canAdd}
+          disabled={!parseResult.success}
           onClick={handleClickAdd}
           className="mt-6 w-2/5 self-center"
         />
