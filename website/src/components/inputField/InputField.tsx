@@ -47,9 +47,10 @@ const GeneralInputField: FunctionComponent<
   fieldsetProps,
   ...otherProps
 }) => {
+  const [isDirty, setIsDirty] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const shrinkLabel = Boolean(value !== undefined || placeholder);
-  const hasError = Boolean(errors);
+  const hasError = errors && isDirty;
 
   const handleChangeInput = (event: ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
@@ -61,6 +62,12 @@ const GeneralInputField: FunctionComponent<
     event.stopPropagation();
   };
 
+  const handleBlur = (event: FocusEvent<HTMLDivElement>) => {
+    setIsDirty(true);
+
+    if (otherProps.onBlur) otherProps.onBlur(event);
+  };
+
   const handleClickFieldset = (event: MouseEvent<HTMLFieldSetElement, globalThis.MouseEvent>) => {
     inputRef.current?.focus();
 
@@ -70,8 +77,9 @@ const GeneralInputField: FunctionComponent<
   return (
     <Tooltip
       {...otherProps}
+      onBlur={handleBlur}
       content={
-        errors
+        hasError
           ? errors.map(error => (
               <p key={error} className="text-red-600">
                 {error}
