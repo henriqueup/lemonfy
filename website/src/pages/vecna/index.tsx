@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
-import { useEffect } from "react";
-import { Pause, Play, Rewind, RewindFull, Stop, Wind, WindFull } from "src/icons";
+import { useEffect, useState } from "react";
+import { NumberField, TextField } from "src/components";
 
 let audio: HTMLAudioElement;
 const Vecna: NextPage = () => {
@@ -8,29 +8,29 @@ const Vecna: NextPage = () => {
     audio = new Audio("vecna-clock-sound.mp3");
   }, []);
 
+  const [textValue, setTextValue] = useState<string | undefined>();
+  const [numberValue, setNumberValue] = useState<number | undefined>();
+
   return (
-    <div className="bg-black">
+    <div className="h-full bg-black">
       <h1 className="text-stone-600 dark:text-stone-400">VECNA</h1>
-      <div className="w-1/4 p-4">
-        <Play stroke="lightgray" />
+      <div className="w-1/4 bg-inherit p-4">
+        <TextField
+          label="Test Text Field"
+          value={textValue}
+          onChange={(newValue?: string) => {
+            setTextValue(newValue);
+          }}
+        />
       </div>
-      <div className="w-1/4 p-4">
-        <Stop stroke="lightgray" />
-      </div>
-      <div className="w-1/4 p-4">
-        <Pause stroke="lightgray" />
-      </div>
-      <div className="w-1/4 p-4">
-        <Rewind stroke="lightgray" />
-      </div>
-      <div className="w-1/4 p-4">
-        <RewindFull stroke="lightgray" />
-      </div>
-      <div className="w-1/4 p-4">
-        <Wind stroke="lightgray" />
-      </div>
-      <div className="w-1/4 p-4">
-        <WindFull stroke="lightgray" />
+      <div className="w-1/4 bg-inherit p-4">
+        <NumberField
+          label="Test Number Field"
+          value={numberValue}
+          onChange={(newValue?: number) => {
+            setNumberValue(newValue);
+          }}
+        />
       </div>
     </div>
   );

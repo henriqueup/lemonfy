@@ -1,7 +1,7 @@
 import { cleanup, render, type RenderResult, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { UserEvent } from "@testing-library/user-event/dist/types/setup/setup";
-import { NumberField } from "src/components";
+import { TextField } from "src/components";
 
 const REGULAR_BORDER = /border-stone-600 .* dark:border-stone-400/;
 const ERROR_BORDER = /border-red-600 .* dark:border-red-600/;
@@ -12,9 +12,9 @@ describe("Number Field", () => {
   let user: UserEvent;
 
   beforeEach(() => {
-    handleChangeMock = jest.fn();
     user = userEvent.setup();
-    rendered = render(<NumberField label="Test Number Field" onChange={handleChangeMock} />);
+    handleChangeMock = jest.fn();
+    rendered = render(<TextField label="Test Text Field" onChange={handleChangeMock} />);
   });
 
   afterEach(cleanup);
@@ -22,78 +22,76 @@ describe("Number Field", () => {
   it("should initially render with label as placeholder", () => {
     const input = rendered.getByRole("textbox") as HTMLInputElement;
 
-    expect(input.placeholder).toBe("Test Number Field");
+    expect(input.placeholder).toBe("Test Text Field");
     expect(input.value).toBe("");
   });
 
   it("should shrink label with placeholder", () => {
     cleanup();
-    rendered = render(
-      <NumberField label="Test Number Field" onChange={handleChangeMock} placeholder="Test Placeholder" />,
-    );
+    rendered = render(<TextField label="Test Text Field" onChange={handleChangeMock} placeholder="Test Placeholder" />);
 
     const input = rendered.getByRole("textbox") as HTMLInputElement;
     const legend = rendered.getByRole("presentation");
 
     expect(input.placeholder).toBe("Test Placeholder");
-    expect(legend.textContent).toBe("Test Number Field");
+    expect(legend.textContent).toBe("Test Text Field");
   });
 
   it("should shrink label on type", async () => {
     const input = rendered.getByRole("textbox") as HTMLInputElement;
 
-    await act(() => user.type(input, "12"));
+    await act(() => user.type(input, "12asf"));
+    rendered.rerender(<TextField label="Test Text Field" value="12asf" onChange={handleChangeMock} />);
     const legend = rendered.getByRole("presentation");
 
-    expect(legend.textContent).toBe("Test Number Field");
-    expect(input.value).toBe("12");
-    expect(handleChangeMock).toHaveBeenCalledTimes(2);
-    expect(handleChangeMock).toHaveBeenCalledWith(1);
-    expect(handleChangeMock).toHaveBeenCalledWith(12);
+    expect(legend.textContent).toBe("Test Text Field");
+    expect(input.value).toBe("12asf");
+    expect(handleChangeMock).toHaveBeenCalledTimes(5);
+    expect(handleChangeMock).toHaveBeenCalledWith("1");
+    expect(handleChangeMock).toHaveBeenCalledWith("2");
+    expect(handleChangeMock).toHaveBeenCalledWith("a");
+    expect(handleChangeMock).toHaveBeenCalledWith("s");
+    expect(handleChangeMock).toHaveBeenCalledWith("f");
   });
 
   it("should have focus with autoFocus", async () => {
     cleanup();
-    rendered = render(<NumberField label="Test Number Field" onChange={handleChangeMock} autoFocus />);
+    rendered = render(<TextField label="Test Text Field" onChange={handleChangeMock} autoFocus />);
 
     expect(rendered.queryByRole("presentation")).not.toBeInTheDocument();
     const input = rendered.getByRole("textbox") as HTMLInputElement;
 
-    await act(() => user.keyboard("12"));
+    await act(() => user.keyboard("12asf"));
+    rendered.rerender(<TextField label="Test Text Field" value="12asf" onChange={handleChangeMock} autoFocus />);
     const legend = rendered.getByRole("presentation");
 
-    expect(legend.textContent).toBe("Test Number Field");
-    expect(input.value).toBe("12");
-  });
-
-  it("should only accept numbers", async () => {
-    const input = rendered.getByRole("textbox") as HTMLInputElement;
-    await act(() => user.type(input, "asf"));
-
-    expect(rendered.queryByRole("presentation")).not.toBeInTheDocument();
-    expect(input.value).toBe("");
+    expect(legend.textContent).toBe("Test Text Field");
+    expect(input.value).toBe("12asf");
   });
 
   it("should clear content on clear icon click", async () => {
     const input = rendered.getByRole("textbox") as HTMLInputElement;
-    await act(() => user.type(input, "12"));
+    await act(() => user.type(input, "12asf"));
+    rendered.rerender(<TextField label="Test Text Field" value="12asf" onChange={handleChangeMock} />);
 
-    expect(input.value).toBe("12");
+    expect(input.value).toBe("12asf");
 
     const clearIcon = rendered.getByRole("button", { name: "Clear" });
     await act(() => user.click(clearIcon));
 
-    expect(input.value).toBe("");
-    expect(handleChangeMock).toHaveBeenCalledTimes(3);
-    expect(handleChangeMock).toHaveBeenCalledWith(1);
-    expect(handleChangeMock).toHaveBeenCalledWith(12);
+    expect(handleChangeMock).toHaveBeenCalledTimes(6);
+    expect(handleChangeMock).toHaveBeenCalledWith("1");
+    expect(handleChangeMock).toHaveBeenCalledWith("2");
+    expect(handleChangeMock).toHaveBeenCalledWith("a");
+    expect(handleChangeMock).toHaveBeenCalledWith("s");
+    expect(handleChangeMock).toHaveBeenCalledWith("f");
     expect(handleChangeMock).toHaveBeenCalledWith(undefined);
   });
 
   it("should only display errors when dirty and hovered", async () => {
     cleanup();
     rendered = render(
-      <NumberField label="Test Number Field" onChange={handleChangeMock} errors={["Test Error 1", "Test Error 2"]} />,
+      <TextField label="Test Text Field" onChange={handleChangeMock} errors={["Test Error 1", "Test Error 2"]} />,
     );
 
     expect(rendered.queryByRole("tooltip")).not.toBeInTheDocument();

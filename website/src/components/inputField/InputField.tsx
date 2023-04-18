@@ -81,7 +81,7 @@ const GeneralInputField: FunctionComponent<
       content={
         hasError
           ? errors.map(error => (
-              <p key={error} className="text-red-600">
+              <p role="tooltip" key={error} className="text-red-600">
                 {error}
               </p>
             ))
@@ -139,7 +139,7 @@ interface TextFieldProps extends BaseProps {
 
 export const TextField: FunctionComponent<
   TextFieldProps & Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "onChange">
-> = ({ label, onChange, autoFocus, ...otherProps }) => {
+> = ({ label, onChange, ...otherProps }) => {
   const handleChange = (newValue: string | number | undefined) => {
     if (typeof newValue === "number") {
       onChange(newValue.toString());
@@ -149,7 +149,7 @@ export const TextField: FunctionComponent<
     onChange(newValue);
   };
 
-  return <GeneralInputField {...otherProps} autoFocus={autoFocus} label={label} onChange={handleChange} />;
+  return <GeneralInputField {...otherProps} label={label} onChange={handleChange} />;
 };
 
 interface NumberFieldProps extends BaseProps {
@@ -163,7 +163,7 @@ interface NumberFieldProps extends BaseProps {
 
 export const NumberField: FunctionComponent<
   NumberFieldProps & Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "onChange">
-> = ({ label, onChange, autoFocus, ...otherProps }) => {
+> = ({ label, onChange, ...otherProps }) => {
   const [ownValue, setOwnValue] = useState<number | string | undefined>(otherProps.value);
 
   const getActualValue = (value: string | number | undefined) => {
@@ -200,12 +200,11 @@ export const NumberField: FunctionComponent<
   return (
     <GeneralInputField
       {...otherProps}
-      autoFocus={autoFocus}
       value={ownValue}
       label={label}
       onChange={handleChange}
       onBlur={handleBlur}
-      inputProps={{ onKeyDown: handleKeyDownInput }}
+      inputProps={{ ...otherProps.inputProps, onKeyDown: handleKeyDownInput }}
     />
   );
 };

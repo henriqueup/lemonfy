@@ -18,6 +18,8 @@ const Fieldset: FunctionComponent<Props & FieldsetHTMLAttributes<HTMLFieldSetEle
   return (
     <fieldset
       {...otherProps}
+      role={otherProps.role ?? "group"}
+      aria-label={otherProps["aria-label"] ?? label}
       className={classNames(
         "relative rounded-lg border border-solid bg-inherit pl-1 pr-1",
         hasError
