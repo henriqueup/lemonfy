@@ -1,28 +1,33 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { AudioContextMock, GainNodeMock, OscillatorNodeMock } from "@mocks/window";
+import { AnimationMock, AudioContextMock, GainNodeMock, OscillatorNodeMock, animateMock } from "@mocks/window";
+import { usePlayerStore } from "@store/player";
 import { render, type RenderResult, cleanup, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { UserEvent } from "@testing-library/user-event/dist/types/setup/setup";
 import Editor from "src/pages/editor";
 
-const mockGainNode = new GainNodeMock();
-const mockOscillatorNode = new OscillatorNodeMock();
+let mockGainNode: GainNodeMock;
+let mockOscillatorNode: OscillatorNodeMock;
+let mockAnimation: AnimationMock;
 var mockAudioContext = new AudioContextMock();
 jest.mock("src/hooks/useAudioContext", () => ({
   useAudioContext: () => mockAudioContext,
 }));
+let rendered: RenderResult;
+let user: UserEvent;
+
+beforeEach(() => {
+  user = userEvent.setup();
+  rendered = render(<Editor />);
+
+  mockGainNode = new GainNodeMock();
+  mockOscillatorNode = new OscillatorNodeMock();
+  mockAnimation = new AnimationMock();
+});
+
+afterEach(cleanup);
 
 describe("Navigation", () => {
-  let rendered: RenderResult;
-  let user: UserEvent;
-
-  beforeEach(() => {
-    user = userEvent.setup();
-    rendered = render(<Editor />);
-  });
-
-  afterEach(cleanup);
-
   it("Loads initially empty", () => {
     const buttons = rendered.getAllByRole("button");
 
@@ -96,13 +101,7 @@ describe("Navigation", () => {
 });
 
 describe("Song creation", () => {
-  let rendered: RenderResult;
-  let user: UserEvent;
-
   beforeEach(async () => {
-    user = userEvent.setup();
-    rendered = render(<Editor />);
-
     const newSheetMenuButton = rendered.getByRole("button", { name: "New Sheet" });
     await act(() => user.click(newSheetMenuButton));
 
@@ -124,8 +123,6 @@ describe("Song creation", () => {
     });
   });
 
-  afterEach(cleanup);
-
   it("Changes note octave", async () => {
     await act(() => user.keyboard("{ArrowUp}{ArrowUp}{ArrowUp}{ArrowDown}"));
 
@@ -140,7 +137,7 @@ describe("Song creation", () => {
     expect(octaveInput).toHaveValue("WHOLE");
   });
 
-  it("Adds notes", async () => {
+  it("Adds and removes notes", async () => {
     await act(() => user.keyboard("{ArrowLeft}{ArrowLeft}")); // select LONG duration
     await act(() => user.keyboard("{ArrowUp}")); // select first octave
     await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
@@ -189,17 +186,47 @@ describe("Song creation", () => {
     expect(rendered.getAllByText("E3")).toHaveLength(4);
     expect(rendered.queryByText("F3")).not.toBeInTheDocument();
   });
+});
 
-  it("Plays song", async () => {
-    await addNotesToFirstBar();
+describe("Song playback", () => {
+  beforeEach(async () => {
     (mockAudioContext.createGain as jest.Mock).mockImplementation(() => mockGainNode);
     (mockAudioContext.createOscillator as jest.Mock).mockImplementation(() => mockOscillatorNode);
+    (HTMLDivElement.prototype.animate as jest.Mock).mockImplementation(() => mockAnimation);
+    animateMock.mockClear();
 
-    const editorMenuButton = rendered.getByRole("button", { name: "Open Editor Menu" });
-    await act(() => user.click(editorMenuButton));
+    const newSheetMenuButton = rendered.getByRole("button", { name: "New Sheet" });
+    await act(() => user.click(newSheetMenuButton));
 
+    let addButton = rendered.getByRole("button", { name: "Add" });
+
+    await act(async () => {
+      await user.keyboard("3");
+      await user.click(addButton);
+    });
+
+    const newBarMenuButton = rendered.getByRole("button", { name: "New Bar" });
+    await act(() => user.click(newBarMenuButton));
+
+    addButton = rendered.getByRole("button", { name: "Add" });
+
+    await act(async () => {
+      await user.keyboard("4{Tab}{Tab}4{Tab}{Tab}60");
+      await user.click(addButton);
+    });
+
+    await addNotesToFirstBar();
+  });
+
+  it("Plays song", async () => {
     const playButton = rendered.getByRole("button", { name: "Play" });
     await act(() => user.click(playButton));
+
+    expect(animateMock).toHaveBeenCalledTimes(1);
+    expect(animateMock).toHaveBeenCalledWith([{ left: "0%" }, { left: "100%" }], {
+      duration: 4 * 1000,
+      easing: "linear",
+    });
 
     expect(mockAudioContext.createGain).toHaveBeenCalledTimes(13);
     expect(mockAudioContext.createOscillator).toHaveBeenCalledTimes(13);
@@ -207,37 +234,69 @@ describe("Song creation", () => {
     expect(mockOscillatorNode.start).toHaveBeenCalledTimes(13);
   });
 
-  async function addNotesToFirstBar() {
-    await act(() => user.keyboard("{ArrowLeft}{ArrowLeft}")); // select LONG duration
-    await act(() => user.keyboard("{ArrowUp}")); // select first octave
-    await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
+  it("Pauses song", async () => {
+    const playButton = rendered.getByRole("button", { name: "Play" });
+    await act(() => user.click(playButton));
 
-    await act(() => user.keyboard("{Control>}{ArrowDown}{/Control}{Shift>}{ArrowLeft}{/Shift}")); // move cursor to start of next track
-    await act(() => user.keyboard("{ArrowUp}")); // select second octave
-    await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
+    const pauseButton = rendered.getByRole("button", { name: "Pause" });
+    await act(() => user.click(pauseButton));
 
-    await act(() => user.keyboard("{Control>}{ArrowDown}{/Control}{Shift>}{ArrowLeft}{/Shift}")); // move cursor to start of next track
-    await act(() => user.keyboard("{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}")); // select EIGTH_TRIPLET duration
-    await act(() => user.keyboard("{Shift>}G{/Shift}")); // add note G#
-    await act(() => user.keyboard("{ArrowUp}")); // raise octave
-    await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
-    await act(() => user.keyboard("e")); // add note E
-    await act(() => user.keyboard("{ArrowDown}")); // lower octave
-    await act(() => user.keyboard("{Shift>}G{/Shift}")); // add note G#
-    await act(() => user.keyboard("{ArrowUp}")); // raise octave
-    await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
-    await act(() => user.keyboard("e")); // add note E
-    await act(() => user.keyboard("{ArrowDown}")); // lower octave
-    await act(() => user.keyboard("{Shift>}G{/Shift}")); // add note G#
-    await act(() => user.keyboard("{ArrowUp}")); // raise octave
-    await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
-    await act(() => user.keyboard("E")); // add note E
-    await act(() => user.keyboard("{ArrowDown}")); // lower octave
-    await act(() => user.keyboard("{Shift>}G{/Shift}")); // add note G#
-    await act(() => user.keyboard("{ArrowUp}")); // raise octave
-    await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
-    await act(() => user.keyboard("e")); // add note E
+    // force the pause to be at the middle of the bar
+    act(() => {
+      usePlayerStore.setState(state => ({
+        ...state,
+        cursor: {
+          ...state.cursor,
+          position: 1 / 2,
+        },
+      }));
+    });
 
-    await act(() => user.keyboard("{Control>}{Shift>}{ArrowLeft}{/Shift}{/Control}")); // move cursor to start
-  }
+    expect(animateMock).toHaveBeenCalledTimes(1);
+    expect(animateMock).toHaveBeenCalledWith([{ left: "0%" }, { left: "100%" }], {
+      duration: 4 * 1000,
+      easing: "linear",
+    });
+
+    expect(mockAnimation.cancel).toHaveBeenCalledTimes(1);
+    expect(mockGainNode.disconnect).toHaveBeenCalledTimes(13);
+    expect(mockOscillatorNode.disconnect).toHaveBeenCalledTimes(13);
+
+    const cursor = rendered.getByRole("presentation", { name: "Cursor" });
+    expect(cursor.style.left).toBe("calc(50% - 4px)");
+  });
 });
+
+async function addNotesToFirstBar() {
+  await act(() => user.keyboard("{ArrowLeft}{ArrowLeft}")); // select LONG duration
+  await act(() => user.keyboard("{ArrowUp}")); // select first octave
+  await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
+
+  await act(() => user.keyboard("{Control>}{ArrowDown}{/Control}{Shift>}{ArrowLeft}{/Shift}")); // move cursor to start of next track
+  await act(() => user.keyboard("{ArrowUp}")); // select second octave
+  await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
+
+  await act(() => user.keyboard("{Control>}{ArrowDown}{/Control}{Shift>}{ArrowLeft}{/Shift}")); // move cursor to start of next track
+  await act(() => user.keyboard("{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}")); // select EIGTH_TRIPLET duration
+  await act(() => user.keyboard("{Shift>}G{/Shift}")); // add note G#
+  await act(() => user.keyboard("{ArrowUp}")); // raise octave
+  await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
+  await act(() => user.keyboard("e")); // add note E
+  await act(() => user.keyboard("{ArrowDown}")); // lower octave
+  await act(() => user.keyboard("{Shift>}G{/Shift}")); // add note G#
+  await act(() => user.keyboard("{ArrowUp}")); // raise octave
+  await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
+  await act(() => user.keyboard("e")); // add note E
+  await act(() => user.keyboard("{ArrowDown}")); // lower octave
+  await act(() => user.keyboard("{Shift>}G{/Shift}")); // add note G#
+  await act(() => user.keyboard("{ArrowUp}")); // raise octave
+  await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
+  await act(() => user.keyboard("E")); // add note E
+  await act(() => user.keyboard("{ArrowDown}")); // lower octave
+  await act(() => user.keyboard("{Shift>}G{/Shift}")); // add note G#
+  await act(() => user.keyboard("{ArrowUp}")); // raise octave
+  await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
+  await act(() => user.keyboard("e")); // add note E
+
+  await act(() => user.keyboard("{Control>}{Shift>}{ArrowLeft}{/Shift}{/Control}")); // move cursor to start
+}

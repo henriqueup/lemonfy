@@ -275,6 +275,7 @@ describe("Wind up", () => {
 
     expect(usePlayerStore.getState()).toMatchObject(INITIAL_STATE);
   });
+
   it.each([
     [false, false],
     [false, true],
@@ -288,6 +289,7 @@ describe("Wind up", () => {
 
     expect(usePlayerStore.getState()).toMatchObject(INITIAL_STATE);
   });
+
   it("Winds up to start of next Bar while not playing", () => {
     const sheet = getMockSheetWithBars();
     useEditorStore.setState({
@@ -300,6 +302,7 @@ describe("Wind up", () => {
     expect(usePlayerStore.getState()).toMatchObject({ ...INITIAL_STATE, cursor: { barIndex: 2, position: 0 } });
     expect(useEditorStore.getState().cursor).toMatchObject({ trackIndex: 0, barIndex: 2, position: 0 });
   });
+
   it("Winds up to start of next Bar while playing", () => {
     const sheet = getMockSheetWithBars();
     useEditorStore.setState({
@@ -316,6 +319,7 @@ describe("Wind up", () => {
     expect(usePlayerStore.getState()).toMatchObject({ ...INITIAL_STATE, cursor: { barIndex: 2, position: 0 } });
     expect(useEditorStore.getState().cursor).toMatchObject({ trackIndex: 0, barIndex: 2, position: 0 });
   });
+
   it.each([true, false])("Winds up to start of last Bar, isPlaying %p", isPlaying => {
     const sheet = getMockSheetWithBars();
     useEditorStore.setState({
@@ -332,6 +336,7 @@ describe("Wind up", () => {
     expect(usePlayerStore.getState()).toMatchObject({ ...INITIAL_STATE, cursor: { barIndex: 2, position: 0 } });
     expect(useEditorStore.getState().cursor).toMatchObject({ trackIndex: 0, barIndex: 2, position: 0 });
   });
+
   it("Rewinds to start of previous Bar while not playing", () => {
     const sheet = getMockSheetWithBars();
     useEditorStore.setState({
@@ -344,6 +349,7 @@ describe("Wind up", () => {
     expect(usePlayerStore.getState()).toMatchObject({ ...INITIAL_STATE, cursor: { barIndex: 0, position: 0 } });
     expect(useEditorStore.getState().cursor).toMatchObject({ trackIndex: 0, barIndex: 0, position: 0 });
   });
+
   it("Rewinds to start of previous Bar while playing", () => {
     const sheet = getMockSheetWithBars();
     useEditorStore.setState({
@@ -360,6 +366,7 @@ describe("Wind up", () => {
     expect(usePlayerStore.getState()).toMatchObject({ ...INITIAL_STATE, cursor: { barIndex: 1, position: 0 } });
     expect(useEditorStore.getState().cursor).toMatchObject({ trackIndex: 0, barIndex: 1, position: 0 });
   });
+
   it("Rewinds to start of current Bar while not playing", () => {
     const sheet = getMockSheetWithBars();
     useEditorStore.setState({
@@ -372,6 +379,7 @@ describe("Wind up", () => {
     expect(usePlayerStore.getState()).toMatchObject({ ...INITIAL_STATE, cursor: { barIndex: 1, position: 0 } });
     expect(useEditorStore.getState().cursor).toMatchObject({ trackIndex: 0, barIndex: 1, position: 0 });
   });
+
   it("Rewinds to start of current Bar while playing", () => {
     const sheet = getMockSheetWithBars();
     useEditorStore.setState({
@@ -388,6 +396,7 @@ describe("Wind up", () => {
     expect(usePlayerStore.getState()).toMatchObject({ ...INITIAL_STATE, cursor: { barIndex: 2, position: 0 } });
     expect(useEditorStore.getState().cursor).toMatchObject({ trackIndex: 0, barIndex: 2, position: 0 });
   });
+
   it.each([true, false])("Rewinds to start of first Bar, isPlaying %p", isPlaying => {
     const sheet = getMockSheetWithBars();
     useEditorStore.setState({

@@ -39,6 +39,8 @@ const Cursor: FunctionComponent<Props> = ({ bar, isPlaying, isPaused = false, po
 
   return (
     <div
+      role="presentation"
+      aria-label="Cursor"
       style={{
         left: `calc(${(position * 100) / bar.capacity}% - 4px)`,
         animation: isPlaying ? undefined : `blink ${SECONDS_PER_MINUTE / bar.tempo}s step-start infinite`,
