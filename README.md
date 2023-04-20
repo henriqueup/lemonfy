@@ -25,11 +25,11 @@ The Lemonfy Project inspired by songsterr app (https://www.songsterr.com/)
 - <s>Use form with zod</s>
   - <s>Complete other forms</s>
   - <s>Only error when dirty</s>
+- Add backend and DB integration
+- Add player pages
 - Add modal component
 - Enable Bar edition
 - Add Bar copy/paste
 - Add mouse support
 - Add automatic save
-- Add backend and DB integration
-- Add player pages
 - Add component animations
