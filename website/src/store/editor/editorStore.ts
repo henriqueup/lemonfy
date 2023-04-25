@@ -1,8 +1,10 @@
 import { create } from "zustand";
+import { devtools } from "zustand/middleware";
+
 import { type NoteDurationName, type Note } from "@entities/note";
 import { type Octave } from "@entities/octave";
 import { type Sheet } from "@entities/sheet";
-import { devtools } from "zustand/middleware";
+import { type Song } from "@entities/song";
 
 export interface Cursor {
   trackIndex: number;
@@ -11,7 +13,7 @@ export interface Cursor {
 }
 
 export interface EditorStore {
-  sheets: Sheet[];
+  song: Song | undefined;
   currentSheet: Sheet | undefined;
   selectedOctave: Octave;
   selectedNoteDuration: NoteDurationName;
@@ -20,7 +22,7 @@ export interface EditorStore {
 }
 
 export const INITIAL_STATE: EditorStore = {
-  sheets: [],
+  song: undefined,
   currentSheet: undefined,
   selectedOctave: 0,
   selectedNoteDuration: "LONG",
@@ -32,4 +34,6 @@ export const INITIAL_STATE: EditorStore = {
   },
 };
 
-export const useEditorStore = create<EditorStore>()(devtools(() => INITIAL_STATE));
+export const useEditorStore = create<EditorStore>()(
+  devtools(() => INITIAL_STATE),
+);
