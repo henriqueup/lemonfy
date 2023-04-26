@@ -1,48 +1,54 @@
 import { type NextPage } from "next";
 import { useState } from "react";
+
 import { Plus } from "../../icons";
-import { type Sheet } from "@entities/sheet";
 import { useEditorStore } from "@store/editor";
 import { classNames } from "../../styles/utils";
 import EditorMenu from "./EditorMenu";
-import SheetEditor from "./SheetEditor";
-import SheetMenu from "./SheetMenu";
-import { addSheet, loadSheet } from "@store/editor/sheetActions";
+import { addSong, loadSong } from "@store/editor/songActions";
+import SongMenu from "src/pages/editor/SongMenu";
+import { type Song as SongEntity } from "@entities/song";
+import Song from "./Song";
 
 const Editor: NextPage = () => {
-  const currentSheet = useEditorStore(state => state.currentSheet);
-  const [sheetMenuIsOpen, setSheetMenuIsOpen] = useState(false);
+  const song = useEditorStore(state => state.song);
+  const [songMenuIsOpen, setSongMenuIsOpen] = useState(false);
 
-  const handleLoadSheet = (sheetFromStorage: Sheet) => {
-    loadSheet(sheetFromStorage);
+  const handleLoadSong = (songFromStorage: SongEntity) => {
+    loadSong(songFromStorage);
   };
 
-  const handleAddSheet = (trackCount: number) => {
-    addSheet(trackCount);
-    setSheetMenuIsOpen(false);
+  const handleAddSong = (name: string, artist: string) => {
+    addSong(name, artist);
+    setSongMenuIsOpen(false);
   };
 
   return (
     <div className="h-screen bg-stone-300 text-stone-600 dark:bg-stone-900 dark:text-stone-400">
-      {currentSheet === undefined ? (
+      {song === undefined ? (
         <div className="flex justify-center">
           <div
             role="button"
-            aria-label="New Sheet"
+            aria-label="New Song"
             className={classNames(
               "mt-4 flex cursor-pointer content-center justify-center",
               "rounded-full border border-solid border-stone-600 p-4 dark:border-stone-400",
             )}
-            onClick={() => setSheetMenuIsOpen(true)}
+            onClick={() => setSongMenuIsOpen(true)}
           >
             <Plus />
           </div>
         </div>
       ) : (
-        <SheetEditor />
+        <Song />
       )}
-      <EditorMenu handleLoad={handleLoadSheet} />
-      {sheetMenuIsOpen ? <SheetMenu onAdd={handleAddSheet} onClose={() => setSheetMenuIsOpen(false)} /> : null}
+      <EditorMenu handleLoad={handleLoadSong} />
+      {songMenuIsOpen ? (
+        <SongMenu
+          onAdd={handleAddSong}
+          onClose={() => setSongMenuIsOpen(false)}
+        />
+      ) : null}
     </div>
   );
 };

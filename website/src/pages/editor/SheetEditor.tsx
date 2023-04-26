@@ -13,16 +13,20 @@ const SheetEditor: FunctionComponent = () => {
 
   if (bars === undefined) return null;
 
-  const handleAddBar = (beatCount: number, dibobinador: number, tempo: number) => {
+  const handleAddBar = (
+    beatCount: number,
+    dibobinador: number,
+    tempo: number,
+  ) => {
     addBar(beatCount, dibobinador, tempo);
     setBarMenuIsOpen(false);
   };
 
   // console.log(bars);
   return (
-    <div className="h-screen w-screen bg-inherit">
+    <div className="h-full w-full bg-inherit">
       <PlaybackMenu />
-      <div className="h-3/5 bg-inherit p-4 pb-2 text-stone-600 dark:text-stone-400">
+      <div className="h-3/5 bg-inherit p-4 pt-0 pb-2 text-stone-600 dark:text-stone-400">
         <fieldset className="h-full rounded border border-solid border-stone-600 bg-inherit p-1 dark:border-stone-400">
           <legend className="ml-3">Bars</legend>
           <div className="mt-2 grid max-h-full grid-cols-2 gap-2 overflow-y-auto bg-inherit">
@@ -43,7 +47,9 @@ const SheetEditor: FunctionComponent = () => {
         </fieldset>
       </div>
       <NoteMenu />
-      {barMenuIsOpen ? <BarMenu onAdd={handleAddBar} onClose={() => setBarMenuIsOpen(false)} /> : null}
+      {barMenuIsOpen ? (
+        <BarMenu onAdd={handleAddBar} onClose={() => setBarMenuIsOpen(false)} />
+      ) : null}
     </div>
   );
 };

@@ -1,22 +1,23 @@
 import { useState, type FunctionComponent, useEffect } from "react";
 import { Button, ButtonContainer, CollapsableSideMenu } from "src/components";
-import { type Sheet } from "@entities/sheet";
 import { useEditorStore } from "@store/editor";
 import { Moon, Sun } from "src/icons";
+import { type Song } from "@entities/song";
 
 type Props = {
-  handleLoad: (sheetFromStorage: Sheet) => void;
+  handleLoad: (songFromStorage: Song) => void;
 };
 
 const EditorMenu: FunctionComponent<Props> = ({ handleLoad }) => {
-  const currentSheet = useEditorStore(state => state.currentSheet);
+  const song = useEditorStore(state => state.song);
   const [isOpen, setIsOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
     if (
       localStorage.theme === "dark" ||
-      (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches)
+      (!("theme" in localStorage) &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches)
     ) {
       document.documentElement.classList.add("dark");
       setIsDarkMode(true);
@@ -41,19 +42,23 @@ const EditorMenu: FunctionComponent<Props> = ({ handleLoad }) => {
   const handleChangeIsOpen = (value: boolean) => setIsOpen(value);
 
   const handleOwnLoad = () => {
-    const storageSheetString = localStorage.getItem("sheet");
-    if (storageSheetString === null) return;
+    const storageSongString = localStorage.getItem("song");
+    if (storageSongString === null) return;
 
-    const sheetFromStorage = JSON.parse(storageSheetString) as Sheet;
-    handleLoad(sheetFromStorage);
+    const songFromStorage = JSON.parse(storageSongString) as Song;
+    handleLoad(songFromStorage);
   };
 
   const handleSave = () => {
-    localStorage.setItem("sheet", JSON.stringify(currentSheet));
+    localStorage.setItem("song", JSON.stringify(song));
   };
 
   return (
-    <CollapsableSideMenu isOpen={isOpen} onChangeIsOpen={handleChangeIsOpen} label="Editor Menu">
+    <CollapsableSideMenu
+      isOpen={isOpen}
+      onChangeIsOpen={handleChangeIsOpen}
+      label="Editor Menu"
+    >
       <div className="flex h-full flex-col">
         <div className="mt-2 mb-2 ml-auto mr-auto flex w-full justify-center">
           <h3 className="m-auto">Editor Menu</h3>
@@ -61,14 +66,22 @@ const EditorMenu: FunctionComponent<Props> = ({ handleLoad }) => {
         <Button
           variant="primary"
           text="Save"
-          disabled={currentSheet === undefined}
+          disabled={song === undefined}
           onClick={handleSave}
           className="mt-6 w-2/5 self-center"
         />
-        <Button text="Load" onClick={handleOwnLoad} className="mt-6 w-2/5 self-center" />
+        <Button
+          text="Load"
+          onClick={handleOwnLoad}
+          className="mt-6 w-2/5 self-center"
+        />
         <div className="flex h-full items-end justify-end">
           <ButtonContainer className="m-3" onClick={handleClickDarkMode}>
-            {isDarkMode ? <Sun width={24} height={24} /> : <Moon width={24} height={24} />}
+            {isDarkMode ? (
+              <Sun width={24} height={24} />
+            ) : (
+              <Moon width={24} height={24} />
+            )}
           </ButtonContainer>
         </div>
       </div>

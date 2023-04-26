@@ -1,26 +1,19 @@
 import { createNote, type Note } from "@entities/note";
 import { type Octave } from "@entities/octave";
 import { createPitch, type PitchName } from "@entities/pitch";
-import { default as SheetModule, type Sheet } from "@entities/sheet";
+import SheetModule from "@entities/sheet";
 import { useEditorStore } from "./editorStore";
-
-export const loadSheet = (sheet: Sheet) => useEditorStore.setState({ currentSheet: sheet });
-
-export const addSheet = (trackCount: number) =>
-  useEditorStore.setState(state => {
-    const newSheet = SheetModule.createSheet(trackCount);
-
-    return {
-      sheets: [...state.sheets, newSheet],
-      currentSheet: newSheet,
-    };
-  });
 
 export const addBar = (beatCount: number, dibobinador: number, tempo: number) =>
   useEditorStore.setState(state => {
     if (state.currentSheet === undefined) return {};
 
-    SheetModule.addBarToSheet(state.currentSheet, beatCount, dibobinador, tempo);
+    SheetModule.addBarToSheet(
+      state.currentSheet,
+      beatCount,
+      dibobinador,
+      tempo,
+    );
 
     return { currentSheet: state.currentSheet };
   });
@@ -40,10 +33,19 @@ export const addCopyOfCurrentBar = () =>
       state.cursor.barIndex,
     );
 
-    return { currentSheet: { ...state.currentSheet, bars: [...state.currentSheet.bars] } };
+    return {
+      currentSheet: {
+        ...state.currentSheet,
+        bars: [...state.currentSheet.bars],
+      },
+    };
   });
 
-export const addNote = (duration: number, pitchName: PitchName, octave: Octave) =>
+export const addNote = (
+  duration: number,
+  pitchName: PitchName,
+  octave: Octave,
+) =>
   useEditorStore.setState(state => {
     if (state.currentSheet === undefined) return {};
 
@@ -54,34 +56,71 @@ export const addNote = (duration: number, pitchName: PitchName, octave: Octave) 
     const pitch = createPitch(pitchName, octave);
     const noteToAdd = createNote(duration, startOfNoteToAdd, pitch);
 
-    SheetModule.addNoteToSheet(state.currentSheet, state.cursor.trackIndex, noteToAdd);
-    SheetModule.fillBarTracksInSheet(state.currentSheet, state.cursor.trackIndex);
+    SheetModule.addNoteToSheet(
+      state.currentSheet,
+      state.cursor.trackIndex,
+      noteToAdd,
+    );
+    SheetModule.fillBarTracksInSheet(
+      state.currentSheet,
+      state.cursor.trackIndex,
+    );
 
     const endOfAddedNote = state.cursor.position + noteToAdd.duration;
     return {
-      currentSheet: { ...state.currentSheet, bars: [...state.currentSheet.bars] },
-      cursor: { ...state.cursor, position: Math.min(endOfAddedNote, barWithCursor.capacity) },
+      currentSheet: {
+        ...state.currentSheet,
+        bars: [...state.currentSheet.bars],
+      },
+      cursor: {
+        ...state.cursor,
+        position: Math.min(endOfAddedNote, barWithCursor.capacity),
+      },
     };
   });
 
-export const addNoteFromDrop = (barIndex: number, trackIndex: number, note: Note) =>
+export const addNoteFromDrop = (
+  barIndex: number,
+  trackIndex: number,
+  note: Note,
+) =>
   useEditorStore.setState(state => {
     if (state.currentSheet === undefined) return {};
 
     SheetModule.addNoteToSheet(state.currentSheet, trackIndex, note);
-    SheetModule.fillBarTracksInSheet(state.currentSheet, state.cursor.trackIndex);
+    SheetModule.fillBarTracksInSheet(
+      state.currentSheet,
+      state.cursor.trackIndex,
+    );
 
-    return { currentSheet: { ...state.currentSheet, bars: [...state.currentSheet.bars] } };
+    return {
+      currentSheet: {
+        ...state.currentSheet,
+        bars: [...state.currentSheet.bars],
+      },
+    };
   });
 
 export const removeNoteFromBar = (noteToRemove: Note) =>
   useEditorStore.setState(state => {
     if (state.currentSheet === undefined) return {};
 
-    SheetModule.removeNotesFromSheet(state.currentSheet, state.cursor.trackIndex, [noteToRemove]);
-    SheetModule.fillBarTracksInSheet(state.currentSheet, state.cursor.trackIndex);
+    SheetModule.removeNotesFromSheet(
+      state.currentSheet,
+      state.cursor.trackIndex,
+      [noteToRemove],
+    );
+    SheetModule.fillBarTracksInSheet(
+      state.currentSheet,
+      state.cursor.trackIndex,
+    );
 
-    return { currentSheet: { ...state.currentSheet, bars: [...state.currentSheet.bars] } };
+    return {
+      currentSheet: {
+        ...state.currentSheet,
+        bars: [...state.currentSheet.bars],
+      },
+    };
   });
 
 export const removeNextNoteFromBar = (lookForward = true) =>
@@ -99,29 +138,49 @@ export const removeNextNoteFromBar = (lookForward = true) =>
     );
     if (noteToRemove === null) return {};
 
-    SheetModule.removeNotesFromSheet(state.currentSheet, state.cursor.trackIndex, [noteToRemove]);
-    SheetModule.fillBarTracksInSheet(state.currentSheet, state.cursor.trackIndex);
+    SheetModule.removeNotesFromSheet(
+      state.currentSheet,
+      state.cursor.trackIndex,
+      [noteToRemove],
+    );
+    SheetModule.fillBarTracksInSheet(
+      state.currentSheet,
+      state.cursor.trackIndex,
+    );
 
     if (lookForward) {
       return {
-        currentSheet: { ...state.currentSheet, bars: [...state.currentSheet.bars] },
+        currentSheet: {
+          ...state.currentSheet,
+          bars: [...state.currentSheet.bars],
+        },
       };
     }
 
     if (state.cursor.position > 0) {
       return {
-        currentSheet: { ...state.currentSheet, bars: [...state.currentSheet.bars] },
-        cursor: { ...state.cursor, position: state.cursor.position - noteToRemove.duration },
+        currentSheet: {
+          ...state.currentSheet,
+          bars: [...state.currentSheet.bars],
+        },
+        cursor: {
+          ...state.cursor,
+          position: state.cursor.position - noteToRemove.duration,
+        },
       };
     }
 
     const newBarIndex = state.cursor.barIndex - 1;
     const previousBar = state.currentSheet.bars[newBarIndex];
 
-    if (previousBar === undefined) throw new Error("There should be a previous bar.");
+    if (previousBar === undefined)
+      throw new Error("There should be a previous bar.");
 
     return {
-      currentSheet: { ...state.currentSheet, bars: [...state.currentSheet.bars] },
+      currentSheet: {
+        ...state.currentSheet,
+        bars: [...state.currentSheet.bars],
+      },
       cursor: {
         ...state.cursor,
         barIndex: newBarIndex,
@@ -136,5 +195,10 @@ export const removeBarFromSheetByIndex = (barIndex: number) =>
 
     SheetModule.removeBarInSheetByIndex(state.currentSheet, barIndex);
 
-    return { currentSheet: { ...state.currentSheet, bars: [...state.currentSheet.bars] } };
+    return {
+      currentSheet: {
+        ...state.currentSheet,
+        bars: [...state.currentSheet.bars],
+      },
+    };
   });

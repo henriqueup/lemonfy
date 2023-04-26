@@ -25,7 +25,8 @@ The Lemonfy Project inspired by songsterr app (https://www.songsterr.com/)
 - <s>Use form with zod</s>
   - <s>Complete other forms</s>
   - <s>Only error when dirty</s>
-- Add Song entity
+- <s>Add Song entity</s>
+  - Adjust tests
 - Add backend and DB integration
 - Add player pages
 - Add modal component
@@ -34,3 +35,4 @@ The Lemonfy Project inspired by songsterr app (https://www.songsterr.com/)
 - Add mouse support
 - Add automatic save
 - Add component animations
+- Add multiple Sheet support
