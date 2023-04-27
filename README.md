@@ -26,7 +26,7 @@ The Lemonfy Project inspired by songsterr app (https://www.songsterr.com/)
   - <s>Complete other forms</s>
   - <s>Only error when dirty</s>
 - <s>Add Song entity</s>
-  - Adjust tests
+  - <s>Adjust tests</s>
 - Add backend and DB integration
 - Add player pages
 - Add modal component
