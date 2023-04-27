@@ -5,7 +5,7 @@ import { Plus } from "../../icons";
 import { useEditorStore } from "@store/editor";
 import { classNames } from "../../styles/utils";
 import EditorMenu from "./EditorMenu";
-import { addSong, loadSong } from "@store/editor/songActions";
+import { setSong, loadSong } from "@store/editor/songActions";
 import SongMenu from "src/pages/editor/SongMenu";
 import { type Song as SongEntity } from "@entities/song";
 import Song from "./Song";
@@ -19,7 +19,7 @@ const Editor: NextPage = () => {
   };
 
   const handleAddSong = (name: string, artist: string) => {
-    addSong(name, artist);
+    setSong(name, artist);
     setSongMenuIsOpen(false);
   };
 

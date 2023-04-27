@@ -1,7 +1,18 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { AnimationMock, AudioContextMock, GainNodeMock, OscillatorNodeMock, animateMock } from "@mocks/window";
+import {
+  AnimationMock,
+  AudioContextMock,
+  GainNodeMock,
+  OscillatorNodeMock,
+  animateMock,
+} from "@mocks/window";
 import { usePlayerStore } from "@store/player";
-import { render, type RenderResult, cleanup, act } from "@testing-library/react";
+import {
+  render,
+  type RenderResult,
+  cleanup,
+  act,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { UserEvent } from "@testing-library/user-event/dist/types/setup/setup";
 import Editor from "src/pages/editor";
@@ -38,62 +49,81 @@ describe("Navigation", () => {
     const buttons = rendered.getAllByRole("button");
 
     expect(buttons).toHaveLength(2);
-    const editorMenuButton = rendered.getByRole("button", { name: "Open Editor Menu" });
+    const editorMenuButton = rendered.getByRole("button", {
+      name: "Open Editor Menu",
+    });
 
     await act(() => user.click(editorMenuButton));
 
-    expect(rendered.getByRole("heading", { name: "Editor Menu" })).toBeInTheDocument();
+    expect(
+      rendered.getByRole("heading", { name: "Editor Menu" }),
+    ).toBeInTheDocument();
     expect(rendered.getByRole("button", { name: "Save" })).toBeInTheDocument();
     expect(rendered.getByRole("button", { name: "Load" })).toBeInTheDocument();
   });
 
+  it("Opens new song menu on click", async () => {
+    const newSongMenuButton = rendered.getByRole("button", {
+      name: "New Song",
+    });
+    await act(() => user.click(newSongMenuButton));
+
+    expect(
+      rendered.getByRole("heading", { name: "New Song" }),
+    ).toBeInTheDocument();
+    expect(rendered.getByPlaceholderText("Name")).toBeInTheDocument();
+    expect(rendered.getByPlaceholderText("Artist")).toBeInTheDocument();
+    expect(rendered.getByRole("button", { name: "Add" })).toBeInTheDocument();
+  });
+
+  it("Creates new song", async () => {
+    await createSong();
+
+    expect(
+      rendered.getByRole("group", { name: "Test song - Me" }),
+    ).toBeInTheDocument();
+    expect(
+      rendered.getByRole("button", { name: "New Sheet" }),
+    ).toBeInTheDocument();
+  });
+
   it("Opens new sheet menu on click", async () => {
-    const newSheetMenuButton = rendered.getByRole("button", { name: "New Sheet" });
+    await createSong();
+
+    const newSheetMenuButton = rendered.getByRole("button", {
+      name: "New Sheet",
+    });
     await act(() => user.click(newSheetMenuButton));
 
-    expect(rendered.getByRole("heading", { name: "New Sheet" })).toBeInTheDocument();
-    expect(rendered.getByPlaceholderText("Number of Tracks")).toBeInTheDocument();
+    expect(
+      rendered.getByRole("heading", { name: "New Sheet" }),
+    ).toBeInTheDocument();
+    expect(
+      rendered.getByPlaceholderText("Number of Tracks"),
+    ).toBeInTheDocument();
     expect(rendered.getByRole("button", { name: "Add" })).toBeInTheDocument();
   });
 
   it("Creates new sheet", async () => {
-    const newSheetMenuButton = rendered.getByRole("button", { name: "New Sheet" });
-    await act(() => user.click(newSheetMenuButton));
-
-    const addButton = rendered.getByRole("button", { name: "Add" });
-
-    await act(async () => {
-      await user.keyboard("3");
-      await user.click(addButton);
-    });
+    await createSheet();
 
     expect(rendered.getByRole("group", { name: "Bars" })).toBeInTheDocument();
-    expect(rendered.getByRole("group", { name: "Note Selector" })).toBeInTheDocument();
-    expect(rendered.getByRole("button", { name: "New Bar" })).toBeInTheDocument();
-    expect(rendered.getByRole("combobox", { name: "Select Octave" })).toBeInTheDocument();
-    expect(rendered.getByRole("combobox", { name: "Select Duration" })).toBeInTheDocument();
+    expect(
+      rendered.getByRole("group", { name: "Note Selector" }),
+    ).toBeInTheDocument();
+    expect(
+      rendered.getByRole("button", { name: "New Bar" }),
+    ).toBeInTheDocument();
+    expect(
+      rendered.getByRole("combobox", { name: "Select Octave" }),
+    ).toBeInTheDocument();
+    expect(
+      rendered.getByRole("combobox", { name: "Select Duration" }),
+    ).toBeInTheDocument();
   });
 
   it("Creates new bar", async () => {
-    const newSheetMenuButton = rendered.getByRole("button", { name: "New Sheet" });
-    await act(() => user.click(newSheetMenuButton));
-
-    let addButton = rendered.getByRole("button", { name: "Add" });
-
-    await act(async () => {
-      await user.keyboard("3");
-      await user.click(addButton);
-    });
-
-    const newBarMenuButton = rendered.getByRole("button", { name: "New Bar" });
-    await act(() => user.click(newBarMenuButton));
-
-    addButton = rendered.getByRole("button", { name: "Add" });
-
-    await act(async () => {
-      await user.keyboard("4{Tab}{Tab}4{Tab}{Tab}60");
-      await user.click(addButton);
-    });
+    await createBar();
 
     expect(rendered.getByText("4/4")).toBeInTheDocument();
     expect(rendered.getByText("60")).toBeInTheDocument();
@@ -102,25 +132,7 @@ describe("Navigation", () => {
 
 describe("Song creation", () => {
   beforeEach(async () => {
-    const newSheetMenuButton = rendered.getByRole("button", { name: "New Sheet" });
-    await act(() => user.click(newSheetMenuButton));
-
-    let addButton = rendered.getByRole("button", { name: "Add" });
-
-    await act(async () => {
-      await user.keyboard("3");
-      await user.click(addButton);
-    });
-
-    const newBarMenuButton = rendered.getByRole("button", { name: "New Bar" });
-    await act(() => user.click(newBarMenuButton));
-
-    addButton = rendered.getByRole("button", { name: "Add" });
-
-    await act(async () => {
-      await user.keyboard("4{Tab}{Tab}4{Tab}{Tab}60");
-      await user.click(addButton);
-    });
+    await createBar();
   });
 
   it("Changes note octave", async () => {
@@ -131,7 +143,9 @@ describe("Song creation", () => {
   });
 
   it("Changes note duration", async () => {
-    await act(() => user.keyboard("{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowRight}"));
+    await act(() =>
+      user.keyboard("{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowRight}"),
+    );
 
     const octaveInput = rendered.getByPlaceholderText("Duration");
     expect(octaveInput).toHaveValue("WHOLE");
@@ -144,14 +158,26 @@ describe("Song creation", () => {
 
     expect(rendered.getByText("C#1")).toBeInTheDocument();
 
-    await act(() => user.keyboard("{Control>}{ArrowDown}{/Control}{Shift>}{ArrowLeft}{/Shift}")); // move cursor to start of next track
+    await act(() =>
+      user.keyboard(
+        "{Control>}{ArrowDown}{/Control}{Shift>}{ArrowLeft}{/Shift}",
+      ),
+    ); // move cursor to start of next track
     await act(() => user.keyboard("{ArrowUp}")); // select second octave
     await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
 
     expect(rendered.getByText("C#2")).toBeInTheDocument();
 
-    await act(() => user.keyboard("{Control>}{ArrowDown}{/Control}{Shift>}{ArrowLeft}{/Shift}")); // move cursor to start of next track
-    await act(() => user.keyboard("{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}")); // select EIGTH_TRIPLET duration
+    await act(() =>
+      user.keyboard(
+        "{Control>}{ArrowDown}{/Control}{Shift>}{ArrowLeft}{/Shift}",
+      ),
+    ); // move cursor to start of next track
+    await act(() =>
+      user.keyboard(
+        "{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}",
+      ),
+    ); // select EIGTH_TRIPLET duration
     await act(() => user.keyboard("{Shift>}G{/Shift}")); // add note G#
     await act(() => user.keyboard("{ArrowUp}")); // raise octave
     await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
@@ -177,7 +203,9 @@ describe("Song creation", () => {
     expect(rendered.getAllByText("E3")).toHaveLength(3);
     expect(rendered.getAllByText("F3")).toHaveLength(1);
 
-    await act(() => user.keyboard("{Shift>}{ArrowLeft}{ArrowLeft}{ArrowLeft}{/Shift}")); // move cursor to end of wrong F note
+    await act(() =>
+      user.keyboard("{Shift>}{ArrowLeft}{ArrowLeft}{ArrowLeft}{/Shift}"),
+    ); // move cursor to end of wrong F note
     await act(() => user.keyboard("{Backspace}")); // delete previous note
     await act(() => user.keyboard("e")); // add note E
 
@@ -190,31 +218,18 @@ describe("Song creation", () => {
 
 describe("Song playback", () => {
   beforeEach(async () => {
-    (mockAudioContext.createGain as jest.Mock).mockImplementation(() => mockGainNode);
-    (mockAudioContext.createOscillator as jest.Mock).mockImplementation(() => mockOscillatorNode);
-    (HTMLDivElement.prototype.animate as jest.Mock).mockImplementation(() => mockAnimation);
+    (mockAudioContext.createGain as jest.Mock).mockImplementation(
+      () => mockGainNode,
+    );
+    (mockAudioContext.createOscillator as jest.Mock).mockImplementation(
+      () => mockOscillatorNode,
+    );
+    (HTMLDivElement.prototype.animate as jest.Mock).mockImplementation(
+      () => mockAnimation,
+    );
     animateMock.mockClear();
 
-    const newSheetMenuButton = rendered.getByRole("button", { name: "New Sheet" });
-    await act(() => user.click(newSheetMenuButton));
-
-    let addButton = rendered.getByRole("button", { name: "Add" });
-
-    await act(async () => {
-      await user.keyboard("3");
-      await user.click(addButton);
-    });
-
-    const newBarMenuButton = rendered.getByRole("button", { name: "New Bar" });
-    await act(() => user.click(newBarMenuButton));
-
-    addButton = rendered.getByRole("button", { name: "Add" });
-
-    await act(async () => {
-      await user.keyboard("4{Tab}{Tab}4{Tab}{Tab}60");
-      await user.click(addButton);
-    });
-
+    await createBar();
     await addNotesToFirstBar();
   });
 
@@ -223,10 +238,13 @@ describe("Song playback", () => {
     await act(() => user.click(playButton));
 
     expect(animateMock).toHaveBeenCalledTimes(1);
-    expect(animateMock).toHaveBeenCalledWith([{ left: "0%" }, { left: "100%" }], {
-      duration: 4 * 1000,
-      easing: "linear",
-    });
+    expect(animateMock).toHaveBeenCalledWith(
+      [{ left: "0%" }, { left: "100%" }],
+      {
+        duration: 4 * 1000,
+        easing: "linear",
+      },
+    );
 
     expect(mockAudioContext.createGain).toHaveBeenCalledTimes(13);
     expect(mockAudioContext.createOscillator).toHaveBeenCalledTimes(13);
@@ -253,10 +271,13 @@ describe("Song playback", () => {
     });
 
     expect(animateMock).toHaveBeenCalledTimes(1);
-    expect(animateMock).toHaveBeenCalledWith([{ left: "0%" }, { left: "100%" }], {
-      duration: 4 * 1000,
-      easing: "linear",
-    });
+    expect(animateMock).toHaveBeenCalledWith(
+      [{ left: "0%" }, { left: "100%" }],
+      {
+        duration: 4 * 1000,
+        easing: "linear",
+      },
+    );
 
     expect(mockAnimation.cancel).toHaveBeenCalledTimes(1);
     expect(mockGainNode.disconnect).toHaveBeenCalledTimes(13);
@@ -267,17 +288,69 @@ describe("Song playback", () => {
   });
 });
 
-async function addNotesToFirstBar() {
+const createSong = async () => {
+  const newSongMenuButton = rendered.getByRole("button", {
+    name: "New Song",
+  });
+  await act(() => user.click(newSongMenuButton));
+
+  const addButton = rendered.getByRole("button", { name: "Add" });
+
+  await act(async () => {
+    await user.keyboard("Test song{Tab}{Tab}Me");
+    await user.click(addButton);
+  });
+};
+
+const createSheet = async () => {
+  await createSong();
+
+  const newSheetMenuButton = rendered.getByRole("button", {
+    name: "New Sheet",
+  });
+  await act(() => user.click(newSheetMenuButton));
+
+  const addButton = rendered.getByRole("button", { name: "Add" });
+
+  await act(async () => {
+    await user.keyboard("3");
+    await user.click(addButton);
+  });
+};
+
+const createBar = async () => {
+  await createSheet();
+
+  const newBarMenuButton = rendered.getByRole("button", { name: "New Bar" });
+  await act(() => user.click(newBarMenuButton));
+
+  const addButton = rendered.getByRole("button", { name: "Add" });
+
+  await act(async () => {
+    await user.keyboard("4{Tab}{Tab}4{Tab}{Tab}60");
+    await user.click(addButton);
+  });
+};
+
+const addNotesToFirstBar = async () => {
   await act(() => user.keyboard("{ArrowLeft}{ArrowLeft}")); // select LONG duration
   await act(() => user.keyboard("{ArrowUp}")); // select first octave
   await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
 
-  await act(() => user.keyboard("{Control>}{ArrowDown}{/Control}{Shift>}{ArrowLeft}{/Shift}")); // move cursor to start of next track
+  await act(() =>
+    user.keyboard("{Control>}{ArrowDown}{/Control}{Shift>}{ArrowLeft}{/Shift}"),
+  ); // move cursor to start of next track
   await act(() => user.keyboard("{ArrowUp}")); // select second octave
   await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
 
-  await act(() => user.keyboard("{Control>}{ArrowDown}{/Control}{Shift>}{ArrowLeft}{/Shift}")); // move cursor to start of next track
-  await act(() => user.keyboard("{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}")); // select EIGTH_TRIPLET duration
+  await act(() =>
+    user.keyboard("{Control>}{ArrowDown}{/Control}{Shift>}{ArrowLeft}{/Shift}"),
+  ); // move cursor to start of next track
+  await act(() =>
+    user.keyboard(
+      "{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}",
+    ),
+  ); // select EIGTH_TRIPLET duration
   await act(() => user.keyboard("{Shift>}G{/Shift}")); // add note G#
   await act(() => user.keyboard("{ArrowUp}")); // raise octave
   await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
@@ -298,5 +371,7 @@ async function addNotesToFirstBar() {
   await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
   await act(() => user.keyboard("e")); // add note E
 
-  await act(() => user.keyboard("{Control>}{Shift>}{ArrowLeft}{/Shift}{/Control}")); // move cursor to start
-}
+  await act(() =>
+    user.keyboard("{Control>}{Shift>}{ArrowLeft}{/Shift}{/Control}"),
+  ); // move cursor to start
+};

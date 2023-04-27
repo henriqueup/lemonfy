@@ -5,7 +5,7 @@ import { useEditorStore } from "@store/editor/editorStore";
 export const loadSong = (song: Song) =>
   useEditorStore.setState({ song, currentSheet: song.sheets[0] });
 
-export const addSong = (name: string, artist: string) =>
+export const setSong = (name: string, artist: string) =>
   useEditorStore.setState({ song: SongModule.createSong(name, artist) });
 
 export const addSheet = (trackCount: number) =>
