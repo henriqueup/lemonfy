@@ -18,6 +18,7 @@
  */
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 
+import repositoryWrapper from "@repositories/wrapper";
 import { prisma } from "../db";
 
 type CreateContextOptions = Record<string, never>;
@@ -34,6 +35,7 @@ type CreateContextOptions = Record<string, never>;
 const createInnerTRPCContext = (_opts: CreateContextOptions) => {
   return {
     prisma,
+    repositoryWrapper,
   };
 };
 

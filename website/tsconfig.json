@@ -3,6 +3,8 @@
     "baseUrl": ".",
     "paths": {
       "@entities/*": ["src/server/entities/*"],
+      "@domains/*": ["src/server/domains/*"],
+      "@repositories/*": ["src/server/repositories/*"],
       "@store/*": ["src/store/*"],
       "@mocks/*": ["src/mocks/*"]
     },
@@ -22,6 +24,13 @@
     "incremental": true,
     "noUncheckedIndexedAccess": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.cjs", "**/*.mjs", "./jest-setup.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.cjs",
+    "**/*.mjs",
+    "./jest-setup.ts"
+  ],
   "exclude": ["node_modules"]
 }

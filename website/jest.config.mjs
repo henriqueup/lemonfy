@@ -21,6 +21,8 @@ const customJestConfig = {
   // For example:
   moduleNameMapper: {
     "@entities/(.*)$": "<rootDir>/src/server/entities/$1",
+    "@domains/(.*)$": "<rootDir>/src/server/domains/$1",
+    "@repositories/(.*)$": "<rootDir>/src/server/repositories/$1",
     "@store/(.*)$": "<rootDir>/src/store/$1",
     "@mocks/(.*)$": "<rootDir>/src/mocks/$1",
   },

@@ -28,6 +28,11 @@ The Lemonfy Project inspired by songsterr app (https://www.songsterr.com/)
 - <s>Add Song entity</s>
   - <s>Adjust tests</s>
 - Add backend and DB integration
+  - <s>Create basic architecture</s>
+    - Should domains be used?
+  - Create prisma models
+  - Create trpc routers
+  - Add trpc usage in frontend
 - Add player pages
 - Add modal component
 - Enable Bar edition
