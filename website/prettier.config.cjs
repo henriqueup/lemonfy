@@ -7,4 +7,12 @@ module.exports = {
   singleQuote: false,
   trailingComma: "all",
   arrowParens: "avoid",
+  overrides: [
+    {
+      files: "**/mocks/entities/*.ts",
+      options: {
+        printWidth: 120,
+      },
+    },
+  ],
 };

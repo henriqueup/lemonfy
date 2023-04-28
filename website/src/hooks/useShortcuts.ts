@@ -18,7 +18,7 @@ const SHORTCUTS = {
   d: "notes.add.D",
   SHIFT_D: "notes.add.D#",
   e: "notes.add.E",
-  F: "notes.add.F",
+  f: "notes.add.F",
   SHIFT_F: "notes.add.F#",
   g: "notes.add.G",
   SHIFT_G: "notes.add.G#",
@@ -33,7 +33,8 @@ const SHORTCUTS = {
 type ShortcutKey = keyof typeof SHORTCUTS;
 type ShortcutCode = (typeof SHORTCUTS)[ShortcutKey];
 
-const isShortcutKey = (key: string): key is ShortcutKey => SHORTCUTS.hasOwnProperty(key);
+const isShortcutKey = (key: string): key is ShortcutKey =>
+  SHORTCUTS.hasOwnProperty(key);
 
 type Shortcut = {
   callback: () => void;

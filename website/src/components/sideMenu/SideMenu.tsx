@@ -1,4 +1,9 @@
-import { type ReactNode, type FunctionComponent, useState, useCallback } from "react";
+import {
+  type ReactNode,
+  type FunctionComponent,
+  useState,
+  useCallback,
+} from "react";
 import { ClickAwayListener } from "src/components";
 import { X } from "src/icons";
 import { classNames } from "src/styles/utils";
@@ -45,8 +50,10 @@ const BaseSideMenu: FunctionComponent<Props> = ({
       <div
         aria-label={label}
         className={classNames(
-          "absolute top-0 h-screen rounded bg-inherit",
-          rightSide ? "right-0 border-l border-l-gray-400" : "left-0 border-r border-r-gray-400",
+          "absolute top-0 z-20 h-screen rounded bg-inherit",
+          rightSide
+            ? "right-0 border-l border-l-gray-400"
+            : "left-0 border-r border-r-gray-400",
           checkIsOpen() ? "w-1/4" : "border-r-0 border-l-0",
         )}
       >
@@ -82,15 +89,16 @@ interface CollapsableSideMenuProps {
   children: ReactNode;
 }
 
-export const CollapsableSideMenu: FunctionComponent<CollapsableSideMenuProps> = ({
-  rightSide,
-  isOpen,
-  onChangeIsOpen,
-  label,
-  children,
-}) => {
+export const CollapsableSideMenu: FunctionComponent<
+  CollapsableSideMenuProps
+> = ({ rightSide, isOpen, onChangeIsOpen, label, children }) => {
   return (
-    <BaseSideMenu label={label} isOpen={isOpen} onChangeIsOpen={onChangeIsOpen} rightSide={rightSide}>
+    <BaseSideMenu
+      label={label}
+      isOpen={isOpen}
+      onChangeIsOpen={onChangeIsOpen}
+      rightSide={rightSide}
+    >
       {children}
     </BaseSideMenu>
   );
@@ -103,9 +111,20 @@ interface FixedSideMenuProps {
   children: ReactNode;
 }
 
-export const FixedSideMenu: FunctionComponent<FixedSideMenuProps> = ({ rightSide, label, onClose, children }) => {
+export const FixedSideMenu: FunctionComponent<FixedSideMenuProps> = ({
+  rightSide,
+  label,
+  onClose,
+  children,
+}) => {
   return (
-    <BaseSideMenu label={label} rightSide={rightSide} isOpen collapsable={false} onChangeIsOpen={onClose}>
+    <BaseSideMenu
+      label={label}
+      rightSide={rightSide}
+      isOpen
+      collapsable={false}
+      onChangeIsOpen={onClose}
+    >
       {children}
     </BaseSideMenu>
   );

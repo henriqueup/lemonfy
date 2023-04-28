@@ -93,11 +93,11 @@ export const getCompleteMoonlightSonataMockSheet = (): Sheet => {
 
   bar3.tracks[0] = [
     createNoteMock(NOTE_DURATIONS["HALF"], 0, createPitch("A", 0), false, false, bar3),
-    createNoteMock(NOTE_DURATIONS["HALF"], 0, createPitch("F#", 0), false, false, bar3),
+    createNoteMock(NOTE_DURATIONS["HALF"], 1 / 2, createPitch("F#", 0), false, false, bar3),
   ];
   bar3.tracks[1] = [
     createNoteMock(NOTE_DURATIONS["HALF"], 0, createPitch("A", 1), false, false, bar3),
-    createNoteMock(NOTE_DURATIONS["HALF"], 0, createPitch("F#", 1), false, false, bar3),
+    createNoteMock(NOTE_DURATIONS["HALF"], 1 / 2, createPitch("F#", 1), false, false, bar3),
   ];
   bar3.tracks[2] = [
     createNoteMock(NOTE_DURATIONS["EIGHTH_TRIPLET"], 0, createPitch("A", 2), false, false, bar3),
