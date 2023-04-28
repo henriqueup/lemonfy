@@ -18,8 +18,7 @@
  */
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 
-import repositoryWrapper from "@repositories/wrapper";
-import { prisma } from "../db";
+import DomainWrapperFactory from "src/server/api/domainWrapper";
 
 type CreateContextOptions = Record<string, never>;
 
@@ -34,8 +33,7 @@ type CreateContextOptions = Record<string, never>;
  */
 const createInnerTRPCContext = (_opts: CreateContextOptions) => {
   return {
-    prisma,
-    repositoryWrapper,
+    domainWrapper: new DomainWrapperFactory("prisma").build(),
   };
 };
 

@@ -29,10 +29,14 @@ The Lemonfy Project inspired by songsterr app (https://www.songsterr.com/)
   - <s>Adjust tests</s>
 - Add backend and DB integration
   - <s>Create basic architecture</s>
-    - Should domains be used?
+    - <s>Should domains be used? So far, yes</s>
   - Create prisma models
   - Create trpc routers
+    - <s>Song create</s>
+    - Song get
   - Add trpc usage in frontend
+    - <s>Song create</s>
+    - Song get
 - Add player pages
 - Add modal component
 - Enable Bar edition

@@ -3,6 +3,7 @@ import { Button, ButtonContainer, CollapsableSideMenu } from "src/components";
 import { useEditorStore } from "@store/editor";
 import { Moon, Sun } from "src/icons";
 import { type Song } from "@entities/song";
+import { api } from "src/utils/api";
 
 type Props = {
   handleLoad: (songFromStorage: Song) => void;
@@ -10,6 +11,7 @@ type Props = {
 
 const EditorMenu: FunctionComponent<Props> = ({ handleLoad }) => {
   const song = useEditorStore(state => state.song);
+  const createSongMutation = api.song.create.useMutation();
   const [isOpen, setIsOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -50,7 +52,10 @@ const EditorMenu: FunctionComponent<Props> = ({ handleLoad }) => {
   };
 
   const handleSave = () => {
+    if (song === undefined) return;
+
     localStorage.setItem("song", JSON.stringify(song));
+    createSongMutation.mutate(song);
   };
 
   return (

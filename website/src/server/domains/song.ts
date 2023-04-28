@@ -1,15 +1,12 @@
-import type { ISongRepository } from "@domains/repository";
+import type { ISongRepository } from "@domains/repositories";
 import type { Song } from "@entities/song";
-import SongRepository from "@repositories/song";
 
 export interface ISongDomain {
-  readonly SongRepository: ISongRepository;
-
   create: (song: Song) => void;
 }
 
-export class SongDomain implements ISongDomain {
-  readonly SongRepository!: ISongRepository;
+class SongDomain implements ISongDomain {
+  private readonly SongRepository!: ISongRepository;
 
   constructor(songRepository: ISongRepository) {
     this.SongRepository = songRepository;
@@ -20,5 +17,4 @@ export class SongDomain implements ISongDomain {
   }
 }
 
-const songDomain = new SongDomain(SongRepository);
-export default songDomain;
+export default SongDomain;

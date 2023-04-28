@@ -4,6 +4,7 @@
     "paths": {
       "@entities/*": ["src/server/entities/*"],
       "@domains/*": ["src/server/domains/*"],
+      "@routers/*": ["src/server/api/routers/*"],
       "@repositories/*": ["src/server/repositories/*"],
       "@store/*": ["src/store/*"],
       "@mocks/*": ["src/mocks/*"]
