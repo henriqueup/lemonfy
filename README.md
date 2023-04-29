@@ -1,6 +1,11 @@
 # Lemonfy
 
-The Lemonfy Project inspired by songsterr app (https://www.songsterr.com/)
+The Lemonfy Project, create and playback songs with a sheet-like interface.
+Inspired by the [Songsterr app](https://www.songsterr.com/).
+
+This project was created with the main goal of practicing software engineering on my own terms. Besides that, it is also a chance to experience different stacks, frameworks, languages etc. And finally, it can also be used as a showcase of my skills.
+
+## Dev notes
 
 ### Storybook with pnpm
 
