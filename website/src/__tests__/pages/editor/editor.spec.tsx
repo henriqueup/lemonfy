@@ -1,13 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
-  AnimationMock,
-  AudioContextMock,
-  GainNodeMock,
-  OscillatorNodeMock,
-  animateMock,
-} from "@mocks/window";
-import { usePlayerStore } from "@store/player";
-import {
   render,
   type RenderResult,
   cleanup,
@@ -15,6 +7,16 @@ import {
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { UserEvent } from "@testing-library/user-event/dist/types/setup/setup";
+
+import { withNextTRPC } from "@mocks/utils/tRPC";
+import {
+  AnimationMock,
+  AudioContextMock,
+  GainNodeMock,
+  OscillatorNodeMock,
+  animateMock,
+} from "@mocks/window";
+import { usePlayerStore } from "@store/player";
 import Editor from "src/pages/editor";
 
 let mockGainNode: GainNodeMock;
@@ -29,7 +31,7 @@ let user: UserEvent;
 
 beforeEach(() => {
   user = userEvent.setup();
-  rendered = render(<Editor />);
+  rendered = render(<Editor />, { wrapper: withNextTRPC });
 
   mockGainNode = new GainNodeMock();
   mockOscillatorNode = new OscillatorNodeMock();
@@ -191,7 +193,7 @@ describe("Song creation", () => {
     await act(() => user.keyboard("{Shift>}G{/Shift}")); // add note G#
     await act(() => user.keyboard("{ArrowUp}")); // raise octave
     await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
-    await act(() => user.keyboard("F")); // add note F by mistake
+    await act(() => user.keyboard("f")); // add note F by mistake
     await act(() => user.keyboard("{ArrowDown}")); // lower octave
     await act(() => user.keyboard("{Shift>}G{/Shift}")); // add note G#
     await act(() => user.keyboard("{ArrowUp}")); // raise octave
@@ -246,10 +248,10 @@ describe("Song playback", () => {
       },
     );
 
-    expect(mockAudioContext.createGain).toHaveBeenCalledTimes(13);
-    expect(mockAudioContext.createOscillator).toHaveBeenCalledTimes(13);
-    expect(mockGainNode.gain.setValueAtTime).toHaveBeenCalledTimes(39);
-    expect(mockOscillatorNode.start).toHaveBeenCalledTimes(13);
+    expect(mockAudioContext.createGain).toHaveBeenCalledTimes(14);
+    expect(mockAudioContext.createOscillator).toHaveBeenCalledTimes(14);
+    expect(mockGainNode.gain.setValueAtTime).toHaveBeenCalledTimes(42);
+    expect(mockOscillatorNode.start).toHaveBeenCalledTimes(14);
   });
 
   it("Pauses song", async () => {
@@ -280,8 +282,8 @@ describe("Song playback", () => {
     );
 
     expect(mockAnimation.cancel).toHaveBeenCalledTimes(1);
-    expect(mockGainNode.disconnect).toHaveBeenCalledTimes(13);
-    expect(mockOscillatorNode.disconnect).toHaveBeenCalledTimes(13);
+    expect(mockGainNode.disconnect).toHaveBeenCalledTimes(14);
+    expect(mockOscillatorNode.disconnect).toHaveBeenCalledTimes(14);
 
     const cursor = rendered.getByRole("presentation", { name: "Cursor" });
     expect(cursor.style.left).toBe("calc(50% - 4px)");
@@ -364,7 +366,7 @@ const addNotesToFirstBar = async () => {
   await act(() => user.keyboard("{Shift>}G{/Shift}")); // add note G#
   await act(() => user.keyboard("{ArrowUp}")); // raise octave
   await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
-  await act(() => user.keyboard("E")); // add note E
+  await act(() => user.keyboard("e")); // add note E
   await act(() => user.keyboard("{ArrowDown}")); // lower octave
   await act(() => user.keyboard("{Shift>}G{/Shift}")); // add note G#
   await act(() => user.keyboard("{ArrowUp}")); // raise octave

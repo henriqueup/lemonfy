@@ -65,7 +65,7 @@ const EditorMenu: FunctionComponent<Props> = ({ handleLoad }) => {
       label="Editor Menu"
     >
       <div className="flex h-full flex-col">
-        <div className="mt-2 mb-2 ml-auto mr-auto flex w-full justify-center">
+        <div className="mb-2 ml-auto mr-auto mt-2 flex w-full justify-center">
           <h3 className="m-auto">Editor Menu</h3>
         </div>
         <Button
