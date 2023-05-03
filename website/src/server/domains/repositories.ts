@@ -1,5 +1,5 @@
 import type { Song } from "@entities/song";
 
 export interface ISongRepository {
-  create: (song: Song) => void;
+  create: (song: Song) => Promise<void>;
 }

@@ -2,7 +2,7 @@ import type { ISongRepository } from "@domains/repositories";
 import type { Song } from "@entities/song";
 
 export interface ISongDomain {
-  create: (song: Song) => void;
+  create: (song: Song) => Promise<void>;
 }
 
 class SongDomain implements ISongDomain {
@@ -12,8 +12,8 @@ class SongDomain implements ISongDomain {
     this.SongRepository = songRepository;
   }
 
-  create(song: Song) {
-    this.SongRepository.create(song);
+  async create(song: Song) {
+    await this.SongRepository.create(song);
   }
 }
 

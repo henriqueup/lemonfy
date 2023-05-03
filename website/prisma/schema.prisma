@@ -16,6 +16,69 @@ model Example {
     updatedAt DateTime @updatedAt
 }
 
+model Song {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+
+    name   String
+    artist String
+    sheets Sheet[]
+
+    @@unique([name, artist])
+}
+
+model Sheet {
+    trackCount Int
+    bars       Bar[]
+    tracks     Track[]
+
+    Song   Song   @relation(fields: [songId], references: [id])
+    songId String
+
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+}
+
+model Bar {
+    beatCount   Int
+    dibobinador Int
+    tempo       Int
+    start       Float
+    capacity    Float
+    index       Int
+
+    Sheet   Sheet?  @relation(fields: [sheetId], references: [id])
+    sheetId String?
+
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+}
+
+model Track {
+    index Int
+    notes Note[]
+
+    Sheet   Sheet?  @relation(fields: [sheetId], references: [id])
+    sheetId String?
+
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+}
+
+model Note {
+    start      Float
+    duration   Float
+    pitch      String
+    hasSustain Boolean @default(false)
+    isSustain  Boolean @default(false)
+
+    Track   Track?  @relation(fields: [trackId], references: [id])
+    trackId String?
+
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+}
+
 // Example from docs
 
 // model Post {
