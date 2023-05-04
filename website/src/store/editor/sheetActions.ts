@@ -2,43 +2,39 @@ import { createNote, type Note } from "@entities/note";
 import { type Octave } from "@entities/octave";
 import { createPitch, type PitchName } from "@entities/pitch";
 import SheetModule from "@entities/sheet";
-import { useEditorStore } from "./editorStore";
+import { useEditorStore, getCurrentSheet } from "./editorStore";
 
 export const addBar = (beatCount: number, dibobinador: number, tempo: number) =>
   useEditorStore.setState(state => {
-    if (state.currentSheet === undefined) return {};
+    if (state.song === undefined) return {};
 
-    SheetModule.addBarToSheet(
-      state.currentSheet,
-      beatCount,
-      dibobinador,
-      tempo,
-    );
+    const currentSheet = getCurrentSheet(state);
+    if (currentSheet === undefined) return {};
 
-    return { currentSheet: state.currentSheet };
+    SheetModule.addBarToSheet(currentSheet, beatCount, dibobinador, tempo);
+
+    return { song: { ...state.song } };
   });
 
 export const addCopyOfCurrentBar = () =>
   useEditorStore.setState(state => {
-    if (state.currentSheet === undefined) return {};
+    if (state.song === undefined) return {};
 
-    const currentBar = state.currentSheet.bars[state.cursor.barIndex];
+    const currentSheet = getCurrentSheet(state);
+    if (currentSheet === undefined) return {};
+
+    const currentBar = currentSheet.bars[state.cursor.barIndex];
     if (currentBar === undefined) return {};
 
     SheetModule.addBarToSheet(
-      state.currentSheet,
+      currentSheet,
       currentBar.beatCount,
       currentBar.dibobinador,
       currentBar.tempo,
       state.cursor.barIndex,
     );
 
-    return {
-      currentSheet: {
-        ...state.currentSheet,
-        bars: [...state.currentSheet.bars],
-      },
-    };
+    return { song: { ...state.song } };
   });
 
 export const addNote = (
@@ -47,9 +43,12 @@ export const addNote = (
   octave: Octave,
 ) =>
   useEditorStore.setState(state => {
-    if (state.currentSheet === undefined) return {};
+    if (state.song === undefined) return {};
 
-    const barWithCursor = state.currentSheet.bars[state.cursor.barIndex];
+    const currentSheet = getCurrentSheet(state);
+    if (currentSheet === undefined) return {};
+
+    const barWithCursor = currentSheet.bars[state.cursor.barIndex];
     if (barWithCursor === undefined) return {};
 
     const startOfNoteToAdd = barWithCursor.start + state.cursor.position;
@@ -57,21 +56,15 @@ export const addNote = (
     const noteToAdd = createNote(duration, startOfNoteToAdd, pitch);
 
     SheetModule.addNoteToSheet(
-      state.currentSheet,
+      currentSheet,
       state.cursor.trackIndex,
       noteToAdd,
     );
-    SheetModule.fillBarTracksInSheet(
-      state.currentSheet,
-      state.cursor.trackIndex,
-    );
+    SheetModule.fillBarTracksInSheet(currentSheet, state.cursor.trackIndex);
 
     const endOfAddedNote = state.cursor.position + noteToAdd.duration;
     return {
-      currentSheet: {
-        ...state.currentSheet,
-        bars: [...state.currentSheet.bars],
-      },
+      song: { ...state.song },
       cursor: {
         ...state.cursor,
         position: Math.min(endOfAddedNote, barWithCursor.capacity),
@@ -85,84 +78,62 @@ export const addNoteFromDrop = (
   note: Note,
 ) =>
   useEditorStore.setState(state => {
-    if (state.currentSheet === undefined) return {};
+    if (state.song === undefined) return {};
 
-    SheetModule.addNoteToSheet(state.currentSheet, trackIndex, note);
-    SheetModule.fillBarTracksInSheet(
-      state.currentSheet,
-      state.cursor.trackIndex,
-    );
+    const currentSheet = getCurrentSheet(state);
+    if (currentSheet === undefined) return {};
 
-    return {
-      currentSheet: {
-        ...state.currentSheet,
-        bars: [...state.currentSheet.bars],
-      },
-    };
+    SheetModule.addNoteToSheet(currentSheet, trackIndex, note);
+    SheetModule.fillBarTracksInSheet(currentSheet, state.cursor.trackIndex);
+
+    return { song: { ...state.song } };
   });
 
 export const removeNoteFromBar = (noteToRemove: Note) =>
   useEditorStore.setState(state => {
-    if (state.currentSheet === undefined) return {};
+    if (state.song === undefined) return {};
 
-    SheetModule.removeNotesFromSheet(
-      state.currentSheet,
-      state.cursor.trackIndex,
-      [noteToRemove],
-    );
-    SheetModule.fillBarTracksInSheet(
-      state.currentSheet,
-      state.cursor.trackIndex,
-    );
+    const currentSheet = getCurrentSheet(state);
+    if (currentSheet === undefined) return {};
 
-    return {
-      currentSheet: {
-        ...state.currentSheet,
-        bars: [...state.currentSheet.bars],
-      },
-    };
+    SheetModule.removeNotesFromSheet(currentSheet, state.cursor.trackIndex, [
+      noteToRemove,
+    ]);
+    SheetModule.fillBarTracksInSheet(currentSheet, state.cursor.trackIndex);
+
+    return { song: { ...state.song } };
   });
 
 export const removeNextNoteFromBar = (lookForward = true) =>
   useEditorStore.setState(state => {
-    if (state.currentSheet === undefined) return {};
+    if (state.song === undefined) return {};
 
-    const barWithCursor = state.currentSheet.bars[state.cursor.barIndex];
+    const currentSheet = getCurrentSheet(state);
+    if (currentSheet === undefined) return {};
+
+    const barWithCursor = currentSheet.bars[state.cursor.barIndex];
     if (barWithCursor === undefined) return {};
 
     const noteToRemove = SheetModule.findSheetNoteByTime(
-      state.currentSheet,
+      currentSheet,
       state.cursor.trackIndex,
       barWithCursor.start + state.cursor.position,
       lookForward,
     );
     if (noteToRemove === null) return {};
 
-    SheetModule.removeNotesFromSheet(
-      state.currentSheet,
-      state.cursor.trackIndex,
-      [noteToRemove],
-    );
-    SheetModule.fillBarTracksInSheet(
-      state.currentSheet,
-      state.cursor.trackIndex,
-    );
+    SheetModule.removeNotesFromSheet(currentSheet, state.cursor.trackIndex, [
+      noteToRemove,
+    ]);
+    SheetModule.fillBarTracksInSheet(currentSheet, state.cursor.trackIndex);
 
     if (lookForward) {
-      return {
-        currentSheet: {
-          ...state.currentSheet,
-          bars: [...state.currentSheet.bars],
-        },
-      };
+      return { song: { ...state.song } };
     }
 
     if (state.cursor.position > 0) {
       return {
-        currentSheet: {
-          ...state.currentSheet,
-          bars: [...state.currentSheet.bars],
-        },
+        song: { ...state.song },
         cursor: {
           ...state.cursor,
           position: state.cursor.position - noteToRemove.duration,
@@ -171,16 +142,13 @@ export const removeNextNoteFromBar = (lookForward = true) =>
     }
 
     const newBarIndex = state.cursor.barIndex - 1;
-    const previousBar = state.currentSheet.bars[newBarIndex];
+    const previousBar = currentSheet.bars[newBarIndex];
 
     if (previousBar === undefined)
       throw new Error("There should be a previous bar.");
 
     return {
-      currentSheet: {
-        ...state.currentSheet,
-        bars: [...state.currentSheet.bars],
-      },
+      song: { ...state.song },
       cursor: {
         ...state.cursor,
         barIndex: newBarIndex,
@@ -191,14 +159,12 @@ export const removeNextNoteFromBar = (lookForward = true) =>
 
 export const removeBarFromSheetByIndex = (barIndex: number) =>
   useEditorStore.setState(state => {
-    if (state.currentSheet === undefined) return {};
+    if (state.song === undefined) return {};
 
-    SheetModule.removeBarInSheetByIndex(state.currentSheet, barIndex);
+    const currentSheet = getCurrentSheet(state);
+    if (currentSheet === undefined) return {};
 
-    return {
-      currentSheet: {
-        ...state.currentSheet,
-        bars: [...state.currentSheet.bars],
-      },
-    };
+    SheetModule.removeBarInSheetByIndex(currentSheet, barIndex);
+
+    return { song: { ...state.song } };
   });

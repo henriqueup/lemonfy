@@ -1,14 +1,14 @@
 import { type FunctionComponent, useState } from "react";
 import { Plus } from "src/icons";
 import { addBar } from "@store/editor/sheetActions";
-import { useEditorStore } from "@store/editor";
+import { getCurrentSheet } from "@store/editor";
 import BarMenu from "./BarMenu";
 import NoteMenu from "./NoteMenu";
 import Bar from "./Bar";
 import PlaybackMenu from "./PlaybackMenu";
 
 const SheetEditor: FunctionComponent = () => {
-  const bars = useEditorStore(state => state.currentSheet?.bars);
+  const bars = getCurrentSheet()?.bars;
   const [barMenuIsOpen, setBarMenuIsOpen] = useState(false);
 
   if (bars === undefined) return null;
@@ -26,7 +26,7 @@ const SheetEditor: FunctionComponent = () => {
   return (
     <div className="h-full w-full bg-inherit">
       <PlaybackMenu />
-      <div className="h-3/5 bg-inherit p-4 pt-0 pb-2 text-stone-600 dark:text-stone-400">
+      <div className="h-3/5 bg-inherit p-4 pb-2 pt-0 text-stone-600 dark:text-stone-400">
         <fieldset className="h-full rounded border border-solid border-stone-600 bg-inherit p-1 dark:border-stone-400">
           <legend className="ml-3">Bars</legend>
           <div className="mt-2 grid max-h-full grid-cols-2 gap-2 overflow-y-auto bg-inherit">

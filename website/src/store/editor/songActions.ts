@@ -3,7 +3,7 @@ import SongModule, { type Song } from "@entities/song";
 import { useEditorStore } from "@store/editor/editorStore";
 
 export const loadSong = (song: Song) =>
-  useEditorStore.setState({ song, currentSheet: song.sheets[0] });
+  useEditorStore.setState({ song, currentSheetIndex: 0 });
 
 export const setSong = (name: string, artist: string) =>
   useEditorStore.setState({ song: SongModule.createSong(name, artist) });
@@ -16,6 +16,6 @@ export const addSheet = (trackCount: number) =>
 
     return {
       song: { ...state.song, sheets: [...state.song.sheets, newSheet] },
-      currentSheet: newSheet,
+      currentSheetIndex: state.song.sheets.length,
     };
   });

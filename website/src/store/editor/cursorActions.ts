@@ -1,47 +1,73 @@
-import { useEditorStore } from "./editorStore";
+import { getCurrentSheet, useEditorStore } from "./editorStore";
 import { NOTE_DURATIONS } from "@entities/note";
 import BarModule from "@entities/bar";
 import { TimeEvaluation } from "@entities/timeEvaluation";
 
 export const increaseCursorTrackIndex = () =>
   useEditorStore.setState(state => {
-    if (state.currentSheet === undefined) return {};
-    if (state.cursor.trackIndex === state.currentSheet.trackCount - 1) return {};
+    const currentSheet = getCurrentSheet(state);
 
-    return { cursor: { ...state.cursor, trackIndex: state.cursor.trackIndex + 1 } };
+    if (currentSheet === undefined) return {};
+    if (state.cursor.trackIndex === currentSheet.trackCount - 1) return {};
+
+    return {
+      cursor: { ...state.cursor, trackIndex: state.cursor.trackIndex + 1 },
+    };
   });
 
 export const decreaseCursorTrackIndex = () =>
   useEditorStore.setState(state => {
-    if (state.currentSheet === undefined) return {};
+    const currentSheet = getCurrentSheet(state);
+
+    if (currentSheet === undefined) return {};
     if (state.cursor.trackIndex === 0) return {};
 
-    return { cursor: { ...state.cursor, trackIndex: state.cursor.trackIndex - 1 } };
+    return {
+      cursor: { ...state.cursor, trackIndex: state.cursor.trackIndex - 1 },
+    };
   });
 
 export const increaseCursorBarIndex = () =>
   useEditorStore.setState(state => {
-    if (state.currentSheet === undefined) return {};
-    if (state.cursor.barIndex === state.currentSheet.bars.length - 1) return {};
+    const currentSheet = getCurrentSheet(state);
 
-    return { cursor: { ...state.cursor, barIndex: state.cursor.barIndex + 1, position: 0 } };
+    if (currentSheet === undefined) return {};
+    if (state.cursor.barIndex === currentSheet.bars.length - 1) return {};
+
+    return {
+      cursor: {
+        ...state.cursor,
+        barIndex: state.cursor.barIndex + 1,
+        position: 0,
+      },
+    };
   });
 
 export const decreaseCursorBarIndex = () =>
   useEditorStore.setState(state => {
-    if (state.currentSheet === undefined) return {};
+    const currentSheet = getCurrentSheet(state);
+
+    if (currentSheet === undefined) return {};
     if (state.cursor.barIndex === 0) return {};
 
-    return { cursor: { ...state.cursor, barIndex: state.cursor.barIndex - 1, position: 0 } };
+    return {
+      cursor: {
+        ...state.cursor,
+        barIndex: state.cursor.barIndex - 1,
+        position: 0,
+      },
+    };
   });
 
 export const increaseCursorPosition = () =>
   useEditorStore.setState(state => {
-    if (state.currentSheet === undefined) return {};
+    const currentSheet = getCurrentSheet(state);
+    if (currentSheet === undefined) return {};
 
-    const barWithCursor = state.currentSheet.bars[state.cursor.barIndex];
+    const barWithCursor = currentSheet.bars[state.cursor.barIndex];
     if (barWithCursor === undefined) return {};
-    if (TimeEvaluation.IsEqualTo(state.cursor.position, barWithCursor.capacity)) return {};
+    if (TimeEvaluation.IsEqualTo(state.cursor.position, barWithCursor.capacity))
+      return {};
 
     const nextNote = BarModule.findBarNoteByTime(
       barWithCursor,
@@ -53,23 +79,28 @@ export const increaseCursorPosition = () =>
     let amountToIncrease = NOTE_DURATIONS[state.selectedNoteDuration];
 
     if (nextNote) {
-      amountToIncrease = nextNote.start + nextNote.duration - state.cursor.position;
+      amountToIncrease =
+        nextNote.start + nextNote.duration - state.cursor.position;
 
-      if (TimeEvaluation.IsSmallerThan(state.cursor.position, nextNote.start)) amountToIncrease -= nextNote.duration;
+      if (TimeEvaluation.IsSmallerThan(state.cursor.position, nextNote.start))
+        amountToIncrease -= nextNote.duration;
     }
     let resultPosition = state.cursor.position + amountToIncrease;
 
-    if (TimeEvaluation.IsGreaterThan(resultPosition, barWithCursor.capacity)) resultPosition = barWithCursor.capacity;
+    if (TimeEvaluation.IsGreaterThan(resultPosition, barWithCursor.capacity))
+      resultPosition = barWithCursor.capacity;
 
     return { cursor: { ...state.cursor, position: resultPosition } };
   });
 
 export const decreaseCursorPosition = () =>
   useEditorStore.setState(state => {
-    if (state.currentSheet === undefined) return {};
+    const currentSheet = getCurrentSheet(state);
+
+    if (currentSheet === undefined) return {};
     if (TimeEvaluation.IsEqualTo(state.cursor.position, 0)) return {};
 
-    const barWithCursor = state.currentSheet.bars[state.cursor.barIndex];
+    const barWithCursor = currentSheet.bars[state.cursor.barIndex];
     if (barWithCursor === undefined) return {};
 
     const previousNote = BarModule.findBarNoteByTime(
@@ -97,9 +128,10 @@ export const decreaseCursorPosition = () =>
 
 export const moveCursorToEndOfBar = () =>
   useEditorStore.setState(state => {
-    if (state.currentSheet === undefined) return {};
+    const currentSheet = getCurrentSheet(state);
+    if (currentSheet === undefined) return {};
 
-    const barWithCursor = state.currentSheet.bars[state.cursor.barIndex];
+    const barWithCursor = currentSheet.bars[state.cursor.barIndex];
     if (barWithCursor === undefined) return {};
 
     return { cursor: { ...state.cursor, position: barWithCursor.capacity } };
@@ -107,7 +139,8 @@ export const moveCursorToEndOfBar = () =>
 
 export const moveCursorToStartOfBar = () =>
   useEditorStore.setState(state => {
-    if (state.currentSheet === undefined) return {};
+    const currentSheet = getCurrentSheet(state);
+    if (currentSheet === undefined) return {};
 
     return { cursor: { ...state.cursor, position: 0 } };
   });

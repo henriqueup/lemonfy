@@ -14,7 +14,7 @@ export interface Cursor {
 
 export interface EditorStore {
   song: Song | undefined;
-  currentSheet: Sheet | undefined;
+  currentSheetIndex: number | undefined;
   selectedOctave: Octave;
   selectedNoteDuration: NoteDurationName;
   noteToAdd: Note | null;
@@ -23,7 +23,7 @@ export interface EditorStore {
 
 export const INITIAL_STATE: EditorStore = {
   song: undefined,
-  currentSheet: undefined,
+  currentSheetIndex: undefined,
   selectedOctave: 0,
   selectedNoteDuration: "LONG",
   noteToAdd: null,
@@ -37,3 +37,11 @@ export const INITIAL_STATE: EditorStore = {
 export const useEditorStore = create<EditorStore>()(
   devtools(() => INITIAL_STATE),
 );
+
+export const getCurrentSheet = (state?: EditorStore): Sheet | undefined => {
+  const currentState = state ?? useEditorStore.getState();
+
+  if (currentState.currentSheetIndex === undefined) return undefined;
+
+  return currentState.song?.sheets[currentState.currentSheetIndex];
+};

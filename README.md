@@ -34,10 +34,12 @@ And finally, it can also be used as a showcase of my skills.
   - <s>Only error when dirty</s>
 - <s>Add Song entity</s>
   - <s>Adjust tests</s>
+  - <s>Fix store bug</s>
+    - Adjust tests
 - Add backend and DB integration
   - <s>Create basic architecture</s>
     - <s>Should domains be used? So far, yes</s>
-  - Create prisma models
+  - <s>Create prisma models</s>
   - Create trpc routers
     - <s>Song create</s>
     - Song get

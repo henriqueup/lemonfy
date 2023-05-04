@@ -1,7 +1,7 @@
 import { type NextPage } from "next";
 import { useState } from "react";
 import { Plus } from "../../icons";
-import { useEditorStore } from "@store/editor";
+import { getCurrentSheet, useEditorStore } from "@store/editor";
 import { classNames } from "../../styles/utils";
 import SheetEditor from "./SheetEditor";
 import SheetMenu from "./SheetMenu";
@@ -9,7 +9,7 @@ import { addSheet } from "@store/editor/songActions";
 
 const Song: NextPage = () => {
   const song = useEditorStore(state => state.song);
-  const currentSheet = useEditorStore(state => state.currentSheet);
+  const currentSheet = getCurrentSheet();
   const [sheetMenuIsOpen, setSheetMenuIsOpen] = useState(false);
 
   const handleAddSheet = (trackCount: number) => {

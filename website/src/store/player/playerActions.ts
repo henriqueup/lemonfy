@@ -1,8 +1,11 @@
 import { default as BarModule, type Bar } from "@entities/bar";
-import { useEditorStore } from "@store/editor";
+import { getCurrentSheet, useEditorStore } from "@store/editor";
 import { INITIAL_STATE, usePlayerStore } from "@store/player";
 
-const createNextBarTimeout = (barWithCursor: Bar | undefined, startPosition = 0): NodeJS.Timeout | undefined => {
+const createNextBarTimeout = (
+  barWithCursor: Bar | undefined,
+  startPosition = 0,
+): NodeJS.Timeout | undefined => {
   if (barWithCursor === undefined) {
     stop();
     return undefined;
@@ -15,7 +18,7 @@ const createNextBarTimeout = (barWithCursor: Bar | undefined, startPosition = 0)
 
   return setTimeout(() => {
     usePlayerStore.setState(state => {
-      const currentSheet = useEditorStore.getState().currentSheet;
+      const currentSheet = getCurrentSheet();
       if (currentSheet === undefined) return {};
 
       const nextBarIndex = state.cursor.barIndex + 1;
@@ -39,8 +42,9 @@ const createNextBarTimeout = (barWithCursor: Bar | undefined, startPosition = 0)
 
 export const play = (audioNodes: AudioNode[]) => {
   usePlayerStore.setState(state => {
-    const currentSheet = useEditorStore.getState().currentSheet;
-    if (currentSheet === undefined || (state.isPlaying && !state.isPaused)) return {};
+    const currentSheet = getCurrentSheet();
+    if (currentSheet === undefined || (state.isPlaying && !state.isPaused))
+      return {};
 
     const editorCursor = useEditorStore.getState().cursor;
     const barWithCursor = currentSheet.bars[editorCursor.barIndex];
@@ -54,7 +58,10 @@ export const play = (audioNodes: AudioNode[]) => {
       isPaused: false,
       currentTimeoutStartTime: startTime,
       nextBarTimeout: timeout,
-      cursor: { barIndex: editorCursor.barIndex, position: editorCursor.position },
+      cursor: {
+        barIndex: editorCursor.barIndex,
+        position: editorCursor.position,
+      },
       audioNodes,
     };
   });
@@ -66,24 +73,38 @@ const clearAudioNodes = (audioNodes: AudioNode[]) => {
 
 export const pause = () =>
   usePlayerStore.setState(state => {
-    if (!state.isPlaying || state.currentTimeoutStartTime === undefined || state.isPaused) return {};
+    if (
+      !state.isPlaying ||
+      state.currentTimeoutStartTime === undefined ||
+      state.isPaused
+    )
+      return {};
 
-    const currentSheet = useEditorStore.getState().currentSheet;
+    const currentSheet = getCurrentSheet();
     if (currentSheet === undefined) return {};
 
     const barWithCursor = currentSheet.bars[state.cursor.barIndex];
     if (barWithCursor === undefined) return {};
 
-    const timeElapsed = (new Date().getTime() - state.currentTimeoutStartTime.getTime()) / 1000;
-    const totalBarTime = BarModule.convertDurationInBarToSeconds(barWithCursor, barWithCursor.capacity);
-    const positionTraveled = barWithCursor.capacity * (timeElapsed / totalBarTime);
+    const timeElapsed =
+      (new Date().getTime() - state.currentTimeoutStartTime.getTime()) / 1000;
+    const totalBarTime = BarModule.convertDurationInBarToSeconds(
+      barWithCursor,
+      barWithCursor.capacity,
+    );
+    const positionTraveled =
+      barWithCursor.capacity * (timeElapsed / totalBarTime);
     const currentBarPosition = positionTraveled + state.cursor.position;
 
     clearAudioNodes(state.audioNodes);
     clearTimeout(state.nextBarTimeout);
 
     useEditorStore.setState(editorState => ({
-      cursor: { ...editorState.cursor, barIndex: state.cursor.barIndex, position: currentBarPosition },
+      cursor: {
+        ...editorState.cursor,
+        barIndex: state.cursor.barIndex,
+        position: currentBarPosition,
+      },
     }));
 
     return {
@@ -103,11 +124,13 @@ export const stop = () =>
 
 export const windUp = (isRewind = false, isFull = false) => {
   usePlayerStore.setState(state => {
-    const currentSheet = useEditorStore.getState().currentSheet;
+    const currentSheet = getCurrentSheet();
     if (currentSheet === undefined) return {};
 
     const editorCursor = useEditorStore.getState().cursor;
-    const currentBarIndex = state.isPlaying ? state.cursor.barIndex : editorCursor.barIndex;
+    const currentBarIndex = state.isPlaying
+      ? state.cursor.barIndex
+      : editorCursor.barIndex;
     if (currentBarIndex >= currentSheet.bars.length) return {};
 
     stop();
@@ -115,7 +138,9 @@ export const windUp = (isRewind = false, isFull = false) => {
     if (isRewind) {
       let nextBarIndex = isFull ? 0 : currentBarIndex;
 
-      const cursorPosition = state.isPlaying ? state.cursor.position : editorCursor.position;
+      const cursorPosition = state.isPlaying
+        ? state.cursor.position
+        : editorCursor.position;
       if (cursorPosition === 0) nextBarIndex -= 1;
 
       nextBarIndex = Math.max(0, nextBarIndex);

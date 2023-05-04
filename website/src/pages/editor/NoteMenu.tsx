@@ -23,12 +23,16 @@ import {
   moveCursorToEndOfBar,
   moveCursorToStartOfBar,
 } from "@store/editor/cursorActions";
-import { addCopyOfCurrentBar, addNote, removeNextNoteFromBar } from "@store/editor/sheetActions";
+import {
+  addCopyOfCurrentBar,
+  addNote,
+  removeNextNoteFromBar,
+} from "@store/editor/sheetActions";
 import { Select } from "src/components/select";
 import { classNames } from "src/styles/utils";
 
 const NoteMenu: FunctionComponent = () => {
-  const currentSheet = useEditorStore(state => state.currentSheet);
+  const currentSheetIndex = useEditorStore(state => state.currentSheetIndex);
   const selectedOctave = useEditorStore(state => state.selectedOctave);
   const selectedDuration = useEditorStore(state => state.selectedNoteDuration);
 
@@ -70,40 +74,52 @@ const NoteMenu: FunctionComponent = () => {
       callback: moveCursorToEndOfBar,
     },
     "notes.add.C": {
-      callback: () => addNote(NOTE_DURATIONS[selectedDuration], "C", selectedOctave),
+      callback: () =>
+        addNote(NOTE_DURATIONS[selectedDuration], "C", selectedOctave),
     },
     "notes.add.C#": {
-      callback: () => addNote(NOTE_DURATIONS[selectedDuration], "C#", selectedOctave),
+      callback: () =>
+        addNote(NOTE_DURATIONS[selectedDuration], "C#", selectedOctave),
     },
     "notes.add.D": {
-      callback: () => addNote(NOTE_DURATIONS[selectedDuration], "D", selectedOctave),
+      callback: () =>
+        addNote(NOTE_DURATIONS[selectedDuration], "D", selectedOctave),
     },
     "notes.add.D#": {
-      callback: () => addNote(NOTE_DURATIONS[selectedDuration], "D#", selectedOctave),
+      callback: () =>
+        addNote(NOTE_DURATIONS[selectedDuration], "D#", selectedOctave),
     },
     "notes.add.E": {
-      callback: () => addNote(NOTE_DURATIONS[selectedDuration], "E", selectedOctave),
+      callback: () =>
+        addNote(NOTE_DURATIONS[selectedDuration], "E", selectedOctave),
     },
     "notes.add.F": {
-      callback: () => addNote(NOTE_DURATIONS[selectedDuration], "F", selectedOctave),
+      callback: () =>
+        addNote(NOTE_DURATIONS[selectedDuration], "F", selectedOctave),
     },
     "notes.add.F#": {
-      callback: () => addNote(NOTE_DURATIONS[selectedDuration], "F#", selectedOctave),
+      callback: () =>
+        addNote(NOTE_DURATIONS[selectedDuration], "F#", selectedOctave),
     },
     "notes.add.G": {
-      callback: () => addNote(NOTE_DURATIONS[selectedDuration], "G", selectedOctave),
+      callback: () =>
+        addNote(NOTE_DURATIONS[selectedDuration], "G", selectedOctave),
     },
     "notes.add.G#": {
-      callback: () => addNote(NOTE_DURATIONS[selectedDuration], "G#", selectedOctave),
+      callback: () =>
+        addNote(NOTE_DURATIONS[selectedDuration], "G#", selectedOctave),
     },
     "notes.add.A": {
-      callback: () => addNote(NOTE_DURATIONS[selectedDuration], "A", selectedOctave),
+      callback: () =>
+        addNote(NOTE_DURATIONS[selectedDuration], "A", selectedOctave),
     },
     "notes.add.A#": {
-      callback: () => addNote(NOTE_DURATIONS[selectedDuration], "A#", selectedOctave),
+      callback: () =>
+        addNote(NOTE_DURATIONS[selectedDuration], "A#", selectedOctave),
     },
     "notes.add.B": {
-      callback: () => addNote(NOTE_DURATIONS[selectedDuration], "B", selectedOctave),
+      callback: () =>
+        addNote(NOTE_DURATIONS[selectedDuration], "B", selectedOctave),
     },
     "notes.remove.left": {
       callback: () => removeNextNoteFromBar(false),
@@ -116,9 +132,12 @@ const NoteMenu: FunctionComponent = () => {
     },
   });
 
-  if (currentSheet === undefined) return null;
+  if (currentSheetIndex === undefined) return null;
 
-  const handleDragStart = (_event: DragEvent<HTMLDivElement>, pitchName: PitchName) => {
+  const handleDragStart = (
+    _event: DragEvent<HTMLDivElement>,
+    pitchName: PitchName,
+  ) => {
     setNoteToAdd(NOTE_DURATIONS[selectedDuration], pitchName, selectedOctave);
   };
 
@@ -139,7 +158,9 @@ const NoteMenu: FunctionComponent = () => {
             label="Duration"
             value={selectedDuration}
             options={Object.keys(NOTE_DURATIONS)}
-            onChange={newKey => setSelectedNoteDuration(newKey as NoteDurationName)}
+            onChange={newKey =>
+              setSelectedNoteDuration(newKey as NoteDurationName)
+            }
             disableClear
             className="ml-1 mr-1 w-[calc(100%_/_13_*_2_-_8px)]"
           />

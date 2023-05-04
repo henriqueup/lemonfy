@@ -1,4 +1,4 @@
-import { useEditorStore } from "@store/editor";
+import { getCurrentSheet, useEditorStore } from "@store/editor";
 import { usePlayerStore } from "@store/player";
 import { pause, stop, windUp } from "@store/player/playerActions";
 import { type FunctionComponent } from "react";
@@ -17,7 +17,7 @@ import { playSong } from "src/utils/audioContext";
 
 const PlaybackMenu: FunctionComponent = () => {
   const audioContext = useAudioContext();
-  const currentSheet = useEditorStore(state => state.currentSheet);
+  const currentSheet = getCurrentSheet();
   const cursor = useEditorStore(state => state.cursor);
   const isPlaying = usePlayerStore(state => state.isPlaying);
   const isPaused = usePlayerStore(state => state.isPaused);
