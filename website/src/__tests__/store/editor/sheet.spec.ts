@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { INITIAL_STATE, useEditorStore } from "@store/editor";
+import { INITIAL_STATE, getCurrentSheet, useEditorStore } from "@store/editor";
 import {
   getEmptyMockSheet,
   getMockSheetWithBars,
@@ -19,6 +19,7 @@ import {
   removeNoteFromBar,
 } from "@store/editor/sheetActions";
 import { createBarMock } from "src/mocks/entities/bar";
+import { getMockSong } from "@mocks/entities/song";
 
 jest.mock<typeof SheetModule.default>("@entities/sheet", () => {
   const mockUtils = jest.requireActual<typeof MockUtilsModule>(
@@ -46,10 +47,22 @@ const sheetModuleWithMocks = MockUtilsModule.getModuleWithMocks(
 );
 
 describe("Add Bar", () => {
-  it("Does nothing with undefined Sheet", () => {
+  it("Does nothing with undefined Song", () => {
     addBar(4, 4, 60);
 
     expect(useEditorStore.getState()).toMatchObject(INITIAL_STATE);
+  });
+
+  it("Does nothing with undefined Sheet index", () => {
+    const sheet = getEmptyMockSheet();
+    const song = getMockSong([sheet]);
+    useEditorStore.setState(() => ({
+      song,
+    }));
+
+    addBar(4, 4, 60);
+
+    expect(useEditorStore.getState()).toMatchObject({ ...INITIAL_STATE, song });
   });
 
   it("Adds Bar to end of current Sheet", () => {
@@ -59,8 +72,10 @@ describe("Add Bar", () => {
     );
 
     const sheet = getEmptyMockSheet();
+    const song = getMockSong([sheet]);
     useEditorStore.setState(() => ({
-      currentSheet: sheet,
+      song,
+      currentSheetIndex: 0,
     }));
 
     addBar(6, 8, 120);
@@ -68,7 +83,7 @@ describe("Add Bar", () => {
     expect(SheetModule.default.addBarToSheet).toBeCalledTimes(1);
     expect(SheetModule.default.addBarToSheet).toBeCalledWith(sheet, 6, 8, 120);
 
-    expect(useEditorStore.getState().currentSheet).toMatchObject({
+    expect(getCurrentSheet()).toMatchObject({
       ...sheet,
       bars: [bar],
     });
@@ -76,30 +91,47 @@ describe("Add Bar", () => {
 });
 
 describe("Add copy of current Bar", () => {
-  it("Does nothing with undefined Sheet", () => {
+  it("Does nothing with undefined Song", () => {
     addCopyOfCurrentBar();
 
     expect(useEditorStore.getState()).toMatchObject(INITIAL_STATE);
   });
 
+  it("Does nothing with undefined Sheet index", () => {
+    const sheet = getEmptyMockSheet();
+    const song = getMockSong([sheet]);
+    useEditorStore.setState(() => ({
+      song,
+    }));
+
+    addCopyOfCurrentBar();
+
+    expect(useEditorStore.getState()).toMatchObject({ ...INITIAL_STATE, song });
+  });
+
   it("Does nothing with undefined current Bar", () => {
     const sheet = getEmptyMockSheet();
+    const song = getMockSong([sheet]);
     useEditorStore.setState(() => ({
-      currentSheet: sheet,
+      song,
+      currentSheetIndex: 0,
     }));
 
     addCopyOfCurrentBar();
 
     expect(useEditorStore.getState()).toMatchObject({
       ...INITIAL_STATE,
-      currentSheet: sheet,
+      song,
+      currentSheetIndex: 0,
     });
   });
 
   it("Adds Bar after current Bar", () => {
     const sheet = getMockSheetWithBars();
+    const song = getMockSong([sheet]);
     useEditorStore.setState(() => ({
-      currentSheet: sheet,
+      song,
+      currentSheetIndex: 0,
     }));
 
     addCopyOfCurrentBar();
@@ -119,21 +151,35 @@ describe("Add Note", () => {
   const noteModuleWithMocks = MockUtilsModule.getModuleWithMocks(NoteModule);
   const pitchModuleWithMocks = MockUtilsModule.getModuleWithMocks(PitchModule);
 
-  it("Does nothing with undefined Sheet", () => {
+  it("Does nothing with undefined Song", () => {
     addNote(4, "B", 2);
 
     expect(useEditorStore.getState()).toMatchObject(INITIAL_STATE);
   });
 
-  it("Does nothing with undefined Bar", () => {
+  it("Does nothing with undefined Sheet index", () => {
     const sheet = getEmptyMockSheet();
+    const song = getMockSong([sheet]);
     useEditorStore.setState(() => ({
-      currentSheet: sheet,
+      song,
     }));
 
     addNote(4, "B", 2);
 
-    expect(useEditorStore.getState().currentSheet).toMatchObject(sheet);
+    expect(useEditorStore.getState()).toMatchObject({ ...INITIAL_STATE, song });
+  });
+
+  it("Does nothing with undefined Bar", () => {
+    const sheet = getEmptyMockSheet();
+    const song = getMockSong([sheet]);
+    useEditorStore.setState(() => ({
+      song,
+      currentSheetIndex: 0,
+    }));
+
+    addNote(4, "B", 2);
+
+    expect(getCurrentSheet()).toMatchObject(sheet);
     expect(useEditorStore.getState().cursor).toMatchObject(
       INITIAL_STATE.cursor,
     );
@@ -156,8 +202,10 @@ describe("Add Note", () => {
       noteModuleWithMocks.createNote.mockImplementation(() => note);
 
       const sheet = getMockSheetWithBars();
+      const song = getMockSong([sheet]);
       useEditorStore.setState(() => ({
-        currentSheet: sheet,
+        song,
+        currentSheetIndex: 0,
       }));
 
       sheetModuleWithMocks.addNoteToSheet.mockImplementation(
@@ -174,7 +222,7 @@ describe("Add Note", () => {
       expect(SheetModule.default.fillBarTracksInSheet).toBeCalledTimes(1);
       expect(SheetModule.default.fillBarTracksInSheet).toBeCalledWith(sheet, 0);
 
-      expect(useEditorStore.getState().currentSheet).toMatchObject({
+      expect(getCurrentSheet()).toMatchObject({
         ...sheet,
         tracks: [[note], [], []],
         bars: [
@@ -207,8 +255,10 @@ describe("Add Note", () => {
       noteModuleWithMocks.createNote.mockImplementation(() => note);
 
       const sheet = getMockSheetWithBars();
+      const song = getMockSong([sheet]);
       useEditorStore.setState(() => ({
-        currentSheet: sheet,
+        song,
+        currentSheetIndex: 0,
         cursor: {
           ...INITIAL_STATE.cursor,
           barIndex: 1,
@@ -229,7 +279,7 @@ describe("Add Note", () => {
       expect(SheetModule.default.fillBarTracksInSheet).toBeCalledTimes(1);
       expect(SheetModule.default.fillBarTracksInSheet).toBeCalledWith(sheet, 0);
 
-      expect(useEditorStore.getState().currentSheet).toMatchObject({
+      expect(getCurrentSheet()).toMatchObject({
         ...sheet,
         tracks: [[note], [], []],
         bars: [
@@ -248,11 +298,24 @@ describe("Add Note", () => {
 });
 
 describe("Remove Note from Bar", () => {
-  it("Does nothing with undefined Sheet", () => {
+  it("Does nothing with undefined Song", () => {
     const note = createNoteMock(NOTE_DURATIONS["QUARTER"], 1 / 4);
     removeNoteFromBar(note);
 
     expect(useEditorStore.getState()).toMatchObject(INITIAL_STATE);
+  });
+
+  it("Does nothing with undefined Sheet index", () => {
+    const sheet = getEmptyMockSheet();
+    const song = getMockSong([sheet]);
+    useEditorStore.setState(() => ({
+      song,
+    }));
+
+    const note = createNoteMock(NOTE_DURATIONS["QUARTER"], 1 / 4);
+    removeNoteFromBar(note);
+
+    expect(useEditorStore.getState()).toMatchObject({ ...INITIAL_STATE, song });
   });
 
   it("Removes received Note", () => {
@@ -261,8 +324,10 @@ describe("Remove Note from Bar", () => {
     sheet.tracks[0]!.push(note);
     sheet.bars[0]!.tracks[0]!.push(note);
 
+    const song = getMockSong([sheet]);
     useEditorStore.setState(() => ({
-      currentSheet: sheet,
+      song,
+      currentSheetIndex: 0,
     }));
 
     sheetModuleWithMocks.removeNotesFromSheet.mockImplementation(
@@ -281,15 +346,13 @@ describe("Remove Note from Bar", () => {
     expect(SheetModule.default.fillBarTracksInSheet).toBeCalledTimes(1);
     expect(SheetModule.default.fillBarTracksInSheet).toBeCalledWith(sheet, 0);
 
-    expect(useEditorStore.getState().currentSheet).toMatchObject(
-      getMockSheetWithBars(),
-    );
+    expect(getCurrentSheet()).toMatchObject(getMockSheetWithBars());
   });
 });
 
 describe("Remove next Note from Bar", () => {
   it.each([true, false])(
-    "Does nothing with undefined Sheet looking forward %p",
+    "Does nothing with undefined Song looking forward %p",
     (lookForward: boolean) => {
       removeNextNoteFromBar(lookForward);
 
@@ -298,15 +361,35 @@ describe("Remove next Note from Bar", () => {
   );
 
   it.each([true, false])(
+    "Does nothing with undefined Sheet index looking forward %p",
+    (lookForward: boolean) => {
+      const sheet = getEmptyMockSheet();
+      const song = getMockSong([sheet]);
+      useEditorStore.setState(() => ({
+        song,
+      }));
+
+      removeNextNoteFromBar(lookForward);
+
+      expect(useEditorStore.getState()).toMatchObject({
+        ...INITIAL_STATE,
+        song,
+      });
+    },
+  );
+
+  it.each([true, false])(
     "Does nothing with undefined Bar looking forward %p",
     (lookForward: boolean) => {
       const sheet = getEmptyMockSheet();
+      const song = getMockSong([sheet]);
       useEditorStore.setState(() => ({
-        currentSheet: sheet,
+        song,
+        currentSheetIndex: 0,
       }));
       removeNextNoteFromBar(lookForward);
 
-      expect(useEditorStore.getState().currentSheet).toMatchObject(sheet);
+      expect(getCurrentSheet()).toMatchObject(sheet);
     },
   );
 
@@ -314,8 +397,10 @@ describe("Remove next Note from Bar", () => {
     "Does nothing with null Note looking forward %p",
     (lookForward: boolean) => {
       const sheet = getMockSheetWithBars();
+      const song = getMockSong([sheet]);
       useEditorStore.setState(() => ({
-        currentSheet: sheet,
+        song,
+        currentSheetIndex: 0,
         cursor: { ...INITIAL_STATE.cursor, trackIndex: 1, position: 1 / 4 },
       }));
 
@@ -331,7 +416,7 @@ describe("Remove next Note from Bar", () => {
         lookForward,
       );
 
-      expect(useEditorStore.getState().currentSheet).toMatchObject(sheet);
+      expect(getCurrentSheet()).toMatchObject(sheet);
     },
   );
 
@@ -343,8 +428,10 @@ describe("Remove next Note from Bar", () => {
       sheet.tracks[1]!.push(note);
       sheet.bars[0]!.tracks[1]!.push(note);
 
+      const song = getMockSong([sheet]);
       useEditorStore.setState(() => ({
-        currentSheet: sheet,
+        song,
+        currentSheetIndex: 0,
         cursor: { ...INITIAL_STATE.cursor, trackIndex: 1, position: 2 / 4 },
       }));
 
@@ -374,9 +461,7 @@ describe("Remove next Note from Bar", () => {
       expect(SheetModule.default.fillBarTracksInSheet).toBeCalledTimes(1);
       expect(SheetModule.default.fillBarTracksInSheet).toBeCalledWith(sheet, 1);
 
-      expect(useEditorStore.getState().currentSheet).toMatchObject(
-        getMockSheetWithBars(),
-      );
+      expect(getCurrentSheet()).toMatchObject(getMockSheetWithBars());
       expect(useEditorStore.getState().cursor).toMatchObject({
         ...INITIAL_STATE.cursor,
         trackIndex: 1,
@@ -391,8 +476,10 @@ describe("Remove next Note from Bar", () => {
     sheet.tracks[1]!.push(note);
     sheet.bars[0]!.tracks[1]!.push(note);
 
+    const song = getMockSong([sheet]);
     useEditorStore.setState(() => ({
-      currentSheet: sheet,
+      song,
+      currentSheetIndex: 0,
       cursor: { ...INITIAL_STATE.cursor, trackIndex: 1 },
     }));
 
@@ -429,8 +516,10 @@ describe("Remove next Note from Bar", () => {
     sheet.tracks[1]!.push(note);
     sheet.bars[0]!.tracks[1]!.push(note);
 
+    const song = getMockSong([sheet]);
     useEditorStore.setState(() => ({
-      currentSheet: sheet,
+      song,
+      currentSheetIndex: 0,
       cursor: { ...INITIAL_STATE.cursor, trackIndex: 1, barIndex: 1 },
     }));
 
@@ -458,9 +547,7 @@ describe("Remove next Note from Bar", () => {
     expect(SheetModule.default.fillBarTracksInSheet).toBeCalledTimes(1);
     expect(SheetModule.default.fillBarTracksInSheet).toBeCalledWith(sheet, 1);
 
-    expect(useEditorStore.getState().currentSheet).toMatchObject(
-      getMockSheetWithBars(),
-    );
+    expect(getCurrentSheet()).toMatchObject(getMockSheetWithBars());
     expect(useEditorStore.getState().cursor).toMatchObject({
       ...INITIAL_STATE.cursor,
       trackIndex: 1,
@@ -470,16 +557,30 @@ describe("Remove next Note from Bar", () => {
 });
 
 describe("Remove Bar by index", () => {
-  it("Does nothing with undefined Sheet", () => {
+  it("Does nothing with undefined Song", () => {
     removeBarFromSheetByIndex(1);
 
     expect(useEditorStore.getState()).toMatchObject(INITIAL_STATE);
   });
 
+  it("Does nothing with undefined Sheet index", () => {
+    const sheet = getEmptyMockSheet();
+    const song = getMockSong([sheet]);
+    useEditorStore.setState(() => ({
+      song,
+    }));
+
+    removeBarFromSheetByIndex(1);
+
+    expect(useEditorStore.getState()).toMatchObject({ ...INITIAL_STATE, song });
+  });
+
   it("Removes received Bar", () => {
     const sheet = getMockSheetWithBars();
+    const song = getMockSong([sheet]);
     useEditorStore.setState(() => ({
-      currentSheet: sheet,
+      song,
+      currentSheetIndex: 0,
     }));
 
     sheetModuleWithMocks.removeBarInSheetByIndex.mockImplementation(
@@ -496,6 +597,6 @@ describe("Remove Bar by index", () => {
     );
 
     expect(sheet.bars).toHaveLength(2);
-    expect(useEditorStore.getState().currentSheet).toMatchObject(sheet);
+    expect(getCurrentSheet()).toMatchObject(sheet);
   });
 });

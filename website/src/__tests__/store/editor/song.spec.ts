@@ -61,7 +61,7 @@ describe("Load Song", () => {
     loadSong(song);
 
     expect(useEditorStore.getState().song).toBe(song);
-    expect(useEditorStore.getState().currentSheet).toBe(sheet1);
+    expect(useEditorStore.getState().currentSheetIndex).toBe(0);
   });
 });
 
@@ -84,7 +84,7 @@ describe("Add Sheet", () => {
     expect(SheetModule.default.createSheet).toBeCalledTimes(1);
     expect(SheetModule.default.createSheet).toBeCalledWith(8);
 
-    expect(useEditorStore.getState().currentSheet).toBe(sheet);
+    expect(useEditorStore.getState().currentSheetIndex).toBe(0);
     expect(useEditorStore.getState().song).toMatchObject({ sheets: [sheet] });
   });
 
@@ -102,7 +102,7 @@ describe("Add Sheet", () => {
     expect(SheetModule.default.createSheet).toBeCalledTimes(1);
     expect(SheetModule.default.createSheet).toBeCalledWith(8);
 
-    expect(useEditorStore.getState().currentSheet).toBe(sheet);
+    expect(useEditorStore.getState().currentSheetIndex).toBe(1);
     expect(useEditorStore.getState().song).toMatchObject({
       sheets: [initialSheet, sheet],
     });
