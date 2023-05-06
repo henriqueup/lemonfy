@@ -15,11 +15,11 @@ interface ISongModule {
 
 const SongModule: ISongModule = {
   createSong: (name: string, artist: string) => {
-    return {
+    return SongSchema.parse({
       name,
       artist,
       sheets: [],
-    };
+    });
   },
 };
 

@@ -3,6 +3,7 @@ import type { Song } from "@entities/song";
 
 export interface ISongDomain {
   create: (song: Song) => Promise<void>;
+  list: () => Promise<Song[]>;
 }
 
 class SongDomain implements ISongDomain {
@@ -14,6 +15,10 @@ class SongDomain implements ISongDomain {
 
   async create(song: Song) {
     await this.SongRepository.create(song);
+  }
+
+  list(): Promise<Song[]> {
+    return this.SongRepository.list();
   }
 }
 

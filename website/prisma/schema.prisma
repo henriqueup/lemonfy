@@ -30,7 +30,7 @@ model Song {
 model Sheet {
     trackCount Int
     bars       Bar[]
-    tracks     Track[]
+    notes      Note[]
 
     Song   Song   @relation(fields: [songId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     songId String
@@ -54,26 +54,16 @@ model Bar {
     createdAt DateTime @default(now())
 }
 
-model Track {
-    index Int
-    notes Note[]
-
-    Sheet   Sheet?  @relation(fields: [sheetId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    sheetId String?
-
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-}
-
 model Note {
+    trackIndex Int
     start      Float
     duration   Float
     pitch      String?
     hasSustain Boolean @default(false)
     isSustain  Boolean @default(false)
 
-    Track   Track?  @relation(fields: [trackId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    trackId String?
+    Sheet   Sheet?  @relation(fields: [sheetId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    sheetId String?
 
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())

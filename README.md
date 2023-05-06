@@ -35,7 +35,7 @@ And finally, it can also be used as a showcase of my skills.
 - <s>Add Song entity</s>
   - <s>Adjust tests</s>
   - <s>Fix store bug</s>
-    - Adjust tests
+    - <s>Adjust tests</s>
 - Add backend and DB integration
   - <s>Create basic architecture</s>
     - <s>Should domains be used? So far, yes</s>

@@ -1,10 +1,10 @@
-import type { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma, type PrismaClient } from "@prisma/client";
 
 import type { ISongRepository } from "@domains/repositories";
-import type { Song } from "@entities/song";
-import type { Sheet } from "@entities/sheet";
-import type { Bar } from "@entities/bar";
-import type { Note } from "@entities/note";
+import { default as SongModule, type Song } from "@entities/song";
+import { default as SheetModule, type Sheet } from "@entities/sheet";
+import { default as BarModule, type Bar } from "@entities/bar";
+import { createNote, type Note } from "@entities/note";
 
 class SongPrismaRepository implements ISongRepository {
   readonly prisma!: PrismaClient;
@@ -21,7 +21,40 @@ class SongPrismaRepository implements ISongRepository {
       data: mapSongToCreateInput(song),
     });
   }
+
+  async list(): Promise<Song[]> {
+    const songs = await this.prisma.song.findMany({
+      include: songIncludes,
+    });
+
+    return songs.map(song => mapSongModelToEntity(song));
+  }
 }
+
+const songIncludes = Prisma.validator<Prisma.SongInclude>()({
+  sheets: {
+    include: {
+      bars: true,
+      notes: {
+        orderBy: [
+          {
+            trackIndex: "asc",
+          },
+          {
+            start: "asc",
+          },
+        ],
+      },
+    },
+  },
+});
+const sheetIncludes = Prisma.validator<Prisma.SheetInclude>()({
+  bars: true,
+  notes: true,
+});
+
+type SongModel = Prisma.SongGetPayload<{ include: typeof songIncludes }>;
+type SheetModel = Prisma.SheetGetPayload<{ include: typeof sheetIncludes }>;
 
 const mapSongToCreateInput = (song: Song): Prisma.SongCreateInput => {
   return {
@@ -38,7 +71,7 @@ const mapSheetsToCreateInput = (
     create: sheets.map(sheet => ({
       trackCount: sheet.trackCount,
       bars: mapBarsToCreateInput(sheet.bars),
-      tracks: mapTracksToCreateInput(sheet.tracks),
+      notes: mapNotesToCreateInput(sheet.tracks),
     })),
   };
 };
@@ -58,29 +91,71 @@ const mapBarsToCreateInput = (
   };
 };
 
-const mapTracksToCreateInput = (
+const mapNotesToCreateInput = (
   tracks: Note[][],
-): Prisma.TrackCreateNestedManyWithoutSheetInput => {
+): Prisma.NoteCreateNestedManyWithoutSheetInput => {
   return {
-    create: tracks.map((track, i) => ({
-      index: i,
-      notes: mapNotesToCreateInput(track),
-    })),
+    create: tracks.flatMap((track, i) =>
+      track.map(note => ({
+        trackIndex: i,
+        duration: note.duration,
+        start: note.start,
+        pitch: note.pitch?.key,
+        isSustain: note.isSustain,
+        hasSustain: note.hasSustain,
+      })),
+    ),
   };
 };
 
-const mapNotesToCreateInput = (
-  notes: Note[],
-): Prisma.NoteCreateNestedManyWithoutTrackInput => {
-  return {
-    create: notes.map(note => ({
-      pitch: note.pitch?.key,
-      start: note.start,
-      duration: note.duration,
-      hasSustain: note.hasSustain,
-      isSustain: note.isSustain,
-    })),
-  };
+const mapSongModelToEntity = (model: SongModel): Song => {
+  const song = SongModule.createSong(model.name, model.artist);
+  song.sheets = model.sheets.map(sheet => mapSheetModelToEntity(sheet));
+
+  return song;
+};
+
+const mapSheetModelToEntity = (model: SheetModel): Sheet => {
+  const sheet = SheetModule.createSheet(model.trackCount);
+
+  sheet.bars = model.bars.map(bar =>
+    mapBarModelToEntity(model.trackCount, bar),
+  );
+
+  // we can push directly because of the order bys used
+  model.notes.forEach(note => {
+    sheet.tracks[note.trackIndex]?.push(mapNoteModelToEntity(note));
+  });
+
+  return sheet;
+};
+
+const mapBarModelToEntity = (
+  trackCount: number,
+  model: Prisma.BarGetPayload<null>,
+): Bar => {
+  const bar = BarModule.createBar(
+    trackCount,
+    model.beatCount,
+    model.dibobinador,
+    model.start,
+    model.tempo,
+    model.index,
+  );
+
+  return bar;
+};
+
+const mapNoteModelToEntity = (model: Prisma.NoteGetPayload<null>): Note => {
+  const note = createNote(
+    model.duration,
+    model.start,
+    model.pitch, //TODO: implement a way to create pitch from key
+    model.hasSustain,
+    model.isSustain,
+  );
+
+  return note;
 };
 
 export default SongPrismaRepository;

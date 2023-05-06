@@ -14,6 +14,7 @@ export const BarSchema = z.object({
   timeRatio: z.number().gt(0),
   index: z.number().min(0),
 });
+
 export type Bar = z.infer<typeof BarSchema>;
 
 interface IBarModule {
@@ -49,7 +50,7 @@ const BarModule: IBarModule = {
     tempo: number,
     index: number,
   ): Bar => {
-    return {
+    return BarSchema.parse({
       trackCount,
       beatCount,
       dibobinador,
@@ -59,7 +60,7 @@ const BarModule: IBarModule = {
       tracks: Array.from({ length: trackCount }, (): Note[] => []),
       timeRatio: tempo / SECONDS_PER_MINUTE,
       index,
-    };
+    });
   },
 
   findBarNoteByTime: (
@@ -77,12 +78,14 @@ const BarModule: IBarModule = {
       const noteEnd = note.start + note.duration;
       if (lookForward)
         return (
-          (TimeEvaluation.IsSmallerOrEqualTo(note.start, time) && TimeEvaluation.IsSmallerThan(time, noteEnd)) ||
+          (TimeEvaluation.IsSmallerOrEqualTo(note.start, time) &&
+            TimeEvaluation.IsSmallerThan(time, noteEnd)) ||
           (!shouldContainTime && TimeEvaluation.IsSmallerThan(time, note.start))
         );
 
       return (
-        (TimeEvaluation.IsSmallerThan(note.start, time) && TimeEvaluation.IsSmallerOrEqualTo(time, noteEnd)) ||
+        (TimeEvaluation.IsSmallerThan(note.start, time) &&
+          TimeEvaluation.IsSmallerOrEqualTo(time, noteEnd)) ||
         (!shouldContainTime && TimeEvaluation.IsSmallerThan(noteEnd, time))
       );
     });
@@ -91,7 +94,10 @@ const BarModule: IBarModule = {
   },
 
   sumBarsCapacity: (bars: Bar[]): number => {
-    return bars.reduce((currentCapacity, currentBar) => currentCapacity + currentBar.capacity, 0);
+    return bars.reduce(
+      (currentCapacity, currentBar) => currentCapacity + currentBar.capacity,
+      0,
+    );
   },
 
   convertDurationInBarToSeconds: (bar: Bar, duration: number): number => {
@@ -100,14 +106,24 @@ const BarModule: IBarModule = {
 
   setBarTimesInSeconds: (bar: Bar): void => {
     const notes = bar.tracks.flat();
-    bar.startInSeconds = BarModule.convertDurationInBarToSeconds(bar, bar.start);
+    bar.startInSeconds = BarModule.convertDurationInBarToSeconds(
+      bar,
+      bar.start,
+    );
 
     for (let i = 0; i < notes.length; i++) {
       const note = notes[i];
-      if (note === undefined) throw new Error(`The note at index ${i} should exist.`);
+      if (note === undefined)
+        throw new Error(`The note at index ${i} should exist.`);
 
-      note.durationInSeconds = BarModule.convertDurationInBarToSeconds(bar, note.duration);
-      note.startInSeconds = BarModule.convertDurationInBarToSeconds(bar, note.start);
+      note.durationInSeconds = BarModule.convertDurationInBarToSeconds(
+        bar,
+        note.duration,
+      );
+      note.startInSeconds = BarModule.convertDurationInBarToSeconds(
+        bar,
+        note.start,
+      );
     }
   },
 
@@ -131,7 +147,9 @@ const BarModule: IBarModule = {
 
     const trackWithoutExtremityNotes = notesInsideBar
       .filter((_, i) => i !== 0 && i !== notesInsideBar.length - 1)
-      .map(trackNote => createNote(trackNote.duration, trackNote.start, trackNote.pitch));
+      .map(trackNote =>
+        createNote(trackNote.duration, trackNote.start, trackNote.pitch),
+      );
     const barTrack = trackWithoutExtremityNotes;
 
     const actualFirstNote = getActualFirstNote(bar, firstNote);
@@ -156,7 +174,11 @@ const BarModule: IBarModule = {
       const track = bar.tracks[i];
       if (track === undefined) throw new Error(`Invalid bar track at ${i}.`);
 
-      const noteToCrop = BarModule.findBarNoteByTime(bar, i, startAdjustedToBar);
+      const noteToCrop = BarModule.findBarNoteByTime(
+        bar,
+        i,
+        startAdjustedToBar,
+      );
       const croppedNote = noteToCrop;
 
       if (croppedNote !== null && croppedNote.start < startAdjustedToBar) {
@@ -174,10 +196,12 @@ const BarModule: IBarModule = {
 };
 
 const getTrackFromIndex = (bar: Bar, trackIndex: number) => {
-  if (trackIndex >= bar.tracks.length || trackIndex < 0) throw new Error("Invalid track index.");
+  if (trackIndex >= bar.tracks.length || trackIndex < 0)
+    throw new Error("Invalid track index.");
 
   const targetTrack = bar.tracks[trackIndex];
-  if (targetTrack === undefined) throw new Error(`Invalid track at index: ${trackIndex}.`);
+  if (targetTrack === undefined)
+    throw new Error(`Invalid track at index: ${trackIndex}.`);
 
   return targetTrack;
 };
@@ -185,8 +209,14 @@ const getTrackFromIndex = (bar: Bar, trackIndex: number) => {
 const getActualFirstNote = (bar: Bar, firstNote: Note) => {
   const firstNoteEnd = firstNote.start + firstNote.duration;
   const targetBarEnd = bar.start + bar.capacity;
-  const shouldHaveSustain = TimeEvaluation.IsGreaterThan(firstNoteEnd, targetBarEnd);
-  const shouldBeSustain = TimeEvaluation.IsSmallerThan(firstNote.start, bar.start);
+  const shouldHaveSustain = TimeEvaluation.IsGreaterThan(
+    firstNoteEnd,
+    targetBarEnd,
+  );
+  const shouldBeSustain = TimeEvaluation.IsSmallerThan(
+    firstNote.start,
+    bar.start,
+  );
 
   let start = firstNote.start;
   let duration = firstNote.duration;
@@ -200,16 +230,33 @@ const getActualFirstNote = (bar: Bar, firstNote: Note) => {
     duration = bar.capacity;
   }
 
-  return createNote(duration, start, firstNote.pitch, shouldHaveSustain, shouldBeSustain);
+  return createNote(
+    duration,
+    start,
+    firstNote.pitch,
+    shouldHaveSustain,
+    shouldBeSustain,
+  );
 };
 
 const getActualLastNote = (bar: Bar, lastNote: Note) => {
   const lastNoteEnd = lastNote.start + lastNote.duration;
   const targetBarEnd = bar.start + bar.capacity;
-  const shouldHaveSustain = TimeEvaluation.IsGreaterThan(lastNoteEnd, targetBarEnd);
-  const duration = shouldHaveSustain ? targetBarEnd - lastNote.start : lastNote.duration;
+  const shouldHaveSustain = TimeEvaluation.IsGreaterThan(
+    lastNoteEnd,
+    targetBarEnd,
+  );
+  const duration = shouldHaveSustain
+    ? targetBarEnd - lastNote.start
+    : lastNote.duration;
 
-  return createNote(duration, lastNote.start, lastNote.pitch, shouldHaveSustain, false);
+  return createNote(
+    duration,
+    lastNote.start,
+    lastNote.pitch,
+    shouldHaveSustain,
+    false,
+  );
 };
 
 export default BarModule;

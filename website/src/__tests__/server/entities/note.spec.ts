@@ -7,7 +7,7 @@ describe("Create Note", () => {
     const newNote = createNote(NOTE_DURATIONS["HALF"], 2, pitch, true);
 
     expect(newNote.duration).toBe(NOTE_DURATIONS["HALF"]);
-    expect(newNote.pitch).toBe<Pitch>(pitch);
+    expect(newNote.pitch).toMatchObject<Pitch>(pitch);
     expect(newNote.start).toBe(2);
     expect(newNote.hasSustain).toBe(true);
     expect(newNote.isSustain).toBe(false);
@@ -27,12 +27,22 @@ describe("Sum Note duration", () => {
   it("Sums Note array duration", () => {
     const notes = [
       createNote(NOTE_DURATIONS["HALF"], 2, createPitch("C", 2), true),
-      createNote(NOTE_DURATIONS["EIGHTH_TRIPLET"], 2, createPitch("G#", 5), true, true),
+      createNote(
+        NOTE_DURATIONS["EIGHTH_TRIPLET"],
+        2,
+        createPitch("G#", 5),
+        true,
+        true,
+      ),
       createNote(NOTE_DURATIONS["WHOLE"], 2, createPitch("F", 0)),
     ];
 
     const totalDuration = sumNotesDuration(notes);
 
-    expect(totalDuration).toBe(NOTE_DURATIONS["HALF"] + NOTE_DURATIONS["EIGHTH_TRIPLET"] + NOTE_DURATIONS["WHOLE"]);
+    expect(totalDuration).toBe(
+      NOTE_DURATIONS["HALF"] +
+        NOTE_DURATIONS["EIGHTH_TRIPLET"] +
+        NOTE_DURATIONS["WHOLE"],
+    );
   });
 });

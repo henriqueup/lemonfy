@@ -30,19 +30,25 @@ export const NOTE_DURATIONS: Record<NoteDurationName, number> = {
   SIXTEENTH: 1 / 16,
 } as const;
 
-const getNextNoteDuration = (currentDuration: NoteDurationName, isRaise: boolean) => {
+const getNextNoteDuration = (
+  currentDuration: NoteDurationName,
+  isRaise: boolean,
+) => {
   const currentDurationIndex = NOTE_DURATION_NAMES.indexOf(currentDuration);
   const nextNoteDuration = isRaise
     ? NOTE_DURATION_NAMES[currentDurationIndex - 1]
     : NOTE_DURATION_NAMES[currentDurationIndex + 1];
 
-  if (NoteDurationNameSchema.safeParse(nextNoteDuration).success) return nextNoteDuration;
+  if (NoteDurationNameSchema.safeParse(nextNoteDuration).success)
+    return nextNoteDuration;
 
   return currentDuration;
 };
 
-export const getHigherNoteDuration = (currentDuration: NoteDurationName) => getNextNoteDuration(currentDuration, true);
-export const getLowerNoteDuration = (currentDuration: NoteDurationName) => getNextNoteDuration(currentDuration, false);
+export const getHigherNoteDuration = (currentDuration: NoteDurationName) =>
+  getNextNoteDuration(currentDuration, true);
+export const getLowerNoteDuration = (currentDuration: NoteDurationName) =>
+  getNextNoteDuration(currentDuration, false);
 
 export const NoteSchema = z.object({
   duration: z.number().min(0),
@@ -62,13 +68,17 @@ export const createNote = (
   pitch?: Pitch,
   hasSustain?: boolean,
   isSustain?: boolean,
-): Note => ({
-  duration,
-  start,
-  pitch,
-  hasSustain: hasSustain || false,
-  isSustain: isSustain || false,
-});
+): Note =>
+  NoteSchema.parse({
+    duration,
+    start,
+    pitch,
+    hasSustain: hasSustain || false,
+    isSustain: isSustain || false,
+  });
 
 export const sumNotesDuration = (notes: Note[]) =>
-  notes.reduce((currentDuration, currentNote) => currentDuration + currentNote.duration, 0);
+  notes.reduce(
+    (currentDuration, currentNote) => currentDuration + currentNote.duration,
+    0,
+  );

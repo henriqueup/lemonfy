@@ -9,6 +9,7 @@ export const SheetSchema = z.object({
   tracks: z.array(z.array(NoteSchema)),
   trackCount: z.number().int().min(1),
 });
+
 export type Sheet = z.infer<typeof SheetSchema>;
 
 interface ISheetModule {
@@ -50,7 +51,7 @@ const SheetModule: ISheetModule = {
       newSheet.tracks[i] = [];
     }
 
-    return newSheet;
+    return SheetSchema.parse(newSheet);
   },
 
   addBarToSheet: (
