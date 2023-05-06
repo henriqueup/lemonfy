@@ -58,7 +58,7 @@ model Note {
     trackIndex Int
     start      Float
     duration   Float
-    pitch      String?
+    pitch      String
     hasSustain Boolean @default(false)
     isSustain  Boolean @default(false)
 

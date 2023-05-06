@@ -53,7 +53,7 @@ export const getLowerNoteDuration = (currentDuration: NoteDurationName) =>
 export const NoteSchema = z.object({
   duration: z.number().min(0),
   start: z.number().min(0),
-  pitch: PitchSchema.optional(),
+  pitch: PitchSchema,
   hasSustain: z.boolean().default(false),
   isSustain: z.boolean().default(false),
   durationInSeconds: z.number().min(0).optional(),
@@ -65,7 +65,7 @@ export type Note = z.infer<typeof NoteSchema>;
 export const createNote = (
   duration: number,
   start: number,
-  pitch?: Pitch,
+  pitch: Pitch,
   hasSustain?: boolean,
   isSustain?: boolean,
 ): Note =>

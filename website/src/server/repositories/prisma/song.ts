@@ -5,6 +5,7 @@ import { default as SongModule, type Song } from "@entities/song";
 import { default as SheetModule, type Sheet } from "@entities/sheet";
 import { default as BarModule, type Bar } from "@entities/bar";
 import { createNote, type Note } from "@entities/note";
+import { createPitchFromKey } from "@entities/pitch";
 
 class SongPrismaRepository implements ISongRepository {
   readonly prisma!: PrismaClient;
@@ -100,7 +101,7 @@ const mapNotesToCreateInput = (
         trackIndex: i,
         duration: note.duration,
         start: note.start,
-        pitch: note.pitch?.key,
+        pitch: note.pitch.key,
         isSustain: note.isSustain,
         hasSustain: note.hasSustain,
       })),
@@ -150,7 +151,7 @@ const mapNoteModelToEntity = (model: Prisma.NoteGetPayload<null>): Note => {
   const note = createNote(
     model.duration,
     model.start,
-    model.pitch, //TODO: implement a way to create pitch from key
+    createPitchFromKey(model.pitch),
     model.hasSustain,
     model.isSustain,
   );

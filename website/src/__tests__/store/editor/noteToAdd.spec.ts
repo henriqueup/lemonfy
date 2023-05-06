@@ -14,17 +14,28 @@ import { useEditorStore } from "@store/editor";
 
 jest.mock<typeof PitchModule>("@entities/pitch", () => ({
   ...jest.requireActual("@entities/pitch"),
-  createPitch: jest.fn(() => ({ name: "C", octave: 2, key: "C2", frequency: 123 })),
+  createPitch: jest.fn(() => ({
+    name: "C",
+    octave: 2,
+    key: "C2",
+    frequency: 123,
+  })),
 }));
 jest.mock<typeof NoteModule>("@entities/note", () => ({
   ...jest.requireActual("@entities/note"),
-  createNote: jest.fn((duration: number, start: number, pitch?: PitchModule.Pitch | undefined) => ({
-    duration,
-    start,
-    hasSustain: true,
-    isSustain: false,
-    pitch,
-  })),
+  createNote: jest.fn(
+    (
+      duration: number,
+      start: number,
+      pitch?: PitchModule.Pitch | undefined,
+    ) => ({
+      duration,
+      start,
+      hasSustain: true,
+      isSustain: false,
+      pitch,
+    }),
+  ),
 }));
 
 describe("Selected Octave", () => {
@@ -57,7 +68,9 @@ describe("Selected Note Duration", () => {
   it("Sets the selected Note Duration", () => {
     setSelectedNoteDuration("EIGHTH");
 
-    expect(useEditorStore.getState().selectedNoteDuration).toBe<NoteDurationName>("EIGHTH");
+    expect(
+      useEditorStore.getState().selectedNoteDuration,
+    ).toBe<NoteDurationName>("EIGHTH");
   });
 
   it("Increases the selected Note Duration", () => {
@@ -66,7 +79,9 @@ describe("Selected Note Duration", () => {
     }));
     increaseSelectedNoteDuration();
 
-    expect(useEditorStore.getState().selectedNoteDuration).toBe<NoteDurationName>("WHOLE");
+    expect(
+      useEditorStore.getState().selectedNoteDuration,
+    ).toBe<NoteDurationName>("WHOLE");
   });
 
   it("Decreases the selected Note Duration", () => {
@@ -75,7 +90,9 @@ describe("Selected Note Duration", () => {
     }));
     decreaseSelectedNoteDuration();
 
-    expect(useEditorStore.getState().selectedNoteDuration).toBe<NoteDurationName>("HALF_TRIPLET");
+    expect(
+      useEditorStore.getState().selectedNoteDuration,
+    ).toBe<NoteDurationName>("HALF_TRIPLET");
   });
 });
 
@@ -91,7 +108,7 @@ describe("Note to add", () => {
     expect(noteToAdd?.hasSustain).toBe(true);
     expect(noteToAdd?.isSustain).toBe(false);
 
-    const pitch = noteToAdd?.pitch;
+    const pitch = noteToAdd.pitch;
     expect(pitch).toBeTruthy();
     expect(pitch?.key).toBe("C2");
     expect(pitch?.name).toBe("C");

@@ -1,13 +1,29 @@
 import { z } from "zod";
 import { OctaveSchema, type Octave } from "./octave";
 
-export const PITCH_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B", "X"] as const;
+export const PITCH_NAMES = [
+  "C",
+  "C#",
+  "D",
+  "D#",
+  "E",
+  "F",
+  "F#",
+  "G",
+  "G#",
+  "A",
+  "A#",
+  "B",
+  "X",
+] as const;
 
 export const PitchNameSchema = z.enum(PITCH_NAMES);
 export type PitchName = z.infer<typeof PitchNameSchema>;
 
 export const PitchKeySchema = z.custom<`${PitchName}${Octave}`>(
-  (value: unknown) => typeof value === "string" && (/^[ACDFG]#?[0-5]$/.test(value) || /^[EBX][0-5]$/.test(value)),
+  (value: unknown) =>
+    typeof value === "string" &&
+    (/^[ACDFG]#?[0-5]$/.test(value) || /^[EBX][0-5]$/.test(value)),
 );
 export type PitchKey = z.infer<typeof PitchKeySchema>;
 
@@ -19,17 +35,42 @@ export const PitchSchema = z.object({
 });
 export type Pitch = z.infer<typeof PitchSchema>;
 
-const getPitchKey = (name: PitchName, octave: Octave): PitchKey => `${name}${octave}`;
+const getPitchKey = (name: PitchName, octave: Octave): PitchKey =>
+  `${name}${octave}`;
+const getPitchNameAndOctave = (key: PitchKey): [PitchName, Octave] => {
+  if (key.length === 2)
+    return [
+      PitchNameSchema.parse(key.substring(0, 1)),
+      OctaveSchema.parse(key.substring(1)),
+    ];
+
+  return [
+    PitchNameSchema.parse(key.substring(0, 2)),
+    OctaveSchema.parse(key.substring(2)),
+  ];
+};
 
 export const createPitch = (name: PitchName, octave: Octave): Pitch => {
   const key = getPitchKey(name, octave);
 
-  return {
+  return PitchSchema.parse({
     name,
     octave,
     key,
     frequency: FrequencyDictionary[key] || 0,
-  };
+  });
+};
+
+export const createPitchFromKey = (key: string): Pitch => {
+  const parsedKey = PitchKeySchema.parse(key);
+  const [name, octave] = getPitchNameAndOctave(parsedKey);
+
+  return PitchSchema.parse({
+    name,
+    octave,
+    key: parsedKey,
+    frequency: FrequencyDictionary[parsedKey] || 0,
+  });
 };
 
 // prettier-ignore

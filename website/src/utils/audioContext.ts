@@ -17,22 +17,31 @@ const createSheetCopy = (originalSheet: Sheet): Sheet => {
 };
 
 const getBarsAfterStart = (sheet: Sheet, start: number): Bar[] => {
-  const barsAfterStart = sheet.bars.filter(bar => bar.start > start || bar.start + bar.capacity > start);
+  const barsAfterStart = sheet.bars.filter(
+    bar => bar.start > start || bar.start + bar.capacity > start,
+  );
   const firstBar = barsAfterStart[0];
 
-  if (firstBar !== undefined && firstBar.start < start) BarModule.cropBar(firstBar, start);
+  if (firstBar !== undefined && firstBar.start < start)
+    BarModule.cropBar(firstBar, start);
 
   return barsAfterStart;
 };
 
-const addNotesToAudioContext = (audioContext: AudioContext, notes: Note[], barStartInSeconds: number): AudioNode[] => {
+const addNotesToAudioContext = (
+  audioContext: AudioContext,
+  notes: Note[],
+  barStartInSeconds: number,
+): AudioNode[] => {
   const audioNodes: AudioNode[] = [];
   for (let j = 0; j < notes.length; j++) {
     const note = notes[j];
     if (note === undefined) throw new Error(`Invalid note at index ${j}.`);
 
-    if (note.startInSeconds == undefined) throw new Error(`Invalid note: '${j}', undefined startInSeconds.`);
-    if (note.durationInSeconds == undefined) throw new Error(`Invalid note: '${j}', undefined durationInSeconds.`);
+    if (note.startInSeconds == undefined)
+      throw new Error(`Invalid note: '${j}', undefined startInSeconds.`);
+    if (note.durationInSeconds == undefined)
+      throw new Error(`Invalid note: '${j}', undefined durationInSeconds.`);
 
     const oscillator = audioContext.createOscillator();
     const gainNode = addGainNode(audioContext);
@@ -43,16 +52,22 @@ const addNotesToAudioContext = (audioContext: AudioContext, notes: Note[], barSt
       gainValueWhilePlaying,
       audioContext.currentTime + barStartInSeconds + note.startInSeconds,
     );
-    gainNode.gain.setValueAtTime(0, audioContext.currentTime + barStartInSeconds + noteEndInSeconds);
+    gainNode.gain.setValueAtTime(
+      0,
+      audioContext.currentTime + barStartInSeconds + noteEndInSeconds,
+    );
     oscillator.connect(gainNode);
 
     //no clue wtf is going on here... gotta learn about sound wave synthesis, I guess
     const sineTerms = new Float32Array([1, 1, 1, 0, 1, 1, 0, 0, 1]);
     const cosineTerms = new Float32Array([1, 1, 1, 1, 1, 1, 1, 1, 1]);
-    const customWaveform = audioContext.createPeriodicWave(cosineTerms, sineTerms);
+    const customWaveform = audioContext.createPeriodicWave(
+      cosineTerms,
+      sineTerms,
+    );
 
     oscillator.setPeriodicWave(customWaveform);
-    oscillator.frequency.value = note.pitch?.frequency || 0;
+    oscillator.frequency.value = note.pitch.frequency;
     oscillator.start();
 
     audioNodes.push(gainNode);
@@ -62,7 +77,11 @@ const addNotesToAudioContext = (audioContext: AudioContext, notes: Note[], barSt
   return audioNodes;
 };
 
-export const playSong = (sheet: Sheet, audioContext: AudioContext, start = 0): void => {
+export const playSong = (
+  sheet: Sheet,
+  audioContext: AudioContext,
+  start = 0,
+): void => {
   const sheetCopyForPlayback = createSheetCopy(sheet);
   SheetModule.fillBarsInSheet(sheetCopyForPlayback);
 
@@ -75,10 +94,13 @@ export const playSong = (sheet: Sheet, audioContext: AudioContext, start = 0): v
 
     bar.start = Math.max(0, bar.start - start);
     BarModule.setBarTimesInSeconds(bar);
-    if (bar.startInSeconds == undefined) throw new Error(`Invalid bar at ${i}: undefined startInSeconds.`);
+    if (bar.startInSeconds == undefined)
+      throw new Error(`Invalid bar at ${i}: undefined startInSeconds.`);
 
     const barNotes = bar.tracks.flat();
-    audioNodes.push(...addNotesToAudioContext(audioContext, barNotes, bar.startInSeconds));
+    audioNodes.push(
+      ...addNotesToAudioContext(audioContext, barNotes, bar.startInSeconds),
+    );
   }
 
   play(audioNodes);

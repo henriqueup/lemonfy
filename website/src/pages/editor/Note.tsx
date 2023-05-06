@@ -8,7 +8,11 @@ interface Props {
 
 const Note: FunctionComponent<Props> = ({ note, barCapacity }) => {
   const getNoteClassName = (): string | undefined => {
-    if ((!note.isSustain && !note.hasSustain) || (note.isSustain && note.hasSustain)) return;
+    if (
+      (!note.isSustain && !note.hasSustain) ||
+      (note.isSustain && note.hasSustain)
+    )
+      return;
 
     if (note.isSustain) return "w-1/2 flex justify-start";
     if (note.hasSustain) return "w-1/2 flex justify-end";
@@ -17,7 +21,10 @@ const Note: FunctionComponent<Props> = ({ note, barCapacity }) => {
   return (
     <div
       className="absolute flex h-full items-center justify-center rounded border border-solid border-stone-600 bg-inherit dark:border-stone-400"
-      style={{ width: `${note.duration * barCapacity * 100}%`, left: `${(note.start * 100) / barCapacity}%` }}
+      style={{
+        width: `${note.duration * barCapacity * 100}%`,
+        left: `${(note.start * 100) / barCapacity}%`,
+      }}
     >
       {note.isSustain ? (
         <div className="flex w-1/2 justify-start">
@@ -25,7 +32,7 @@ const Note: FunctionComponent<Props> = ({ note, barCapacity }) => {
         </div>
       ) : null}
       <div className={getNoteClassName()}>
-        <span>{note.pitch?.key}</span>
+        <span>{note.pitch.key}</span>
       </div>
       {note.hasSustain ? (
         <div className="flex w-1/2 justify-end">
