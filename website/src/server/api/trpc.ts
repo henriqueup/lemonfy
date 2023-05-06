@@ -20,8 +20,9 @@ import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 
 import DomainWrapperFactory from "src/server/api/domainWrapper";
 
-type CreateContextOptions = Record<string, never>;
+export const domainWrapper = new DomainWrapperFactory("prisma").build();
 
+type CreateContextOptions = Record<string, never>;
 /**
  * This helper generates the "internals" for a tRPC context. If you need to use
  * it, you can export it from here
@@ -33,7 +34,7 @@ type CreateContextOptions = Record<string, never>;
  */
 const createInnerTRPCContext = (_opts: CreateContextOptions) => {
   return {
-    domainWrapper: new DomainWrapperFactory("prisma").build(),
+    domainWrapper,
   };
 };
 

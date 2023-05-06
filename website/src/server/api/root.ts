@@ -1,6 +1,6 @@
 import { exampleRouter } from "@routers/example";
 import { songRouter } from "@routers/song";
-import { createTRPCRouter } from "./trpc";
+import { createTRPCRouter, domainWrapper } from "./trpc";
 
 /**
  * This is the primary router for your server.
@@ -11,6 +11,8 @@ export const appRouter = createTRPCRouter({
   example: exampleRouter,
   song: songRouter,
 });
+
+export const routerCaller = appRouter.createCaller({ domainWrapper });
 
 // export type definition of API
 export type AppRouter = typeof appRouter;

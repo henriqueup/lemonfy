@@ -40,12 +40,15 @@ And finally, it can also be used as a showcase of my skills.
   - <s>Create basic architecture</s>
     - <s>Should domains be used? So far, yes</s>
   - <s>Create prisma models</s>
-  - Create trpc routers
+  - <s>Create trpc routers</s>
     - <s>Song create</s>
-    - Song get
-  - Add trpc usage in frontend
+    - <s>Song get</s>
+  - <s>Add trpc usage in frontend</s>
     - <s>Song create</s>
-    - Song get
+    - <s>Song get</s>
+  - Migrate to App Router
+  - Finish library page
+    - Enable loading existing song in Editor
 - Add player pages
 - Add modal component
 - Enable Bar edition

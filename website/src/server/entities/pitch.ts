@@ -41,12 +41,12 @@ const getPitchNameAndOctave = (key: PitchKey): [PitchName, Octave] => {
   if (key.length === 2)
     return [
       PitchNameSchema.parse(key.substring(0, 1)),
-      OctaveSchema.parse(key.substring(1)),
+      OctaveSchema.parse(Number(key.substring(1))),
     ];
 
   return [
     PitchNameSchema.parse(key.substring(0, 2)),
-    OctaveSchema.parse(key.substring(2)),
+    OctaveSchema.parse(Number(key.substring(2))),
   ];
 };
 

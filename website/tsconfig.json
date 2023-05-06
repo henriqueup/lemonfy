@@ -2,15 +2,31 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@entities/*": ["src/server/entities/*"],
-      "@domains/*": ["src/server/domains/*"],
-      "@routers/*": ["src/server/api/routers/*"],
-      "@repositories/*": ["src/server/repositories/*"],
-      "@store/*": ["src/store/*"],
-      "@mocks/*": ["src/mocks/*"]
+      "@entities/*": [
+        "src/server/entities/*"
+      ],
+      "@domains/*": [
+        "src/server/domains/*"
+      ],
+      "@routers/*": [
+        "src/server/api/routers/*"
+      ],
+      "@repositories/*": [
+        "src/server/repositories/*"
+      ],
+      "@store/*": [
+        "src/store/*"
+      ],
+      "@mocks/*": [
+        "src/mocks/*"
+      ]
     },
     "target": "es2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -23,7 +39,12 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "noUncheckedIndexedAccess": true
+    "noUncheckedIndexedAccess": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": [
     "next-env.d.ts",
@@ -31,7 +52,10 @@
     "**/*.tsx",
     "**/*.cjs",
     "**/*.mjs",
-    "./jest-setup.ts"
+    "./jest-setup.ts",
+    ".next/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }
