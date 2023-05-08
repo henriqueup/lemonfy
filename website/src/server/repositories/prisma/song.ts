@@ -32,6 +32,19 @@ class SongPrismaRepository implements ISongRepository {
 
     return songs.map(song => mapSongModelToInfoEntity(song));
   }
+
+  async get(songId: string): Promise<Song | null> {
+    const song = await this.prisma.song.findUnique({
+      where: {
+        id: songId,
+      },
+      include: songIncludes,
+    });
+
+    if (song === null) return null;
+
+    return mapSongModelToEntity(song);
+  }
 }
 
 const songIncludes = Prisma.validator<Prisma.SongInclude>()({

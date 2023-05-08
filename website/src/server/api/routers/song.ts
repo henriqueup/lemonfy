@@ -9,4 +9,7 @@ export const songRouter = createTRPCRouter({
   list: publicProcedure.input(z.undefined()).query(({ ctx }) => {
     return ctx.domainWrapper.Song.list();
   }),
+  get: publicProcedure.input(z.string().cuid()).query(({ input, ctx }) => {
+    return ctx.domainWrapper.Song.get(input);
+  }),
 });

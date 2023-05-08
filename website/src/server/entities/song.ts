@@ -2,6 +2,7 @@ import { SheetSchema } from "@entities/sheet";
 import { z } from "zod";
 
 export const SongInfoSchema = z.object({
+  id: z.string().cuid().optional(),
   name: z.string().min(1),
   artist: z.string().min(1),
 });
