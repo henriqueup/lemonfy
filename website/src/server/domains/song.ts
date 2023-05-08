@@ -1,9 +1,9 @@
 import type { ISongRepository } from "@domains/repositories";
-import type { Song } from "@entities/song";
+import type { Song, SongInfo } from "@entities/song";
 
 export interface ISongDomain {
   create: (song: Song) => Promise<void>;
-  list: () => Promise<Song[]>;
+  list: () => Promise<SongInfo[]>;
 }
 
 class SongDomain implements ISongDomain {
@@ -17,7 +17,7 @@ class SongDomain implements ISongDomain {
     await this.SongRepository.create(song);
   }
 
-  list(): Promise<Song[]> {
+  list(): Promise<SongInfo[]> {
     return this.SongRepository.list();
   }
 }

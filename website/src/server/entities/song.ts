@@ -1,12 +1,18 @@
 import { SheetSchema } from "@entities/sheet";
 import { z } from "zod";
 
-export const SongSchema = z.object({
+export const SongInfoSchema = z.object({
   name: z.string().min(1),
   artist: z.string().min(1),
-  sheets: z.array(SheetSchema),
 });
 
+export const SongSchema = SongInfoSchema.merge(
+  z.object({
+    sheets: z.array(SheetSchema),
+  }),
+);
+
+export type SongInfo = z.infer<typeof SongInfoSchema>;
 export type Song = z.infer<typeof SongSchema>;
 
 interface ISongModule {

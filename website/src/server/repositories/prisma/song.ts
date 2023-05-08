@@ -1,7 +1,11 @@
 import { Prisma, type PrismaClient } from "@prisma/client";
 
 import type { ISongRepository } from "@domains/repositories";
-import { default as SongModule, type Song } from "@entities/song";
+import {
+  default as SongModule,
+  type Song,
+  type SongInfo,
+} from "@entities/song";
 import { default as SheetModule, type Sheet } from "@entities/sheet";
 import { default as BarModule, type Bar } from "@entities/bar";
 import { createNote, type Note } from "@entities/note";
@@ -23,12 +27,10 @@ class SongPrismaRepository implements ISongRepository {
     });
   }
 
-  async list(): Promise<Song[]> {
-    const songs = await this.prisma.song.findMany({
-      include: songIncludes,
-    });
+  async list(): Promise<SongInfo[]> {
+    const songs = await this.prisma.song.findMany();
 
-    return songs.map(song => mapSongModelToEntity(song));
+    return songs.map(song => mapSongModelToInfoEntity(song));
   }
 }
 
@@ -107,6 +109,12 @@ const mapNotesToCreateInput = (
       })),
     ),
   };
+};
+
+const mapSongModelToInfoEntity = (
+  model: Prisma.SongGetPayload<null>,
+): SongInfo => {
+  return SongModule.createSong(model.name, model.artist);
 };
 
 const mapSongModelToEntity = (model: SongModel): Song => {
