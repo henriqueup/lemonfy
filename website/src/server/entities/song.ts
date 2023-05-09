@@ -17,12 +17,13 @@ export type SongInfo = z.infer<typeof SongInfoSchema>;
 export type Song = z.infer<typeof SongSchema>;
 
 interface ISongModule {
-  createSong: (name: string, artist: string) => Song;
+  createSong: (name: string, artist: string, id?: string) => Song;
 }
 
 const SongModule: ISongModule = {
-  createSong: (name: string, artist: string) => {
+  createSong: (name: string, artist: string, id?: string) => {
     return SongSchema.parse({
+      id,
       name,
       artist,
       sheets: [],

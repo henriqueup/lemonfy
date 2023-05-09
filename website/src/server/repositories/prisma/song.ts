@@ -127,11 +127,11 @@ const mapNotesToCreateInput = (
 const mapSongModelToInfoEntity = (
   model: Prisma.SongGetPayload<null>,
 ): SongInfo => {
-  return SongModule.createSong(model.name, model.artist);
+  return SongModule.createSong(model.name, model.artist, model.id);
 };
 
 const mapSongModelToEntity = (model: SongModel): Song => {
-  const song = SongModule.createSong(model.name, model.artist);
+  const song = SongModule.createSong(model.name, model.artist, model.id);
   song.sheets = model.sheets.map(sheet => mapSheetModelToEntity(sheet));
 
   return song;

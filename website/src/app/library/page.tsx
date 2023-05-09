@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { routerCaller } from "src/server/api/root";
 
 export default async function Page() {
@@ -8,7 +9,9 @@ export default async function Page() {
       <ul>
         {songs.map(song => (
           <li key={`${song.name}-${song.artist}`}>
-            <span>{`${song.name} - ${song.artist}`}</span>
+            <Link href={`/editor/${song.id ?? "404"}`}>
+              {`${song.name} - ${song.artist}`}
+            </Link>
           </li>
         ))}
       </ul>

@@ -47,6 +47,7 @@ And finally, it can also be used as a showcase of my skills.
     - <s>Song create</s>
     - <s>Song get</s>
   - Migrate to App Router
+    - Move global menu to layout
   - Finish library page
     - Enable loading existing song in Editor
 - Add player pages
