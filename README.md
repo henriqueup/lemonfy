@@ -43,17 +43,24 @@ And finally, it can also be used as a showcase of my skills.
   - <s>Create trpc routers</s>
     - <s>Song create</s>
     - <s>Song get</s>
+    - Song update
   - <s>Add trpc usage in frontend</s>
     - <s>Song create</s>
     - <s>Song get</s>
+    - Song update
   - Finish library page
-    - Enable loading existing song in Editor
+    - <s>Enable loading existing song in Editor</s>
+    - Fix tests
+    - Add new song button
     - Move global menu to root
+  - Create server tests
 - Add player pages
+- Add loading and toasters
 - Add modal component
 - Enable Bar edition
 - Add Bar copy/paste
 - Add mouse support
+  - Drag playback cursor
 - Add automatic save
 - Add component animations
 - Add multiple Sheet support

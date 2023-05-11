@@ -22,7 +22,6 @@ export const getStaticPaths = async (): Promise<
   };
 };
 
-// `getStaticPaths` requires using `getStaticProps`
 export const getStaticProps = async (
   context: GetStaticPropsContext<StaticPropsParams>,
 ): Promise<GetStaticPropsResult<EditorProps>> => {
@@ -32,7 +31,6 @@ export const getStaticProps = async (
   const song = await routerCaller.song.get(songId);
 
   return {
-    // Passed to the page component as props
     props: { song },
   };
 };

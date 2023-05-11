@@ -4,10 +4,11 @@ import { Button, ButtonContainer, CollapsableSideMenu } from "src/components";
 import { useEditorStore } from "@store/editor";
 import { Moon, Sun } from "src/icons";
 import { api } from "src/utils/api";
+import { setSongId } from "@store/editor/songActions";
 
 const EditorMenu: FunctionComponent = () => {
   const song = useEditorStore(state => state.song);
-  const createSongMutation = api.song.create.useMutation();
+  const saveSongMutation = api.song.save.useMutation();
   const [isOpen, setIsOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -39,11 +40,11 @@ const EditorMenu: FunctionComponent = () => {
 
   const handleChangeIsOpen = (value: boolean) => setIsOpen(value);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (song === undefined) return;
 
-    localStorage.setItem("song", JSON.stringify(song));
-    createSongMutation.mutate(song);
+    const songId = await saveSongMutation.mutateAsync(song);
+    setSongId(songId);
   };
 
   return (
@@ -60,7 +61,7 @@ const EditorMenu: FunctionComponent = () => {
           variant="primary"
           text="Save"
           disabled={song === undefined}
-          onClick={handleSave}
+          onClick={() => void handleSave()}
           className="mt-6 w-2/5 self-center"
         />
         <div className="flex h-full items-end justify-end">

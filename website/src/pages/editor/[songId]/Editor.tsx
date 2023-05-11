@@ -16,7 +16,6 @@ const Editor: FunctionComponent<EditorProps> = ({ song }) => {
   const [songMenuIsOpen, setSongMenuIsOpen] = useState(false);
 
   useEffect(() => {
-    console.log("song", song);
     if (song === undefined) return;
 
     loadSong(song);

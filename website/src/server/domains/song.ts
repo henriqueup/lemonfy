@@ -3,7 +3,7 @@ import SheetModule from "@entities/sheet";
 import type { Song, SongInfo } from "@entities/song";
 
 export interface ISongDomain {
-  create: (song: Song) => Promise<void>;
+  save: (song: Song) => Promise<string>;
   list: () => Promise<SongInfo[]>;
   get: (songId: string) => Promise<Song>;
 }
@@ -15,8 +15,13 @@ class SongDomain implements ISongDomain {
     this.SongRepository = songRepository;
   }
 
-  async create(song: Song) {
-    await this.SongRepository.create(song);
+  async save(song: Song) {
+    if (song.id === undefined) {
+      return this.SongRepository.create(song);
+    }
+
+    await this.SongRepository.update(song);
+    return song.id;
   }
 
   list(): Promise<SongInfo[]> {

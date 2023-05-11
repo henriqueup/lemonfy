@@ -51,6 +51,7 @@ export const getLowerNoteDuration = (currentDuration: NoteDurationName) =>
   getNextNoteDuration(currentDuration, false);
 
 export const NoteSchema = z.object({
+  id: z.string().cuid().nullable().optional(),
   duration: z.number().min(0),
   start: z.number().min(0),
   pitch: PitchSchema,
@@ -68,8 +69,10 @@ export const createNote = (
   pitch: Pitch,
   hasSustain?: boolean,
   isSustain?: boolean,
+  id?: string,
 ): Note =>
   NoteSchema.parse({
+    id: id ?? null,
     duration,
     start,
     pitch,
