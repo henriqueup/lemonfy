@@ -1,22 +1,22 @@
-"use client";
 import { type FunctionComponent, useState, useEffect } from "react";
 
 import { Plus } from "src/icons";
 import { classNames } from "src/styles/utils";
-import EditorMenu from "./EditorMenu";
 import { setSong, loadSong } from "@store/editor/songActions";
-import SongMenu from "src/pages/editor/SongMenu";
 import { type Song as SongEntity } from "@entities/song";
+import EditorMenu from "./EditorMenu";
+import SongMenu from "./SongMenu";
 import Song from "./Song";
 
-interface Props {
+export interface EditorProps {
   song?: SongEntity;
 }
 
-const Editor: FunctionComponent<Props> = ({ song }) => {
+const Editor: FunctionComponent<EditorProps> = ({ song }) => {
   const [songMenuIsOpen, setSongMenuIsOpen] = useState(false);
 
   useEffect(() => {
+    console.log("song", song);
     if (song === undefined) return;
 
     loadSong(song);

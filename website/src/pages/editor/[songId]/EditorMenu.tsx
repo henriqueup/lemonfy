@@ -1,15 +1,11 @@
 import { useState, type FunctionComponent, useEffect } from "react";
+
 import { Button, ButtonContainer, CollapsableSideMenu } from "src/components";
 import { useEditorStore } from "@store/editor";
 import { Moon, Sun } from "src/icons";
-import { type Song } from "@entities/song";
 import { api } from "src/utils/api";
 
-type Props = {
-  handleLoad: (songFromStorage: Song) => void;
-};
-
-const EditorMenu: FunctionComponent<Props> = ({ handleLoad }) => {
+const EditorMenu: FunctionComponent = () => {
   const song = useEditorStore(state => state.song);
   const createSongMutation = api.song.create.useMutation();
   const [isOpen, setIsOpen] = useState(false);
@@ -43,14 +39,6 @@ const EditorMenu: FunctionComponent<Props> = ({ handleLoad }) => {
 
   const handleChangeIsOpen = (value: boolean) => setIsOpen(value);
 
-  const handleOwnLoad = () => {
-    const storageSongString = localStorage.getItem("song");
-    if (storageSongString === null) return;
-
-    const songFromStorage = JSON.parse(storageSongString) as Song;
-    handleLoad(songFromStorage);
-  };
-
   const handleSave = () => {
     if (song === undefined) return;
 
@@ -73,11 +61,6 @@ const EditorMenu: FunctionComponent<Props> = ({ handleLoad }) => {
           text="Save"
           disabled={song === undefined}
           onClick={handleSave}
-          className="mt-6 w-2/5 self-center"
-        />
-        <Button
-          text="Load"
-          onClick={handleOwnLoad}
           className="mt-6 w-2/5 self-center"
         />
         <div className="flex h-full items-end justify-end">

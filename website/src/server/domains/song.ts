@@ -1,4 +1,5 @@
 import type { ISongRepository } from "@domains/repositories";
+import SheetModule from "@entities/sheet";
 import type { Song, SongInfo } from "@entities/song";
 
 export interface ISongDomain {
@@ -27,6 +28,7 @@ class SongDomain implements ISongDomain {
 
     if (result === null) throw new Error(`No Song with id: ${songId}.`);
 
+    result.sheets.forEach(sheet => SheetModule.fillBarsInSheet(sheet));
     return result;
   }
 }

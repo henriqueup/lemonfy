@@ -46,10 +46,9 @@ And finally, it can also be used as a showcase of my skills.
   - <s>Add trpc usage in frontend</s>
     - <s>Song create</s>
     - <s>Song get</s>
-  - Migrate to App Router
-    - Move global menu to layout
   - Finish library page
     - Enable loading existing song in Editor
+    - Move global menu to root
 - Add player pages
 - Add modal component
 - Enable Bar edition
@@ -58,3 +57,5 @@ And finally, it can also be used as a showcase of my skills.
 - Add automatic save
 - Add component animations
 - Add multiple Sheet support
+- Migrate to App Router
+  - Remove tRPC?

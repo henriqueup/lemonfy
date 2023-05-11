@@ -1,14 +1,14 @@
-"use client";
-import { type FunctionComponent, useState } from "react";
+import { type NextPage } from "next";
+import { useState } from "react";
 
 import { Plus } from "src/icons";
 import { getCurrentSheet, useEditorStore } from "@store/editor";
 import { classNames } from "src/styles/utils";
+import { addSheet } from "@store/editor/songActions";
 import SheetEditor from "./SheetEditor";
 import SheetMenu from "./SheetMenu";
-import { addSheet } from "@store/editor/songActions";
 
-const Song: FunctionComponent = () => {
+const Song: NextPage = () => {
   const song = useEditorStore(state => state.song);
   const currentSheet = getCurrentSheet();
   const [sheetMenuIsOpen, setSheetMenuIsOpen] = useState(false);

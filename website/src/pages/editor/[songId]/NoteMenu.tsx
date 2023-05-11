@@ -1,5 +1,6 @@
 import { type DragEvent, type FunctionComponent } from "react";
-import { useShortcuts } from "../../hooks";
+
+import { useShortcuts } from "src/hooks";
 import { NOTE_DURATIONS, type NoteDurationName } from "@entities/note";
 import { NUMBER_OF_OCTAVES, type Octave } from "@entities/octave";
 import { type PitchName, PITCH_NAMES } from "@entities/pitch";

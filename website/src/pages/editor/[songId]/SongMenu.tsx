@@ -1,7 +1,8 @@
-import { SongSchema } from "@entities/song";
 import { type FunctionComponent, useState } from "react";
-import { Button, FixedSideMenu, TextField } from "src/components";
 import { type z } from "zod";
+
+import { SongSchema } from "@entities/song";
+import { Button, FixedSideMenu, TextField } from "src/components";
 
 type Props = {
   onAdd: (name: string, artist: string) => void;
@@ -28,7 +29,7 @@ const SongMenu: FunctionComponent<Props> = ({ onAdd, onClose }) => {
   return (
     <FixedSideMenu label="Song Menu" rightSide onClose={onClose}>
       <div className="flex flex-col bg-inherit">
-        <div className="m-auto mt-2 mb-2 flex w-full justify-center">
+        <div className="m-auto mb-2 mt-2 flex w-full justify-center">
           <h3 className="m-auto">New Song</h3>
         </div>
         <TextField

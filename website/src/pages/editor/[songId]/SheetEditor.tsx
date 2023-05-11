@@ -1,4 +1,3 @@
-"use client";
 import { type FunctionComponent, useState } from "react";
 
 import { Plus } from "src/icons";

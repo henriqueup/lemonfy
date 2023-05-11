@@ -1,8 +1,15 @@
+import { type NextPage } from "next";
 import Link from "next/link";
-import { routerCaller } from "src/server/api/root";
+import { api } from "src/utils/api";
 
-export default async function Page() {
-  const songs = await routerCaller.song.list();
+const Library: NextPage = () => {
+  const listSongsQuery = api.song.list.useQuery();
+
+  if (!listSongsQuery.data) {
+    return <div>Loading...</div>;
+  }
+
+  const songs = listSongsQuery.data;
 
   return (
     <div className="p-4">
@@ -17,4 +24,6 @@ export default async function Page() {
       </ul>
     </div>
   );
-}
+};
+
+export default Library;

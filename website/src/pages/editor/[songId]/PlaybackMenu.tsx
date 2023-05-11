@@ -1,7 +1,8 @@
+import { type FunctionComponent } from "react";
+
 import { getCurrentSheet, useEditorStore } from "@store/editor";
 import { usePlayerStore } from "@store/player";
 import { pause, stop, windUp } from "@store/player/playerActions";
-import { type FunctionComponent } from "react";
 import { ButtonContainer } from "src/components";
 import { useAudioContext } from "src/hooks";
 import {
