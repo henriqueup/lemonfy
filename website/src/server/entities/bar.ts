@@ -3,7 +3,6 @@ import { createNote, NoteSchema, type Note } from "./note";
 import { SECONDS_PER_MINUTE, TimeEvaluation } from "./timeEvaluation";
 
 export const BarSchema = z.object({
-  id: z.string().cuid().optional(),
   trackCount: z.number().int().min(1),
   beatCount: z.number().int().min(1),
   dibobinador: z.number().int().min(1),
@@ -26,7 +25,6 @@ interface IBarModule {
     start: number,
     tempo: number,
     index: number,
-    id?: string,
   ) => Bar;
   findBarNoteByTime: (
     bar: Bar,
@@ -51,10 +49,8 @@ const BarModule: IBarModule = {
     start: number,
     tempo: number,
     index: number,
-    id?: string,
   ): Bar => {
     return BarSchema.parse({
-      id,
       trackCount,
       beatCount,
       dibobinador,

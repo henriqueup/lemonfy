@@ -20,7 +20,7 @@ class SongPrismaRepository implements ISongRepository {
 
   async create(song: Song) {
     const result = await this.prisma.song.create({
-      data: mapSongToInput(song),
+      data: mapSongToCreateInput(song),
     });
 
     return result.id;
@@ -46,10 +46,25 @@ class SongPrismaRepository implements ISongRepository {
   }
 
   async update(song: Song) {
-    await this.prisma.song.update({
-      where: { id: song.id },
-      data: mapSongToInput(song),
+    const songId = song.id;
+    if (songId === undefined) throw new Error("Song must have an id.");
+
+    await this.prisma.sheet.deleteMany({
+      where: { songId: songId },
     });
+
+    const sheetsCreate = mapSheetsToCreateInput(song.sheets);
+
+    const sheetCreatePromises = sheetsCreate.create.map(sheetCreate =>
+      this.prisma.sheet.create({
+        data: {
+          ...sheetCreate,
+          songId: songId,
+        },
+      }),
+    );
+
+    await Promise.all(sheetCreatePromises);
   }
 }
 
@@ -78,56 +93,47 @@ const sheetIncludes = Prisma.validator<Prisma.SheetInclude>()({
 type SongModel = Prisma.SongGetPayload<{ include: typeof songIncludes }>;
 type SheetModel = Prisma.SheetGetPayload<{ include: typeof sheetIncludes }>;
 
-const mapSongToInput = (song: Song) => {
+const mapSongToCreateInput = (song: Song) => {
   return {
     name: song.name,
     artist: song.artist,
-    sheets: mapSheetsToInput(song.sheets),
+    sheets: mapSheetsToCreateInput(song.sheets),
   };
 };
 
-const mapSheetsToInput = (sheets: Sheet[]) => {
+const mapSheetsToCreateInput = (sheets: Sheet[]) => {
   return {
-    connectOrCreate: sheets.map(sheet => ({
-      where: { id: sheet.id ?? "" },
-      create: {
-        trackCount: sheet.trackCount,
-        bars: mapBarsToInput(sheet.bars),
-        notes: mapNotesToInput(sheet.tracks),
-      },
+    create: sheets.map(sheet => ({
+      trackCount: sheet.trackCount,
+      bars: mapBarsToCreateInput(sheet.bars),
+      notes: mapNotesToCreateInput(sheet.tracks),
     })),
   };
 };
 
-const mapBarsToInput = (bars: Bar[]) => {
+const mapBarsToCreateInput = (bars: Bar[]) => {
   return {
-    connectOrCreate: bars.map(bar => ({
-      where: { id: bar.id ?? "" },
-      create: {
-        beatCount: bar.beatCount,
-        dibobinador: bar.dibobinador,
-        tempo: bar.tempo,
-        start: bar.start,
-        capacity: bar.capacity,
-        index: bar.index,
-      },
+    create: bars.map(bar => ({
+      beatCount: bar.beatCount,
+      dibobinador: bar.dibobinador,
+      tempo: bar.tempo,
+      start: bar.start,
+      capacity: bar.capacity,
+      index: bar.index,
     })),
   };
 };
 
-const mapNotesToInput = (tracks: Note[][]) => {
+const mapNotesToCreateInput = (tracks: Note[][]) => {
   return {
-    connectOrCreate: tracks.flatMap((track, i) =>
+    create: tracks.flatMap((track, i) =>
       track.map(note => ({
-        where: { id: note.id ?? "" },
-        create: {
-          trackIndex: i,
-          duration: note.duration,
-          start: note.start,
-          pitch: note.pitch.key,
-          isSustain: note.isSustain,
-          hasSustain: note.hasSustain,
-        },
+        trackIndex: i,
+        duration: note.duration,
+        start: note.start,
+        pitch: note.pitch.key,
+        isSustain: note.isSustain,
+        hasSustain: note.hasSustain,
       })),
     ),
   };
@@ -147,7 +153,7 @@ const mapSongModelToEntity = (model: SongModel): Song => {
 };
 
 const mapSheetModelToEntity = (model: SheetModel): Sheet => {
-  const sheet = SheetModule.createSheet(model.trackCount, model.id);
+  const sheet = SheetModule.createSheet(model.trackCount);
 
   sheet.bars = model.bars.map(bar =>
     mapBarModelToEntity(model.trackCount, bar),
@@ -172,7 +178,6 @@ const mapBarModelToEntity = (
     model.start,
     model.tempo,
     model.index,
-    model.id,
   );
 
   return bar;
@@ -185,7 +190,6 @@ const mapNoteModelToEntity = (model: Prisma.NoteGetPayload<null>): Note => {
     createPitchFromKey(model.pitch),
     model.hasSustain,
     model.isSustain,
-    model.id,
   );
 
   return note;

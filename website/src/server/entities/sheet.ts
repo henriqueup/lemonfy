@@ -5,7 +5,6 @@ import { type Note, NoteSchema } from "./note";
 import { TimeEvaluation } from "./timeEvaluation";
 
 export const SheetSchema = z.object({
-  id: z.string().cuid().optional(),
   bars: z.array(BarSchema),
   tracks: z.array(z.array(NoteSchema)),
   trackCount: z.number().int().min(1),
@@ -21,7 +20,7 @@ interface ISheetModule {
     lookForward?: boolean,
   ) => Note | null;
 
-  createSheet: (trackCount: number, id?: string) => Sheet;
+  createSheet: (trackCount: number) => Sheet;
   addBarToSheet: (
     sheet: Sheet,
     beatCount: number,
@@ -41,9 +40,8 @@ interface ISheetModule {
 }
 
 const SheetModule: ISheetModule = {
-  createSheet: (trackCount: number, id?: string): Sheet => {
+  createSheet: (trackCount: number): Sheet => {
     const newSheet: Sheet = {
-      id,
       bars: [],
       tracks: [],
       trackCount,
