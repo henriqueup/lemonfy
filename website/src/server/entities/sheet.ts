@@ -1,8 +1,8 @@
 import { z } from "zod";
 
+import { TimeEvaluation } from "src/utils/timeEvaluation";
 import { default as BarModule, BarSchema } from "./bar";
 import { type Note, NoteSchema } from "./note";
-import { TimeEvaluation } from "./timeEvaluation";
 
 export const SheetSchema = z.object({
   bars: z.array(BarSchema),

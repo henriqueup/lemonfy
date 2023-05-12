@@ -1,7 +1,7 @@
 import { getCurrentSheet, useEditorStore } from "./editorStore";
 import { NOTE_DURATIONS } from "@entities/note";
 import BarModule from "@entities/bar";
-import { TimeEvaluation } from "@entities/timeEvaluation";
+import { TimeEvaluation } from "src/utils/timeEvaluation";
 
 export const increaseCursorTrackIndex = () =>
   useEditorStore.setState(state => {

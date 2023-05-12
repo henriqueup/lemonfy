@@ -4,7 +4,6 @@ import {
   type RenderResult,
   cleanup,
   act,
-  prettyDOM,
   within,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -30,6 +29,7 @@ var mockAudioContext = new AudioContextMock();
 jest.mock("src/hooks/useAudioContext", () => ({
   useAudioContext: () => mockAudioContext,
 }));
+
 let rendered: RenderResult;
 let user: UserEvent;
 
@@ -219,6 +219,28 @@ describe("Song creation", () => {
     expect(rendered.getAllByText("E3")).toHaveLength(4);
     expect(rendered.queryByText("F3")).not.toBeInTheDocument();
   });
+
+  // it("Saves song", async () => {
+  //   const mutateAsyncMock = jest.fn(() => "123");
+  //   const saveSpy = jest.spyOn(api.song.save, "useMutation");
+  //   saveSpy.mockImplementation(() => ({ mutateAsync: mutateAsyncMock }));
+
+  //   await createBar();
+  //   await addNotesToFirstBar();
+
+  //   const editorMenuButton = rendered.getByRole("button", {
+  //     name: "Open Editor Menu",
+  //   });
+
+  //   await act(() => user.click(editorMenuButton));
+
+  //   const saveButton = rendered.getByRole("button", { name: "Save" });
+
+  //   await act(() => user.click(saveButton));
+
+  //   expect(mutateAsyncMock).toHaveBeenCalledTimes(1);
+  //   expect(mutateAsyncMock).toHaveBeenCalledWith("123");
+  // });
 });
 
 describe("Song playback", () => {

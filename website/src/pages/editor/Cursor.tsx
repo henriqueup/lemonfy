@@ -1,5 +1,11 @@
-import { SECONDS_PER_MINUTE } from "@entities/timeEvaluation";
-import { useCallback, useEffect, useState, type FunctionComponent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+  type FunctionComponent,
+} from "react";
+
+import { SECONDS_PER_MINUTE } from "src/utils/timeEvaluation";
 import { default as BarModule, type Bar } from "@entities/bar";
 
 interface Props {
@@ -9,22 +15,36 @@ interface Props {
   position: number;
 }
 
-const Cursor: FunctionComponent<Props> = ({ bar, isPlaying, isPaused = false, position }) => {
+const Cursor: FunctionComponent<Props> = ({
+  bar,
+  isPlaying,
+  isPaused = false,
+  position,
+}) => {
   const [playbackAnimation, setPlaybackAnimation] = useState<Animation>();
 
   const cursorRef = useCallback(
     (divElement: HTMLDivElement | null) => {
       if (!isPlaying || isPaused || divElement === null) return;
 
-      const totalBarDurationInSeconds = BarModule.convertDurationInBarToSeconds(bar, bar.capacity);
-      const remainingBarDurationInSeconds = BarModule.convertDurationInBarToSeconds(bar, bar.capacity - position);
-      const startPosition = totalBarDurationInSeconds - remainingBarDurationInSeconds;
-      const startPositionPercentage = (startPosition / totalBarDurationInSeconds) * 100;
+      const totalBarDurationInSeconds = BarModule.convertDurationInBarToSeconds(
+        bar,
+        bar.capacity,
+      );
+      const remainingBarDurationInSeconds =
+        BarModule.convertDurationInBarToSeconds(bar, bar.capacity - position);
+      const startPosition =
+        totalBarDurationInSeconds - remainingBarDurationInSeconds;
+      const startPositionPercentage =
+        (startPosition / totalBarDurationInSeconds) * 100;
 
-      const animation = divElement.animate([{ left: `${startPositionPercentage}%` }, { left: "100%" }], {
-        duration: remainingBarDurationInSeconds * 1000,
-        easing: "linear",
-      });
+      const animation = divElement.animate(
+        [{ left: `${startPositionPercentage}%` }, { left: "100%" }],
+        {
+          duration: remainingBarDurationInSeconds * 1000,
+          easing: "linear",
+        },
+      );
 
       setPlaybackAnimation(animation);
     },
@@ -43,7 +63,9 @@ const Cursor: FunctionComponent<Props> = ({ bar, isPlaying, isPaused = false, po
       aria-label="Cursor"
       style={{
         left: `calc(${(position * 100) / bar.capacity}% - 4px)`,
-        animation: isPlaying ? undefined : `blink ${SECONDS_PER_MINUTE / bar.tempo}s step-start infinite`,
+        animation: isPlaying
+          ? undefined
+          : `blink ${SECONDS_PER_MINUTE / bar.tempo}s step-start infinite`,
       }}
       className="absolute top-[-2px] flex h-[calc(100%_+_4px)] w-[9px]"
       ref={cursorRef}

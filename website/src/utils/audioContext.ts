@@ -2,6 +2,7 @@ import BarModule, { type Bar } from "@entities/bar";
 import { type Note } from "@entities/note";
 import SheetModule, { type Sheet } from "@entities/sheet";
 import { play } from "@store/player/playerActions";
+import { toPrecision } from "src/utils/numbers";
 
 const addGainNode = (audioContext: AudioContext) => {
   const node = audioContext.createGain();
@@ -50,11 +51,15 @@ const addNotesToAudioContext = (
 
     gainNode.gain.setValueAtTime(
       gainValueWhilePlaying,
-      audioContext.currentTime + barStartInSeconds + note.startInSeconds,
+      toPrecision(
+        audioContext.currentTime + barStartInSeconds + note.startInSeconds,
+      ),
     );
     gainNode.gain.setValueAtTime(
       0,
-      audioContext.currentTime + barStartInSeconds + noteEndInSeconds,
+      toPrecision(
+        audioContext.currentTime + barStartInSeconds + noteEndInSeconds,
+      ),
     );
     oscillator.connect(gainNode);
 

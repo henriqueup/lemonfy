@@ -1,8 +1,8 @@
-import { TimeEvaluation } from "@entities/timeEvaluation";
+import { TimeEvaluation } from "src/utils/timeEvaluation";
 
 describe("Time Evaluation", () => {
   const valueAboveTolerance = 1e-7;
-  const valueBelowTolerance = 1e-9;
+  const valueBelowTolerance = 1e-8;
 
   it("Detectcs difference with value above tolerance", () => {
     const valueA = 1;

@@ -1,6 +1,8 @@
 import { z } from "zod";
+
+import { SECONDS_PER_MINUTE, TimeEvaluation } from "src/utils/timeEvaluation";
+import { toPrecision } from "src/utils/numbers";
 import { createNote, NoteSchema, type Note } from "./note";
-import { SECONDS_PER_MINUTE, TimeEvaluation } from "./timeEvaluation";
 
 export const BarSchema = z.object({
   trackCount: z.number().int().min(1),
@@ -54,8 +56,8 @@ const BarModule: IBarModule = {
       trackCount,
       beatCount,
       dibobinador,
-      start,
-      capacity: beatCount / dibobinador,
+      start: toPrecision(start),
+      capacity: toPrecision(beatCount / dibobinador),
       tempo,
       tracks: Array.from({ length: trackCount }, (): Note[] => []),
       timeRatio: tempo / SECONDS_PER_MINUTE,
@@ -94,14 +96,16 @@ const BarModule: IBarModule = {
   },
 
   sumBarsCapacity: (bars: Bar[]): number => {
-    return bars.reduce(
-      (currentCapacity, currentBar) => currentCapacity + currentBar.capacity,
-      0,
+    return toPrecision(
+      bars.reduce(
+        (currentCapacity, currentBar) => currentCapacity + currentBar.capacity,
+        0,
+      ),
     );
   },
 
   convertDurationInBarToSeconds: (bar: Bar, duration: number): number => {
-    return (duration * bar.dibobinador) / bar.timeRatio;
+    return toPrecision((duration * bar.dibobinador) / bar.timeRatio);
   },
 
   setBarTimesInSeconds: (bar: Bar): void => {

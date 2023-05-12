@@ -1,6 +1,6 @@
 import type { default as BarModule, Bar } from "@entities/bar";
 import { type Note, NOTE_DURATIONS } from "@entities/note";
-import { SECONDS_PER_MINUTE } from "@entities/timeEvaluation";
+import { SECONDS_PER_MINUTE } from "src/utils/timeEvaluation";
 import { createNoteMock } from "src/mocks/entities/note";
 import type { WithMockedFunctions } from "src/mocks/utils/moduleUtils";
 

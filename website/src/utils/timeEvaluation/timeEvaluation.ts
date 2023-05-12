@@ -1,4 +1,4 @@
-const TOLERANCE = 1e-8;
+const TOLERANCE = 1e-7;
 
 export const IsEqualTo = (a: number, b: number) => {
   return Math.abs(a - b) < TOLERANCE;

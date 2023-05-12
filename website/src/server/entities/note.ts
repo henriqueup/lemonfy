@@ -1,4 +1,6 @@
 import { z } from "zod";
+
+import { toPrecision } from "src/utils/numbers";
 import { PitchSchema, type Pitch } from "./pitch";
 
 const NOTE_DURATION_NAMES = [
@@ -70,15 +72,17 @@ export const createNote = (
   isSustain?: boolean,
 ): Note =>
   NoteSchema.parse({
-    duration,
-    start,
+    duration: toPrecision(duration),
+    start: toPrecision(start),
     pitch,
     hasSustain: hasSustain || false,
     isSustain: isSustain || false,
   });
 
 export const sumNotesDuration = (notes: Note[]) =>
-  notes.reduce(
-    (currentDuration, currentNote) => currentDuration + currentNote.duration,
-    0,
+  toPrecision(
+    notes.reduce(
+      (currentDuration, currentNote) => currentDuration + currentNote.duration,
+      0,
+    ),
   );

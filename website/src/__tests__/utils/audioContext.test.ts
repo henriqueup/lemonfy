@@ -9,6 +9,7 @@ import {
   OscillatorNodeMock,
 } from "@mocks/window";
 import { playSong } from "src/utils/audioContext";
+import { toPrecision } from "src/utils/numbers";
 
 jest.mock<typeof BarModule.default>("@entities/bar", () => {
   const mockUtils = jest.requireActual<typeof MockUtilsModule>(
@@ -118,12 +119,16 @@ describe("Play song", () => {
         expect(mockGainNode.gain.setValueAtTime).toHaveBeenNthCalledWith(
           2,
           0.2,
-          bar.startInSeconds! + note.startInSeconds!,
+          toPrecision(bar.startInSeconds! + note.startInSeconds!),
         );
         expect(mockGainNode.gain.setValueAtTime).toHaveBeenNthCalledWith(
           3,
           0,
-          bar.startInSeconds! + note.startInSeconds! + note.durationInSeconds!,
+          toPrecision(
+            bar.startInSeconds! +
+              note.startInSeconds! +
+              note.durationInSeconds!,
+          ),
         );
 
         expect(mockOscillatorNode.connect).toHaveBeenCalledTimes(1);
@@ -178,12 +183,16 @@ describe("Play song", () => {
         expect(mockGainNode.gain.setValueAtTime).toHaveBeenNthCalledWith(
           2,
           0.2,
-          bar.startInSeconds! + note.startInSeconds!,
+          toPrecision(bar.startInSeconds! + note.startInSeconds!),
         );
         expect(mockGainNode.gain.setValueAtTime).toHaveBeenNthCalledWith(
           3,
           0,
-          bar.startInSeconds! + note.startInSeconds! + note.durationInSeconds!,
+          toPrecision(
+            bar.startInSeconds! +
+              note.startInSeconds! +
+              note.durationInSeconds!,
+          ),
         );
 
         expect(mockOscillatorNode.connect).toHaveBeenCalledTimes(1);

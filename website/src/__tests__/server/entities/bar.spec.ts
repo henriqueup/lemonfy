@@ -1,13 +1,20 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import BarModule, { type Bar } from "@entities/bar";
 import * as NoteModule from "@entities/note";
-import { createBarMock, getEmptyMockBar, getFilledMockBar } from "src/mocks/entities/bar";
+import {
+  createBarMock,
+  getEmptyMockBar,
+  getFilledMockBar,
+} from "src/mocks/entities/bar";
 import * as MockUtilsModule from "src/mocks/utils/moduleUtils";
-import { SECONDS_PER_MINUTE } from "@entities/timeEvaluation";
+import { SECONDS_PER_MINUTE } from "src/utils/timeEvaluation";
 import { createNoteMock } from "src/mocks/entities/note";
+import { toPrecision } from "src/utils/numbers";
 
 jest.mock<typeof NoteModule>("@entities/note", () => {
-  const mockUtils = jest.requireActual<typeof MockUtilsModule>("src/mocks/utils/moduleUtils");
+  const mockUtils = jest.requireActual<typeof MockUtilsModule>(
+    "src/mocks/utils/moduleUtils",
+  );
   return mockUtils.mockModuleFunctions(jest.requireActual("@entities/note"));
 });
 jest.mock<typeof BarModule>("@entities/bar", () => ({
@@ -72,8 +79,12 @@ describe("Set Notes times in seconds", () => {
 
     bar.tracks.forEach(track => {
       track.forEach(note => {
-        expect(note.startInSeconds).toBe((note.start * bar.dibobinador) / bar.timeRatio);
-        expect(note.durationInSeconds).toBe((note.duration * bar.dibobinador) / bar.timeRatio);
+        expect(note.startInSeconds).toBe(
+          toPrecision((note.start * bar.dibobinador) / bar.timeRatio),
+        );
+        expect(note.durationInSeconds).toBe(
+          toPrecision((note.duration * bar.dibobinador) / bar.timeRatio),
+        );
       });
     });
   });
@@ -106,7 +117,9 @@ describe("Fill track", () => {
 
   it("Empties the Bar when track has no Notes within it", () => {
     const bar = getEmptyMockBar();
-    bar.tracks[0]!.push(createNoteMock(NoteModule.NOTE_DURATIONS["QUARTER"], 0));
+    bar.tracks[0]!.push(
+      createNoteMock(NoteModule.NOTE_DURATIONS["QUARTER"], 0),
+    );
     const track = [createNoteMock(NoteModule.NOTE_DURATIONS["QUARTER"], 3 / 4)];
 
     BarModule.fillBarTrack(bar, track, 0);
@@ -235,14 +248,18 @@ describe("Fill track", () => {
 
   it("Considers sustain on single Note in whole Bar", () => {
     const bar = getEmptyMockBar();
-    const track = [createNoteMock(NoteModule.NOTE_DURATIONS["DOUBLE_WHOLE"], 3 / 4)];
+    const track = [
+      createNoteMock(NoteModule.NOTE_DURATIONS["DOUBLE_WHOLE"], 3 / 4),
+    ];
 
     BarModule.fillBarTrack(bar, track, 0);
 
     expect(bar.tracks[0]).toHaveLength(1);
 
     const actualFirstNote = bar.tracks[0]![0]!;
-    expect(actualFirstNote.duration).toBe(NoteModule.NOTE_DURATIONS["HALF"] + NoteModule.NOTE_DURATIONS["QUARTER"]);
+    expect(actualFirstNote.duration).toBe(
+      NoteModule.NOTE_DURATIONS["HALF"] + NoteModule.NOTE_DURATIONS["QUARTER"],
+    );
     expect(actualFirstNote.start).toBe(0);
     expect(actualFirstNote.hasSustain).toBe(true);
     expect(actualFirstNote.isSustain).toBe(true);
@@ -253,14 +270,18 @@ describe("Find Note by time", () => {
   it("Fails with invalid track index", () => {
     const bar = getFilledMockBar();
 
-    expect(() => BarModule.findBarNoteByTime(bar, 4, 1)).toThrowError("Invalid track index.");
+    expect(() => BarModule.findBarNoteByTime(bar, 4, 1)).toThrowError(
+      "Invalid track index.",
+    );
   });
 
   it("Fails with invalid track", () => {
     const bar = getFilledMockBar();
     delete bar.tracks[1];
 
-    expect(() => BarModule.findBarNoteByTime(bar, 1, 1)).toThrowError("Invalid track at index: 1.");
+    expect(() => BarModule.findBarNoteByTime(bar, 1, 1)).toThrowError(
+      "Invalid track at index: 1.",
+    );
   });
 
   it("Returns null when looking forward with end of Note", () => {
@@ -363,21 +384,26 @@ describe("Crop Bar", () => {
     findBarNoteSpy.mockClear();
   });
 
-  it.each([0, 1, 2, 2.1])("Does nothing with start not inside Bar: %p", (start: number) => {
-    const bar = getFilledMockBar();
-    bar.start = 1;
+  it.each([0, 1, 2, 2.1])(
+    "Does nothing with start not inside Bar: %p",
+    (start: number) => {
+      const bar = getFilledMockBar();
+      bar.start = 1;
 
-    BarModule.cropBar(bar, start);
+      BarModule.cropBar(bar, start);
 
-    expect(bar.capacity).toBe(1);
-    expect(findBarNoteSpy).not.toHaveBeenCalled();
-  });
+      expect(bar.capacity).toBe(1);
+      expect(findBarNoteSpy).not.toHaveBeenCalled();
+    },
+  );
 
   it("Fails with invalid track", () => {
     const bar = getFilledMockBar();
     delete bar.tracks[0];
 
-    expect(() => BarModule.cropBar(bar, 1 / 8)).toThrowError("Invalid bar track at 0.");
+    expect(() => BarModule.cropBar(bar, 1 / 8)).toThrowError(
+      "Invalid bar track at 0.",
+    );
   });
 
   it("Shortens the Bar, removing and shortening Notes accordingly", () => {

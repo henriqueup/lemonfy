@@ -1,5 +1,6 @@
 import { createNote, NOTE_DURATIONS, sumNotesDuration } from "@entities/note";
 import { createPitch, type Pitch } from "@entities/pitch";
+import { toPrecision } from "src/utils/numbers";
 
 describe("Create Note", () => {
   it("Creates Note with initial values", () => {
@@ -40,9 +41,11 @@ describe("Sum Note duration", () => {
     const totalDuration = sumNotesDuration(notes);
 
     expect(totalDuration).toBe(
-      NOTE_DURATIONS["HALF"] +
-        NOTE_DURATIONS["EIGHTH_TRIPLET"] +
-        NOTE_DURATIONS["WHOLE"],
+      toPrecision(
+        NOTE_DURATIONS["HALF"] +
+          NOTE_DURATIONS["EIGHTH_TRIPLET"] +
+          NOTE_DURATIONS["WHOLE"],
+      ),
     );
   });
 });

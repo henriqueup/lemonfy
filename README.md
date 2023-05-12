@@ -54,8 +54,8 @@ And finally, it can also be used as a showcase of my skills.
     - Add new song button
     - Move global menu to root
   - Create server tests
-- Fix float issue
-  - Maybe something like: Number((0.009033203125).toFixed(8))
+- <s>Fix float issue</s>
+  - <s>Maybe something like: Number((0.009033203125).toFixed(8))</s>
 - Add player pages
 - Add loading and toasters
 - Add modal component
@@ -66,5 +66,6 @@ And finally, it can also be used as a showcase of my skills.
 - Add automatic save
 - Add component animations
 - Add multiple Sheet support
+- Add metronome
 - Migrate to App Router
   - Remove tRPC?

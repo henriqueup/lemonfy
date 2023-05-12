@@ -2,7 +2,7 @@ import React, { type DragEvent, type FunctionComponent, useState } from "react";
 
 import { type Bar } from "@entities/bar";
 import { sumNotesDuration, type Note as NoteEntity } from "@entities/note";
-import { TimeEvaluation } from "@entities/timeEvaluation";
+import { TimeEvaluation } from "src/utils/timeEvaluation";
 import { useEditorStore } from "@store/editor";
 import { classNames } from "src/styles/utils";
 import Cursor from "./Cursor";
