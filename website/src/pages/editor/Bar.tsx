@@ -28,7 +28,11 @@ const Bar: FunctionComponent<Props> = ({ bar }) => {
   };
 
   return (
-    <div className="flex rounded border border-solid border-stone-600 bg-inherit p-4 dark:border-stone-400">
+    <div
+      role="group"
+      aria-label={`Bar ${bar.index}`}
+      className="flex rounded border border-solid border-stone-600 bg-inherit p-4 dark:border-stone-400"
+    >
       <div className="relative flex h-[100px] w-full flex-col justify-evenly bg-inherit">
         {bar.tracks.map((track, j) => (
           <Track

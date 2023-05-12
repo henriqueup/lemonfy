@@ -2,6 +2,7 @@ import { type FunctionComponent, useState, useEffect } from "react";
 
 import { Plus } from "src/icons";
 import { classNames } from "src/styles/utils";
+import { useEditorStore } from "@store/editor";
 import { setSong, loadSong } from "@store/editor/songActions";
 import { type Song as SongEntity } from "@entities/song";
 import EditorMenu from "./EditorMenu";
@@ -9,17 +10,18 @@ import SongMenu from "./SongMenu";
 import Song from "./Song";
 
 export interface EditorProps {
-  song?: SongEntity;
+  songToLoad?: SongEntity;
 }
 
-const Editor: FunctionComponent<EditorProps> = ({ song }) => {
+const Editor: FunctionComponent<EditorProps> = ({ songToLoad }) => {
   const [songMenuIsOpen, setSongMenuIsOpen] = useState(false);
+  const loadedSong = useEditorStore(state => state.song);
 
   useEffect(() => {
-    if (song === undefined) return;
+    if (songToLoad === undefined) return;
 
-    loadSong(song);
-  }, [song]);
+    loadSong(songToLoad);
+  }, [songToLoad]);
 
   const handleAddSong = (name: string, artist: string) => {
     setSong(name, artist);
@@ -28,7 +30,7 @@ const Editor: FunctionComponent<EditorProps> = ({ song }) => {
 
   return (
     <div className="h-screen bg-stone-300 text-stone-600 dark:bg-stone-900 dark:text-stone-400">
-      {song === undefined ? (
+      {loadedSong === undefined ? (
         <div className="flex justify-center">
           <div
             role="button"

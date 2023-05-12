@@ -4,6 +4,8 @@ import {
   type RenderResult,
   cleanup,
   act,
+  prettyDOM,
+  within,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { UserEvent } from "@testing-library/user-event/dist/types/setup/setup";
@@ -17,7 +19,9 @@ import {
   animateMock,
 } from "@mocks/window";
 import { usePlayerStore } from "@store/player";
-import Editor from "src/pages/editor";
+import Editor from "src/pages/editor/Editor";
+import { getCompleteMoonlightSonataMockSheet } from "@mocks/entities/sheet";
+import { getMockSong } from "@mocks/entities/song";
 
 let mockGainNode: GainNodeMock;
 let mockOscillatorNode: OscillatorNodeMock;
@@ -61,7 +65,6 @@ describe("Navigation", () => {
       rendered.getByRole("heading", { name: "Editor Menu" }),
     ).toBeInTheDocument();
     expect(rendered.getByRole("button", { name: "Save" })).toBeInTheDocument();
-    expect(rendered.getByRole("button", { name: "Load" })).toBeInTheDocument();
   });
 
   it("Opens new song menu on click", async () => {
@@ -287,6 +290,65 @@ describe("Song playback", () => {
 
     const cursor = rendered.getByRole("presentation", { name: "Cursor" });
     expect(cursor.style.left).toBe("calc(50% - 4px)");
+  });
+});
+
+describe("Song loading", () => {
+  it("Loads up with song to load", async () => {
+    const sheet = getCompleteMoonlightSonataMockSheet();
+    const songToLoad = getMockSong([sheet]);
+
+    cleanup();
+    rendered = render(<Editor songToLoad={songToLoad} />, {
+      wrapper: withNextTRPC,
+    });
+
+    expect(
+      rendered.getByRole("group", { name: "Moonlight Sonata - Beethoven" }),
+    ).toBeInTheDocument();
+
+    expect(rendered.getByRole("group", { name: "Bars" })).toBeInTheDocument();
+    expect(rendered.getAllByText("4/4")).toHaveLength(4);
+    expect(rendered.getAllByText("54")).toHaveLength(4);
+
+    const renderedBars = rendered.getAllByRole("group", { name: /Bar / });
+    expect(renderedBars).toHaveLength(4);
+
+    const firstBar = within(renderedBars[0]!);
+    expect(firstBar.getAllByText("C#1")).toHaveLength(1);
+    expect(firstBar.getAllByText("C#2")).toHaveLength(1);
+    expect(firstBar.getAllByText("G#2")).toHaveLength(4);
+    expect(firstBar.getAllByText("C#3")).toHaveLength(4);
+    expect(firstBar.getAllByText("E3")).toHaveLength(4);
+
+    const secondBar = within(renderedBars[1]!);
+    expect(secondBar.getAllByText("B0")).toHaveLength(1);
+    expect(secondBar.getAllByText("B1")).toHaveLength(1);
+    expect(secondBar.getAllByText("G#2")).toHaveLength(4);
+    expect(secondBar.getAllByText("C#3")).toHaveLength(4);
+    expect(secondBar.getAllByText("E3")).toHaveLength(4);
+
+    const thirdBar = within(renderedBars[2]!);
+    expect(thirdBar.getAllByText("A0")).toHaveLength(1);
+    expect(thirdBar.getAllByText("F#0")).toHaveLength(1);
+    expect(thirdBar.getAllByText("A1")).toHaveLength(1);
+    expect(thirdBar.getAllByText("F#1")).toHaveLength(1);
+    expect(thirdBar.getAllByText("A2")).toHaveLength(4);
+    expect(thirdBar.getAllByText("C#3")).toHaveLength(2);
+    expect(thirdBar.getAllByText("E3")).toHaveLength(2);
+    expect(thirdBar.getAllByText("D3")).toHaveLength(2);
+    expect(thirdBar.getAllByText("F#3")).toHaveLength(2);
+
+    const fourthBar = within(renderedBars[3]!);
+    expect(fourthBar.getAllByText("G#0")).toHaveLength(1);
+    expect(fourthBar.getAllByText("G#1")).toHaveLength(1);
+    expect(fourthBar.getAllByText("G#2")).toHaveLength(3);
+    expect(fourthBar.getAllByText("C3")).toHaveLength(2);
+    expect(fourthBar.getAllByText("F#3")).toHaveLength(1);
+    expect(fourthBar.getAllByText("C#3")).toHaveLength(2);
+    expect(fourthBar.getAllByText("E3")).toHaveLength(1);
+    expect(fourthBar.getAllByText("D#3")).toHaveLength(2);
+    expect(fourthBar.getAllByText("F#2")).toHaveLength(1);
   });
 });
 

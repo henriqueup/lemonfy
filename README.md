@@ -43,17 +43,19 @@ And finally, it can also be used as a showcase of my skills.
   - <s>Create trpc routers</s>
     - <s>Song create</s>
     - <s>Song get</s>
-    - Song update
+    - <s>Song update</s>
   - <s>Add trpc usage in frontend</s>
     - <s>Song create</s>
     - <s>Song get</s>
-    - Song update
+    - <s>Song update</s>
   - Finish library page
     - <s>Enable loading existing song in Editor</s>
     - Fix tests
     - Add new song button
     - Move global menu to root
   - Create server tests
+- Fix float issue
+  - Maybe something like: Number((0.009033203125).toFixed(8))
 - Add player pages
 - Add loading and toasters
 - Add modal component

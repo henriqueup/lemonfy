@@ -1,5 +1,5 @@
 import { routerCaller } from "src/server/api/root";
-import Editor, { type EditorProps } from "./Editor";
+import Editor, { type EditorProps } from "../Editor";
 import type {
   GetStaticPathsResult,
   GetStaticPropsContext,
@@ -31,12 +31,12 @@ export const getStaticProps = async (
   const song = await routerCaller.song.get(songId);
 
   return {
-    props: { song },
+    props: { songToLoad: song },
   };
 };
 
-const EditorSSG: NextPage<EditorProps> = ({ song }) => {
-  return <Editor song={song} />;
+const EditorSSG: NextPage<EditorProps> = ({ songToLoad }) => {
+  return <Editor songToLoad={songToLoad} />;
 };
 
 export default EditorSSG;
