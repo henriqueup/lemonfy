@@ -12,7 +12,7 @@ const Library: NextPage = () => {
   const songs = listSongsQuery.data;
 
   return (
-    <div className="p-4">
+    <div className="bg-inherit p-4 text-inherit">
       <ul>
         {songs.map(song => (
           <li key={`${song.name}-${song.artist}`}>

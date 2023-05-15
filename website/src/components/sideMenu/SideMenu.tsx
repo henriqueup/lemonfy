@@ -52,16 +52,16 @@ const BaseSideMenu: FunctionComponent<Props> = ({
         className={classNames(
           "absolute top-0 z-20 h-screen rounded bg-inherit",
           rightSide
-            ? "right-0 border-l border-l-gray-400"
-            : "left-0 border-r border-r-gray-400",
-          checkIsOpen() ? "w-1/4" : "border-r-0 border-l-0",
+            ? "right-0 border-l border-stone-600 dark:border-stone-400"
+            : "left-0 border-r border-stone-600 dark:border-stone-400",
+          checkIsOpen() ? "w-1/4" : "border-l-0 border-r-0",
         )}
       >
         {checkIsOpen() && !collapsable ? (
           <div
             role="button"
             aria-label={`Close ${label}`}
-            className="absolute top-2 right-2 cursor-pointer p-1"
+            className="absolute right-2 top-2 cursor-pointer p-1"
             onClick={() => handleChangeIsOpen(false)}
           >
             <X height={24} width={24} />
