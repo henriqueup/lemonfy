@@ -25,7 +25,7 @@ const SheetEditor: FunctionComponent = () => {
 
   // console.log(bars);
   return (
-    <div className="h-full w-full bg-inherit">
+    <div className="relative h-full w-full bg-inherit">
       <PlaybackMenu />
       <div className="h-3/5 bg-inherit p-4 pb-2 pt-0 text-stone-600 dark:text-stone-400">
         <fieldset className="h-full rounded border border-solid border-stone-600 bg-inherit p-1 dark:border-stone-400">

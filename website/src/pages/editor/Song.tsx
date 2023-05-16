@@ -21,7 +21,7 @@ const Song: NextPage = () => {
   if (!song) return null;
 
   return (
-    <div className="h-screen bg-inherit p-2 text-inherit">
+    <div className="h-full bg-inherit p-2 text-inherit">
       <fieldset className="h-full rounded border border-solid border-stone-600 bg-inherit p-1 dark:border-stone-400">
         <legend className="ml-3">{`${song.name} - ${song.artist}`}</legend>
         {currentSheet === undefined ? (

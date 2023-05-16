@@ -35,7 +35,7 @@ const PlaybackMenu: FunctionComponent = () => {
   };
 
   return (
-    <div className="absolute left-0 top-2 flex w-screen justify-center bg-transparent">
+    <div className="absolute left-0 top-[-4px] flex w-screen justify-center bg-transparent">
       <div className="flex items-center rounded border border-solid border-stone-600 bg-stone-300 dark:border-stone-400 dark:bg-stone-900">
         <ButtonContainer
           aria-label="Fully Rewind"

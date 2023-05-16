@@ -50,9 +50,10 @@ And finally, it can also be used as a showcase of my skills.
     - <s>Song update</s>
   - Finish library page
     - <s>Enable loading existing song in Editor</s>
-    - Fix tests
-    - Add new song button
+    - <s>Fix tests</s>
+    - <s>Add new song button</s>
     - Move global menu to root
+      - Create topbar menu
   - Create server tests
 - <s>Fix float issue</s>
   - <s>Maybe something like: Number((0.009033203125).toFixed(8))</s>

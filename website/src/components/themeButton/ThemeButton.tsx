@@ -32,7 +32,7 @@ const ThemeButton: FunctionComponent = () => {
   };
 
   return (
-    <ButtonContainer className="m-3" onClick={handleClickThemeButton}>
+    <ButtonContainer onClick={handleClickThemeButton}>
       {isDarkMode ? (
         <Sun width={24} height={24} />
       ) : (
