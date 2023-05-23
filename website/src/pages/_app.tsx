@@ -9,7 +9,9 @@ const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <div className="h-screen bg-stone-300 text-stone-600 dark:bg-stone-900 dark:text-stone-400">
       <TopbarMenu />
-      <Component {...pageProps} />
+      <div className="h-full bg-inherit pt-8 text-inherit">
+        <Component {...pageProps} />
+      </div>
     </div>
   );
 };

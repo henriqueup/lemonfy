@@ -50,7 +50,7 @@ const BaseSideMenu: FunctionComponent<Props> = ({
       <div
         aria-label={label}
         className={classNames(
-          "absolute top-0 z-20 h-screen rounded bg-inherit",
+          "absolute top-0 z-40 h-screen rounded bg-inherit",
           rightSide
             ? "right-0 border-l border-stone-600 dark:border-stone-400"
             : "left-0 border-r border-stone-600 dark:border-stone-400",
