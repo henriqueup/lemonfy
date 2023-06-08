@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { INITIAL_STATE, getCurrentSheet, useEditorStore } from "@store/editor";
+import { INITIAL_STATE, getCurrentSheet, useEditorStore } from "@/store/editor";
 import {
   getEmptyMockSheet,
   getMockSheetWithBars,
@@ -17,9 +17,9 @@ import {
   removeBarFromSheetByIndex,
   removeNextNoteFromBar,
   removeNoteFromBar,
-} from "@store/editor/sheetActions";
+} from "@/store/editor/sheetActions";
 import { createBarMock } from "src/mocks/entities/bar";
-import { getMockSong } from "@mocks/entities/song";
+import { getMockSong } from "@/mocks/entities/song";
 
 jest.mock<typeof SheetModule.default>("@entities/sheet", () => {
   const mockUtils = jest.requireActual<typeof MockUtilsModule>(

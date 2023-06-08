@@ -2,11 +2,11 @@ import { type FunctionComponent } from "react";
 
 import { type Bar as BarEntity } from "@entities/bar";
 import { type Note } from "@entities/note";
-// import { addNoteFromDrop } from "@store/editor";
+// import { addNoteFromDrop } from "@/store/editor";
 import Track from "./Track";
-import { usePlayerStore } from "@store/player";
+import { usePlayerStore } from "@/store/player";
 import { Trash } from "src/icons";
-import { removeBarFromSheetByIndex } from "@store/editor/sheetActions";
+import { removeBarFromSheetByIndex } from "@/store/editor/sheetActions";
 import { ButtonContainer } from "src/components";
 import Cursor from "./Cursor";
 
@@ -31,7 +31,7 @@ const Bar: FunctionComponent<Props> = ({ bar }) => {
     <div
       role="group"
       aria-label={`Bar ${bar.index}`}
-      className="flex rounded border border-solid border-stone-600 bg-inherit p-4 dark:border-stone-400"
+      className="flex rounded border bg-inherit p-4"
     >
       <div className="relative flex h-[100px] w-full flex-col justify-evenly bg-inherit">
         {bar.tracks.map((track, j) => (

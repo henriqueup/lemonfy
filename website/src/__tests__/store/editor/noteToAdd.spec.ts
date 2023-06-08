@@ -6,11 +6,11 @@ import {
   setNoteToAdd,
   setSelectedNoteDuration,
   setSelectedOctave,
-} from "@store/editor/noteToAddActions";
+} from "@/store/editor/noteToAddActions";
 import { type NoteDurationName, NOTE_DURATIONS } from "@entities/note";
 import type * as PitchModule from "@entities/pitch";
 import type * as NoteModule from "@entities/note";
-import { useEditorStore } from "@store/editor";
+import { useEditorStore } from "@/store/editor";
 
 jest.mock<typeof PitchModule>("@entities/pitch", () => ({
   ...jest.requireActual("@entities/pitch"),

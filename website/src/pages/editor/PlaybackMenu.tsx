@@ -1,8 +1,8 @@
 import { type FunctionComponent } from "react";
 
-import { getCurrentSheet, useEditorStore } from "@store/editor";
-import { usePlayerStore } from "@store/player";
-import { pause, stop, windUp } from "@store/player/playerActions";
+import { getCurrentSheet, useEditorStore } from "@/store/editor";
+import { usePlayerStore } from "@/store/player";
+import { pause, stop, windUp } from "@/store/player/playerActions";
 import { ButtonContainer } from "src/components";
 import { useAudioContext } from "src/hooks";
 import {
@@ -36,7 +36,7 @@ const PlaybackMenu: FunctionComponent = () => {
 
   return (
     <div className="absolute left-0 top-[-4px] flex w-full justify-center bg-transparent">
-      <div className="flex items-center rounded border border-solid border-stone-600 bg-stone-300 dark:border-stone-400 dark:bg-stone-900">
+      <div className="flex items-center rounded border bg-background">
         <ButtonContainer
           aria-label="Fully Rewind"
           className="w-1/6 p-2"

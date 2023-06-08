@@ -1,6 +1,6 @@
 import { default as BarModule, type Bar } from "@entities/bar";
-import { getCurrentSheet, useEditorStore } from "@store/editor";
-import { INITIAL_STATE, usePlayerStore } from "@store/player";
+import { getCurrentSheet, useEditorStore } from "@/store/editor";
+import { INITIAL_STATE, usePlayerStore } from "@/store/player";
 
 const createNextBarTimeout = (
   barWithCursor: Bar | undefined,

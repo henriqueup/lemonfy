@@ -1,7 +1,13 @@
 import { areParentsRelativeOrAbsolute } from "src/components/utils";
-import { type ReactNode, useCallback, useRef, useState, type RefCallback } from "react";
+import {
+  type ReactNode,
+  useCallback,
+  useRef,
+  useState,
+  type RefCallback,
+} from "react";
 import { ClickAwayListener } from "src/components";
-import { classNames } from "src/styles/utils";
+import { cn } from "src/styles/utils";
 
 interface Props {
   isOpen: boolean;
@@ -21,7 +27,8 @@ const FloatingContainer = ({ isOpen, onClose, className, children }: Props) => {
 
     // take second parent because first is ClickAwayListener
     const parentElement = ref?.parentElement?.parentElement;
-    const hasRelativeParent = parentElement && areParentsRelativeOrAbsolute(parentElement);
+    const hasRelativeParent =
+      parentElement && areParentsRelativeOrAbsolute(parentElement);
     const parentRect = parentElement?.getBoundingClientRect();
 
     if (parentRect) {
@@ -44,8 +51,13 @@ const FloatingContainer = ({ isOpen, onClose, className, children }: Props) => {
   return (
     <ClickAwayListener onClickAway={onClose}>
       <div
-        style={{ top: rect?.top, left: rect?.left, width: rect?.width, maxHeight: rect?.height }}
-        className={classNames(className, "absolute overflow-y-auto")}
+        style={{
+          top: rect?.top,
+          left: rect?.left,
+          width: rect?.width,
+          maxHeight: rect?.height,
+        }}
+        className={cn(className, "absolute overflow-y-auto")}
         ref={containerCallbackRef}
       >
         {children}

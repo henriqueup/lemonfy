@@ -1,5 +1,5 @@
 import { type ButtonHTMLAttributes, type DetailedHTMLProps, type FunctionComponent } from "react";
-import { classNames } from "../../styles/utils";
+import { cn } from "../../styles/utils";
 
 type Variant = "primary" | "success" | "error" | "transparent" | "default";
 export type ButtonProps = {
@@ -21,7 +21,7 @@ const Button: FunctionComponent<
   return (
     <button
       {...props}
-      className={classNames(
+      className={cn(
         "cursor-pointer rounded p-2 text-lg font-bold text-white",
         props.disabled ? "bg-gray-400 hover:bg-gray-400" : VARIANT_MAP[variant],
         props.className,

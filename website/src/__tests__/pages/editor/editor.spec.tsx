@@ -9,18 +9,18 @@ import {
 import userEvent from "@testing-library/user-event";
 import type { UserEvent } from "@testing-library/user-event/dist/types/setup/setup";
 
-import { withNextTRPC } from "@mocks/utils/tRPC";
+import { withNextTRPC } from "@/mocks/utils/tRPC";
 import {
   AnimationMock,
   AudioContextMock,
   GainNodeMock,
   OscillatorNodeMock,
   animateMock,
-} from "@mocks/window";
-import { usePlayerStore } from "@store/player";
+} from "@/mocks/window";
+import { usePlayerStore } from "@/store/player";
 import Editor from "src/pages/editor/Editor";
-import { getCompleteMoonlightSonataMockSheet } from "@mocks/entities/sheet";
-import { getMockSong } from "@mocks/entities/song";
+import { getCompleteMoonlightSonataMockSheet } from "@/mocks/entities/sheet";
+import { getMockSong } from "@/mocks/entities/song";
 
 let mockGainNode: GainNodeMock;
 let mockOscillatorNode: OscillatorNodeMock;

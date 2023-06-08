@@ -1,9 +1,9 @@
 import { useState, type FunctionComponent } from "react";
 
 import { Button, CollapsableSideMenu } from "src/components";
-import { useEditorStore } from "@store/editor";
+import { useEditorStore } from "@/store/editor";
 import { api } from "src/utils/api";
-import { setSongId } from "@store/editor/songActions";
+import { setSongId } from "@/store/editor/songActions";
 
 const EditorMenu: FunctionComponent = () => {
   const song = useEditorStore(state => state.song);

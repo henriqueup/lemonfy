@@ -1,4 +1,4 @@
-import { type Cursor, INITIAL_STATE, useEditorStore } from "@store/editor";
+import { type Cursor, INITIAL_STATE, useEditorStore } from "@/store/editor";
 import {
   decreaseCursorBarIndex,
   decreaseCursorPosition,
@@ -8,7 +8,7 @@ import {
   increaseCursorTrackIndex,
   moveCursorToEndOfBar,
   moveCursorToStartOfBar,
-} from "@store/editor/cursorActions";
+} from "@/store/editor/cursorActions";
 import {
   getEmptyMockSheet,
   getMockSheetWithBars,
@@ -18,7 +18,7 @@ import * as BarModule from "@entities/bar";
 import * as MockUtilsModule from "src/mocks/utils/moduleUtils";
 import { createNoteMock } from "src/mocks/entities/note";
 import { NOTE_DURATIONS } from "@entities/note";
-import { getMockSong } from "@mocks/entities/song";
+import { getMockSong } from "@/mocks/entities/song";
 
 jest.mock<typeof BarModule.default>("@entities/bar", () => {
   const mockUtils = jest.requireActual<typeof MockUtilsModule>(

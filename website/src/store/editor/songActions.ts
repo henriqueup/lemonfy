@@ -1,6 +1,6 @@
 import SheetModule from "@entities/sheet";
 import SongModule, { SongSchema, type Song } from "@entities/song";
-import { useEditorStore } from "@store/editor/editorStore";
+import { useEditorStore } from "@/store/editor/editorStore";
 
 export const loadSong = (song: Song) =>
   useEditorStore.setState({ song, currentSheetIndex: 0 });

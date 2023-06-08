@@ -20,7 +20,7 @@ const Note: FunctionComponent<Props> = ({ note, barCapacity }) => {
 
   return (
     <div
-      className="absolute flex h-full items-center justify-center rounded border border-solid border-stone-600 bg-inherit dark:border-stone-400"
+      className="absolute flex h-full items-center justify-center rounded border bg-inherit"
       style={{
         width: `${note.duration * barCapacity * 100}%`,
         left: `${(note.start * 100) / barCapacity}%`,

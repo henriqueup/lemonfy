@@ -1,8 +1,8 @@
 import { type FunctionComponent, useState } from "react";
 
 import { Plus } from "src/icons";
-import { addBar } from "@store/editor/sheetActions";
-import { getCurrentSheet } from "@store/editor";
+import { addBar } from "@/store/editor/sheetActions";
+import { getCurrentSheet } from "@/store/editor";
 import BarMenu from "./BarMenu";
 import NoteMenu from "./NoteMenu";
 import Bar from "./Bar";
@@ -27,8 +27,8 @@ const SheetEditor: FunctionComponent = () => {
   return (
     <div className="relative h-full w-full bg-inherit">
       <PlaybackMenu />
-      <div className="h-3/5 bg-inherit p-4 pb-2 pt-0 text-stone-600 dark:text-stone-400">
-        <fieldset className="h-full rounded border border-solid border-stone-600 bg-inherit p-1 dark:border-stone-400">
+      <div className="h-3/5 bg-inherit p-4 pb-2 pt-0">
+        <fieldset className="h-full rounded border bg-inherit p-1">
           <legend className="ml-3">Bars</legend>
           <div className="mt-2 grid max-h-full grid-cols-2 gap-2 overflow-y-auto bg-inherit">
             {bars.map((bar, i) => (
@@ -39,7 +39,7 @@ const SheetEditor: FunctionComponent = () => {
             <div
               role="button"
               aria-label="New Bar"
-              className="mt-4 flex cursor-pointer content-center justify-center rounded-full border border-solid border-stone-600 p-1 dark:border-stone-400"
+              className="mt-4 flex cursor-pointer content-center justify-center rounded-full border p-1"
               onClick={() => setBarMenuIsOpen(true)}
             >
               <Plus height={24} width={24} />

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { INITIAL_STATE, useEditorStore } from "@store/editor";
+import { INITIAL_STATE, useEditorStore } from "@/store/editor";
 import {
   getEmptyMockSheet,
   getMockSheetWithBars,
@@ -7,7 +7,7 @@ import {
 import * as SheetModule from "@entities/sheet";
 import * as SongModule from "@entities/song";
 import * as MockUtilsModule from "src/mocks/utils/moduleUtils";
-import { addSheet, setSong, loadSong } from "@store/editor/songActions";
+import { addSheet, setSong, loadSong } from "@/store/editor/songActions";
 import { type Song } from "@entities/song";
 
 jest.mock<typeof SongModule.default>("@entities/song", () => {

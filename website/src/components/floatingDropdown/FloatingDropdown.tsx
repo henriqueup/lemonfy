@@ -1,7 +1,14 @@
-import { forwardRef, type Ref, useEffect, useState, type KeyboardEvent, type MouseEvent } from "react";
+import {
+  forwardRef,
+  type Ref,
+  useEffect,
+  useState,
+  type KeyboardEvent,
+  type MouseEvent,
+} from "react";
 import { FloatingContainer } from "src/components/floatingContainer";
 import type { OptionObject } from "src/components/select";
-import { classNames } from "src/styles/utils";
+import { cn } from "src/styles/utils";
 
 type Props = {
   isOpen: boolean;
@@ -10,7 +17,10 @@ type Props = {
   onClose: () => void;
 };
 
-const FloatingDropdown = ({ isOpen, options, onChangeOption, onClose }: Props, listRef: Ref<HTMLUListElement>) => {
+const FloatingDropdown = (
+  { isOpen, options, onChangeOption, onClose }: Props,
+  listRef: Ref<HTMLUListElement>,
+) => {
   const [index, setIndex] = useState(-1);
 
   const getLoopingIndex = (index: number, length: number) => {
@@ -38,9 +48,16 @@ const FloatingDropdown = ({ isOpen, options, onChangeOption, onClose }: Props, l
     } else if (event.key === "ArrowUp") {
       nextIndex = getLoopingIndex(index - 1, options.length);
     } else if (event.key === "Tab") {
-      if ((index === 0 && event.shiftKey) || (index === options.length - 1 && !event.shiftKey)) return;
+      if (
+        (index === 0 && event.shiftKey) ||
+        (index === options.length - 1 && !event.shiftKey)
+      )
+        return;
 
-      nextIndex = getLoopingIndex(event.shiftKey ? index - 1 : index + 1, options.length);
+      nextIndex = getLoopingIndex(
+        event.shiftKey ? index - 1 : index + 1,
+        options.length,
+      );
     }
 
     event.preventDefault();
@@ -82,9 +99,11 @@ const FloatingDropdown = ({ isOpen, options, onChangeOption, onClose }: Props, l
             key={option.key}
             onClick={event => handleClickOption(event, option)}
             tabIndex={0}
-            className={classNames(
+            className={cn(
               "w-full cursor-pointer text-inherit hover:bg-gray-800 focus-visible:outline-none",
-              i === index ? "bg-stone-400 dark:bg-stone-700" : "bg-stone-300 dark:bg-stone-900",
+              i === index
+                ? "bg-stone-400 dark:bg-stone-700"
+                : "bg-stone-300 dark:bg-stone-900",
             )}
           >
             {option.value}

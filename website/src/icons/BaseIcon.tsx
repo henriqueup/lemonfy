@@ -1,5 +1,5 @@
 import React, { type FunctionComponent, type ReactNode } from "react";
-import { classNames } from "src/styles/utils";
+import { cn } from "src/styles/utils";
 
 interface Props {
   x?: number | string;
@@ -32,7 +32,7 @@ const BaseIcon: FunctionComponent<Props> = ({
       width={width}
       height={height}
       viewBox={viewbox}
-      className={classNames("text-inherit", className)}
+      className={cn("text-inherit", className)}
       stroke={stroke}
       fill={fill}
     >

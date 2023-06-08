@@ -1,13 +1,13 @@
 import * as BarModule from "@entities/bar";
 import * as SheetModule from "@entities/sheet";
 import * as MockUtilsModule from "src/mocks/utils/moduleUtils";
-import { mockDefaultImplementations } from "@mocks/entities/bar";
-import { getCompleteMoonlightSonataMockSheet } from "@mocks/entities/sheet";
+import { mockDefaultImplementations } from "@/mocks/entities/bar";
+import { getCompleteMoonlightSonataMockSheet } from "@/mocks/entities/sheet";
 import {
   AudioContextMock,
   GainNodeMock,
   OscillatorNodeMock,
-} from "@mocks/window";
+} from "@/mocks/window";
 import { playSong } from "src/utils/audioContext";
 import { toPrecision } from "src/utils/numbers";
 

@@ -4,7 +4,7 @@ import { useShortcuts } from "src/hooks";
 import { NOTE_DURATIONS, type NoteDurationName } from "@entities/note";
 import { NUMBER_OF_OCTAVES, type Octave } from "@entities/octave";
 import { type PitchName, PITCH_NAMES } from "@entities/pitch";
-import { useEditorStore } from "@store/editor";
+import { useEditorStore } from "@/store/editor";
 import {
   decreaseSelectedNoteDuration,
   decreaseSelectedOctave,
@@ -13,7 +13,7 @@ import {
   setNoteToAdd,
   setSelectedNoteDuration,
   setSelectedOctave,
-} from "@store/editor/noteToAddActions";
+} from "@/store/editor/noteToAddActions";
 import {
   decreaseCursorBarIndex,
   decreaseCursorPosition,
@@ -23,14 +23,14 @@ import {
   increaseCursorTrackIndex,
   moveCursorToEndOfBar,
   moveCursorToStartOfBar,
-} from "@store/editor/cursorActions";
+} from "@/store/editor/cursorActions";
 import {
   addCopyOfCurrentBar,
   addNote,
   removeNextNoteFromBar,
-} from "@store/editor/sheetActions";
+} from "@/store/editor/sheetActions";
 import { Select } from "src/components/select";
-import { classNames } from "src/styles/utils";
+import { cn } from "src/styles/utils";
 
 const NoteMenu: FunctionComponent = () => {
   const currentSheetIndex = useEditorStore(state => state.currentSheetIndex);
@@ -143,8 +143,8 @@ const NoteMenu: FunctionComponent = () => {
   };
 
   return (
-    <div className="h-2/5 bg-inherit p-4 pt-2 text-stone-600 dark:text-stone-400">
-      <fieldset className="h-full rounded border border-solid border-stone-600 bg-inherit p-4 dark:border-stone-400">
+    <div className="h-2/5 bg-inherit p-4 pt-2">
+      <fieldset className="h-full rounded border bg-inherit p-4">
         <legend>Note Selector</legend>
         <div className="mb-4 flex w-full bg-inherit">
           <Select
@@ -172,9 +172,9 @@ const NoteMenu: FunctionComponent = () => {
               key={i}
               draggable={true}
               onDragStart={event => handleDragStart(event, pitchName)}
-              className={classNames(
+              className={cn(
                 "m-1 flex min-h-[5rem] min-w-[calc(100%_/_13_-_8px)] cursor-pointer items-center justify-center",
-                "rounded-2xl border border-solid border-stone-600 text-6xl text-stone-600 dark:border-stone-400 dark:text-stone-400",
+                "rounded-2xl border text-6xl",
               )}
             >
               {pitchName}

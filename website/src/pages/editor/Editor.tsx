@@ -1,9 +1,9 @@
 import { type FunctionComponent, useState, useEffect } from "react";
 
 import { Plus } from "src/icons";
-import { classNames } from "src/styles/utils";
-import { useEditorStore } from "@store/editor";
-import { setSong, loadSong } from "@store/editor/songActions";
+import { cn } from "src/styles/utils";
+import { useEditorStore } from "@/store/editor";
+import { setSong, loadSong } from "@/store/editor/songActions";
 import { type Song as SongEntity } from "@entities/song";
 import EditorMenu from "./EditorMenu";
 import SongMenu from "./SongMenu";
@@ -35,9 +35,9 @@ const Editor: FunctionComponent<EditorProps> = ({ songToLoad }) => {
           <div
             role="button"
             aria-label="New Song"
-            className={classNames(
+            className={cn(
               "mt-4 flex cursor-pointer content-center justify-center",
-              "rounded-full border border-solid border-stone-600 p-4 dark:border-stone-400",
+              "rounded-full border p-4",
             )}
             onClick={() => setSongMenuIsOpen(true)}
           >

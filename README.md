@@ -52,8 +52,10 @@ And finally, it can also be used as a showcase of my skills.
     - <s>Enable loading existing song in Editor</s>
     - <s>Fix tests</s>
     - <s>Add new song button</s>
-    - Move global menu to root
-      - Create topbar menu
+    - <s>Move global menu to root</s>
+      - <s>Create topbar menu</s>
+      - Change to use shadcn/ui
+      - Move side menus to topbar
   - Create server tests
 - <s>Fix float issue</s>
   - <s>Maybe something like: Number((0.009033203125).toFixed(8))</s>

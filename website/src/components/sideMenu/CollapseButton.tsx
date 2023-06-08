@@ -1,6 +1,6 @@
 import { type FunctionComponent } from "react";
 import { ChevronLeft, ChevronRight } from "src/icons";
-import { classNames } from "src/styles/utils";
+import { cn } from "src/styles/utils";
 
 type Props = {
   isOpen: boolean;
@@ -9,13 +9,18 @@ type Props = {
   onClick: () => void;
 };
 
-const CollapseButton: FunctionComponent<Props> = ({ isOpen, rightSide, menuLabel, onClick }) => {
+const CollapseButton: FunctionComponent<Props> = ({
+  isOpen,
+  rightSide,
+  menuLabel,
+  onClick,
+}) => {
   return (
     <div
       role="button"
       aria-label={isOpen ? `Close ${menuLabel}` : `Open ${menuLabel}`}
-      className={classNames(
-        "absolute top-[calc(50%_-_16px)] flex h-8 w-6 cursor-pointer items-center justify-center rounded border border-stone-600 bg-inherit dark:border-stone-400",
+      className={cn(
+        "absolute top-[calc(50%_-_16px)] flex h-8 w-6 cursor-pointer items-center justify-center rounded border bg-inherit",
         rightSide ? "border-r-0" : "border-l-0",
         rightSide ? "right-full" : "left-full",
       )}

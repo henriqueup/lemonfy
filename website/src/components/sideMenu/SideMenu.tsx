@@ -6,7 +6,7 @@ import {
 } from "react";
 import { ClickAwayListener } from "src/components";
 import { X } from "src/icons";
-import { classNames } from "src/styles/utils";
+import { cn } from "src/styles/utils";
 import CollapseButton from "./CollapseButton";
 
 interface Props {
@@ -49,11 +49,9 @@ const BaseSideMenu: FunctionComponent<Props> = ({
     <ClickAwayListener onClickAway={handleClickAway}>
       <div
         aria-label={label}
-        className={classNames(
-          "absolute top-0 z-40 h-screen rounded bg-inherit",
-          rightSide
-            ? "right-0 border-l border-stone-600 dark:border-stone-400"
-            : "left-0 border-r border-stone-600 dark:border-stone-400",
+        className={cn(
+          "fixed top-0 z-40 h-screen rounded bg-inherit",
+          rightSide ? "right-0 border-l" : "left-0 border-r",
           checkIsOpen() ? "w-1/4" : "border-l-0 border-r-0",
         )}
       >

@@ -1,7 +1,7 @@
 import BarModule, { type Bar } from "@entities/bar";
 import { type Note } from "@entities/note";
 import SheetModule, { type Sheet } from "@entities/sheet";
-import { play } from "@store/player/playerActions";
+import { play } from "@/store/player/playerActions";
 import { toPrecision } from "src/utils/numbers";
 
 const addGainNode = (audioContext: AudioContext) => {

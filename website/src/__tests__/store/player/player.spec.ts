@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { useEditorStore } from "@store/editor";
+import { useEditorStore } from "@/store/editor";
 import {
   getEmptyMockSheet,
   getMockSheetWithBars,
 } from "src/mocks/entities/sheet";
 import * as BarModule from "@entities/bar";
 import * as MockUtilsModule from "src/mocks/utils/moduleUtils";
-import { INITIAL_STATE, usePlayerStore } from "@store/player";
-import { pause, play, stop, windUp } from "@store/player/playerActions";
-import { AudioNodeMock } from "@mocks/window";
-import { getMockSong } from "@mocks/entities/song";
+import { INITIAL_STATE, usePlayerStore } from "@/store/player";
+import { pause, play, stop, windUp } from "@/store/player/playerActions";
+import { AudioNodeMock } from "@/mocks/window";
+import { getMockSong } from "@/mocks/entities/song";
 
 jest.useFakeTimers();
 const setTimeoutSpy = jest.spyOn(global, "setTimeout");

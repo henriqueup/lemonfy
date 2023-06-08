@@ -3,11 +3,11 @@ import React, { type DragEvent, type FunctionComponent, useState } from "react";
 import { type Bar } from "@entities/bar";
 import { sumNotesDuration, type Note as NoteEntity } from "@entities/note";
 import { TimeEvaluation } from "src/utils/timeEvaluation";
-import { useEditorStore } from "@store/editor";
-import { classNames } from "src/styles/utils";
+import { useEditorStore } from "@/store/editor";
+import { cn } from "src/styles/utils";
 import Cursor from "./Cursor";
 import Note from "./Note";
-import { usePlayerStore } from "@store/player";
+import { usePlayerStore } from "@/store/player";
 
 interface TrackProps {
   index: number;
@@ -81,8 +81,8 @@ const Track: FunctionComponent<TrackProps> = ({
     >
       {/* <div className="flex p-2">
         <div
-          className={classNames(
-            "rounded border-2 border-solid border-stone-600 dark:border-stone-400 p-2",
+          className={cn(
+            "rounded border-2 p-2",
             isSelectedTrack && "border-lime-600",
             isSelectedTrack && "bg-lime-400",
           )}
@@ -95,7 +95,7 @@ const Track: FunctionComponent<TrackProps> = ({
         {isShowingPreview && noteToAdd !== null ? (
           <Note note={noteToAdd} barCapacity={bar.capacity} />
         ) : null}
-        <div className="m-auto ml-0 mr-0 h-px flex-grow border border-solid border-stone-600 dark:border-stone-400" />
+        <div className="m-auto ml-0 mr-0 h-px flex-grow border" />
         {!isPlaying && isSelectedTrack && isSelectedBar ? (
           <Cursor bar={bar} isPlaying={isPlaying} position={cursor.position} />
         ) : null}
