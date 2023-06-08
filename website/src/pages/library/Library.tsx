@@ -2,7 +2,6 @@ import { type NextPage } from "next";
 import Link from "next/link";
 
 import { Fieldset } from "src/components/fieldset";
-import LibraryMenu from "src/pages/library/LibraryMenu";
 import { api } from "src/utils/api";
 
 const Library: NextPage = () => {
@@ -27,7 +26,6 @@ const Library: NextPage = () => {
           ))}
         </ul>
       </Fieldset>
-      <LibraryMenu />
     </div>
   );
 };

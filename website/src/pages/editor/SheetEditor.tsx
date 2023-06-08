@@ -4,7 +4,6 @@ import { Plus } from "src/icons";
 import { addBar } from "@/store/editor/sheetActions";
 import { getCurrentSheet } from "@/store/editor";
 import BarMenu from "./BarMenu";
-import NoteMenu from "./NoteMenu";
 import Bar from "./Bar";
 import PlaybackMenu from "./PlaybackMenu";
 
@@ -27,7 +26,7 @@ const SheetEditor: FunctionComponent = () => {
   return (
     <div className="relative h-full w-full bg-inherit">
       <PlaybackMenu />
-      <div className="h-3/5 bg-inherit p-4 pb-2 pt-0">
+      <div className="h-full bg-inherit p-4 pb-2 pt-0">
         <fieldset className="h-full rounded border bg-inherit p-1">
           <legend className="ml-3">Bars</legend>
           <div className="mt-2 grid max-h-full grid-cols-2 gap-2 overflow-y-auto bg-inherit">
@@ -47,7 +46,6 @@ const SheetEditor: FunctionComponent = () => {
           </div>
         </fieldset>
       </div>
-      <NoteMenu />
       {barMenuIsOpen ? (
         <BarMenu onAdd={handleAddBar} onClose={() => setBarMenuIsOpen(false)} />
       ) : null}

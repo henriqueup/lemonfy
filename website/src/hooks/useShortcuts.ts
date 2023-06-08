@@ -1,16 +1,16 @@
 import { useCallback, useEffect } from "react";
 
 const SHORTCUTS = {
-  ArrowRight: "duration.raise",
-  ArrowLeft: "duration.lower",
-  ArrowUp: "octave.raise",
-  ArrowDown: "octave.lower",
-  CTRL_ArrowUp: "cursor.track.above",
-  CTRL_ArrowDown: "cursor.track.under",
+  ALT_ArrowUp: "duration.raise",
+  ALT_ArrowDown: "duration.lower",
+  CTRL_ArrowUp: "octave.raise",
+  CTRL_ArrowDown: "octave.lower",
+  ArrowUp: "cursor.track.above",
+  ArrowDown: "cursor.track.under",
   CTRL_ArrowRight: "cursor.bar.right",
   CTRL_ArrowLeft: "cursor.bar.left",
-  SHIFT_ArrowRight: "cursor.position.right",
-  SHIFT_ArrowLeft: "cursor.position.left",
+  ArrowRight: "cursor.position.right",
+  ArrowLeft: "cursor.position.left",
   CTRL_SHIFT_ArrowRight: "cursor.position.endOfBar",
   CTRL_SHIFT_ArrowLeft: "cursor.position.startOfBar",
   c: "notes.add.C",
@@ -25,9 +25,12 @@ const SHORTCUTS = {
   a: "notes.add.A",
   SHIFT_A: "notes.add.A#",
   b: "notes.add.B",
-  Backspace: "notes.remove.left",
-  Delete: "notes.remove.right",
+  x: "notes.add.X",
+  Backspace: "notes.remove.previous",
+  Delete: "notes.remove.next",
   CTRL_b: "bars.add.copy",
+  CTRL_S: "save.song",
+  CTRL_SHIFT_S: "new.song",
 } as const;
 
 type ShortcutKey = keyof typeof SHORTCUTS;
@@ -40,7 +43,7 @@ type Shortcut = {
   callback: () => void;
 };
 
-type ShortcutDictionary = {
+export type ShortcutDictionary = {
   [K in ShortcutCode]?: Shortcut;
 };
 
@@ -52,16 +55,24 @@ const useShortcuts = (shortcutDictionary: ShortcutDictionary) => {
     if (event.shiftKey) keys.push("SHIFT");
     if (event.altKey) keys.push("ALT");
 
-    // console.log(event.key);
     keys.push(event.key);
 
     const resultingKey = keys.join("_");
+    // console.log(resultingKey);
     if (isShortcutKey(resultingKey)) return resultingKey;
   };
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
-      if (event.target instanceof HTMLInputElement) return;
+      if (
+        !(event.target instanceof HTMLElement) ||
+        event.target instanceof HTMLInputElement
+      ) {
+        return;
+      }
+
+      const targetRole = getRoleFromEventTarget(event.target);
+      if (targetRole?.startsWith("menu")) return;
 
       const shortcutKey = getShortcutKey(event);
       if (shortcutKey === undefined) return;
@@ -75,6 +86,13 @@ const useShortcuts = (shortcutDictionary: ShortcutDictionary) => {
     },
     [shortcutDictionary],
   );
+
+  const getRoleFromEventTarget = (eventTarget: HTMLElement): string | null => {
+    const roleAttribute = eventTarget.attributes.getNamedItem("role");
+    if (roleAttribute === null) return null;
+
+    return roleAttribute.value;
+  };
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);

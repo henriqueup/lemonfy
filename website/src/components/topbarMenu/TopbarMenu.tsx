@@ -1,4 +1,5 @@
 import { type FunctionComponent } from "react";
+import { useRouter } from "next/router";
 
 import {
   Menubar,
@@ -15,80 +16,25 @@ import {
   MenubarSubTrigger,
   MenubarTrigger,
 } from "@/components/ui/menubar";
-
 import { ThemeButton } from "src/components/themeButton";
 import Logo from "src/icons/Logo";
-import { cn } from "src/styles/utils";
+import FileMenu from "@/components/topbarMenu/FileMenu";
+import EditMenu from "@/components/topbarMenu/EditMenu";
 
 const TopbarMenu: FunctionComponent = () => {
+  const router = useRouter();
+
+  const handleLogoClick = () => {
+    void router.push("/library");
+  };
+
   return (
-    // <div
-    //   className={cn(
-    //     "absolute left-0 top-0 z-30 flex h-8 w-screen",
-    //     "border-b-[1px] border-solid border-b-stone-600 bg-inherit text-inherit dark:border-b-stone-400",
-    //   )}
-    // >
-    //   <div className="flex flex-grow justify-start">
-    //     <div className="cursor-pointer">
-    //       <Logo height={30} width={30} />
-    //     </div>
-    //   </div>
-    //   <div className="flex flex-grow justify-end">
-    //     <ThemeButton />
-    //   </div>
-    // </div>
     <Menubar className="absolute left-0 top-0 w-screen">
-      <MenubarMenu>
-        <MenubarTrigger>File</MenubarTrigger>
-        <MenubarContent>
-          <MenubarItem>
-            New Tab <MenubarShortcut>⌘T</MenubarShortcut>
-          </MenubarItem>
-          <MenubarItem>
-            New Window <MenubarShortcut>⌘N</MenubarShortcut>
-          </MenubarItem>
-          <MenubarItem disabled>New Incognito Window</MenubarItem>
-          <MenubarSeparator />
-          <MenubarSub>
-            <MenubarSubTrigger>Share</MenubarSubTrigger>
-            <MenubarSubContent>
-              <MenubarItem>Email link</MenubarItem>
-              <MenubarItem>Messages</MenubarItem>
-              <MenubarItem>Notes</MenubarItem>
-            </MenubarSubContent>
-          </MenubarSub>
-          <MenubarSeparator />
-          <MenubarItem>
-            Print... <MenubarShortcut>⌘P</MenubarShortcut>
-          </MenubarItem>
-        </MenubarContent>
-      </MenubarMenu>
-      <MenubarMenu>
-        <MenubarTrigger>Edit</MenubarTrigger>
-        <MenubarContent>
-          <MenubarItem>
-            Undo <MenubarShortcut>⌘Z</MenubarShortcut>
-          </MenubarItem>
-          <MenubarItem>
-            Redo <MenubarShortcut>⇧⌘Z</MenubarShortcut>
-          </MenubarItem>
-          <MenubarSeparator />
-          <MenubarSub>
-            <MenubarSubTrigger>Find</MenubarSubTrigger>
-            <MenubarSubContent>
-              <MenubarItem>Search the web</MenubarItem>
-              <MenubarSeparator />
-              <MenubarItem>Find...</MenubarItem>
-              <MenubarItem>Find Next</MenubarItem>
-              <MenubarItem>Find Previous</MenubarItem>
-            </MenubarSubContent>
-          </MenubarSub>
-          <MenubarSeparator />
-          <MenubarItem>Cut</MenubarItem>
-          <MenubarItem>Copy</MenubarItem>
-          <MenubarItem>Paste</MenubarItem>
-        </MenubarContent>
-      </MenubarMenu>
+      <div className="cursor-pointer" onClick={handleLogoClick}>
+        <Logo height={30} width={30} />
+      </div>
+      <FileMenu />
+      <EditMenu />
       <MenubarMenu>
         <MenubarTrigger>View</MenubarTrigger>
         <MenubarContent>

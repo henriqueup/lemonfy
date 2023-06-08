@@ -114,8 +114,9 @@ const MenubarItem = React.forwardRef<
   React.ElementRef<typeof MenubarPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof MenubarPrimitive.Item> & {
     inset?: boolean;
+    keepOpen?: boolean;
   }
->(({ className, inset, ...props }, ref) => (
+>(({ className, inset, keepOpen, ...props }, ref) => (
   <MenubarPrimitive.Item
     ref={ref}
     className={cn(
@@ -124,6 +125,13 @@ const MenubarItem = React.forwardRef<
       inset && "pl-8",
       className,
     )}
+    onSelect={
+      keepOpen
+        ? (event: Event) => {
+            event.preventDefault();
+          }
+        : undefined
+    }
     {...props}
   />
 ));

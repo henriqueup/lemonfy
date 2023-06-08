@@ -5,7 +5,6 @@ import { cn } from "src/styles/utils";
 import { useEditorStore } from "@/store/editor";
 import { setSong, loadSong } from "@/store/editor/songActions";
 import { type Song as SongEntity } from "@entities/song";
-import EditorMenu from "./EditorMenu";
 import SongMenu from "./SongMenu";
 import Song from "./Song";
 
@@ -47,7 +46,6 @@ const Editor: FunctionComponent<EditorProps> = ({ songToLoad }) => {
       ) : (
         <Song />
       )}
-      <EditorMenu />
       {songMenuIsOpen ? (
         <SongMenu
           onAdd={handleAddSong}
