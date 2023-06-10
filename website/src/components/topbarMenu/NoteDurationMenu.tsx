@@ -18,12 +18,14 @@ import {
 import { useEditorStore } from "@/store/editor";
 import { NOTE_DURATIONS, type NoteDurationName } from "@/server/entities/note";
 
-const NoteDurationMenu: FunctionComponent = () => {
+const NoteDurationMenu: FunctionComponent<{ disabled?: boolean }> = ({
+  disabled,
+}) => {
   const selectedDuration = useEditorStore(state => state.selectedNoteDuration);
 
   return (
     <MenubarSub>
-      <MenubarSubTrigger>Note Duration</MenubarSubTrigger>
+      <MenubarSubTrigger disabled={disabled}>Note Duration</MenubarSubTrigger>
       <MenubarSubContent>
         <MenubarItem inset keepOpen onClick={increaseSelectedNoteDuration}>
           Increase <MenubarShortcut>Alt↑</MenubarShortcut>

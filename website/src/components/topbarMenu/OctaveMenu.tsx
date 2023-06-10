@@ -18,12 +18,14 @@ import {
 } from "@/store/editor/noteToAddActions";
 import { useEditorStore } from "@/store/editor";
 
-const OctaveMenu: FunctionComponent = () => {
+const OctaveMenu: FunctionComponent<{ disabled?: boolean }> = ({
+  disabled,
+}) => {
   const selectedOctave = useEditorStore(state => state.selectedOctave);
 
   return (
     <MenubarSub>
-      <MenubarSubTrigger>Octave</MenubarSubTrigger>
+      <MenubarSubTrigger disabled={disabled}>Octave</MenubarSubTrigger>
       <MenubarSubContent>
         <MenubarItem inset keepOpen onClick={increaseSelectedOctave}>
           Increase <MenubarShortcut>⌘↑</MenubarShortcut>

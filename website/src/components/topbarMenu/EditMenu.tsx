@@ -12,7 +12,7 @@ import {
   MenubarTrigger,
 } from "@/components/ui/menubar";
 import { useShortcuts, type ShortcutDictionary } from "@/hooks/useShortcuts";
-import { useEditorStore } from "@/store/editor";
+import { getCurrentSheet, useEditorStore } from "@/store/editor";
 import { type PitchName, PITCH_NAMES } from "@entities/pitch";
 import { NOTE_DURATIONS } from "@entities/note";
 import {
@@ -26,20 +26,11 @@ import {
   addNote,
   removeNextNoteFromBar,
 } from "@/store/editor/sheetActions";
-import {
-  decreaseCursorBarIndex,
-  decreaseCursorPosition,
-  decreaseCursorTrackIndex,
-  increaseCursorBarIndex,
-  increaseCursorPosition,
-  increaseCursorTrackIndex,
-  moveCursorToEndOfBar,
-  moveCursorToStartOfBar,
-} from "@/store/editor/cursorActions";
 import OctaveMenu from "@/components/topbarMenu/OctaveMenu";
 import NoteDurationMenu from "@/components/topbarMenu/NoteDurationMenu";
 
 const EditMenu: FunctionComponent = () => {
+  const currentSheet = useEditorStore(getCurrentSheet);
   const selectedOctave = useEditorStore(state => state.selectedOctave);
   const selectedDuration = useEditorStore(state => state.selectedNoteDuration);
 
@@ -84,30 +75,6 @@ const EditMenu: FunctionComponent = () => {
     "bars.add.copy": {
       callback: addCopyOfCurrentBar,
     },
-    "cursor.track.above": {
-      callback: decreaseCursorTrackIndex,
-    },
-    "cursor.track.under": {
-      callback: increaseCursorTrackIndex,
-    },
-    "cursor.bar.left": {
-      callback: decreaseCursorBarIndex,
-    },
-    "cursor.bar.right": {
-      callback: increaseCursorBarIndex,
-    },
-    "cursor.position.left": {
-      callback: decreaseCursorPosition,
-    },
-    "cursor.position.right": {
-      callback: increaseCursorPosition,
-    },
-    "cursor.position.startOfBar": {
-      callback: moveCursorToStartOfBar,
-    },
-    "cursor.position.endOfBar": {
-      callback: moveCursorToEndOfBar,
-    },
   });
 
   return (
@@ -115,7 +82,9 @@ const EditMenu: FunctionComponent = () => {
       <MenubarTrigger>Edit</MenubarTrigger>
       <MenubarContent>
         <MenubarSub>
-          <MenubarSubTrigger>Add Note</MenubarSubTrigger>
+          <MenubarSubTrigger disabled={currentSheet === undefined}>
+            Add Note
+          </MenubarSubTrigger>
           <MenubarSubContent>
             {notesData.map(noteData => (
               <MenubarItem
@@ -130,7 +99,9 @@ const EditMenu: FunctionComponent = () => {
           </MenubarSubContent>
         </MenubarSub>
         <MenubarSub>
-          <MenubarSubTrigger>Remove Note</MenubarSubTrigger>
+          <MenubarSubTrigger disabled={currentSheet === undefined}>
+            Remove Note
+          </MenubarSubTrigger>
           <MenubarSubContent>
             <MenubarItem keepOpen onClick={() => removeNextNoteFromBar(false)}>
               Previous
@@ -143,8 +114,8 @@ const EditMenu: FunctionComponent = () => {
           </MenubarSubContent>
         </MenubarSub>
         <MenubarSeparator />
-        <OctaveMenu />
-        <NoteDurationMenu />
+        <OctaveMenu disabled={currentSheet === undefined} />
+        <NoteDurationMenu disabled={currentSheet === undefined} />
       </MenubarContent>
     </MenubarMenu>
   );
