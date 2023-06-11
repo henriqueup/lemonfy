@@ -1,22 +1,29 @@
 import { type ColumnDef } from "@tanstack/react-table";
 
-import { type Song } from "@/server/entities/song";
+import { type SongInfo } from "@/server/entities/song";
 import SongTableActions from "@/pages/library/SongTableActions";
+import { DataTableColumnHeader } from "@/components/ui/DataTable/DataTableColumnHeader";
 
-export const songColumns: ColumnDef<Song>[] = [
+export const songColumns: ColumnDef<SongInfo>[] = [
   {
     accessorKey: "name",
-    header: () => <div className="ml-4">Song</div>,
-    cell: ({ row }) => <div className="ml-4">{row.getValue("name")}</div>,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Song" />
+    ),
+    cell: ({ row }) => <div>{row.getValue("name")}</div>,
+    enableMultiSort: true,
+    meta: { headClassName: "ml-4", cellClassName: "ml-4" },
   },
   {
     accessorKey: "artist",
-    header: "Artist",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Artist" />
+    ),
+    enableMultiSort: true,
   },
   {
     id: "actions",
-    header: () => <div className="mr-4 w-1/12" />,
     cell: ({ row }) => <SongTableActions song={row.original} />,
-    meta: { skipContentWrap: true },
+    meta: { headClassName: "mr-4 w-[5%]", cellClassName: "mr-4 w-[5%]" },
   },
 ];

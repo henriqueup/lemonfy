@@ -50,6 +50,8 @@ And finally, it can also be used as a showcase of my skills.
     - <s>Song update</s>
   - Finish library page
     - <s>Enable loading existing song in Editor</s>
+      - Clear song when exiting Editor
+        - Confirmation if Song is dirty
     - <s>Fix tests</s>
     - <s>Add new song button</s>
     - <s>Move global menu to root</s>
@@ -57,6 +59,11 @@ And finally, it can also be used as a showcase of my skills.
       - <s>Change to use shadcn/ui</s>
       - <s>Move side menus to topbar</s>
     - Change to table
+      - <s>Implement pagination</s>
+      - <s>Implement sorting</s>
+      - Implement filters
+      - Implement song removal
+        - Use row selection
   - Create server tests
 - <s>Fix float issue</s>
   - <s>Maybe something like: Number((0.009033203125).toFixed(8))</s>
