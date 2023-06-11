@@ -1,7 +1,7 @@
 import { type NextPage } from "next";
-import Link from "next/link";
 
-import { Fieldset } from "src/components/fieldset";
+import { DataTable } from "@/components/ui/DataTable";
+import { songColumns } from "@/pages/library/columns";
 import { api } from "src/utils/api";
 
 const Library: NextPage = () => {
@@ -15,17 +15,30 @@ const Library: NextPage = () => {
 
   return (
     <div className="h-full bg-inherit p-4 pt-10 text-inherit">
-      <Fieldset label="Library" shrinkLabel className="h-full">
-        <ul className="m-4">
+      <h2 className="mb-4">Library</h2>
+      <DataTable columns={songColumns} data={songs} />
+      {/* <Table className="p-4">
+        <TableHeader>
+          <TableHead className="ml-4">Song</TableHead>
+          <TableHead>Artist</TableHead>
+          <TableHead className="mr-4 w-1/12">Edit</TableHead>
+        </TableHeader>
+        <TableBody>
           {songs.map(song => (
-            <li key={`${song.name}-${song.artist}`}>
-              <Link href={`/editor/${song.id ?? "404"}`}>
-                {`${song.name} - ${song.artist}`}
-              </Link>
-            </li>
+            <TableRow
+              key={song.id}
+              onClick={() => handleSongClick(song.id)}
+              className="cursor-pointer"
+            >
+              <TableCell className="ml-4">{song.name}</TableCell>
+              <TableCell>{song.artist}</TableCell>
+              <TableCell className="mr-4 w-1/12">
+                <Edit />
+              </TableCell>
+            </TableRow>
           ))}
-        </ul>
-      </Fieldset>
+        </TableBody>
+      </Table> */}
     </div>
   );
 };

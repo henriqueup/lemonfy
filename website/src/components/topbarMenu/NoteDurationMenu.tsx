@@ -9,7 +9,7 @@ import {
   MenubarSub,
   MenubarSubContent,
   MenubarSubTrigger,
-} from "@/components/ui/menubar";
+} from "@/components/ui/Menubar";
 import {
   decreaseSelectedNoteDuration,
   increaseSelectedNoteDuration,

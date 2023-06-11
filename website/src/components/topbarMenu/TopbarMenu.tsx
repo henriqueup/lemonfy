@@ -1,7 +1,7 @@
 import { type FunctionComponent } from "react";
 import { useRouter } from "next/router";
 
-import { Menubar } from "@/components/ui/menubar";
+import { Menubar } from "@/components/ui/Menubar";
 import { ThemeButton } from "src/components/themeButton";
 import Logo from "src/icons/Logo";
 import FileMenu from "@/components/topbarMenu/FileMenu";

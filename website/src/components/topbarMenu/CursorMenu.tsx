@@ -7,7 +7,7 @@ import {
   MenubarSeparator,
   MenubarShortcut,
   MenubarTrigger,
-} from "@/components/ui/menubar";
+} from "@/components/ui/Menubar";
 import {
   decreaseCursorBarIndex,
   decreaseCursorPosition,

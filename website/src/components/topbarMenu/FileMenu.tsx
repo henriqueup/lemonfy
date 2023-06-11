@@ -7,7 +7,7 @@ import {
   MenubarMenu,
   MenubarShortcut,
   MenubarTrigger,
-} from "@/components/ui/menubar";
+} from "@/components/ui/Menubar";
 import { useShortcuts } from "@/hooks";
 import { useEditorStore } from "@/store/editor";
 import { api } from "@/utils/api";

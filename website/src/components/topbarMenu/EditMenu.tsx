@@ -10,7 +10,7 @@ import {
   MenubarSubContent,
   MenubarSubTrigger,
   MenubarTrigger,
-} from "@/components/ui/menubar";
+} from "@/components/ui/Menubar";
 import { useShortcuts, type ShortcutDictionary } from "@/hooks/useShortcuts";
 import { getCurrentSheet, useEditorStore } from "@/store/editor";
 import { type PitchName, PITCH_NAMES } from "@entities/pitch";

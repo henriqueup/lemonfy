@@ -9,7 +9,7 @@ import {
   MenubarSub,
   MenubarSubContent,
   MenubarSubTrigger,
-} from "@/components/ui/menubar";
+} from "@/components/ui/Menubar";
 import { NUMBER_OF_OCTAVES, type Octave } from "@/server/entities/octave";
 import {
   decreaseSelectedOctave,
