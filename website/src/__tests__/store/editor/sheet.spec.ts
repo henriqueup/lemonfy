@@ -83,9 +83,11 @@ describe("Add Bar", () => {
     expect(SheetModule.default.addBarToSheet).toBeCalledTimes(1);
     expect(SheetModule.default.addBarToSheet).toBeCalledWith(sheet, 6, 8, 120);
 
-    expect(getCurrentSheet()).toMatchObject({
-      ...sheet,
-      bars: [bar],
+    expect(useEditorStore.getState()).toMatchObject({
+      ...INITIAL_STATE,
+      isDirty: true,
+      song: { ...song, sheets: [{ ...sheet, bars: [bar] }] },
+      currentSheetIndex: 0,
     });
   });
 });
@@ -144,6 +146,13 @@ describe("Add copy of current Bar", () => {
       70,
       0,
     );
+
+    expect(useEditorStore.getState()).toMatchObject({
+      ...INITIAL_STATE,
+      isDirty: true,
+      song,
+      currentSheetIndex: 0,
+    });
   });
 });
 
@@ -223,7 +232,6 @@ describe("Add Note", () => {
       expect(SheetModule.default.fillBarTracksInSheet).toBeCalledWith(sheet, 0);
 
       expect(getCurrentSheet()).toMatchObject({
-        ...sheet,
         tracks: [[note], [], []],
         bars: [
           { ...sheet.bars[0], tracks: [[note], [], []] },
@@ -231,9 +239,16 @@ describe("Add Note", () => {
           sheet.bars[2],
         ],
       });
-      expect(useEditorStore.getState().cursor).toMatchObject({
-        ...INITIAL_STATE.cursor,
-        position: expectedPosition,
+
+      expect(useEditorStore.getState()).toMatchObject({
+        ...INITIAL_STATE,
+        isDirty: true,
+        song,
+        currentSheetIndex: 0,
+        cursor: {
+          ...INITIAL_STATE.cursor,
+          position: expectedPosition,
+        },
       });
     },
   );
@@ -280,7 +295,6 @@ describe("Add Note", () => {
       expect(SheetModule.default.fillBarTracksInSheet).toBeCalledWith(sheet, 0);
 
       expect(getCurrentSheet()).toMatchObject({
-        ...sheet,
         tracks: [[note], [], []],
         bars: [
           sheet.bars[0],
@@ -288,10 +302,17 @@ describe("Add Note", () => {
           sheet.bars[2],
         ],
       });
-      expect(useEditorStore.getState().cursor).toMatchObject({
-        ...INITIAL_STATE.cursor,
-        barIndex: 1,
-        position: expectedPosition,
+
+      expect(useEditorStore.getState()).toMatchObject({
+        ...INITIAL_STATE,
+        isDirty: true,
+        song,
+        currentSheetIndex: 0,
+        cursor: {
+          ...INITIAL_STATE.cursor,
+          barIndex: 1,
+          position: expectedPosition,
+        },
       });
     },
   );
@@ -347,6 +368,12 @@ describe("Remove Note from Bar", () => {
     expect(SheetModule.default.fillBarTracksInSheet).toBeCalledWith(sheet, 0);
 
     expect(getCurrentSheet()).toMatchObject(getMockSheetWithBars());
+    expect(useEditorStore.getState()).toMatchObject({
+      ...INITIAL_STATE,
+      isDirty: true,
+      song,
+      currentSheetIndex: 0,
+    });
   });
 });
 
@@ -462,10 +489,16 @@ describe("Remove next Note from Bar", () => {
       expect(SheetModule.default.fillBarTracksInSheet).toBeCalledWith(sheet, 1);
 
       expect(getCurrentSheet()).toMatchObject(getMockSheetWithBars());
-      expect(useEditorStore.getState().cursor).toMatchObject({
-        ...INITIAL_STATE.cursor,
-        trackIndex: 1,
-        position: lookForward ? 2 / 4 : 1 / 4,
+      expect(useEditorStore.getState()).toMatchObject({
+        ...INITIAL_STATE,
+        isDirty: true,
+        song,
+        currentSheetIndex: 0,
+        cursor: {
+          ...INITIAL_STATE.cursor,
+          trackIndex: 1,
+          position: lookForward ? 2 / 4 : 1 / 4,
+        },
       });
     },
   );
@@ -548,10 +581,16 @@ describe("Remove next Note from Bar", () => {
     expect(SheetModule.default.fillBarTracksInSheet).toBeCalledWith(sheet, 1);
 
     expect(getCurrentSheet()).toMatchObject(getMockSheetWithBars());
-    expect(useEditorStore.getState().cursor).toMatchObject({
-      ...INITIAL_STATE.cursor,
-      trackIndex: 1,
-      position: 2 / 4,
+    expect(useEditorStore.getState()).toMatchObject({
+      ...INITIAL_STATE,
+      isDirty: true,
+      song,
+      currentSheetIndex: 0,
+      cursor: {
+        ...INITIAL_STATE.cursor,
+        trackIndex: 1,
+        position: 2 / 4,
+      },
     });
   });
 });
@@ -598,5 +637,11 @@ describe("Remove Bar by index", () => {
 
     expect(sheet.bars).toHaveLength(2);
     expect(getCurrentSheet()).toMatchObject(sheet);
+    expect(useEditorStore.getState()).toMatchObject({
+      ...INITIAL_STATE,
+      isDirty: true,
+      song,
+      currentSheetIndex: 0,
+    });
   });
 });

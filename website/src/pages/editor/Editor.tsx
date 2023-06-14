@@ -2,11 +2,12 @@ import { type FunctionComponent, useState, useEffect } from "react";
 
 import { Plus } from "src/icons";
 import { cn } from "src/styles/utils";
-import { useEditorStore } from "@/store/editor";
+import { reset, useEditorStore } from "@/store/editor";
 import { setSong, loadSong } from "@/store/editor/songActions";
 import { type Song as SongEntity } from "@entities/song";
 import SongMenu from "./SongMenu";
 import Song from "./Song";
+import UnsavedChangesDialog from "@/components/UnsavedChangesDialog";
 
 export interface EditorProps {
   songToLoad?: SongEntity;
@@ -15,6 +16,11 @@ export interface EditorProps {
 const Editor: FunctionComponent<EditorProps> = ({ songToLoad }) => {
   const [songMenuIsOpen, setSongMenuIsOpen] = useState(false);
   const loadedSong = useEditorStore(state => state.song);
+  const isDirty = useEditorStore(state => state.isDirty);
+
+  useEffect(() => {
+    return () => reset();
+  }, []);
 
   useEffect(() => {
     if (songToLoad === undefined) return;
@@ -28,31 +34,34 @@ const Editor: FunctionComponent<EditorProps> = ({ songToLoad }) => {
   };
 
   return (
-    <div className="h-full bg-inherit text-inherit">
-      {loadedSong === undefined ? (
-        <div className="flex justify-center">
-          <div
-            role="button"
-            aria-label="New Song"
-            className={cn(
-              "mt-4 flex cursor-pointer content-center justify-center",
-              "rounded-full border p-4",
-            )}
-            onClick={() => setSongMenuIsOpen(true)}
-          >
-            <Plus />
+    <>
+      <div className="h-full bg-inherit text-inherit">
+        {loadedSong === undefined ? (
+          <div className="flex justify-center">
+            <div
+              role="button"
+              aria-label="New Song"
+              className={cn(
+                "mt-4 flex cursor-pointer content-center justify-center",
+                "rounded-full border p-4",
+              )}
+              onClick={() => setSongMenuIsOpen(true)}
+            >
+              <Plus />
+            </div>
           </div>
-        </div>
-      ) : (
-        <Song />
-      )}
-      {songMenuIsOpen ? (
-        <SongMenu
-          onAdd={handleAddSong}
-          onClose={() => setSongMenuIsOpen(false)}
-        />
-      ) : null}
-    </div>
+        ) : (
+          <Song />
+        )}
+        {songMenuIsOpen ? (
+          <SongMenu
+            onAdd={handleAddSong}
+            onClose={() => setSongMenuIsOpen(false)}
+          />
+        ) : null}
+      </div>
+      <UnsavedChangesDialog shouldConfirmLeave={isDirty} />
+    </>
   );
 };
 

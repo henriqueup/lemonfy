@@ -44,7 +44,11 @@ describe("Add Song", () => {
     expect(songModuleWithMocks.createSong).toBeCalledTimes(1);
     expect(songModuleWithMocks.createSong).toBeCalledWith("Test song", "Me");
 
-    expect(useEditorStore.getState().song).toMatchObject(song);
+    expect(useEditorStore.getState()).toMatchObject({
+      ...INITIAL_STATE,
+      isDirty: true,
+      song,
+    });
   });
 });
 
@@ -60,10 +64,25 @@ describe("Load Song", () => {
 
     loadSong(song);
 
-    expect(useEditorStore.getState().song).toBe(song);
-    expect(useEditorStore.getState().currentSheetIndex).toBe(0);
+    expect(useEditorStore.getState()).toMatchObject({
+      ...INITIAL_STATE,
+      song,
+      currentSheetIndex: 0,
+    });
   });
 });
+
+// describe("Set Song Id", () => {
+//   it("Sets Song Id", () => {
+//     useEditorStore.setState(() => ({
+//       song: { name: "", artist: "", sheets: [] },
+//     }));
+
+//     setSongId("test-id");
+
+//     expect(useEditorStore.getState().song!.id).toBe("test-id");
+//   });
+// });
 
 describe("Add Sheet", () => {
   it("Does nothing with undefined Song", () => {
@@ -74,8 +93,9 @@ describe("Add Sheet", () => {
 
   it("Adds first Sheet", () => {
     const sheet = getEmptyMockSheet();
+    const song = { name: "", artist: "", sheets: [] };
     useEditorStore.setState(() => ({
-      song: { name: "", artist: "", sheets: [] },
+      song,
     }));
     sheetModuleWithMocks.createSheet.mockImplementation(() => sheet);
 
@@ -84,15 +104,20 @@ describe("Add Sheet", () => {
     expect(SheetModule.default.createSheet).toBeCalledTimes(1);
     expect(SheetModule.default.createSheet).toBeCalledWith(8);
 
-    expect(useEditorStore.getState().currentSheetIndex).toBe(0);
-    expect(useEditorStore.getState().song).toMatchObject({ sheets: [sheet] });
+    expect(useEditorStore.getState()).toMatchObject({
+      ...INITIAL_STATE,
+      isDirty: true,
+      song: { ...song, sheets: [sheet] },
+      currentSheetIndex: 0,
+    });
   });
 
   it("Adds Sheet with previous Sheets", () => {
     const initialSheet = getEmptyMockSheet();
     const sheet = getMockSheetWithBars();
+    const song = { name: "", artist: "", sheets: [initialSheet] };
     useEditorStore.setState(() => ({
-      song: { name: "", artist: "", sheets: [initialSheet] },
+      song,
       currentSheet: initialSheet,
     }));
     sheetModuleWithMocks.createSheet.mockImplementation(() => sheet);
@@ -102,9 +127,11 @@ describe("Add Sheet", () => {
     expect(SheetModule.default.createSheet).toBeCalledTimes(1);
     expect(SheetModule.default.createSheet).toBeCalledWith(8);
 
-    expect(useEditorStore.getState().currentSheetIndex).toBe(1);
-    expect(useEditorStore.getState().song).toMatchObject({
-      sheets: [initialSheet, sheet],
+    expect(useEditorStore.getState()).toMatchObject({
+      ...INITIAL_STATE,
+      isDirty: true,
+      song: { ...song, sheets: [initialSheet, sheet] },
+      currentSheetIndex: 1,
     });
   });
 });

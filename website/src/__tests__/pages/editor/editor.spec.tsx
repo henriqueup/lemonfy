@@ -21,6 +21,11 @@ import { usePlayerStore } from "@/store/player";
 import Editor from "src/pages/editor/Editor";
 import { getCompleteMoonlightSonataMockSheet } from "@/mocks/entities/sheet";
 import { getMockSong } from "@/mocks/entities/song";
+import { mockUseRouter } from "@/mocks/next/router";
+
+jest.mock("next/router", () => ({
+  useRouter: jest.fn(() => mockUseRouter),
+}));
 
 let mockGainNode: GainNodeMock;
 let mockOscillatorNode: OscillatorNodeMock;

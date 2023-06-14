@@ -65,6 +65,8 @@ And finally, it can also be used as a showcase of my skills.
       - Implement song removal
         - Use row selection
   - Create server tests
+    - Change to use classes
+    - Fix existing tests and mocking
 - <s>Fix float issue</s>
   - <s>Maybe something like: Number((0.009033203125).toFixed(8))</s>
 - Add player pages

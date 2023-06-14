@@ -14,6 +14,7 @@ export interface Cursor {
 
 export interface EditorStore {
   song: Song | undefined;
+  isDirty: boolean;
   currentSheetIndex: number | undefined;
   selectedOctave: Octave;
   selectedNoteDuration: NoteDurationName;
@@ -23,6 +24,7 @@ export interface EditorStore {
 
 export const INITIAL_STATE: EditorStore = {
   song: undefined,
+  isDirty: false,
   currentSheetIndex: undefined,
   selectedOctave: 0,
   selectedNoteDuration: "LONG",
@@ -44,4 +46,13 @@ export const getCurrentSheet = (state?: EditorStore): Sheet | undefined => {
   if (currentState.currentSheetIndex === undefined) return undefined;
 
   return currentState.song?.sheets[currentState.currentSheetIndex];
+};
+
+export const reset = () => useEditorStore.setState(INITIAL_STATE);
+
+export const handleStorableAction = (state: EditorStore): EditorStore => {
+  return {
+    ...state,
+    isDirty: true,
+  };
 };
