@@ -1,9 +1,13 @@
-import { cleanup, render, type RenderResult, act } from "@testing-library/react";
+import {
+  cleanup,
+  render,
+  type RenderResult,
+  act,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { UserEvent } from "@testing-library/user-event/dist/types/setup/setup";
 import { TextField } from "src/components";
 
-const REGULAR_BORDER = /border-stone-600 .* dark:border-stone-400/;
 const ERROR_BORDER = /border-red-600 .* dark:border-red-600/;
 
 describe("Number Field", () => {
@@ -14,7 +18,9 @@ describe("Number Field", () => {
   beforeEach(() => {
     user = userEvent.setup();
     handleChangeMock = jest.fn();
-    rendered = render(<TextField label="Test Text Field" onChange={handleChangeMock} />);
+    rendered = render(
+      <TextField label="Test Text Field" onChange={handleChangeMock} />,
+    );
   });
 
   afterEach(cleanup);
@@ -28,7 +34,13 @@ describe("Number Field", () => {
 
   it("should shrink label with placeholder", () => {
     cleanup();
-    rendered = render(<TextField label="Test Text Field" onChange={handleChangeMock} placeholder="Test Placeholder" />);
+    rendered = render(
+      <TextField
+        label="Test Text Field"
+        onChange={handleChangeMock}
+        placeholder="Test Placeholder"
+      />,
+    );
 
     const input = rendered.getByRole("textbox") as HTMLInputElement;
     const legend = rendered.getByRole("presentation");
@@ -41,7 +53,13 @@ describe("Number Field", () => {
     const input = rendered.getByRole("textbox") as HTMLInputElement;
 
     await act(() => user.type(input, "12asf"));
-    rendered.rerender(<TextField label="Test Text Field" value="12asf" onChange={handleChangeMock} />);
+    rendered.rerender(
+      <TextField
+        label="Test Text Field"
+        value="12asf"
+        onChange={handleChangeMock}
+      />,
+    );
     const legend = rendered.getByRole("presentation");
 
     expect(legend.textContent).toBe("Test Text Field");
@@ -56,13 +74,26 @@ describe("Number Field", () => {
 
   it("should have focus with autoFocus", async () => {
     cleanup();
-    rendered = render(<TextField label="Test Text Field" onChange={handleChangeMock} autoFocus />);
+    rendered = render(
+      <TextField
+        label="Test Text Field"
+        onChange={handleChangeMock}
+        autoFocus
+      />,
+    );
 
     expect(rendered.queryByRole("presentation")).not.toBeInTheDocument();
     const input = rendered.getByRole("textbox") as HTMLInputElement;
 
     await act(() => user.keyboard("12asf"));
-    rendered.rerender(<TextField label="Test Text Field" value="12asf" onChange={handleChangeMock} autoFocus />);
+    rendered.rerender(
+      <TextField
+        label="Test Text Field"
+        value="12asf"
+        onChange={handleChangeMock}
+        autoFocus
+      />,
+    );
     const legend = rendered.getByRole("presentation");
 
     expect(legend.textContent).toBe("Test Text Field");
@@ -72,7 +103,13 @@ describe("Number Field", () => {
   it("should clear content on clear icon click", async () => {
     const input = rendered.getByRole("textbox") as HTMLInputElement;
     await act(() => user.type(input, "12asf"));
-    rendered.rerender(<TextField label="Test Text Field" value="12asf" onChange={handleChangeMock} />);
+    rendered.rerender(
+      <TextField
+        label="Test Text Field"
+        value="12asf"
+        onChange={handleChangeMock}
+      />,
+    );
 
     expect(input.value).toBe("12asf");
 
@@ -91,12 +128,16 @@ describe("Number Field", () => {
   it("should only display errors when dirty and hovered", async () => {
     cleanup();
     rendered = render(
-      <TextField label="Test Text Field" onChange={handleChangeMock} errors={["Test Error 1", "Test Error 2"]} />,
+      <TextField
+        label="Test Text Field"
+        onChange={handleChangeMock}
+        errors={["Test Error 1", "Test Error 2"]}
+      />,
     );
 
     expect(rendered.queryByRole("tooltip")).not.toBeInTheDocument();
     const inputGroup = rendered.getByRole("group");
-    expect(inputGroup.className).toMatch(REGULAR_BORDER);
+    expect(inputGroup.className).not.toMatch(ERROR_BORDER);
 
     await act(() => user.click(inputGroup));
     await act(() => user.click(rendered.baseElement));

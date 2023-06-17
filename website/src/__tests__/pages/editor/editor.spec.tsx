@@ -22,6 +22,7 @@ import Editor from "src/pages/editor/Editor";
 import { getCompleteMoonlightSonataMockSheet } from "@/mocks/entities/sheet";
 import { getMockSong } from "@/mocks/entities/song";
 import { mockUseRouter } from "@/mocks/next/router";
+import { MyApp } from "@/pages/_app";
 
 jest.mock("next/router", () => ({
   useRouter: jest.fn(() => mockUseRouter),
@@ -40,7 +41,10 @@ let user: UserEvent;
 
 beforeEach(() => {
   user = userEvent.setup();
-  rendered = render(<Editor />, { wrapper: withNextTRPC });
+  rendered = render(
+    <MyApp Component={Editor} pageProps={{}} router={mockUseRouter} />,
+    { wrapper: withNextTRPC },
+  );
 
   mockGainNode = new GainNodeMock();
   mockOscillatorNode = new OscillatorNodeMock();
@@ -51,25 +55,20 @@ afterEach(cleanup);
 
 describe("Navigation", () => {
   it("Loads initially empty", () => {
-    const buttons = rendered.getAllByRole("button");
-
-    expect(buttons).toHaveLength(2);
-  });
-
-  it("Opens editor menu on click", async () => {
-    const buttons = rendered.getAllByRole("button");
-
-    expect(buttons).toHaveLength(2);
-    const editorMenuButton = rendered.getByRole("button", {
-      name: "Open Editor Menu",
+    const menubar = rendered.getByRole("menubar");
+    const menuitems = rendered.getAllByRole("menuitem");
+    const newSongMenuButton = rendered.getByRole("button", {
+      name: "New Song",
     });
 
-    await act(() => user.click(editorMenuButton));
+    expect(menubar).toBeInTheDocument();
+    expect(menuitems).toHaveLength(3);
 
-    expect(
-      rendered.getByRole("heading", { name: "Editor Menu" }),
-    ).toBeInTheDocument();
-    expect(rendered.getByRole("button", { name: "Save" })).toBeInTheDocument();
+    expect(menuitems[0]!.textContent).toBe("File");
+    expect(menuitems[1]!.textContent).toBe("Edit");
+    expect(menuitems[2]!.textContent).toBe("Cursor");
+
+    expect(newSongMenuButton).toBeInTheDocument();
   });
 
   it("Opens new song menu on click", async () => {
@@ -119,16 +118,7 @@ describe("Navigation", () => {
 
     expect(rendered.getByRole("group", { name: "Bars" })).toBeInTheDocument();
     expect(
-      rendered.getByRole("group", { name: "Note Selector" }),
-    ).toBeInTheDocument();
-    expect(
       rendered.getByRole("button", { name: "New Bar" }),
-    ).toBeInTheDocument();
-    expect(
-      rendered.getByRole("combobox", { name: "Select Octave" }),
-    ).toBeInTheDocument();
-    expect(
-      rendered.getByRole("combobox", { name: "Select Duration" }),
     ).toBeInTheDocument();
   });
 
@@ -146,65 +136,61 @@ describe("Song creation", () => {
   });
 
   it("Changes note octave", async () => {
-    await act(() => user.keyboard("{ArrowUp}{ArrowUp}{ArrowUp}{ArrowDown}"));
+    await act(() =>
+      user.keyboard(
+        "{Control>}{ArrowUp}{ArrowUp}{ArrowUp}{ArrowDown}{/Control}",
+      ),
+    );
 
-    const octaveInput = rendered.getByPlaceholderText("Octave");
-    expect(octaveInput).toHaveValue("2");
+    const octaveLabel = rendered.getByText("Octave: 2");
+    expect(octaveLabel).toBeInTheDocument();
   });
 
   it("Changes note duration", async () => {
     await act(() =>
-      user.keyboard("{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowRight}"),
+      user.keyboard("{Alt>}{ArrowDown}{ArrowDown}{ArrowDown}{ArrowUp}{/Alt}"),
     );
 
-    const octaveInput = rendered.getByPlaceholderText("Duration");
-    expect(octaveInput).toHaveValue("WHOLE");
+    const durationLabel = rendered.getByText("Note Duration: WHOLE");
+    expect(durationLabel).toBeInTheDocument();
   });
 
   it("Adds and removes notes", async () => {
-    await act(() => user.keyboard("{ArrowLeft}{ArrowLeft}")); // select LONG duration
-    await act(() => user.keyboard("{ArrowUp}")); // select first octave
+    await act(() => user.keyboard("{Alt>}{ArrowDown}{ArrowDown}{/Alt}")); // select LONG duration
+    await act(() => user.keyboard("{Control>}{ArrowUp}{/Control}")); // select first octave
     await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
 
     expect(rendered.getByText("C#1")).toBeInTheDocument();
 
-    await act(() =>
-      user.keyboard(
-        "{Control>}{ArrowDown}{/Control}{Shift>}{ArrowLeft}{/Shift}",
-      ),
-    ); // move cursor to start of next track
-    await act(() => user.keyboard("{ArrowUp}")); // select second octave
+    await act(() => user.keyboard("{ArrowDown}{ArrowLeft}")); // move cursor to start of next track
+    await act(() => user.keyboard("{Control>}{ArrowUp}{/Control}")); // select second octave
     await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
 
     expect(rendered.getByText("C#2")).toBeInTheDocument();
 
+    await act(() => user.keyboard("{ArrowDown}{ArrowLeft}")); // move cursor to start of next track
     await act(() =>
       user.keyboard(
-        "{Control>}{ArrowDown}{/Control}{Shift>}{ArrowLeft}{/Shift}",
-      ),
-    ); // move cursor to start of next track
-    await act(() =>
-      user.keyboard(
-        "{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}",
+        "{Alt>}{ArrowDown}{ArrowDown}{ArrowDown}{ArrowDown}{ArrowDown}{ArrowDown}{/Alt}",
       ),
     ); // select EIGTH_TRIPLET duration
     await act(() => user.keyboard("{Shift>}G{/Shift}")); // add note G#
-    await act(() => user.keyboard("{ArrowUp}")); // raise octave
+    await act(() => user.keyboard("{Control>}{ArrowUp}{/Control}")); // raise octave
     await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
     await act(() => user.keyboard("e")); // add note E
-    await act(() => user.keyboard("{ArrowDown}")); // lower octave
+    await act(() => user.keyboard("{Control>}{ArrowDown}{/Control}")); // lower octave
     await act(() => user.keyboard("{Shift>}G{/Shift}")); // add note G#
-    await act(() => user.keyboard("{ArrowUp}")); // raise octave
+    await act(() => user.keyboard("{Control>}{ArrowUp}{/Control}")); // raise octave
     await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
     await act(() => user.keyboard("e")); // add note E
-    await act(() => user.keyboard("{ArrowDown}")); // lower octave
+    await act(() => user.keyboard("{Control>}{ArrowDown}{/Control}")); // lower octave
     await act(() => user.keyboard("{Shift>}G{/Shift}")); // add note G#
-    await act(() => user.keyboard("{ArrowUp}")); // raise octave
+    await act(() => user.keyboard("{Control>}{ArrowUp}{/Control}")); // raise octave
     await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
     await act(() => user.keyboard("f")); // add note F by mistake
-    await act(() => user.keyboard("{ArrowDown}")); // lower octave
+    await act(() => user.keyboard("{Control>}{ArrowDown}{/Control}")); // lower octave
     await act(() => user.keyboard("{Shift>}G{/Shift}")); // add note G#
-    await act(() => user.keyboard("{ArrowUp}")); // raise octave
+    await act(() => user.keyboard("{Control>}{ArrowUp}{/Control}")); // raise octave
     await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
     await act(() => user.keyboard("e")); // add note E
 
@@ -213,9 +199,7 @@ describe("Song creation", () => {
     expect(rendered.getAllByText("E3")).toHaveLength(3);
     expect(rendered.getAllByText("F3")).toHaveLength(1);
 
-    await act(() =>
-      user.keyboard("{Shift>}{ArrowLeft}{ArrowLeft}{ArrowLeft}{/Shift}"),
-    ); // move cursor to end of wrong F note
+    await act(() => user.keyboard("{ArrowLeft}{ArrowLeft}{ArrowLeft}")); // move cursor to end of wrong F note
     await act(() => user.keyboard("{Backspace}")); // delete previous note
     await act(() => user.keyboard("e")); // add note E
 
@@ -424,41 +408,37 @@ const createBar = async () => {
 };
 
 const addNotesToFirstBar = async () => {
-  await act(() => user.keyboard("{ArrowLeft}{ArrowLeft}")); // select LONG duration
-  await act(() => user.keyboard("{ArrowUp}")); // select first octave
+  await act(() => user.keyboard("{Alt>}{ArrowDown}{ArrowDown}{/Alt}")); // select LONG duration
+  await act(() => user.keyboard("{Control>}{ArrowUp}{/Control}")); // select first octave
   await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
 
-  await act(() =>
-    user.keyboard("{Control>}{ArrowDown}{/Control}{Shift>}{ArrowLeft}{/Shift}"),
-  ); // move cursor to start of next track
-  await act(() => user.keyboard("{ArrowUp}")); // select second octave
+  await act(() => user.keyboard("{ArrowDown}{ArrowLeft}")); // move cursor to start of next track
+  await act(() => user.keyboard("{Control>}{ArrowUp}{/Control}")); // select second octave
   await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
 
-  await act(() =>
-    user.keyboard("{Control>}{ArrowDown}{/Control}{Shift>}{ArrowLeft}{/Shift}"),
-  ); // move cursor to start of next track
+  await act(() => user.keyboard("{ArrowDown}{ArrowLeft}")); // move cursor to start of next track
   await act(() =>
     user.keyboard(
-      "{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}",
+      "{Alt>}{ArrowDown}{ArrowDown}{ArrowDown}{ArrowDown}{ArrowDown}{ArrowDown}{/Alt}",
     ),
   ); // select EIGTH_TRIPLET duration
   await act(() => user.keyboard("{Shift>}G{/Shift}")); // add note G#
-  await act(() => user.keyboard("{ArrowUp}")); // raise octave
+  await act(() => user.keyboard("{Control>}{ArrowUp}{/Control}")); // raise octave
   await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
   await act(() => user.keyboard("e")); // add note E
-  await act(() => user.keyboard("{ArrowDown}")); // lower octave
+  await act(() => user.keyboard("{Control>}{ArrowDown}{/Control}")); // lower octave
   await act(() => user.keyboard("{Shift>}G{/Shift}")); // add note G#
-  await act(() => user.keyboard("{ArrowUp}")); // raise octave
+  await act(() => user.keyboard("{Control>}{ArrowUp}{/Control}")); // raise octave
   await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
   await act(() => user.keyboard("e")); // add note E
-  await act(() => user.keyboard("{ArrowDown}")); // lower octave
+  await act(() => user.keyboard("{Control>}{ArrowDown}{/Control}")); // lower octave
   await act(() => user.keyboard("{Shift>}G{/Shift}")); // add note G#
-  await act(() => user.keyboard("{ArrowUp}")); // raise octave
+  await act(() => user.keyboard("{Control>}{ArrowUp}{/Control}")); // raise octave
   await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
   await act(() => user.keyboard("e")); // add note E
-  await act(() => user.keyboard("{ArrowDown}")); // lower octave
+  await act(() => user.keyboard("{Control>}{ArrowDown}{/Control}")); // lower octave
   await act(() => user.keyboard("{Shift>}G{/Shift}")); // add note G#
-  await act(() => user.keyboard("{ArrowUp}")); // raise octave
+  await act(() => user.keyboard("{Control>}{ArrowUp}{/Control}")); // raise octave
   await act(() => user.keyboard("{Shift>}C{/Shift}")); // add note C#
   await act(() => user.keyboard("e")); // add note E
 

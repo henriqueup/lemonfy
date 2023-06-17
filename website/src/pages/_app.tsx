@@ -5,7 +5,7 @@ import { api } from "../utils/api";
 import "../styles/globals.css";
 import { TopbarMenu } from "src/components";
 
-const MyApp: AppType = ({ Component, pageProps }) => {
+export const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <div className="h-screen bg-background text-popover-foreground">
       <TopbarMenu />

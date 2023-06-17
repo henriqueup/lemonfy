@@ -7,16 +7,24 @@ import {
 import * as SheetModule from "@entities/sheet";
 import * as SongModule from "@entities/song";
 import * as MockUtilsModule from "src/mocks/utils/moduleUtils";
-import { addSheet, setSong, loadSong } from "@/store/editor/songActions";
+import {
+  addSheet,
+  setSong,
+  loadSong,
+  setSongId,
+} from "@/store/editor/songActions";
 import { type Song } from "@entities/song";
 
-jest.mock<typeof SongModule.default>("@entities/song", () => {
+jest.mock<typeof SongModule>("@entities/song", () => {
   const mockUtils = jest.requireActual<typeof MockUtilsModule>(
     "src/mocks/utils/moduleUtils",
   );
-  return mockUtils.mockModuleFunctions(
-    jest.requireActual<typeof SongModule>("@entities/song").default,
-  );
+  const songModule = jest.requireActual<typeof SongModule>("@entities/song");
+  return {
+    ...songModule,
+    __esModule: true,
+    default: mockUtils.mockModuleFunctions(songModule.default),
+  };
 });
 jest.mock<typeof SheetModule.default>("@entities/sheet", () => {
   const mockUtils = jest.requireActual<typeof MockUtilsModule>(
@@ -34,8 +42,8 @@ const sheetModuleWithMocks = MockUtilsModule.getModuleWithMocks(
   SheetModule.default,
 );
 
-describe("Add Song", () => {
-  it("Adds Song", () => {
+describe("Set Song", () => {
+  it("Sets Song", () => {
     const song: Song = { name: "", artist: "", sheets: [] };
     songModuleWithMocks.createSong.mockImplementation(() => song);
 
@@ -72,17 +80,24 @@ describe("Load Song", () => {
   });
 });
 
-// describe("Set Song Id", () => {
-//   it("Sets Song Id", () => {
-//     useEditorStore.setState(() => ({
-//       song: { name: "", artist: "", sheets: [] },
-//     }));
+describe("Set Song Id", () => {
+  it("Sets Song Id", () => {
+    const song = { name: "test", artist: "me", sheets: [] };
+    useEditorStore.setState(() => ({
+      song,
+    }));
 
-//     setSongId("test-id");
+    setSongId("clj03p3av00002a6ggmlryreg");
 
-//     expect(useEditorStore.getState().song!.id).toBe("test-id");
-//   });
-// });
+    expect(useEditorStore.getState()).toMatchObject({
+      ...INITIAL_STATE,
+      song: {
+        ...song,
+        id: "clj03p3av00002a6ggmlryreg",
+      },
+    });
+  });
+});
 
 describe("Add Sheet", () => {
   it("Does nothing with undefined Song", () => {
