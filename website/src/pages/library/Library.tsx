@@ -5,6 +5,7 @@ import { DataTable } from "@/components/ui/DataTable";
 import { songColumns } from "@/pages/library/columns";
 import { api } from "src/utils/api";
 import { type SongInfo } from "@/server/entities/song";
+import SongTableToolbar from "@/pages/library/SongTableToolbar";
 
 const Library: NextPage = () => {
   const listSongsQuery = api.song.list.useQuery();
@@ -33,6 +34,7 @@ const Library: NextPage = () => {
             className: "cursor-pointer",
             onClick: (_event, row) => handleRowClick(row.original),
           }}
+          Toolbar={SongTableToolbar}
         />
       </div>
     </div>

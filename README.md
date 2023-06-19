@@ -50,8 +50,8 @@ And finally, it can also be used as a showcase of my skills.
     - <s>Song update</s>
   - Finish library page
     - <s>Enable loading existing song in Editor</s>
-      - Clear song when exiting Editor
-        - Confirmation if Song is dirty
+      - <s>Clear song when exiting Editor</s>
+        - <s>Confirmation if Song is dirty</s>
     - <s>Fix tests</s>
     - <s>Add new song button</s>
     - <s>Move global menu to root</s>

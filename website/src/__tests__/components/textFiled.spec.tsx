@@ -10,7 +10,7 @@ import { TextField } from "src/components";
 
 const ERROR_BORDER = /border-red-600 .* dark:border-red-600/;
 
-describe("Number Field", () => {
+describe("Text Field", () => {
   let rendered: RenderResult;
   let handleChangeMock: jest.Mock;
   let user: UserEvent;
@@ -32,7 +32,7 @@ describe("Number Field", () => {
     expect(input.value).toBe("");
   });
 
-  it("should shrink label with placeholder", () => {
+  it("should hide label with placeholder and no value", () => {
     cleanup();
     rendered = render(
       <TextField
@@ -43,10 +43,10 @@ describe("Number Field", () => {
     );
 
     const input = rendered.getByRole("textbox") as HTMLInputElement;
-    const legend = rendered.getByRole("presentation");
+    const legend = rendered.queryByRole("presentation");
 
     expect(input.placeholder).toBe("Test Placeholder");
-    expect(legend.textContent).toBe("Test Text Field");
+    expect(legend).not.toBeInTheDocument();
   });
 
   it("should shrink label on type", async () => {

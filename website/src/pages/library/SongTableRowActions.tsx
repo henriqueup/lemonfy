@@ -11,7 +11,9 @@ import {
 } from "@/components/ui/DropdownMenu";
 import { type SongInfo } from "@/server/entities/song";
 
-const SongTableActions: FunctionComponent<{ song: SongInfo }> = ({ song }) => {
+const SongTableRowActions: FunctionComponent<{ song: SongInfo }> = ({
+  song,
+}) => {
   const router = useRouter();
 
   const handleEditClick = () => {
@@ -39,4 +41,4 @@ const SongTableActions: FunctionComponent<{ song: SongInfo }> = ({ song }) => {
   );
 };
 
-export default SongTableActions;
+export default SongTableRowActions;

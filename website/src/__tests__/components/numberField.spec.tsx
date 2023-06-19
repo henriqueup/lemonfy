@@ -32,7 +32,7 @@ describe("Number Field", () => {
     expect(input.value).toBe("");
   });
 
-  it("should shrink label with placeholder", () => {
+  it("should hide label with placeholder and no value", () => {
     cleanup();
     rendered = render(
       <NumberField
@@ -43,10 +43,10 @@ describe("Number Field", () => {
     );
 
     const input = rendered.getByRole("textbox") as HTMLInputElement;
-    const legend = rendered.getByRole("presentation");
+    const legend = rendered.queryByRole("presentation");
 
     expect(input.placeholder).toBe("Test Placeholder");
-    expect(legend.textContent).toBe("Test Number Field");
+    expect(legend).not.toBeInTheDocument();
   });
 
   it("should shrink label on type", async () => {

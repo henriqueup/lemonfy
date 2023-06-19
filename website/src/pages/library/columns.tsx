@@ -1,7 +1,7 @@
 import { type ColumnDef } from "@tanstack/react-table";
 
 import { type SongInfo } from "@/server/entities/song";
-import SongTableActions from "@/pages/library/SongTableActions";
+import SongTableRowActions from "@/pages/library/SongTableRowActions";
 import { DataTableColumnHeader } from "@/components/ui/DataTable/DataTableColumnHeader";
 
 export const songColumns: ColumnDef<SongInfo>[] = [
@@ -23,7 +23,7 @@ export const songColumns: ColumnDef<SongInfo>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => <SongTableActions song={row.original} />,
+    cell: ({ row }) => <SongTableRowActions song={row.original} />,
     meta: { headClassName: "mr-4 w-[5%]", cellClassName: "mr-4 w-[5%]" },
   },
 ];

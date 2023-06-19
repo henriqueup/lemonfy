@@ -1,4 +1,4 @@
-import { useState, type MouseEvent } from "react";
+import { useState, type MouseEvent, type FunctionComponent } from "react";
 import {
   type ColumnDef,
   flexRender,
@@ -8,6 +8,7 @@ import {
   type Row,
   getSortedRowModel,
   type SortingState,
+  getFilteredRowModel,
 } from "@tanstack/react-table";
 
 import {
@@ -30,18 +31,26 @@ interface RowProps<TData> {
   className?: string;
 }
 
+export interface DataTableToolbarProps {
+  globalFilter: string;
+  setGlobalFilter: (value: string) => void;
+}
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   rowProps?: RowProps<TData>;
+  Toolbar?: FunctionComponent<DataTableToolbarProps>;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   rowProps,
+  Toolbar,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [globalFilter, setGlobalFilter] = useState<string>("");
 
   const table = useReactTable({
     data,
@@ -50,13 +59,22 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onGlobalFilterChange: setGlobalFilter,
     state: {
       sorting,
+      globalFilter,
     },
   });
 
   return (
     <div className="space-y-4">
+      {Toolbar !== undefined ? (
+        <Toolbar
+          globalFilter={globalFilter}
+          setGlobalFilter={value => setGlobalFilter(value)}
+        />
+      ) : null}
       <div className="rounded-md border">
         <Table>
           <TableHeader>

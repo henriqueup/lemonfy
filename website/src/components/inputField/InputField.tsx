@@ -26,7 +26,10 @@ interface BaseProps {
   disableClear?: boolean;
   autoFocus?: boolean;
   fieldsetProps?: FieldsetHTMLAttributes<HTMLFieldSetElement>;
-  inputProps?: Omit<DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, "value" | "onChange">;
+  inputProps?: Omit<
+    DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>,
+    "value" | "onChange"
+  >;
 }
 
 interface GeneralProps extends BaseProps {
@@ -34,7 +37,11 @@ interface GeneralProps extends BaseProps {
 }
 
 const GeneralInputField: FunctionComponent<
-  GeneralProps & Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "onChange">
+  GeneralProps &
+    Omit<
+      DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
+      "onChange"
+    >
 > = ({
   label,
   value,
@@ -49,7 +56,7 @@ const GeneralInputField: FunctionComponent<
 }) => {
   const [isDirty, setIsDirty] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const shrinkLabel = Boolean(value !== undefined || placeholder);
+  const hasContent = value !== undefined && value !== "";
   const hasError = errors && isDirty;
 
   const handleChangeInput = (event: ChangeEvent<HTMLInputElement>) => {
@@ -68,7 +75,9 @@ const GeneralInputField: FunctionComponent<
     if (otherProps.onBlur) otherProps.onBlur(event);
   };
 
-  const handleClickFieldset = (event: MouseEvent<HTMLFieldSetElement, globalThis.MouseEvent>) => {
+  const handleClickFieldset = (
+    event: MouseEvent<HTMLFieldSetElement, globalThis.MouseEvent>,
+  ) => {
     inputRef.current?.focus();
 
     if (fieldsetProps?.onClick) fieldsetProps.onClick(event);
@@ -90,24 +99,24 @@ const GeneralInputField: FunctionComponent<
     >
       <Fieldset
         {...fieldsetProps}
-        label={label}
-        shrinkLabel={shrinkLabel}
+        label={hasContent ? label : ""}
+        shrinkLabel={hasContent}
         hasError={hasError}
         onClick={event => handleClickFieldset(event)}
       >
-        <div className="flex cursor-pointer items-center pb-2 pt-2">
+        <div className="flex cursor-text items-center pb-2 pt-2">
           <input
             autoFocus={autoFocus}
             {...inputProps}
             placeholder={placeholder || label}
-            className="w-full cursor-pointer bg-inherit placeholder:text-inherit focus-visible:outline-none"
+            className="w-full cursor-text bg-inherit pl-1 placeholder:text-inherit focus-visible:outline-none"
             value={value === undefined ? "" : value}
             onInput={handleChangeInput}
             onFocus={event => event.target.select()}
             tabIndex={0}
             ref={inputRef}
           />
-          {value !== undefined && !disableClear ? (
+          {hasContent && !disableClear ? (
             <ButtonContainer
               aria-label="Clear"
               onClick={event => handleClear(event)}
@@ -118,7 +127,9 @@ const GeneralInputField: FunctionComponent<
                 width={16}
                 height={16}
                 strokeWidth={2}
-                className={hasError ? "text-red-600 dark:text-red-600" : undefined}
+                className={
+                  hasError ? "text-red-600 dark:text-red-600" : undefined
+                }
               />
             </ButtonContainer>
           ) : null}
@@ -138,7 +149,11 @@ interface TextFieldProps extends BaseProps {
 }
 
 export const TextField: FunctionComponent<
-  TextFieldProps & Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "onChange">
+  TextFieldProps &
+    Omit<
+      DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
+      "onChange"
+    >
 > = ({ label, onChange, ...otherProps }) => {
   const handleChange = (newValue: string | number | undefined) => {
     if (typeof newValue === "number") {
@@ -149,7 +164,9 @@ export const TextField: FunctionComponent<
     onChange(newValue);
   };
 
-  return <GeneralInputField {...otherProps} label={label} onChange={handleChange} />;
+  return (
+    <GeneralInputField {...otherProps} label={label} onChange={handleChange} />
+  );
 };
 
 interface NumberFieldProps extends BaseProps {
@@ -162,9 +179,15 @@ interface NumberFieldProps extends BaseProps {
 }
 
 export const NumberField: FunctionComponent<
-  NumberFieldProps & Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "onChange">
+  NumberFieldProps &
+    Omit<
+      DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
+      "onChange"
+    >
 > = ({ label, onChange, ...otherProps }) => {
-  const [ownValue, setOwnValue] = useState<number | string | undefined>(otherProps.value);
+  const [ownValue, setOwnValue] = useState<number | string | undefined>(
+    otherProps.value,
+  );
 
   const getActualValue = (value: string | number | undefined) => {
     let actualValue: number | undefined = Number(value);
@@ -190,7 +213,16 @@ export const NumberField: FunctionComponent<
   };
 
   const handleKeyDownInput = (event: KeyboardEvent<HTMLInputElement>) => {
-    const ALLOWED_CHARS = ["Tab", "Backspace", "Delete", "ArrowLeft", "ArrowRight", "-", ".", ","];
+    const ALLOWED_CHARS = [
+      "Tab",
+      "Backspace",
+      "Delete",
+      "ArrowLeft",
+      "ArrowRight",
+      "-",
+      ".",
+      ",",
+    ];
 
     if (Number.isNaN(Number(event.key)) && !ALLOWED_CHARS.includes(event.key)) {
       event.preventDefault();
