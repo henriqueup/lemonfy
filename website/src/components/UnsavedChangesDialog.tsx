@@ -7,16 +7,7 @@ import {
   useRef,
 } from "react";
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/AlertDialog";
+import AlertDialog from "@/components/AlertDialog";
 
 interface Props {
   shouldConfirmLeave: boolean;
@@ -25,7 +16,7 @@ interface Props {
 const UnsavedChangesDialog: FunctionComponent<Props> = ({
   shouldConfirmLeave,
 }: Props) => {
-  const [isOpenDialog, setIsOpenDialog] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const nextPathRef = useRef("");
 
   const router = useRouter();
@@ -46,7 +37,7 @@ const UnsavedChangesDialog: FunctionComponent<Props> = ({
         return;
       }
 
-      setIsOpenDialog(true);
+      setIsDialogOpen(true);
       nextPathRef.current = nextPath;
 
       router.events.emit("routeChangeError", ROUTE_CHANGE_ERROR, nextPath, {
@@ -86,11 +77,11 @@ const UnsavedChangesDialog: FunctionComponent<Props> = ({
 
   const handleCancelLeave = () => {
     nextPathRef.current = "";
-    setIsOpenDialog(false);
+    setIsDialogOpen(false);
   };
 
   const handleConfirmLeave = () => {
-    setIsOpenDialog(false);
+    setIsDialogOpen(false);
 
     removeListeners();
     void router.push(nextPathRef.current);
@@ -103,24 +94,13 @@ const UnsavedChangesDialog: FunctionComponent<Props> = ({
   }, [addListeners, removeListeners]);
 
   return (
-    <AlertDialog open={isOpenDialog}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>You have unsaved changes</AlertDialogTitle>
-          <AlertDialogDescription>
-            Leaving this page will discard unsaved changes. Are you sure?
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel onClick={handleCancelLeave}>
-            Cancel
-          </AlertDialogCancel>
-          <AlertDialogAction onClick={handleConfirmLeave}>
-            Continue
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <AlertDialog
+      isOpen={isDialogOpen}
+      title="You have unsaved changes"
+      description="Leaving this page will discard unsaved changes. Are you sure?"
+      handleCancel={handleCancelLeave}
+      handleContinue={handleConfirmLeave}
+    />
   );
 };
 

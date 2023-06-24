@@ -13,4 +13,9 @@ export const songRouter = createTRPCRouter({
   get: publicProcedure.input(z.string().cuid()).query(({ input, ctx }) => {
     return ctx.domainWrapper.Song.get(input);
   }),
+  deleteMany: publicProcedure
+    .input(z.array(z.string().cuid()))
+    .mutation(({ input, ctx }) => {
+      void ctx.domainWrapper.Song.deleteMany(input);
+    }),
 });

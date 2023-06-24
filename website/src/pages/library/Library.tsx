@@ -9,6 +9,7 @@ import SongTableToolbar from "@/pages/library/SongTableToolbar";
 
 const Library: NextPage = () => {
   const listSongsQuery = api.song.list.useQuery();
+  const deleteManySongsMutation = api.song.deleteMany.useMutation();
   const router = useRouter();
 
   if (!listSongsQuery.data) {

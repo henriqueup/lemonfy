@@ -6,6 +6,7 @@ export interface ISongDomain {
   save: (song: Song) => Promise<string>;
   list: () => Promise<SongInfo[]>;
   get: (songId: string) => Promise<Song>;
+  deleteMany: (songIds: string[]) => Promise<void>;
 }
 
 class SongDomain implements ISongDomain {
@@ -35,6 +36,10 @@ class SongDomain implements ISongDomain {
 
     result.sheets.forEach(sheet => SheetModule.fillBarsInSheet(sheet));
     return result;
+  }
+
+  deleteMany(songIds: string[]): Promise<void> {
+    return this.SongRepository.deleteMany(songIds);
   }
 }
 

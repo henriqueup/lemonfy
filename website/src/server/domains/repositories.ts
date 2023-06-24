@@ -5,4 +5,5 @@ export interface ISongRepository {
   list: () => Promise<SongInfo[]>;
   get: (songId: string) => Promise<Song | null>;
   update: (song: Song) => Promise<void>;
+  deleteMany: (songIds: string[]) => Promise<void>;
 }

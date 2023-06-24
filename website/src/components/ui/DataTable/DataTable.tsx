@@ -21,9 +21,15 @@ import {
 } from "@/components/ui/Table";
 import { DataTablePagination } from "@/components/ui/DataTable/DataTablePagination";
 
-type Meta = {
-  cellClassName?: string;
-  headClassName?: string;
+export type ColumnMetaData = {
+  cellProps?: {
+    className?: string;
+    onClick?: (event: MouseEvent<HTMLTableCellElement>) => void;
+  };
+  headProps?: {
+    className?: string;
+    onClick?: (event: MouseEvent<HTMLTableCellElement>) => void;
+  };
 };
 
 interface RowProps<TData> {
@@ -51,6 +57,7 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState<string>("");
+  const [rowSelection, setRowSelection] = useState({});
 
   const table = useReactTable({
     data,
@@ -61,9 +68,11 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onGlobalFilterChange: setGlobalFilter,
+    onRowSelectionChange: setRowSelection,
     state: {
       sorting,
       globalFilter,
+      rowSelection,
     },
   });
 
@@ -80,21 +89,26 @@ export function DataTable<TData, TValue>({
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id} className="hover:bg-inherit">
-                {headerGroup.headers.map(header => (
-                  <TableHead
-                    key={header.id}
-                    className={
-                      (header.column.columnDef.meta as Meta)?.headClassName
-                    }
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </TableHead>
-                ))}
+                {headerGroup.headers.map(header => {
+                  const headMeta = (
+                    header.column.columnDef.meta as ColumnMetaData
+                  )?.headProps;
+
+                  return (
+                    <TableHead
+                      key={header.id}
+                      onClick={headMeta?.onClick}
+                      className={headMeta?.className}
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                    </TableHead>
+                  );
+                })}
               </TableRow>
             ))}
           </TableHeader>
@@ -107,23 +121,31 @@ export function DataTable<TData, TValue>({
                   {...rowProps}
                   onClick={
                     rowProps?.onClick
-                      ? event => rowProps.onClick?.(event, row)
+                      ? event => {
+                          if (event.target instanceof HTMLButtonElement) return;
+                          rowProps.onClick?.(event, row);
+                        }
                       : undefined
                   }
                 >
-                  {row.getVisibleCells().map(cell => (
-                    <TableCell
-                      key={cell.id}
-                      className={
-                        (cell.column.columnDef.meta as Meta)?.cellClassName
-                      }
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
+                  {row.getVisibleCells().map(cell => {
+                    const cellMeta = (
+                      cell.column.columnDef.meta as ColumnMetaData
+                    )?.cellProps;
+
+                    return (
+                      <TableCell
+                        key={cell.id}
+                        onClick={cellMeta?.onClick}
+                        className={cellMeta?.className}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
+                    );
+                  })}
                 </TableRow>
               ))
             ) : (
