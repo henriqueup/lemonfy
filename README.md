@@ -61,7 +61,7 @@ And finally, it can also be used as a showcase of my skills.
     - Change to table
       - <s>Implement pagination</s>
       - <s>Implement sorting</s>
-      - Implement filters
+      - <s>Implement filters</s>
       - Implement song removal
         - Use row selection
   - Create server tests

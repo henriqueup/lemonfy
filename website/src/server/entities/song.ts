@@ -1,13 +1,20 @@
-import { SheetSchema } from "@entities/sheet";
 import { z } from "zod";
 
-export const SongInfoSchema = z.object({
+import { SheetSchema } from "@entities/sheet";
+
+export const BaseSongSchema = z.object({
   id: z.string().cuid().optional(),
   name: z.string().min(1),
   artist: z.string().min(1),
 });
 
-export const SongSchema = SongInfoSchema.merge(
+export const SongInfoSchema = BaseSongSchema.merge(
+  z.object({
+    id: z.string().cuid(),
+  }),
+);
+
+export const SongSchema = BaseSongSchema.merge(
   z.object({
     sheets: z.array(SheetSchema),
   }),

@@ -9,7 +9,6 @@ import SongTableToolbar from "@/pages/library/SongTableToolbar";
 
 const Library: NextPage = () => {
   const listSongsQuery = api.song.list.useQuery();
-  const deleteManySongsMutation = api.song.deleteMany.useMutation();
   const router = useRouter();
 
   if (!listSongsQuery.data) {
@@ -17,7 +16,7 @@ const Library: NextPage = () => {
   }
 
   const handleRowClick = (song: SongInfo) => {
-    void router.push(`/editor/${song.id ?? "404"}`);
+    void router.push(`/editor/${song.id}`);
   };
 
   const songs = listSongsQuery.data;
@@ -36,6 +35,7 @@ const Library: NextPage = () => {
             onClick: (_event, row) => handleRowClick(row.original),
           }}
           Toolbar={SongTableToolbar}
+          initialVisibility={{ select: false }}
         />
       </div>
     </div>

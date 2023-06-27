@@ -5,6 +5,7 @@ import {
   default as SongModule,
   type Song,
   type SongInfo,
+  SongInfoSchema,
 } from "@entities/song";
 import { default as SheetModule, type Sheet } from "@entities/sheet";
 import { default as BarModule, type Bar } from "@entities/bar";
@@ -148,7 +149,9 @@ const mapNotesToCreateInput = (tracks: Note[][]) => {
 const mapSongModelToInfoEntity = (
   model: Prisma.SongGetPayload<null>,
 ): SongInfo => {
-  return SongModule.createSong(model.name, model.artist, model.id);
+  return SongInfoSchema.parse(
+    SongModule.createSong(model.name, model.artist, model.id),
+  );
 };
 
 const mapSongModelToEntity = (model: SongModel): Song => {

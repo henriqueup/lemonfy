@@ -9,6 +9,8 @@ import {
   getSortedRowModel,
   type SortingState,
   getFilteredRowModel,
+  type Table as TableType,
+  type VisibilityState,
 } from "@tanstack/react-table";
 
 import {
@@ -37,16 +39,18 @@ interface RowProps<TData> {
   className?: string;
 }
 
-export interface DataTableToolbarProps {
+export interface DataTableToolbarProps<TData> {
   globalFilter: string;
   setGlobalFilter: (value: string) => void;
+  table: TableType<TData>;
 }
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   rowProps?: RowProps<TData>;
-  Toolbar?: FunctionComponent<DataTableToolbarProps>;
+  Toolbar?: FunctionComponent<DataTableToolbarProps<TData>>;
+  initialVisibility?: VisibilityState;
 }
 
 export function DataTable<TData, TValue>({
@@ -54,10 +58,13 @@ export function DataTable<TData, TValue>({
   data,
   rowProps,
   Toolbar,
+  initialVisibility = {},
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState<string>("");
   const [rowSelection, setRowSelection] = useState({});
+  const [columnVisibility, setColumnVisibility] =
+    useState<VisibilityState>(initialVisibility);
 
   const table = useReactTable({
     data,
@@ -69,10 +76,12 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     onGlobalFilterChange: setGlobalFilter,
     onRowSelectionChange: setRowSelection,
+    onColumnVisibilityChange: setColumnVisibility,
     state: {
       sorting,
       globalFilter,
       rowSelection,
+      columnVisibility,
     },
   });
 
@@ -82,6 +91,7 @@ export function DataTable<TData, TValue>({
         <Toolbar
           globalFilter={globalFilter}
           setGlobalFilter={value => setGlobalFilter(value)}
+          table={table}
         />
       ) : null}
       <div className="rounded-md border">

@@ -10,6 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/AlertDialog";
+import { Loader } from "lucide-react";
 
 interface Props {
   isOpen: boolean;
@@ -17,6 +18,7 @@ interface Props {
   description: string;
   handleCancel: () => void;
   handleContinue: () => void;
+  isLoading?: boolean;
 }
 
 const AlertDialog: FunctionComponent<Props> = ({
@@ -25,6 +27,7 @@ const AlertDialog: FunctionComponent<Props> = ({
   description,
   handleCancel,
   handleContinue,
+  isLoading = false,
 }: Props) => {
   return (
     <AlertDialogBase open={isOpen}>
@@ -36,7 +39,14 @@ const AlertDialog: FunctionComponent<Props> = ({
         <AlertDialogFooter>
           <AlertDialogCancel onClick={handleCancel}>Cancel</AlertDialogCancel>
           <AlertDialogAction onClick={handleContinue}>
-            Continue
+            {isLoading ? (
+              <>
+                <Loader className="mr-2 h-4 w-4 animate-spin" />
+                Please wait
+              </>
+            ) : (
+              "Continue"
+            )}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

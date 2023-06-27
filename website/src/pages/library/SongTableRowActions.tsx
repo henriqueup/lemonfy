@@ -8,29 +8,44 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/DropdownMenu";
 import { type SongInfo } from "@/server/entities/song";
 import AlertDialog from "@/components/AlertDialog";
+import { api } from "@/utils/api";
 
 const SongTableRowActions: FunctionComponent<{
   song: SongInfo;
   table: Table<SongInfo>;
 }> = ({ song, table }) => {
+  const deleteManySongsMutation = api.song.deleteMany.useMutation();
   const router = useRouter();
+
   const [isConfirmDeleteDialogOpen, setIsConfirmDeleteDialogOpen] =
     useState(false);
+  const [isLoadingDeletion, setIsLoadingDeletion] = useState(false);
 
   const handleEditClick = () => {
-    void router.push(`/editor/${song.id ?? "404"}`);
+    void router.push(`/editor/${song.id}`);
   };
 
   const handleDeleteClick = (event: MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
-    console.log(
-      table.getFilteredSelectedRowModel().rows.map(row => row.original.id),
-    );
     setIsConfirmDeleteDialogOpen(true);
+  };
+
+  const handleConfirmSongDeletion = async () => {
+    const songIdsToDelete = table
+      .getFilteredSelectedRowModel()
+      .rows.map(row => row.original.id);
+
+    setIsLoadingDeletion(true);
+
+    await deleteManySongsMutation.mutateAsync(songIdsToDelete);
+
+    setIsLoadingDeletion(false);
+    setIsConfirmDeleteDialogOpen(false);
   };
 
   return (
@@ -53,6 +68,7 @@ const SongTableRowActions: FunctionComponent<{
             <Edit className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
             Edit
           </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuItem
             disabled={table.getFilteredSelectedRowModel().rows.length === 0}
             onClick={handleDeleteClick}
@@ -68,7 +84,8 @@ const SongTableRowActions: FunctionComponent<{
         title="Attention!"
         description="You are about to permanently delete the selected songs. Are you sure?"
         handleCancel={() => setIsConfirmDeleteDialogOpen(false)}
-        handleContinue={() => console.log("deleting songs")}
+        handleContinue={() => void handleConfirmSongDeletion()}
+        isLoading={isLoadingDeletion}
       />
     </>
   );
