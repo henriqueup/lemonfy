@@ -34,6 +34,10 @@ export type ColumnMetaData = {
   };
 };
 
+export type ExtendedTableType<TData> = TableType<TData> & {
+  revalidateData?: () => Promise<void>;
+};
+
 interface RowProps<TData> {
   onClick?: (event: MouseEvent<HTMLTableRowElement>, row: Row<TData>) => void;
   className?: string;
@@ -42,7 +46,7 @@ interface RowProps<TData> {
 export interface DataTableToolbarProps<TData> {
   globalFilter: string;
   setGlobalFilter: (value: string) => void;
-  table: TableType<TData>;
+  table: ExtendedTableType<TData>;
 }
 
 interface DataTableProps<TData, TValue> {

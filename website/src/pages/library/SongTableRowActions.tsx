@@ -1,7 +1,6 @@
 import { type MouseEvent, type FunctionComponent, useState } from "react";
 import { useRouter } from "next/router";
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
-import { type Table } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/Button";
 import {
@@ -14,10 +13,11 @@ import {
 import { type SongInfo } from "@/server/entities/song";
 import AlertDialog from "@/components/AlertDialog";
 import { api } from "@/utils/api";
+import type { ExtendedTableType } from "@/components/ui/DataTable/DataTable";
 
 const SongTableRowActions: FunctionComponent<{
   song: SongInfo;
-  table: Table<SongInfo>;
+  table: ExtendedTableType<SongInfo>;
 }> = ({ song, table }) => {
   const deleteManySongsMutation = api.song.deleteMany.useMutation();
   const router = useRouter();
@@ -43,7 +43,9 @@ const SongTableRowActions: FunctionComponent<{
     setIsLoadingDeletion(true);
 
     await deleteManySongsMutation.mutateAsync(songIdsToDelete);
+    await table.revalidateData?.();
 
+    table.setColumnVisibility({});
     setIsLoadingDeletion(false);
     setIsConfirmDeleteDialogOpen(false);
   };

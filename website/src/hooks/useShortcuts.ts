@@ -29,7 +29,7 @@ const SHORTCUTS = {
   Backspace: "notes.remove.previous",
   Delete: "notes.remove.next",
   CTRL_b: "bars.add.copy",
-  CTRL_S: "save.song",
+  CTRL_s: "save.song",
   CTRL_SHIFT_S: "new.song",
 } as const;
 

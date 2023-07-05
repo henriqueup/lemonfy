@@ -11,7 +11,7 @@ import {
 import { useShortcuts } from "@/hooks";
 import { useEditorStore } from "@/store/editor";
 import { api } from "@/utils/api";
-import { setSongId } from "@/store/editor/songActions";
+import { saveSong } from "@/store/editor/songActions";
 
 const FileMenu: FunctionComponent = () => {
   const router = useRouter();
@@ -22,7 +22,7 @@ const FileMenu: FunctionComponent = () => {
     if (song === undefined) return;
 
     const songId = await saveSongMutation.mutateAsync(song);
-    setSongId(songId);
+    saveSong(songId);
   };
 
   const handleNewSong = () => {
@@ -32,6 +32,9 @@ const FileMenu: FunctionComponent = () => {
   useShortcuts({
     "new.song": {
       callback: handleNewSong,
+    },
+    "save.song": {
+      callback: () => void handleSaveSong(),
     },
   });
 

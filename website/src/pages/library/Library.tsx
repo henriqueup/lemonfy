@@ -19,6 +19,10 @@ const Library: NextPage = () => {
     void router.push(`/editor/${song.id}`);
   };
 
+  const revalidateSongs = async () => {
+    await listSongsQuery.refetch();
+  };
+
   const songs = listSongsQuery.data;
 
   return (
@@ -28,7 +32,7 @@ const Library: NextPage = () => {
       </div>
       <div className="w-3/5">
         <DataTable
-          columns={songColumns}
+          columns={songColumns(revalidateSongs)}
           data={songs}
           rowProps={{
             className: "cursor-pointer",

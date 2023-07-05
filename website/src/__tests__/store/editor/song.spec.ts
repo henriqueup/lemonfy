@@ -11,7 +11,7 @@ import {
   addSheet,
   setSong,
   loadSong,
-  setSongId,
+  saveSong,
 } from "@/store/editor/songActions";
 import { type Song } from "@entities/song";
 
@@ -80,14 +80,32 @@ describe("Load Song", () => {
   });
 });
 
-describe("Set Song Id", () => {
+describe("Save Song", () => {
   it("Sets Song Id", () => {
     const song = { name: "test", artist: "me", sheets: [] };
     useEditorStore.setState(() => ({
       song,
     }));
 
-    setSongId("clj03p3av00002a6ggmlryreg");
+    saveSong("clj03p3av00002a6ggmlryreg");
+
+    expect(useEditorStore.getState()).toMatchObject({
+      ...INITIAL_STATE,
+      song: {
+        ...song,
+        id: "clj03p3av00002a6ggmlryreg",
+      },
+    });
+  });
+
+  it("Clears isDirty", () => {
+    const song = { name: "test", artist: "me", sheets: [] };
+    useEditorStore.setState(() => ({
+      song,
+      isDirty: true,
+    }));
+
+    saveSong("clj03p3av00002a6ggmlryreg");
 
     expect(useEditorStore.getState()).toMatchObject({
       ...INITIAL_STATE,

@@ -62,8 +62,9 @@ And finally, it can also be used as a showcase of my skills.
       - <s>Implement pagination</s>
       - <s>Implement sorting</s>
       - <s>Implement filters</s>
-      - Implement song removal
-        - Use row selection
+      - <s>Implement song removal</s>
+        - <s>Use row selection</s>
+        - Fix selection jumping to next song after deletion
   - Create server tests
     - Fix existing tests and mocking
 - <s>Fix float issue</s>

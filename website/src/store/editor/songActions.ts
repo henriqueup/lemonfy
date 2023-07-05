@@ -14,11 +14,14 @@ export const setSong = (name: string, artist: string) =>
     song: SongModule.createSong(name, artist),
   }));
 
-export const setSongId = (songId: string) =>
+export const saveSong = (songId: string) =>
   useEditorStore.setState(state => {
     if (state.song === undefined) return {};
 
-    return { song: SongSchema.parse({ ...state.song, id: songId }) };
+    return {
+      song: SongSchema.parse({ ...state.song, id: songId }),
+      isDirty: false,
+    };
   });
 
 export const addSheet = (trackCount: number) =>

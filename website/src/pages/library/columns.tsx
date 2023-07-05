@@ -6,7 +6,9 @@ import { DataTableColumnHeader } from "@/components/ui/DataTable/DataTableColumn
 import { Checkbox } from "@/components/ui/Checkbox";
 import { type ColumnMetaData } from "@/components/ui/DataTable/DataTable";
 
-export const songColumns: ColumnDef<SongInfo>[] = [
+export const songColumns = (
+  revalidateData: () => Promise<void>,
+): ColumnDef<SongInfo>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -57,7 +59,10 @@ export const songColumns: ColumnDef<SongInfo>[] = [
   {
     id: "actions",
     cell: ({ row, table }) => (
-      <SongTableRowActions song={row.original} table={table} />
+      <SongTableRowActions
+        song={row.original}
+        table={{ ...table, revalidateData }}
+      />
     ),
     meta: {
       headProps: { className: "mr-4 w-[5%]" },
