@@ -69,8 +69,8 @@ class SongPrismaRepository implements ISongRepository {
   }
 
   async deleteMany(songIds: string[]): Promise<void> {
-    await this.prisma.sheet.deleteMany({
-      where: { songId: { in: songIds } },
+    await this.prisma.song.deleteMany({
+      where: { id: { in: songIds } },
     });
   }
 }
