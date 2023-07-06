@@ -45,7 +45,7 @@ const SongTableRowActions: FunctionComponent<{
     await deleteManySongsMutation.mutateAsync(songIdsToDelete);
     await table.revalidateData?.();
 
-    table.setColumnVisibility({});
+    table.setRowSelection({});
     setIsLoadingDeletion(false);
     setIsConfirmDeleteDialogOpen(false);
   };
