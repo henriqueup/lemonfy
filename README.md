@@ -48,7 +48,7 @@ And finally, it can also be used as a showcase of my skills.
     - <s>Song create</s>
     - <s>Song get</s>
     - <s>Song update</s>
-  - Finish library page
+  - <s>Finish library page</s>
     - <s>Enable loading existing song in Editor</s>
       - <s>Clear song when exiting Editor</s>
         - <s>Confirmation if Song is dirty</s>
@@ -58,7 +58,7 @@ And finally, it can also be used as a showcase of my skills.
       - <s>Create topbar menu</s>
       - <s>Change to use shadcn/ui</s>
       - <s>Move side menus to topbar</s>
-    - Change to table
+    - <s>Change to table</s>
       - <s>Implement pagination</s>
       - <s>Implement sorting</s>
       - <s>Implement filters</s>
@@ -69,9 +69,11 @@ And finally, it can also be used as a showcase of my skills.
     - Fix existing tests and mocking
 - <s>Fix float issue</s>
   - <s>Maybe something like: Number((0.009033203125).toFixed(8))</s>
-- Add player pages
+- <s>Add player pages</s>
 - Add loading and toasters
-- Add modal component
+  - Add error handling
+- Enable Song edition
+- <s>Add modal component</s>
 - Enable Bar edition
 - Add Bar copy/paste
 - Add mouse support

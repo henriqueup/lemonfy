@@ -20,11 +20,18 @@ class SongPrismaRepository implements ISongRepository {
   }
 
   async create(song: Song) {
-    const result = await this.prisma.song.create({
-      data: mapSongToCreateInput(song),
-    });
+    try {
+      const result = await this.prisma.song.create({
+        data: mapSongToCreateInput(song),
+      });
 
-    return result.id;
+      return result.id;
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        console.error("HERE", error.code);
+      }
+      throw error;
+    }
   }
 
   async list(): Promise<SongInfo[]> {
