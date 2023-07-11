@@ -72,6 +72,7 @@ And finally, it can also be used as a showcase of my skills.
 - <s>Add player pages</s>
 - Add loading and toasters
   - Add error handling
+    - Use tRPC, see: https://github.com/trpc/trpc/discussions/2036#discussioncomment-4488650
 - Enable Song edition
 - <s>Add modal component</s>
 - Enable Bar edition

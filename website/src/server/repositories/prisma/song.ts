@@ -11,6 +11,7 @@ import { default as SheetModule, type Sheet } from "@entities/sheet";
 import { default as BarModule, type Bar } from "@entities/bar";
 import { createNote, type Note } from "@entities/note";
 import { createPitchFromKey } from "@entities/pitch";
+import { BusinessException } from "@/utils/exceptions";
 
 class SongPrismaRepository implements ISongRepository {
   readonly prisma!: PrismaClient;
@@ -28,8 +29,13 @@ class SongPrismaRepository implements ISongRepository {
       return result.id;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        console.error("HERE", error.code);
+        if (error.code === "P2002") {
+          throw new BusinessException(
+            `Song '${song.name} - ${song.artist}' already exists.`,
+          );
+        }
       }
+
       throw error;
     }
   }

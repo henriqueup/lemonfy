@@ -12,6 +12,7 @@ import { useShortcuts, useToast } from "@/hooks";
 import { useEditorStore } from "@/store/editor";
 import { api } from "@/utils/api";
 import { saveSong } from "@/store/editor/songActions";
+import { TRPCClientError } from "@trpc/client";
 
 const FileMenu: FunctionComponent = () => {
   const router = useRouter();
@@ -26,7 +27,13 @@ const FileMenu: FunctionComponent = () => {
       const songId = await saveSongMutation.mutateAsync(song);
       saveSong(songId);
     } catch (error) {
-      toast({ variant: "destructive", title: "Something went wrong" });
+      if (error instanceof TRPCClientError) {
+        console.log(error.data);
+        toast({
+          variant: "destructive",
+          title: error.message,
+        });
+      }
     }
   };
 
