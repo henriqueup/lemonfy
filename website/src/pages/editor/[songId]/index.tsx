@@ -1,11 +1,12 @@
-import { routerCaller } from "src/server/api/root";
-import Editor, { type EditorProps } from "../Editor";
 import type {
   GetStaticPathsResult,
   GetStaticPropsContext,
   GetStaticPropsResult,
   NextPage,
 } from "next";
+
+import { routerCaller } from "src/server/api/root";
+import Editor, { type EditorProps } from "../Editor";
 
 type StaticPropsParams = {
   songId?: string;

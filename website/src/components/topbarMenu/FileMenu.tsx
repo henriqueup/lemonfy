@@ -12,13 +12,16 @@ import { useShortcuts, useToast } from "@/hooks";
 import { useEditorStore } from "@/store/editor";
 import { api } from "@/utils/api";
 import { saveSong } from "@/store/editor/songActions";
+import { setGlobalLoading } from "@/store/global/globalActions";
 
 const FileMenu: FunctionComponent = () => {
   const router = useRouter();
   const { toast } = useToast();
   const song = useEditorStore(state => state.song);
+
   const saveSongMutation = api.song.save.useMutation({
     useErrorBoundary: error => !error.data?.isBusinessException,
+    onSettled: () => setGlobalLoading(false),
     onError: error => {
       if (error.data?.isBusinessException)
         toast({
@@ -26,12 +29,19 @@ const FileMenu: FunctionComponent = () => {
           title: error.message,
         });
     },
-    onSuccess: songId => saveSong(songId),
+    onSuccess: songId => {
+      saveSong(songId);
+      toast({
+        variant: "success",
+        title: "Song saved successfully.",
+      });
+    },
   });
 
   const handleSaveSong = () => {
     if (song === undefined) return;
 
+    setGlobalLoading(true);
     saveSongMutation.mutate(song);
   };
 

@@ -1,13 +1,14 @@
 import { type AppType } from "next/app";
 
-import { api } from "../utils/api";
-
 import "../styles/globals.css";
-import { TopbarMenu } from "src/components";
+import { api } from "../utils/api";
+import { ErrorBoundary, LoadingSpinner, TopbarMenu } from "src/components";
 import { Toaster } from "@/components/ui/Toaster";
-import ErrorBoundary from "@/components/ErrorBoundary";
+import { useGlobalStore } from "@/store/global";
 
 export const MyApp: AppType = ({ Component, pageProps }) => {
+  const { isLoading } = useGlobalStore();
+
   return (
     <div className="h-screen bg-background text-popover-foreground">
       <ErrorBoundary>
@@ -16,6 +17,11 @@ export const MyApp: AppType = ({ Component, pageProps }) => {
           <Component {...pageProps} />
         </div>
         <Toaster />
+        {isLoading ? (
+          <div className="absolute left-0 top-0 h-screen w-screen">
+            <LoadingSpinner className="z-50 bg-background/80 backdrop-blur-sm transition-opacity" />
+          </div>
+        ) : null}
       </ErrorBoundary>
     </div>
   );
