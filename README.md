@@ -71,8 +71,12 @@ And finally, it can also be used as a showcase of my skills.
   - <s>Maybe something like: Number((0.009033203125).toFixed(8))</s>
 - <s>Add player pages</s>
 - Add loading and toasters
+  - Add loading component
+    - Wrapper?
   - Add error handling
-    - Use tRPC, see: https://github.com/trpc/trpc/discussions/2036#discussioncomment-4488650
+    - <s>Add error boundary</s>
+      - Make it pretty
+    - <s>Use tRPC, see: https://github.com/trpc/trpc/discussions/2036#discussioncomment-4488650</s>
 - Enable Song edition
 - <s>Add modal component</s>
 - Enable Bar edition

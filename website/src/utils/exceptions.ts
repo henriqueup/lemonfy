@@ -1,7 +1,7 @@
-import { TRPCError } from "@trpc/server";
-
-export class BusinessException extends TRPCError {
+export class BusinessException extends Error {
   constructor(public message: string) {
-    super({ message, code: "BAD_REQUEST" });
+    super(message);
+
+    this.name = "BusinessException";
   }
 }

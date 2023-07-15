@@ -55,13 +55,20 @@ export const createTRPCContext = (_opts: CreateNextContextOptions) => {
  */
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
+import { BusinessException } from "@/utils/exceptions";
 
 const t = initTRPC
   .context<Awaited<ReturnType<typeof createTRPCContext>>>()
   .create({
     transformer: superjson,
-    errorFormatter({ shape }) {
-      return shape;
+    errorFormatter({ shape, error }) {
+      return {
+        ...shape,
+        data: {
+          ...shape.data,
+          isBusinessException: error.cause instanceof BusinessException,
+        },
+      };
     },
   });
 

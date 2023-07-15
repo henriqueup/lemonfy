@@ -12,29 +12,27 @@ import { useShortcuts, useToast } from "@/hooks";
 import { useEditorStore } from "@/store/editor";
 import { api } from "@/utils/api";
 import { saveSong } from "@/store/editor/songActions";
-import { TRPCClientError } from "@trpc/client";
 
 const FileMenu: FunctionComponent = () => {
   const router = useRouter();
   const { toast } = useToast();
   const song = useEditorStore(state => state.song);
-  const saveSongMutation = api.song.save.useMutation();
-
-  const handleSaveSong = async () => {
-    if (song === undefined) return;
-
-    try {
-      const songId = await saveSongMutation.mutateAsync(song);
-      saveSong(songId);
-    } catch (error) {
-      if (error instanceof TRPCClientError) {
-        console.log(error.data);
+  const saveSongMutation = api.song.save.useMutation({
+    useErrorBoundary: error => !error.data?.isBusinessException,
+    onError: error => {
+      if (error.data?.isBusinessException)
         toast({
           variant: "destructive",
           title: error.message,
         });
-      }
-    }
+    },
+    onSuccess: songId => saveSong(songId),
+  });
+
+  const handleSaveSong = () => {
+    if (song === undefined) return;
+
+    saveSongMutation.mutate(song);
   };
 
   const handleNewSong = () => {
