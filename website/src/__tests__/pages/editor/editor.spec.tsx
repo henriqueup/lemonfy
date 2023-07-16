@@ -78,11 +78,11 @@ describe("Navigation", () => {
     await act(() => user.click(newSongMenuButton));
 
     expect(
-      rendered.getByRole("heading", { name: "New Song" }),
+      rendered.getByRole("heading", { name: "Create Song" }),
     ).toBeInTheDocument();
     expect(rendered.getByPlaceholderText("Name")).toBeInTheDocument();
     expect(rendered.getByPlaceholderText("Artist")).toBeInTheDocument();
-    expect(rendered.getByRole("button", { name: "Add" })).toBeInTheDocument();
+    expect(rendered.getByRole("button", { name: "Save" })).toBeInTheDocument();
   });
 
   it("Creates new song", async () => {
@@ -94,6 +94,41 @@ describe("Navigation", () => {
     expect(
       rendered.getByRole("button", { name: "New Sheet" }),
     ).toBeInTheDocument();
+  });
+
+  it("Edits song", async () => {
+    await createSong();
+
+    const songNameLabel = rendered.getByText("Test song - Me");
+
+    expect(songNameLabel).toBeInTheDocument();
+    expect(
+      rendered.getByRole("button", { name: "New Sheet" }),
+    ).toBeInTheDocument();
+
+    await act(() => user.click(songNameLabel));
+
+    expect(
+      rendered.getByRole("heading", { name: "Edit Song" }),
+    ).toBeInTheDocument();
+
+    const saveButton = rendered.getByRole("button", { name: "Save" });
+    expect(saveButton).toBeInTheDocument();
+    expect(saveButton).toBeDisabled();
+
+    const artistInput = rendered.getByPlaceholderText("Artist");
+    expect(artistInput).toBeInTheDocument();
+
+    await act(async () => {
+      await user.click(artistInput);
+      await user.keyboard("You");
+    });
+
+    expect(saveButton).not.toBeDisabled();
+
+    await act(() => user.click(saveButton));
+
+    expect(rendered.getByText("Test song - You")).toBeInTheDocument();
   });
 
   it("Opens new sheet menu on click", async () => {
@@ -369,7 +404,7 @@ const createSong = async () => {
   });
   await act(() => user.click(newSongMenuButton));
 
-  const addButton = rendered.getByRole("button", { name: "Add" });
+  const addButton = rendered.getByRole("button", { name: "Save" });
 
   await act(async () => {
     await user.keyboard("Test song{Tab}{Tab}Me");

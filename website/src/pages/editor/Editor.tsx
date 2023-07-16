@@ -28,7 +28,7 @@ const Editor: FunctionComponent<EditorProps> = ({ songToLoad }) => {
     loadSong(songToLoad);
   }, [songToLoad]);
 
-  const handleAddSong = (name: string, artist: string) => {
+  const handleSaveSong = (name: string, artist: string) => {
     setSong(name, artist);
     setSongMenuIsOpen(false);
   };
@@ -51,11 +51,12 @@ const Editor: FunctionComponent<EditorProps> = ({ songToLoad }) => {
             </div>
           </div>
         ) : (
-          <Song />
+          <Song openSongMenu={() => setSongMenuIsOpen(true)} />
         )}
         {songMenuIsOpen ? (
           <SongMenu
-            onAdd={handleAddSong}
+            loadedSong={loadedSong}
+            onSave={handleSaveSong}
             onClose={() => setSongMenuIsOpen(false)}
           />
         ) : null}

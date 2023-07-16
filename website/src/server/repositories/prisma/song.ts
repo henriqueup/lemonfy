@@ -63,6 +63,11 @@ class SongPrismaRepository implements ISongRepository {
     const songId = song.id;
     if (songId === undefined) throw new Error("Song must have an id.");
 
+    await this.prisma.song.update({
+      where: { id: songId },
+      data: { name: song.name, artist: song.artist },
+    });
+
     await this.prisma.sheet.deleteMany({
       where: { songId: songId },
     });

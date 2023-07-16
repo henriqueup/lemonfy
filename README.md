@@ -79,15 +79,21 @@ And finally, it can also be used as a showcase of my skills.
       - Make it pretty...
     - <s>Use tRPC, see: https://github.com/trpc/trpc/discussions/2036#discussioncomment-4488650</s>
   - <s>Add success toast</s>
-- Enable Song edition
+- <s>Enable Song edition</s>
+- Change Sheet to Instruments
+  - Base interface
+    - Name
+    - Number of tracks
+    - Tracks
+    - IsFretted
+    - AddNote()
 - <s>Add modal component</s>
-- Enable Bar edition
 - Add Bar copy/paste
 - Add mouse support
   - Drag playback cursor
 - Add automatic save
 - Add component animations
-- Add multiple Sheet support
+- Add multiple Instrument support
 - Add metronome
 - Migrate to App Router
   - Remove tRPC?

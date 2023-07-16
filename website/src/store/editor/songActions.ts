@@ -9,10 +9,22 @@ export const loadSong = (song: Song) =>
   useEditorStore.setState({ song, currentSheetIndex: 0 });
 
 export const setSong = (name: string, artist: string) =>
-  useEditorStore.setState(state => ({
-    ...handleStorableAction(state),
-    song: SongModule.createSong(name, artist),
-  }));
+  useEditorStore.setState(state => {
+    let song = SongModule.createSong(name, artist);
+
+    if (state.song !== undefined) {
+      song = {
+        ...state.song,
+        name,
+        artist,
+      };
+    }
+
+    return {
+      ...handleStorableAction(state),
+      song,
+    };
+  });
 
 export const saveSong = (songId: string) =>
   useEditorStore.setState(state => {
