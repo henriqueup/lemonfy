@@ -80,6 +80,11 @@ And finally, it can also be used as a showcase of my skills.
     - <s>Use tRPC, see: https://github.com/trpc/trpc/discussions/2036#discussioncomment-4488650</s>
   - <s>Add success toast</s>
 - <s>Enable Song edition</s>
+- Add Immer
+  - Fix nesting
+  - Fix tests
+  - Add undo/redo
+    - Use patches: https://immerjs.github.io/immer/patches/
 - Change Sheet to Instruments
   - Base interface
     - Name

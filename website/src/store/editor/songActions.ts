@@ -1,3 +1,5 @@
+import { produce } from "immer";
+
 import SheetModule from "@entities/sheet";
 import SongModule, { SongSchema, type Song } from "@entities/song";
 import {
@@ -9,42 +11,43 @@ export const loadSong = (song: Song) =>
   useEditorStore.setState({ song, currentSheetIndex: 0 });
 
 export const setSong = (name: string, artist: string) =>
-  useEditorStore.setState(state => {
-    let song = SongModule.createSong(name, artist);
+  useEditorStore.setState(state =>
+    produce(state, draft => {
+      let song = SongModule.createSong(name, artist);
 
-    if (state.song !== undefined) {
-      song = {
-        ...state.song,
-        name,
-        artist,
-      };
-    }
+      if (draft.song !== undefined) {
+        song = {
+          ...draft.song,
+          name,
+          artist,
+        };
+      }
 
-    return {
-      ...handleStorableAction(state),
-      song,
-    };
-  });
+      draft.song = song;
+      handleStorableAction(draft);
+    }),
+  );
 
 export const saveSong = (songId: string) =>
-  useEditorStore.setState(state => {
-    if (state.song === undefined) return {};
+  useEditorStore.setState(state =>
+    produce(state, draft => {
+      if (draft.song === undefined) return;
 
-    return {
-      song: SongSchema.parse({ ...state.song, id: songId }),
-      isDirty: false,
-    };
-  });
+      draft.song = SongSchema.parse({ ...draft.song, id: songId });
+      draft.isDirty = false;
+    }),
+  );
 
 export const addSheet = (trackCount: number) =>
-  useEditorStore.setState(state => {
-    if (state.song === undefined) return {};
+  useEditorStore.setState(state =>
+    produce(state, draft => {
+      console.log(draft, draft.song, draft.song === undefined);
+      if (draft.song === undefined) return;
 
-    const newSheet = SheetModule.createSheet(trackCount);
+      const newSheet = SheetModule.createSheet(trackCount);
 
-    return {
-      ...handleStorableAction(state),
-      song: { ...state.song, sheets: [...state.song.sheets, newSheet] },
-      currentSheetIndex: state.song.sheets.length,
-    };
-  });
+      handleStorableAction(draft);
+      draft.song.sheets.push(newSheet);
+      draft.currentSheetIndex = draft.song.sheets.length - 1;
+    }),
+  );
