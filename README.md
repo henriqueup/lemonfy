@@ -81,7 +81,7 @@ And finally, it can also be used as a showcase of my skills.
   - <s>Add success toast</s>
 - <s>Enable Song edition</s>
 - Add Immer
-  - Fix nesting
+  - <s>Fix nesting</s>
   - Fix tests
   - Add undo/redo
     - Use patches: https://immerjs.github.io/immer/patches/

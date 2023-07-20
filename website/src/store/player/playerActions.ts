@@ -1,8 +1,12 @@
-import { produce } from "immer";
+import { type Draft, produce } from "immer";
 
 import { default as BarModule, type Bar } from "@entities/bar";
 import { getCurrentSheet, useEditorStore } from "@/store/editor";
-import { INITIAL_STATE, usePlayerStore } from "@/store/player";
+import {
+  INITIAL_STATE,
+  type PlayerStore,
+  usePlayerStore,
+} from "@/store/player";
 
 const createNextBarTimeout = (
   barWithCursor: Bar | undefined,
@@ -76,6 +80,11 @@ const clearAudioNodes = (audioNodes: AudioNode[]) => {
   audioNodes.forEach(audioNode => audioNode.disconnect());
 };
 
+const clearPlayback = (draft: Draft<PlayerStore>) => {
+  clearAudioNodes(draft.audioNodes);
+  clearTimeout(draft.nextBarTimeout);
+};
+
 export const pause = () =>
   usePlayerStore.setState(state =>
     produce(state, draft => {
@@ -102,16 +111,14 @@ export const pause = () =>
         barWithCursor.capacity * (timeElapsed / totalBarTime);
       const currentBarPosition = positionTraveled + draft.cursor.position;
 
-      clearAudioNodes(draft.audioNodes);
-      clearTimeout(draft.nextBarTimeout);
+      clearPlayback(draft);
 
-      useEditorStore.setState(editorState => ({
-        cursor: {
-          ...editorState.cursor,
-          barIndex: draft.cursor.barIndex,
-          position: currentBarPosition,
-        },
-      }));
+      useEditorStore.setState(editorState =>
+        produce(editorState, editorDraft => {
+          editorDraft.cursor.barIndex = draft.cursor.barIndex;
+          editorDraft.cursor.position = currentBarPosition;
+        }),
+      );
 
       draft.isPaused = true;
       draft.cursor.position = currentBarPosition;
@@ -119,14 +126,23 @@ export const pause = () =>
     }),
   );
 
+const stopCallback = (draft: Draft<PlayerStore>) => {
+  clearPlayback(draft);
+
+  draft.audioNodes = INITIAL_STATE.audioNodes;
+  draft.currentTimeoutStartTime = INITIAL_STATE.currentTimeoutStartTime;
+
+  draft.cursor.barIndex = INITIAL_STATE.cursor.barIndex;
+  draft.cursor.position = INITIAL_STATE.cursor.position;
+
+  draft.isPaused = INITIAL_STATE.isPaused;
+  draft.isPlaying = INITIAL_STATE.isPlaying;
+  draft.nextBarTimeout = INITIAL_STATE.nextBarTimeout;
+};
+
 export const stop = () =>
   usePlayerStore.setState(state =>
-    produce(state, draft => {
-      clearAudioNodes(draft.audioNodes);
-      if (draft.nextBarTimeout) clearTimeout(draft.nextBarTimeout);
-
-      return { ...INITIAL_STATE, nextBarTimeout: undefined };
-    }),
+    produce(state, draft => stopCallback(draft)),
   );
 
 export const windUp = (isRewind = false, isFull = false) => {
@@ -141,8 +157,7 @@ export const windUp = (isRewind = false, isFull = false) => {
         : editorCursor.barIndex;
       if (currentBarIndex >= currentSheet.bars.length) return;
 
-      //TODO: fix produce nesting
-      stop();
+      stopCallback(draft);
 
       if (isRewind) {
         let nextBarIndex = isFull ? 0 : currentBarIndex;
@@ -179,6 +194,7 @@ export const windUp = (isRewind = false, isFull = false) => {
 
       draft.cursor.barIndex = nextBarIndex;
       draft.cursor.position = 0;
+      draft.cursor.position = 1;
     }),
   );
 };
