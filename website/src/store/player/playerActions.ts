@@ -157,17 +157,13 @@ export const windUp = (isRewind = false, isFull = false) => {
         : editorCursor.barIndex;
       if (currentBarIndex >= currentSheet.bars.length) return;
 
-      stopCallback(draft);
-
       if (isRewind) {
         let nextBarIndex = isFull ? 0 : currentBarIndex;
 
-        const cursorPosition = draft.isPlaying
-          ? draft.cursor.position
-          : editorCursor.position;
-        if (cursorPosition === 0) nextBarIndex -= 1;
-
-        nextBarIndex = Math.max(0, nextBarIndex);
+        if (!draft.isPlaying && editorCursor.position === 0) {
+          nextBarIndex -= 1;
+          nextBarIndex = Math.max(0, nextBarIndex);
+        }
 
         useEditorStore.setState(editorState =>
           produce(editorState, editorDraft => {
@@ -176,6 +172,7 @@ export const windUp = (isRewind = false, isFull = false) => {
           }),
         );
 
+        stopCallback(draft);
         draft.cursor.barIndex = nextBarIndex;
         draft.cursor.position = 0;
         return;
@@ -192,9 +189,9 @@ export const windUp = (isRewind = false, isFull = false) => {
         }),
       );
 
+      stopCallback(draft);
       draft.cursor.barIndex = nextBarIndex;
       draft.cursor.position = 0;
-      draft.cursor.position = 1;
     }),
   );
 };

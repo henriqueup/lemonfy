@@ -142,9 +142,7 @@ describe("Play", () => {
     expect(usePlayerStore.getState().nextBarTimeout).toBeUndefined();
     expect(usePlayerStore.getState().cursor.barIndex).toBe(0);
     expect(usePlayerStore.getState().cursor.position).toBe(0);
-    expect(usePlayerStore.getState().currentTimeoutStartTime).toStrictEqual(
-      dateAtStart,
-    );
+    expect(usePlayerStore.getState().currentTimeoutStartTime).toBeUndefined();
   });
 });
 
@@ -180,6 +178,7 @@ describe("Pause", () => {
     expect(usePlayerStore.getState()).toMatchObject({
       ...INITIAL_STATE,
       isPlaying: true,
+      currentTimeoutStartTime: referenceDate,
       isPaused: true,
     });
   });
@@ -438,31 +437,6 @@ describe("Wind up", () => {
     expect(useEditorStore.getState().cursor).toMatchObject({
       trackIndex: 0,
       barIndex: 0,
-      position: 0,
-    });
-  });
-
-  it("Rewinds to start of previous Bar while playing", () => {
-    const sheet = getMockSheetWithBars();
-    useEditorStore.setState({
-      song: getMockSong([sheet]),
-      currentSheetIndex: 0,
-      cursor: { trackIndex: 0, barIndex: 1, position: 1 / 4 },
-    });
-    usePlayerStore.setState({
-      isPlaying: true,
-      cursor: { barIndex: 2, position: 0 },
-    });
-
-    windUp(true);
-
-    expect(usePlayerStore.getState()).toMatchObject({
-      ...INITIAL_STATE,
-      cursor: { barIndex: 1, position: 0 },
-    });
-    expect(useEditorStore.getState().cursor).toMatchObject({
-      trackIndex: 0,
-      barIndex: 1,
       position: 0,
     });
   });

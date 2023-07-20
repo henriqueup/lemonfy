@@ -41,7 +41,6 @@ export const saveSong = (songId: string) =>
 export const addSheet = (trackCount: number) =>
   useEditorStore.setState(state =>
     produce(state, draft => {
-      console.log(draft, draft.song, draft.song === undefined);
       if (draft.song === undefined) return;
 
       const newSheet = SheetModule.createSheet(trackCount);
