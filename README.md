@@ -82,7 +82,7 @@ And finally, it can also be used as a showcase of my skills.
 - <s>Enable Song edition</s>
 - Add Immer
   - <s>Fix nesting</s>
-  - Fix tests
+  - <s>Fix tests</s>
   - Add undo/redo
     - Use patches: https://immerjs.github.io/immer/patches/
 - Change Sheet to Instruments

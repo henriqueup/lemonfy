@@ -16,7 +16,11 @@ const setTimeoutSpy = jest.spyOn(global, "setTimeout");
 const clearTimeoutSpy = jest.spyOn(global, "clearTimeout");
 const referenceDate = new Date(2020, 3, 1);
 
+// initial state must be restored because of the mock used for immer
+const preservedInitialState = structuredClone(INITIAL_STATE);
 beforeEach(() => {
+  usePlayerStore.setState(structuredClone(preservedInitialState));
+
   jest.runAllTimers();
   setTimeoutSpy.mockClear();
   clearTimeoutSpy.mockClear();

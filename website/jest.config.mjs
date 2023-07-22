@@ -26,7 +26,7 @@ const customJestConfig = {
     "@routers/(.*)$": "<rootDir>/src/server/api/routers/$1",
     "@repositories/(.*)$": "<rootDir>/src/server/repositories/$1",
   },
-  testEnvironment: "jest-environment-jsdom",
+  testEnvironment: "./FixJSDOMEnvironment.ts",
   setupFilesAfterEnv: ["<rootDir>/setup-jest.ts"],
   transform: {
     "^.+\\.(t|j)sx?$": ["@swc/jest"],

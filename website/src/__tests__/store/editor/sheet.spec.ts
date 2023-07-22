@@ -46,6 +46,12 @@ const sheetModuleWithMocks = MockUtilsModule.getModuleWithMocks(
   SheetModule.default,
 );
 
+// initial state must be restored because of the mock used for immer
+const preservedInitialState = structuredClone(INITIAL_STATE);
+beforeEach(() => {
+  useEditorStore.setState(structuredClone(preservedInitialState));
+});
+
 describe("Add Bar", () => {
   it("Does nothing with undefined Song", () => {
     addBar(4, 4, 60);

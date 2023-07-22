@@ -24,6 +24,7 @@ import { getMockSong } from "@/mocks/entities/song";
 import { mockUseRouter } from "@/mocks/next/router";
 import { MyApp } from "@/pages/_app";
 
+jest.unmock("immer");
 jest.mock("next/router", () => ({
   useRouter: jest.fn(() => mockUseRouter),
 }));
