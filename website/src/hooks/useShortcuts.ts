@@ -31,6 +31,8 @@ const SHORTCUTS = {
   CTRL_b: "bars.add.copy",
   CTRL_s: "save.song",
   CTRL_SHIFT_S: "new.song",
+  CTRL_z: "undo",
+  CTRL_SHIFT_Z: "redo",
 } as const;
 
 type ShortcutKey = keyof typeof SHORTCUTS;
