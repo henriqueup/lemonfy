@@ -9,11 +9,12 @@ import {
 } from "@/store/player";
 
 const createNextBarTimeout = (
+  originalDraft: Draft<PlayerStore>,
   barWithCursor: Bar | undefined,
   startPosition = 0,
 ): NodeJS.Timeout | undefined => {
   if (barWithCursor === undefined) {
-    stop();
+    stopCallback(originalDraft);
     return undefined;
   }
 
@@ -32,7 +33,7 @@ const createNextBarTimeout = (
         const nextBar = currentSheet.bars[nextBarIndex];
 
         const startTime = new Date();
-        const timeout = createNextBarTimeout(nextBar);
+        const timeout = createNextBarTimeout(draft, nextBar);
         if (timeout === undefined) return;
 
         draft.currentTimeoutStartTime = startTime;
@@ -56,6 +57,7 @@ export const play = (audioNodes: AudioNode[]) => {
       const startTime = new Date();
 
       const timeout = createNextBarTimeout(
+        draft,
         barWithCursor,
         editorCursor.position,
       );

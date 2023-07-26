@@ -1,13 +1,21 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { produceWithPatches, type Patch, applyPatches } from "immer";
+import {
+  produceWithPatches,
+  type Patch,
+  applyPatches,
+  type Draft,
+  enablePatches,
+} from "immer";
+
+enablePatches();
 
 export interface TaggedPatch extends Patch {
   tag: string;
 }
 
-export const createPatchTag = (): string => new Date().toISOString();
+const createPatchTag = (): string => new Date().toISOString();
 
-export const popLastPatches = (patches: TaggedPatch[]): TaggedPatch[] => {
+const popLastPatches = (patches: TaggedPatch[]): TaggedPatch[] => {
   const lastPatches: TaggedPatch[] = [];
 
   let currentPatch = patches.pop();
@@ -22,11 +30,33 @@ export const popLastPatches = (patches: TaggedPatch[]): TaggedPatch[] => {
   return lastPatches;
 };
 
+let undoneablePatches: TaggedPatch[] = [];
+let redoablePatches: TaggedPatch[] = [];
+
+export const produceUndoneableAction = <T>(
+  state: T,
+  recipe: (draft: Draft<T>) => Draft<T> | void,
+): T => {
+  const [result, , inversePatches] = produceWithPatches(state, recipe);
+
+  const tag = createPatchTag();
+  undoneablePatches = undoneablePatches.concat(
+    inversePatches.map(patch => ({ ...patch, tag })),
+  );
+  redoablePatches = [];
+
+  return result;
+};
+
 export const handleChangeHistory = <T extends object>(
   state: T,
-  patchesToPop: TaggedPatch[],
-  patchesToPush: TaggedPatch[],
+  operation: "undo" | "redo",
 ) => {
+  const patchesToPop =
+    operation === "undo" ? undoneablePatches : redoablePatches;
+  const patchesToPush =
+    operation === "undo" ? redoablePatches : undoneablePatches;
+
   const [result, , inversePatches] = produceWithPatches(state, draft => {
     const patchesToUndo = popLastPatches(patchesToPop);
 

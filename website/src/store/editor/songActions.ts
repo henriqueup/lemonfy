@@ -6,13 +6,14 @@ import {
   handleStorableAction,
   useEditorStore,
 } from "@/store/editor/editorStore";
+import { produceUndoneableAction } from "@/utils/immer";
 
 export const loadSong = (song: Song) =>
   useEditorStore.setState({ song, currentSheetIndex: 0 });
 
 export const setSong = (name: string, artist: string) =>
   useEditorStore.setState(state =>
-    handleStorableAction(state, draft => {
+    produceUndoneableAction(state, draft => {
       let song = SongModule.createSong(name, artist);
 
       if (draft.song !== undefined) {
@@ -24,6 +25,7 @@ export const setSong = (name: string, artist: string) =>
       }
 
       draft.song = song;
+      handleStorableAction(draft);
     }),
   );
 
@@ -39,11 +41,12 @@ export const saveSong = (songId: string) =>
 
 export const addSheet = (trackCount: number) =>
   useEditorStore.setState(state =>
-    handleStorableAction(state, draft => {
+    produceUndoneableAction(state, draft => {
       if (draft.song === undefined) return;
 
       const newSheet = SheetModule.createSheet(trackCount);
 
+      handleStorableAction(draft);
       draft.song.sheets.push(newSheet);
       draft.currentSheetIndex = draft.song.sheets.length - 1;
     }),

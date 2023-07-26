@@ -1,14 +1,14 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { produceWithPatches, type Draft, enablePatches } from "immer";
+import { type Draft } from "immer";
 
 import { type NoteDurationName, type Note } from "@entities/note";
 import { type Octave } from "@entities/octave";
 import { type Sheet } from "@entities/sheet";
 import { type Song } from "@entities/song";
 import {
-  createPatchTag,
   handleChangeHistory,
+  produceUndoneableAction,
   type TaggedPatch,
 } from "@/utils/immer";
 
@@ -25,7 +25,6 @@ export interface EditorStore {
   selectedNoteDuration: NoteDurationName;
   noteToAdd: Note | null;
   cursor: Cursor;
-
   isDirty: boolean;
 }
 
@@ -40,11 +39,9 @@ export const INITIAL_STATE: EditorStore = {
     barIndex: 0,
     position: 0,
   },
-
   isDirty: false,
 };
 
-enablePatches();
 export const useEditorStore = create<EditorStore>()(
   devtools(() => INITIAL_STATE),
 );
@@ -59,33 +56,12 @@ export const getCurrentSheet = (state?: EditorStore): Sheet | undefined => {
 
 export const reset = () => useEditorStore.setState(INITIAL_STATE);
 
-let undoablePatches: TaggedPatch[] = [];
-let redoablePatches: TaggedPatch[] = [];
-
-export const handleStorableAction = (
-  state: EditorStore,
-  recipe: (draft: Draft<EditorStore>) => EditorStore | void,
-): EditorStore => {
-  const [result, , inversePatches] = produceWithPatches(state, draft => {
-    recipe(draft);
-    draft.isDirty = true;
-  });
-
-  const tag = createPatchTag();
-  undoablePatches = undoablePatches.concat(
-    inversePatches.map(patch => ({ ...patch, tag })),
-  );
-  redoablePatches = [];
-
-  return result;
+export const handleStorableAction = (draft: Draft<EditorStore>): void => {
+  draft.isDirty = true;
 };
 
 export const undo = () =>
-  useEditorStore.setState(state =>
-    handleChangeHistory(state, undoablePatches, redoablePatches),
-  );
+  useEditorStore.setState(state => handleChangeHistory(state, "undo"));
 
 export const redo = () =>
-  useEditorStore.setState(state =>
-    handleChangeHistory(state, redoablePatches, undoablePatches),
-  );
+  useEditorStore.setState(state => handleChangeHistory(state, "redo"));

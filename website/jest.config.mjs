@@ -26,6 +26,7 @@ const customJestConfig = {
     "@routers/(.*)$": "<rootDir>/src/server/api/routers/$1",
     "@repositories/(.*)$": "<rootDir>/src/server/repositories/$1",
   },
+  modulePathIgnorePatterns: ["<rootDir>/.*/__mocks__"],
   testEnvironment: "./FixJSDOMEnvironment.ts",
   setupFilesAfterEnv: ["<rootDir>/setup-jest.ts"],
   transform: {

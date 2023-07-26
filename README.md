@@ -83,14 +83,15 @@ And finally, it can also be used as a showcase of my skills.
 - Add Immer
   - <s>Fix nesting</s>
   - <s>Fix tests</s>
-  - Add undo/redo
-    - Use patches: https://immerjs.github.io/immer/patches/
-    - Fix/Add tests
+  - <s>Add undo/redo</s>
+    - <s>Use patches: https://immerjs.github.io/immer/patches/</s>
+    - <s>Fix tests</s>
+    - Add tests
 - Change Sheet to Instruments
   - Base interface
     - Name
     - Number of tracks
-    - Tracks
+    - Sheet
     - IsFretted
     - AddNote()
 - <s>Add modal component</s>

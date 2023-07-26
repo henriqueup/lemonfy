@@ -7,22 +7,24 @@ import {
   getCurrentSheet,
   handleStorableAction,
 } from "./editorStore";
+import { produceUndoneableAction } from "@/utils/immer";
 
 export const addBar = (beatCount: number, dibobinador: number, tempo: number) =>
   useEditorStore.setState(state =>
-    handleStorableAction(state, draft => {
+    produceUndoneableAction(state, draft => {
       if (draft.song === undefined) return;
 
       const currentSheet = getCurrentSheet(draft);
       if (currentSheet === undefined) return;
 
       SheetModule.addBarToSheet(currentSheet, beatCount, dibobinador, tempo);
+      handleStorableAction(draft);
     }),
   );
 
 export const addCopyOfCurrentBar = () =>
   useEditorStore.setState(state =>
-    handleStorableAction(state, draft => {
+    produceUndoneableAction(state, draft => {
       if (draft.song === undefined) return;
 
       const currentSheet = getCurrentSheet(draft);
@@ -38,6 +40,7 @@ export const addCopyOfCurrentBar = () =>
         currentBar.tempo,
         draft.cursor.barIndex,
       );
+      handleStorableAction(draft);
     }),
   );
 
@@ -47,7 +50,7 @@ export const addNote = (
   octave: Octave,
 ) =>
   useEditorStore.setState(state =>
-    handleStorableAction(state, draft => {
+    produceUndoneableAction(state, draft => {
       if (draft.song === undefined) return;
 
       const currentSheet = getCurrentSheet(draft);
@@ -66,6 +69,7 @@ export const addNote = (
         noteToAdd,
       );
       SheetModule.fillBarTracksInSheet(currentSheet, draft.cursor.trackIndex);
+      handleStorableAction(draft);
 
       const endOfAddedNote = draft.cursor.position + noteToAdd.duration;
       draft.cursor.position = Math.min(endOfAddedNote, barWithCursor.capacity);
@@ -74,7 +78,7 @@ export const addNote = (
 
 export const removeNoteFromBar = (noteToRemove: Note) =>
   useEditorStore.setState(state =>
-    handleStorableAction(state, draft => {
+    produceUndoneableAction(state, draft => {
       if (draft.song === undefined) return;
 
       const currentSheet = getCurrentSheet(draft);
@@ -84,12 +88,13 @@ export const removeNoteFromBar = (noteToRemove: Note) =>
         noteToRemove,
       ]);
       SheetModule.fillBarTracksInSheet(currentSheet, draft.cursor.trackIndex);
+      handleStorableAction(draft);
     }),
   );
 
 export const removeNextNoteFromBar = (lookForward = true) =>
   useEditorStore.setState(state =>
-    handleStorableAction(state, draft => {
+    produceUndoneableAction(state, draft => {
       if (draft.song === undefined) return;
 
       const currentSheet = getCurrentSheet(draft);
@@ -110,6 +115,7 @@ export const removeNextNoteFromBar = (lookForward = true) =>
         noteToRemove,
       ]);
       SheetModule.fillBarTracksInSheet(currentSheet, draft.cursor.trackIndex);
+      handleStorableAction(draft);
 
       if (lookForward) {
         return;
@@ -133,12 +139,13 @@ export const removeNextNoteFromBar = (lookForward = true) =>
 
 export const removeBarFromSheetByIndex = (barIndex: number) =>
   useEditorStore.setState(state =>
-    handleStorableAction(state, draft => {
+    produceUndoneableAction(state, draft => {
       if (draft.song === undefined) return;
 
       const currentSheet = getCurrentSheet(draft);
       if (currentSheet === undefined) return;
 
       SheetModule.removeBarInSheetByIndex(currentSheet, barIndex);
+      handleStorableAction(draft);
     }),
   );
