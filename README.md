@@ -86,7 +86,7 @@ And finally, it can also be used as a showcase of my skills.
   - <s>Add undo/redo</s>
     - <s>Use patches: https://immerjs.github.io/immer/patches/</s>
     - <s>Fix tests</s>
-    - Add tests
+    - <s>Add tests</s>
 - Change Sheet to Instruments
   - Base interface
     - Name

@@ -6,11 +6,7 @@ import { type NoteDurationName, type Note } from "@entities/note";
 import { type Octave } from "@entities/octave";
 import { type Sheet } from "@entities/sheet";
 import { type Song } from "@entities/song";
-import {
-  handleChangeHistory,
-  produceUndoneableAction,
-  type TaggedPatch,
-} from "@/utils/immer";
+import { handleChangeHistory } from "@/utils/immer";
 
 export interface Cursor {
   trackIndex: number;

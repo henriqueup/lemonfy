@@ -20,10 +20,9 @@ const popLastPatches = (patches: TaggedPatch[]): TaggedPatch[] => {
 
   let currentPatch = patches.pop();
   while (currentPatch !== undefined) {
+    if (lastPatches.length && currentPatch.tag !== lastPatches[0]!.tag) break;
+
     lastPatches.push(currentPatch);
-
-    if (currentPatch.tag !== lastPatches[0]!.tag) break;
-
     currentPatch = patches.pop();
   }
 
