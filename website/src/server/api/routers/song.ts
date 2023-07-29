@@ -8,7 +8,6 @@ export const songRouter = createTRPCRouter({
     return ctx.domainWrapper.Song.save(input);
   }),
   list: publicProcedure.input(z.undefined()).query(async ({ ctx }) => {
-    // await new Promise(res => setTimeout(res, 2000));
     return ctx.domainWrapper.Song.list();
   }),
   get: publicProcedure.input(z.string().cuid()).query(({ input, ctx }) => {

@@ -10,7 +10,7 @@ jest.unmock("immer");
 describe("Undo", () => {
   it("Does nothing with no previous patches", () => {
     const song = getMockSong();
-    song.sheets[0] = getCompleteMoonlightSonataMockSheet();
+    song.instruments[0] = getCompleteMoonlightSonataMockSheet();
 
     const undoResult = handleChangeHistory(song, "undo");
     const redoResult = handleChangeHistory(undoResult, "redo");
@@ -21,16 +21,16 @@ describe("Undo", () => {
 
   it("Undoes and redos same tagged patches", () => {
     const song = getMockSong();
-    song.sheets[0] = getCompleteMoonlightSonataMockSheet();
+    song.instruments[0] = getCompleteMoonlightSonataMockSheet();
 
     // remove some notes
     const songAfterFirstChange = produceUndoneableAction(song, draft => {
-      SheetModule.removeNotesFromSheet(draft.sheets[0]!, 2, [
-        draft.sheets[0]!.tracks[2]![2]!,
-        draft.sheets[0]!.tracks[2]![3]!,
+      SheetModule.removeNotesFromSheet(draft.instruments[0]!, 2, [
+        draft.instruments[0]!.tracks[2]![2]!,
+        draft.instruments[0]!.tracks[2]![3]!,
       ]);
 
-      SheetModule.fillBarTracksInSheet(draft.sheets[0]!, 2);
+      SheetModule.fillBarTracksInSheet(draft.instruments[0]!, 2);
     });
 
     // add a note
@@ -38,7 +38,7 @@ describe("Undo", () => {
       songAfterFirstChange,
       draft => {
         SheetModule.addNoteToSheet(
-          draft.sheets[0]!,
+          draft.instruments[0]!,
           2,
           createNote(
             NOTE_DURATIONS.EIGHTH_TRIPLET,
@@ -47,7 +47,7 @@ describe("Undo", () => {
           ),
         );
 
-        SheetModule.fillBarTracksInSheet(draft.sheets[0]!, 2);
+        SheetModule.fillBarTracksInSheet(draft.instruments[0]!, 2);
       },
     );
 

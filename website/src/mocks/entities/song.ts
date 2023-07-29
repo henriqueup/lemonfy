@@ -5,6 +5,6 @@ export const getMockSong = (sheets?: Sheet[]): Song => {
   return {
     name: "Moonlight Sonata",
     artist: "Beethoven",
-    sheets: sheets ?? [],
+    instruments: sheets ?? [],
   };
 };

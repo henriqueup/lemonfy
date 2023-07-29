@@ -1,6 +1,8 @@
 import type { ISongRepository } from "@domains/repositories";
 import SheetModule from "@entities/sheet";
+import type { Instrument } from "@entities/instrument";
 import type { Song, SongInfo } from "@entities/song";
+import { BusinessException } from "@/utils/exceptions";
 
 export interface ISongDomain {
   save: (song: Song) => Promise<string>;
@@ -10,13 +12,15 @@ export interface ISongDomain {
 }
 
 class SongDomain implements ISongDomain {
-  private readonly SongRepository!: ISongRepository;
+  private readonly SongRepository: ISongRepository;
 
   constructor(songRepository: ISongRepository) {
     this.SongRepository = songRepository;
   }
 
   async save(song: Song) {
+    this.validateInstrumentsAlreadyExist(song.instruments);
+
     if (song.id === undefined) {
       return this.SongRepository.create(song);
     }
@@ -34,12 +38,28 @@ class SongDomain implements ISongDomain {
 
     if (result === null) throw new Error(`No Song with id: ${songId}.`);
 
-    result.sheets.forEach(sheet => SheetModule.fillBarsInSheet(sheet));
+    result.instruments.forEach(instrument => {
+      if (instrument.sheet) SheetModule.fillBarsInSheet(instrument.sheet);
+    });
     return result;
   }
 
   deleteMany(songIds: string[]): Promise<void> {
     return this.SongRepository.deleteMany(songIds);
+  }
+
+  private validateInstrumentsAlreadyExist(instruments: Instrument[]): void {
+    const instrumentsWithoutId = instruments
+      .filter(instrument => instrument.id === undefined)
+      .map(instrument => instrument.name);
+
+    if (instrumentsWithoutId.length) {
+      throw new BusinessException(
+        `All Instruments should already exist, but the following don't: ${instrumentsWithoutId.join(
+          ", ",
+        )}.`,
+      );
+    }
   }
 }
 

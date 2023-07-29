@@ -1,37 +1,39 @@
-import type { ISongRepository } from "@domains/repositories";
+import type {
+  IInstrumentRepository,
+  ISongRepository,
+} from "@domains/repositories";
 import SongDomain, { type ISongDomain } from "@domains/song";
 import SongPrismaRepository from "@repositories/prisma/song";
 import { prisma } from "../db";
+import InstrumentDomain, {
+  type IInstrumentDomain,
+} from "@/server/domains/instrument";
+import InstrumentPrismaRepository from "@/server/repositories/prisma/instrument";
 
 export interface IDomainWrapper {
   readonly Song: ISongDomain;
+  readonly Instrument: IInstrumentDomain;
 }
 
 class DomainWrapper implements IDomainWrapper {
-  readonly Song!: ISongDomain;
+  readonly Song: ISongDomain;
+  readonly Instrument: IInstrumentDomain;
 
-  constructor(songRepository: ISongRepository) {
+  constructor(
+    songRepository: ISongRepository,
+    instrumentRepository: IInstrumentRepository,
+  ) {
     this.Song = new SongDomain(songRepository);
+    this.Instrument = new InstrumentDomain(instrumentRepository);
   }
 }
 
-type PersistanceTypes = "prisma";
-
 class DomainWrapperFactory {
-  readonly persistanceType!: PersistanceTypes;
-
-  constructor(persistanceType: PersistanceTypes) {
-    this.persistanceType = persistanceType;
-  }
-
-  build(): IDomainWrapper {
-    switch (this.persistanceType) {
-      case "prisma":
-        return new DomainWrapper(new SongPrismaRepository(prisma));
-
-      default:
-        throw new Error("Invalid persistance type.");
-    }
+  create(): IDomainWrapper {
+    return new DomainWrapper(
+      new SongPrismaRepository(prisma),
+      new InstrumentPrismaRepository(prisma),
+    );
   }
 }
 

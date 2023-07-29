@@ -1,0 +1,89 @@
+import { Prisma, type PrismaClient } from "@prisma/client";
+
+import type { IInstrumentRepository } from "@domains/repositories";
+import InstrumentModule, {
+  type InstrumentInfo,
+  type Instrument,
+  InstrumentInfoSchema,
+} from "@/server/entities/instrument";
+import { type Pitch, createPitchFromKey } from "@entities/pitch";
+import { BusinessException } from "@/utils/exceptions";
+
+class InstrumentPrismaRepository implements IInstrumentRepository {
+  readonly prisma: PrismaClient;
+
+  constructor(prisma: PrismaClient) {
+    this.prisma = prisma;
+  }
+
+  async create(instrument: Instrument) {
+    try {
+      const result = await this.prisma.instrument.create({
+        data: mapInstrumentToCreateInput(instrument),
+      });
+
+      return result.id;
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === "P2002") {
+          throw new BusinessException(
+            `Instrument '${instrument.name}' already exists.`,
+          );
+        }
+      }
+
+      throw error;
+    }
+  }
+
+  async list(): Promise<InstrumentInfo[]> {
+    const instruments = await this.prisma.instrument.findMany({
+      include: instrumentIncludes,
+    });
+
+    return instruments.map(instrument =>
+      InstrumentInfoSchema.parse(mapInstrumentModelToEntity(instrument)),
+    );
+  }
+}
+
+export const instrumentIncludes = Prisma.validator<Prisma.InstrumentInclude>()({
+  InstrumentTunning: true,
+});
+
+type InstrumentModel = Prisma.InstrumentGetPayload<{
+  include: typeof instrumentIncludes;
+}>;
+
+const mapInstrumentToCreateInput = (
+  instrument: Instrument,
+): Prisma.InstrumentCreateInput => {
+  return {
+    ...instrument,
+    InstrumentTunning: mapInstrumentTuningToCreateInput(instrument.tunning),
+  };
+};
+
+const mapInstrumentTuningToCreateInput = (pitches: Pitch[]) => {
+  return {
+    connectOrCreate: pitches.map(pitch => ({
+      where: { pitch: pitch.key },
+      create: { pitch: pitch.key },
+    })),
+  };
+};
+
+export const mapInstrumentModelToEntity = (
+  model: InstrumentModel,
+): Instrument => {
+  return InstrumentModule.createInstrument(
+    model.name,
+    model.type,
+    model.trackCount,
+    model.InstrumentTunning.map(tunning => createPitchFromKey(tunning.pitch)),
+    model.isFretted,
+    model.id,
+  );
+};
+
+export default InstrumentPrismaRepository;

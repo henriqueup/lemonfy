@@ -20,7 +20,7 @@ import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 
 import DomainWrapperFactory from "src/server/api/domainWrapper";
 
-export const domainWrapper = new DomainWrapperFactory("prisma").build();
+export const domainWrapper = new DomainWrapperFactory().create();
 
 type CreateContextOptions = Record<string, never>;
 /**

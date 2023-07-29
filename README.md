@@ -80,7 +80,7 @@ And finally, it can also be used as a showcase of my skills.
     - <s>Use tRPC, see: https://github.com/trpc/trpc/discussions/2036#discussioncomment-4488650</s>
   - <s>Add success toast</s>
 - <s>Enable Song edition</s>
-- Add Immer
+- <s>Add Immer</s>
   - <s>Fix nesting</s>
   - <s>Fix tests</s>
   - <s>Add undo/redo</s>
@@ -88,12 +88,16 @@ And finally, it can also be used as a showcase of my skills.
     - <s>Fix tests</s>
     - <s>Add tests</s>
 - Change Sheet to Instruments
-  - Base interface
-    - Name
-    - Number of tracks
-    - Sheet
-    - IsFretted
-    - AddNote()
+  - Fields
+    - name
+    - type
+    - trackCount
+    - tunning
+    - isFretted
+    - sheet
+  - Add classes in layers
+  - Adjust Song classes
+  - Add Instrument management page
 - <s>Add modal component</s>
 - Add Bar copy/paste
 - Add mouse support

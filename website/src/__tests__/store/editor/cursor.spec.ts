@@ -42,7 +42,7 @@ describe("Increase track index", () => {
   it("Does nothing when index already maxed", () => {
     useEditorStore.setState(state => ({
       song: getMockSong([getEmptyMockSheet()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { ...state.cursor, trackIndex: 2 },
     }));
     increaseCursorTrackIndex();
@@ -56,7 +56,7 @@ describe("Increase track index", () => {
   it("Increases the track index", () => {
     useEditorStore.setState(state => ({
       song: getMockSong([getEmptyMockSheet()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { ...state.cursor, trackIndex: 1 },
     }));
     increaseCursorTrackIndex();
@@ -78,7 +78,7 @@ describe("Decrease track index", () => {
   it("Does nothing when index is 0", () => {
     useEditorStore.setState(() => ({
       song: getMockSong([getEmptyMockSheet()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
     }));
     decreaseCursorTrackIndex();
 
@@ -90,7 +90,7 @@ describe("Decrease track index", () => {
   it("Decreases the track index", () => {
     useEditorStore.setState(state => ({
       song: getMockSong([getEmptyMockSheet()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { ...state.cursor, trackIndex: 1 },
     }));
     decreaseCursorTrackIndex();
@@ -112,7 +112,7 @@ describe("Increase Bar index", () => {
   it("Does nothing when index already maxed", () => {
     useEditorStore.setState(state => ({
       song: getMockSong([getMockSheetWithBars()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { ...state.cursor, barIndex: 2 },
     }));
     increaseCursorBarIndex();
@@ -126,7 +126,7 @@ describe("Increase Bar index", () => {
   it("Increases the Bar index and sets position to 0", () => {
     useEditorStore.setState(state => ({
       song: getMockSong([getMockSheetWithBars()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { ...state.cursor, barIndex: 1, position: 1 },
     }));
     increaseCursorBarIndex();
@@ -148,7 +148,7 @@ describe("Decrease Bar index", () => {
   it("Does nothing when index is 0", () => {
     useEditorStore.setState(() => ({
       song: getMockSong([getEmptyMockSheet()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
     }));
     decreaseCursorBarIndex();
 
@@ -160,7 +160,7 @@ describe("Decrease Bar index", () => {
   it("Decreases the Bar index and sets position to 0", () => {
     useEditorStore.setState(state => ({
       song: getMockSong([getMockSheetWithBars()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { ...state.cursor, barIndex: 1, position: 1 },
     }));
     decreaseCursorBarIndex();
@@ -182,7 +182,7 @@ describe("Increase cursor position", () => {
   it("Does nothing with undefined Bar", () => {
     useEditorStore.setState(state => ({
       song: getMockSong([getMockSheetWithBars()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { ...state.cursor, barIndex: 4 },
     }));
     increaseCursorPosition();
@@ -196,7 +196,7 @@ describe("Increase cursor position", () => {
   it("Does nothing when position is end of Bar", () => {
     useEditorStore.setState(state => ({
       song: getMockSong([getMockSheetWithBars()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { ...state.cursor, position: 3 / 4 },
     }));
     increaseCursorPosition();
@@ -210,7 +210,7 @@ describe("Increase cursor position", () => {
   it("Increases position without next Note and no Note within selected duration", () => {
     useEditorStore.setState(state => ({
       song: getMockSong([getMockSheetWithGap()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { ...state.cursor, position: 1 / 4 },
       selectedNoteDuration: "HALF",
     }));
@@ -225,7 +225,7 @@ describe("Increase cursor position", () => {
   it("Increases position with resulting position larger than Bar", () => {
     useEditorStore.setState(state => ({
       song: getMockSong([getMockSheetWithGap()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { ...state.cursor, position: 1 / 4 },
       selectedNoteDuration: "WHOLE",
     }));
@@ -243,7 +243,7 @@ describe("Increase cursor position", () => {
     );
     useEditorStore.setState(state => ({
       song: getMockSong([getMockSheetWithGap()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { ...state.cursor, trackIndex: 1, position: 1 / 4 },
       selectedNoteDuration: "HALF",
     }));
@@ -262,7 +262,7 @@ describe("Increase cursor position", () => {
     );
     useEditorStore.setState(state => ({
       song: getMockSong([getMockSheetWithGap()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { ...state.cursor, trackIndex: 1 },
       selectedNoteDuration: "HALF",
     }));
@@ -282,7 +282,7 @@ describe("Increase cursor position", () => {
     );
     useEditorStore.setState(state => ({
       song: getMockSong([getMockSheetWithGap()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { ...state.cursor, trackIndex: 1 },
       selectedNoteDuration: "EIGHTH",
     }));
@@ -302,7 +302,7 @@ describe("Increase cursor position", () => {
     );
     useEditorStore.setState(state => ({
       song: getMockSong([getMockSheetWithGap()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { ...state.cursor, trackIndex: 1, position: 1 / 8 },
       selectedNoteDuration: "EIGHTH",
     }));
@@ -331,7 +331,7 @@ describe("Decrease cursor position", () => {
   it("Does nothing with undefined Bar", () => {
     useEditorStore.setState(state => ({
       song: getMockSong([getMockSheetWithBars()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { ...state.cursor, barIndex: 4 },
     }));
     decreaseCursorPosition();
@@ -345,7 +345,7 @@ describe("Decrease cursor position", () => {
   it("Does nothing when position is start of Bar", () => {
     useEditorStore.setState(() => ({
       song: getMockSong([getMockSheetWithBars()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
     }));
     decreaseCursorPosition();
 
@@ -355,7 +355,7 @@ describe("Decrease cursor position", () => {
   it("Decreases position without previous Note and no Note within selected duration", () => {
     useEditorStore.setState(state => ({
       song: getMockSong([getMockSheetWithGap()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { ...state.cursor, position: 3 / 4 },
       selectedNoteDuration: "HALF",
     }));
@@ -370,7 +370,7 @@ describe("Decrease cursor position", () => {
   it("Decreases position with resulting position smaller than 0", () => {
     useEditorStore.setState(state => ({
       song: getMockSong([getMockSheetWithGap()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { ...state.cursor, position: 3 / 4 },
       selectedNoteDuration: "WHOLE",
     }));
@@ -387,7 +387,7 @@ describe("Decrease cursor position", () => {
     );
     useEditorStore.setState(state => ({
       song: getMockSong([getMockSheetWithGap()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { ...state.cursor, trackIndex: 1, position: 2 / 4 },
       selectedNoteDuration: "HALF",
     }));
@@ -406,7 +406,7 @@ describe("Decrease cursor position", () => {
     );
     useEditorStore.setState(state => ({
       song: getMockSong([getMockSheetWithGap()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { ...state.cursor, trackIndex: 1, position: 3 / 4 },
       selectedNoteDuration: "HALF",
     }));
@@ -426,7 +426,7 @@ describe("Decrease cursor position", () => {
     );
     useEditorStore.setState(state => ({
       song: getMockSong([getMockSheetWithGap()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { ...state.cursor, trackIndex: 1, position: 3 / 4 },
       selectedNoteDuration: "EIGHTH",
     }));
@@ -446,7 +446,7 @@ describe("Decrease cursor position", () => {
     );
     useEditorStore.setState(state => ({
       song: getMockSong([getMockSheetWithGap()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { ...state.cursor, trackIndex: 1, position: 5 / 8 },
       selectedNoteDuration: "EIGHTH",
     }));
@@ -471,7 +471,7 @@ describe("Move cursor to end of Bar", () => {
   it("Does nothing with undefined Bar", () => {
     useEditorStore.setState(() => ({
       song: getMockSong([getEmptyMockSheet()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
     }));
     moveCursorToEndOfBar();
 
@@ -481,7 +481,7 @@ describe("Move cursor to end of Bar", () => {
   it("Moves cursor from 0 to end of Bar", () => {
     useEditorStore.setState(state => ({
       song: getMockSong([getMockSheetWithBars()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { ...state.cursor, barIndex: 1 },
     }));
     moveCursorToEndOfBar();
@@ -496,7 +496,7 @@ describe("Move cursor to end of Bar", () => {
   it("Moves cursor from middle to end of Bar", () => {
     useEditorStore.setState(state => ({
       song: getMockSong([getMockSheetWithBars()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { ...state.cursor, barIndex: 1, position: 1 / 4 },
     }));
     moveCursorToEndOfBar();
@@ -519,7 +519,7 @@ describe("Move cursor to start of Bar", () => {
   it("Moves cursor to start of Bar", () => {
     useEditorStore.setState(state => ({
       song: getMockSong([getMockSheetWithBars()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { ...state.cursor, barIndex: 1, position: 1 / 4 },
     }));
     moveCursorToStartOfBar();

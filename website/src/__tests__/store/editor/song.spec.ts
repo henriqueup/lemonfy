@@ -50,7 +50,7 @@ beforeEach(() => {
 
 describe("Set Song", () => {
   it("Sets Song", () => {
-    const song: Song = { name: "", artist: "", sheets: [] };
+    const song: Song = { name: "", artist: "", instruments: [] };
     songModuleWithMocks.createSong.mockImplementation(() => song);
 
     setSong("Test song", "Me");
@@ -73,7 +73,7 @@ describe("Load Song", () => {
     const song: Song = {
       name: "Test song",
       artist: "Me",
-      sheets: [sheet1, sheet2],
+      instruments: [sheet1, sheet2],
     };
 
     loadSong(song);

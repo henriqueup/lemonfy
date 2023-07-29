@@ -9,7 +9,7 @@ import {
 import { produceUndoneableAction } from "@/utils/immer";
 
 export const loadSong = (song: Song) =>
-  useEditorStore.setState({ song, currentSheetIndex: 0 });
+  useEditorStore.setState({ song, currentInstrumentIndex: 0 });
 
 export const setSong = (name: string, artist: string) =>
   useEditorStore.setState(state =>
@@ -47,7 +47,7 @@ export const addSheet = (trackCount: number) =>
       const newSheet = SheetModule.createSheet(trackCount);
 
       handleStorableAction(draft);
-      draft.song.sheets.push(newSheet);
-      draft.currentSheetIndex = draft.song.sheets.length - 1;
+      draft.song.instruments.push(newSheet);
+      draft.currentInstrumentIndex = draft.song.instruments.length - 1;
     }),
   );

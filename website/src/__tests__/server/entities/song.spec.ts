@@ -6,6 +6,6 @@ describe("Create Song", () => {
 
     expect(newSong.name).toBe("Test song");
     expect(newSong.artist).toBe("Me");
-    expect(newSong.sheets).toHaveLength(0);
+    expect(newSong.instruments).toHaveLength(0);
   });
 });

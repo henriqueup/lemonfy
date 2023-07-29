@@ -48,7 +48,7 @@ describe("Play", () => {
   it("Does nothing with empty Sheet", () => {
     useEditorStore.setState({
       song: getMockSong([getEmptyMockSheet()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
     });
     play([]);
 
@@ -61,7 +61,7 @@ describe("Play", () => {
     const sheet = getMockSheetWithBars();
     useEditorStore.setState({
       song: getMockSong([sheet]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { trackIndex: 0, barIndex: 2, position: 1 / 4 },
     });
 
@@ -84,7 +84,7 @@ describe("Play", () => {
     const sheet = getMockSheetWithBars();
     useEditorStore.setState(() => ({
       song: getMockSong([sheet]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
     }));
 
     const dateAtStart = new Date(referenceDate);
@@ -209,7 +209,7 @@ describe("Pause", () => {
     });
     useEditorStore.setState({
       song: getMockSong([getEmptyMockSheet()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
     });
 
     pause();
@@ -230,7 +230,7 @@ describe("Pause", () => {
     });
     useEditorStore.setState({
       song: getMockSong([getMockSheetWithBars()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
     });
 
     pause();
@@ -252,7 +252,7 @@ describe("Pause", () => {
     }));
     useEditorStore.setState({
       song: getMockSong([getMockSheetWithBars()]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
     });
 
     const dateAtPause = new Date(referenceDate);
@@ -342,7 +342,7 @@ describe("Wind up", () => {
     (isRewind, isFull) => {
       useEditorStore.setState({
         song: getMockSong([getEmptyMockSheet()]),
-        currentSheetIndex: 0,
+        currentInstrumentIndex: 0,
       });
       windUp(isRewind, isFull);
 
@@ -354,7 +354,7 @@ describe("Wind up", () => {
     const sheet = getMockSheetWithBars();
     useEditorStore.setState({
       song: getMockSong([sheet]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { trackIndex: 0, barIndex: 1, position: 1 / 4 },
     });
 
@@ -375,7 +375,7 @@ describe("Wind up", () => {
     const sheet = getMockSheetWithBars();
     useEditorStore.setState({
       song: getMockSong([sheet]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { trackIndex: 0, barIndex: 0, position: 1 / 4 },
     });
     usePlayerStore.setState({
@@ -402,7 +402,7 @@ describe("Wind up", () => {
       const sheet = getMockSheetWithBars();
       useEditorStore.setState({
         song: getMockSong([sheet]),
-        currentSheetIndex: 0,
+        currentInstrumentIndex: 0,
         cursor: { trackIndex: 0, barIndex: 0, position: 1 / 4 },
       });
       usePlayerStore.setState({
@@ -428,7 +428,7 @@ describe("Wind up", () => {
     const sheet = getMockSheetWithBars();
     useEditorStore.setState({
       song: getMockSong([sheet]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { trackIndex: 0, barIndex: 1, position: 0 },
     });
 
@@ -449,7 +449,7 @@ describe("Wind up", () => {
     const sheet = getMockSheetWithBars();
     useEditorStore.setState({
       song: getMockSong([sheet]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { trackIndex: 0, barIndex: 1, position: 1 / 4 },
     });
 
@@ -470,7 +470,7 @@ describe("Wind up", () => {
     const sheet = getMockSheetWithBars();
     useEditorStore.setState({
       song: getMockSong([sheet]),
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { trackIndex: 0, barIndex: 1, position: 1 / 4 },
     });
     usePlayerStore.setState({
@@ -497,7 +497,7 @@ describe("Wind up", () => {
       const sheet = getMockSheetWithBars();
       useEditorStore.setState({
         song: getMockSong([sheet]),
-        currentSheetIndex: 0,
+        currentInstrumentIndex: 0,
         cursor: { trackIndex: 0, barIndex: 0, position: 1 / 4 },
       });
       usePlayerStore.setState({

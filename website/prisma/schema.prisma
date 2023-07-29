@@ -10,36 +10,67 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-}
-
 model Song {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
 
-    name   String
-    artist String
-    sheets Sheet[]
+    name        String
+    artist      String
+    instruments SongInstrument[]
 
     @@unique([name, artist])
 }
 
+model SongInstrument {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+
+    Song         Song       @relation(fields: [songId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    songId       String
+    Instrument   Instrument @relation(fields: [instrumentId], references: [id])
+    instrumentId String
+    Sheet        Sheet?
+}
+
+model Instrument {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+
+    name       String
+    type       String
+    trackCount Int
+    isFretted  Boolean
+
+    SongInstrument    SongInstrument[]
+    InstrumentTunning InstrumentTunning[]
+
+    @@unique([name])
+}
+
+model InstrumentTunning {
+    pitch        String     @id
+    Instrument   Instrument @relation(fields: [instrumentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    instrumentId String
+}
+
 model Sheet {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+
     trackCount Int
     bars       Bar[]
     notes      Note[]
 
-    Song   Song   @relation(fields: [songId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    songId String
+    SongInstrument   SongInstrument @relation(fields: [songInstrumentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    songInstrumentId String
 
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
+    @@unique([songInstrumentId])
 }
 
 model Bar {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+
     beatCount   Int
     dibobinador Int
     tempo       Int
@@ -47,14 +78,14 @@ model Bar {
     capacity    Float
     index       Int
 
-    Sheet   Sheet?  @relation(fields: [sheetId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    sheetId String?
-
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
+    Sheet   Sheet  @relation(fields: [sheetId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    sheetId String
 }
 
 model Note {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+
     trackIndex Int
     start      Float
     duration   Float
@@ -62,37 +93,6 @@ model Note {
     hasSustain Boolean @default(false)
     isSustain  Boolean @default(false)
 
-    Sheet   Sheet?  @relation(fields: [sheetId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    sheetId String?
-
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
+    Sheet   Sheet  @relation(fields: [sheetId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    sheetId String
 }
-
-// Example from docs
-
-// model Post {
-//   id        Int      @id @default(autoincrement())
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-//   title     String   @db.VarChar(255)
-//   content   String?
-//   published Boolean  @default(false)
-//   author    User     @relation(fields: [authorId], references: [id])
-//   authorId  Int
-// }
-
-// model Profile {
-//   id     Int     @id @default(autoincrement())
-//   bio    String?
-//   user   User    @relation(fields: [userId], references: [id])
-//   userId Int     @unique
-// }
-
-// model User {
-//   id      Int      @id @default(autoincrement())
-//   email   String   @unique
-//   name    String?
-//   posts   Post[]
-//   profile Profile?
-// }

@@ -82,7 +82,7 @@ describe("Add Bar", () => {
     const song = getMockSong([sheet]);
     useEditorStore.setState(() => ({
       song,
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
     }));
 
     addBar(6, 8, 120);
@@ -123,7 +123,7 @@ describe("Add copy of current Bar", () => {
     const song = getMockSong([sheet]);
     useEditorStore.setState(() => ({
       song,
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
     }));
 
     addCopyOfCurrentBar();
@@ -140,7 +140,7 @@ describe("Add copy of current Bar", () => {
     const song = getMockSong([sheet]);
     useEditorStore.setState(() => ({
       song,
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
     }));
 
     addCopyOfCurrentBar();
@@ -190,7 +190,7 @@ describe("Add Note", () => {
     const song = getMockSong([sheet]);
     useEditorStore.setState(() => ({
       song,
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
     }));
 
     addNote(4, "B", 2);
@@ -221,7 +221,7 @@ describe("Add Note", () => {
       const song = getMockSong([sheet]);
       useEditorStore.setState(() => ({
         song,
-        currentSheetIndex: 0,
+        currentInstrumentIndex: 0,
       }));
 
       sheetModuleWithMocks.addNoteToSheet.mockImplementation(
@@ -280,7 +280,7 @@ describe("Add Note", () => {
       const song = getMockSong([sheet]);
       useEditorStore.setState(() => ({
         song,
-        currentSheetIndex: 0,
+        currentInstrumentIndex: 0,
         cursor: {
           ...INITIAL_STATE.cursor,
           barIndex: 1,
@@ -355,7 +355,7 @@ describe("Remove Note from Bar", () => {
     const song = getMockSong([sheet]);
     useEditorStore.setState(() => ({
       song,
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
     }));
 
     sheetModuleWithMocks.removeNotesFromSheet.mockImplementation(
@@ -419,7 +419,7 @@ describe("Remove next Note from Bar", () => {
       const song = getMockSong([sheet]);
       useEditorStore.setState(() => ({
         song,
-        currentSheetIndex: 0,
+        currentInstrumentIndex: 0,
       }));
       removeNextNoteFromBar(lookForward);
 
@@ -434,7 +434,7 @@ describe("Remove next Note from Bar", () => {
       const song = getMockSong([sheet]);
       useEditorStore.setState(() => ({
         song,
-        currentSheetIndex: 0,
+        currentInstrumentIndex: 0,
         cursor: { ...INITIAL_STATE.cursor, trackIndex: 1, position: 1 / 4 },
       }));
 
@@ -465,7 +465,7 @@ describe("Remove next Note from Bar", () => {
       const song = getMockSong([sheet]);
       useEditorStore.setState(() => ({
         song,
-        currentSheetIndex: 0,
+        currentInstrumentIndex: 0,
         cursor: { ...INITIAL_STATE.cursor, trackIndex: 1, position: 2 / 4 },
       }));
 
@@ -519,7 +519,7 @@ describe("Remove next Note from Bar", () => {
     const song = getMockSong([sheet]);
     useEditorStore.setState(() => ({
       song,
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { ...INITIAL_STATE.cursor, trackIndex: 1 },
     }));
 
@@ -559,7 +559,7 @@ describe("Remove next Note from Bar", () => {
     const song = getMockSong([sheet]);
     useEditorStore.setState(() => ({
       song,
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
       cursor: { ...INITIAL_STATE.cursor, trackIndex: 1, barIndex: 1 },
     }));
 
@@ -626,7 +626,7 @@ describe("Remove Bar by index", () => {
     const song = getMockSong([sheet]);
     useEditorStore.setState(() => ({
       song,
-      currentSheetIndex: 0,
+      currentInstrumentIndex: 0,
     }));
 
     sheetModuleWithMocks.removeBarInSheetByIndex.mockImplementation(

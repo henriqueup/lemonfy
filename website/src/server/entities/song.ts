@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { SheetSchema } from "@entities/sheet";
+import { InstrumentSchema } from "@/server/entities/instrument";
 
 export const BaseSongSchema = z.object({
   id: z.string().cuid().optional(),
@@ -16,7 +16,7 @@ export const SongInfoSchema = BaseSongSchema.merge(
 
 export const SongSchema = BaseSongSchema.merge(
   z.object({
-    sheets: z.array(SheetSchema),
+    instruments: z.array(InstrumentSchema),
   }),
 );
 
@@ -33,7 +33,7 @@ const SongModule: ISongModule = {
       id,
       name,
       artist,
-      sheets: [],
+      instruments: [],
     });
   },
 };

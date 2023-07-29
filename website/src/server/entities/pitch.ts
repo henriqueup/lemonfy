@@ -57,7 +57,7 @@ export const createPitch = (name: PitchName, octave: Octave): Pitch => {
     name,
     octave,
     key,
-    frequency: FrequencyDictionary[key] || 0,
+    frequency: FrequencyDictionary[key] ?? 0,
   });
 };
 
@@ -69,7 +69,7 @@ export const createPitchFromKey = (key: string): Pitch => {
     name,
     octave,
     key: parsedKey,
-    frequency: FrequencyDictionary[parsedKey] || 0,
+    frequency: FrequencyDictionary[parsedKey] ?? 0,
   });
 };
 
