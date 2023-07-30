@@ -1,4 +1,4 @@
-import { type FunctionComponent, useMemo } from "react";
+import { type FunctionComponent, useMemo, useState } from "react";
 import type { z } from "zod";
 import { ChevronsUpDown, Info, Plus } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -59,6 +59,9 @@ import {
   FrequencyDictionary,
   createPitchFromKey,
 } from "@/server/entities/pitch";
+import { api } from "@/utils/api";
+import { setGlobalLoading } from "@/store/global/globalActions";
+import { toast } from "@/hooks/useToast";
 
 const FormSchema = BaseInstrumentSchema.omit({ id: true }).superRefine(
   instrumentRefineCallback,
@@ -74,9 +77,29 @@ const defaultValues: Form = {
 };
 
 const CreateInstrumentDialog: FunctionComponent = () => {
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const form = useForm<Form>({
     resolver: zodResolver(FormSchema),
     defaultValues,
+  });
+
+  const createInstrumentMutation = api.instrument.save.useMutation({
+    useErrorBoundary: error => !error.data?.isBusinessException,
+    onSettled: () => setGlobalLoading(false),
+    onError: error => {
+      if (error.data?.isBusinessException)
+        toast({
+          variant: "destructive",
+          title: error.message,
+        });
+    },
+    onSuccess: () => {
+      toast({
+        variant: "success",
+        title: "Instrument created successfully.",
+      });
+      setIsDialogOpen(false);
+    },
   });
 
   const tunings = useMemo(() => {
@@ -124,14 +147,14 @@ const CreateInstrumentDialog: FunctionComponent = () => {
   };
 
   const handleSubmit = (values: Form) => {
-    // await new Promise(resolve => setTimeout(resolve, 2000));
-    console.log(values);
+    setGlobalLoading(true);
+    createInstrumentMutation.mutate(values);
   };
 
   return (
-    <Dialog onOpenChange={() => form.reset(defaultValues)}>
+    <Dialog onOpenChange={() => form.reset(defaultValues)} open={isDialogOpen}>
       <DialogTrigger asChild>
-        <Button variant="success">
+        <Button variant="success" onClick={() => setIsDialogOpen(true)}>
           <Plus className="mr-1 h-4 w-4" /> Create Instrument
         </Button>
       </DialogTrigger>

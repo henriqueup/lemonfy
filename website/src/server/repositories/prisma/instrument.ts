@@ -59,7 +59,10 @@ const mapInstrumentToCreateInput = (
   instrument: Instrument,
 ): Prisma.InstrumentCreateInput => {
   return {
-    ...instrument,
+    name: instrument.name,
+    type: instrument.type,
+    trackCount: instrument.trackCount,
+    isFretted: instrument.isFretted,
     InstrumentTuning: mapInstrumentTuningToCreateInput(instrument.tuning),
   };
 };

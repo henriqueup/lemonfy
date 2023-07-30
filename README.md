@@ -99,6 +99,7 @@ And finally, it can also be used as a showcase of my skills.
   - <s>Adjust Song classes</s>
   - Add Instrument management page
     - Add creation dialog
+      - <s>Integrate cration with backend</s>
       - Fix tuning scroll and popover position
     - Add data table
   - Add Instrument to song creation in Editor

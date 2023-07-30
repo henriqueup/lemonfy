@@ -18,8 +18,8 @@ export const MyApp: AppType = ({ Component, pageProps }) => {
         </div>
         <Toaster />
         {isLoading ? (
-          <div className="absolute left-0 top-0 h-screen w-screen">
-            <LoadingSpinner className="z-50 bg-background/80 backdrop-blur-sm transition-opacity" />
+          <div className="absolute left-0 top-0 z-[60] h-screen w-screen">
+            <LoadingSpinner className="bg-background/80 backdrop-blur-sm transition-opacity" />
           </div>
         ) : null}
       </ErrorBoundary>
