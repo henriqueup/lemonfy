@@ -48,7 +48,7 @@ class InstrumentPrismaRepository implements IInstrumentRepository {
 }
 
 export const instrumentIncludes = Prisma.validator<Prisma.InstrumentInclude>()({
-  InstrumentTunning: true,
+  InstrumentTuning: true,
 });
 
 type InstrumentModel = Prisma.InstrumentGetPayload<{
@@ -60,7 +60,7 @@ const mapInstrumentToCreateInput = (
 ): Prisma.InstrumentCreateInput => {
   return {
     ...instrument,
-    InstrumentTunning: mapInstrumentTuningToCreateInput(instrument.tunning),
+    InstrumentTuning: mapInstrumentTuningToCreateInput(instrument.tuning),
   };
 };
 
@@ -80,7 +80,7 @@ export const mapInstrumentModelToEntity = (
     model.name,
     model.type,
     model.trackCount,
-    model.InstrumentTunning.map(tunning => createPitchFromKey(tunning.pitch)),
+    model.InstrumentTuning.map(tuning => createPitchFromKey(tuning.pitch)),
     model.isFretted,
     model.id,
   );

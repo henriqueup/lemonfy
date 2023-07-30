@@ -5,6 +5,7 @@ import {
   MenubarContent,
   MenubarItem,
   MenubarMenu,
+  MenubarSeparator,
   MenubarShortcut,
   MenubarTrigger,
 } from "@/components/ui/Menubar";
@@ -49,6 +50,10 @@ const FileMenu: FunctionComponent = () => {
     void router.push("/editor");
   };
 
+  const handleInstruments = () => {
+    void router.push("/instruments");
+  };
+
   useShortcuts({
     "new.song": {
       callback: handleNewSong,
@@ -77,6 +82,8 @@ const FileMenu: FunctionComponent = () => {
         >
           Save Song <MenubarShortcut>⌘S</MenubarShortcut>
         </MenubarItem>
+        <MenubarSeparator />
+        <MenubarItem onClick={handleInstruments}>Instruments</MenubarItem>
       </MenubarContent>
     </MenubarMenu>
   );

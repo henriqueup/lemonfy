@@ -1,14 +1,21 @@
 {
   "overrides": [
     {
-      "extends": ["plugin:@typescript-eslint/recommended-requiring-type-checking"],
+      "extends": [
+        "plugin:@typescript-eslint/recommended-requiring-type-checking"
+      ],
       "files": ["*.ts", "*.tsx"],
       "parserOptions": {
         "project": "website/tsconfig.json"
       }
     },
     {
-      "files": ["**/*.spec.ts", "**/*.spec.tsx", "**/*.test.ts", "**/*.test.tsx"],
+      "files": [
+        "**/*.spec.ts",
+        "**/*.spec.tsx",
+        "**/*.test.ts",
+        "**/*.test.tsx"
+      ],
       "plugins": ["jest"],
       "rules": {
         // you should turn the original rule off *only* for test files
@@ -22,8 +29,13 @@
     "project": "website/tsconfig.json"
   },
   "plugins": ["@typescript-eslint"],
-  "extends": ["next/core-web-vitals", "plugin:@typescript-eslint/recommended", "plugin:storybook/recommended"],
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:storybook/recommended"
+  ],
   "rules": {
-    "@typescript-eslint/consistent-type-imports": "warn"
+    "@typescript-eslint/consistent-type-imports": "warn",
+    "@typescript-eslint/no-empty-interface": "warn"
   }
 }

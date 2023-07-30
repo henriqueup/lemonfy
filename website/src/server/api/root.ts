@@ -1,5 +1,5 @@
-import { exampleRouter } from "@routers/example";
 import { songRouter } from "@routers/song";
+import { instrumentRouter } from "@routers/instrument";
 import { createTRPCRouter, domainWrapper } from "./trpc";
 
 /**
@@ -8,7 +8,7 @@ import { createTRPCRouter, domainWrapper } from "./trpc";
  * All routers added in /api/routers should be manually added here
  */
 export const appRouter = createTRPCRouter({
-  example: exampleRouter,
+  instrument: instrumentRouter,
   song: songRouter,
 });
 

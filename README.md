@@ -88,16 +88,20 @@ And finally, it can also be used as a showcase of my skills.
     - <s>Fix tests</s>
     - <s>Add tests</s>
 - Change Sheet to Instruments
-  - Fields
-    - name
-    - type
-    - trackCount
-    - tunning
-    - isFretted
-    - sheet
-  - Add classes in layers
-  - Adjust Song classes
+  - <s>Fields</s>
+    - <s>name</s>
+    - <s>type</s>
+    - <s>trackCount</s>
+    - <s>tuning</s>
+    - <s>isFretted</s>
+    - <s>sheet</s>
+  - <s>Add classes in layers</s>
+  - <s>Adjust Song classes</s>
   - Add Instrument management page
+    - Add creation dialog
+      - Fix tuning scroll and popover position
+    - Add data table
+  - Add Instrument to song creation in Editor
 - <s>Add modal component</s>
 - Add Bar copy/paste
 - Add mouse support

@@ -41,13 +41,13 @@ model Instrument {
     trackCount Int
     isFretted  Boolean
 
-    SongInstrument    SongInstrument[]
-    InstrumentTunning InstrumentTunning[]
+    SongInstrument   SongInstrument[]
+    InstrumentTuning InstrumentTuning[]
 
     @@unique([name])
 }
 
-model InstrumentTunning {
+model InstrumentTuning {
     pitch        String     @id
     Instrument   Instrument @relation(fields: [instrumentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     instrumentId String
