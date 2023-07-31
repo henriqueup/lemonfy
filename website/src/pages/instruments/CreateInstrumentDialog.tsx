@@ -151,8 +151,13 @@ const CreateInstrumentDialog: FunctionComponent = () => {
     createInstrumentMutation.mutate(values);
   };
 
+  const handleOpenChange = (open: boolean) => {
+    form.reset(defaultValues);
+    setIsDialogOpen(open);
+  };
+
   return (
-    <Dialog onOpenChange={() => form.reset(defaultValues)} open={isDialogOpen}>
+    <Dialog onOpenChange={handleOpenChange} open={isDialogOpen}>
       <DialogTrigger asChild>
         <Button variant="success" onClick={() => setIsDialogOpen(true)}>
           <Plus className="mr-1 h-4 w-4" /> Create Instrument
@@ -284,7 +289,7 @@ const CreateInstrumentDialog: FunctionComponent = () => {
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Tuning</FormLabel>
-                  <Popover>
+                  <Popover modal>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
@@ -302,7 +307,7 @@ const CreateInstrumentDialog: FunctionComponent = () => {
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent className="p-0">
+                    <PopoverContent className="p-0" side="top">
                       <Command>
                         <CommandInput placeholder="Search tuning..." />
                         <CommandEmpty>No tuning found.</CommandEmpty>

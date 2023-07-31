@@ -98,9 +98,9 @@ And finally, it can also be used as a showcase of my skills.
   - <s>Add classes in layers</s>
   - <s>Adjust Song classes</s>
   - Add Instrument management page
-    - Add creation dialog
-      - <s>Integrate cration with backend</s>
-      - Fix tuning scroll and popover position
+    - <s>Add creation dialog</s>
+      - <s>Integrate creation with backend</s>
+      - <s>Fix tuning scroll and popover position</s>
     - Add data table
   - Add Instrument to song creation in Editor
 - <s>Add modal component</s>

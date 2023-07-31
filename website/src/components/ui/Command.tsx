@@ -44,19 +44,40 @@ const CommandDialog = ({ children, ...props }: CommandDialogProps) => {
 const CommandInput = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
->(({ className, ...props }, ref) => (
-  <div className="flex items-center border-b px-3" cmdk-input-wrapper="">
-    <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
-    <CommandPrimitive.Input
-      ref={ref}
-      className={cn(
-        "flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
-        className,
-      )}
-      {...props}
-    />
-  </div>
-));
+>(({ className, ...props }, ref) => {
+  const rootRef = React.useRef<HTMLInputElement>(null);
+
+  const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+    if (rootRef.current === null) return;
+
+    // parent is the Command root, whose parent will be the container with Commands
+    if (rootRef.current.parentElement?.parentElement === event.relatedTarget) {
+      setTimeout(() => {
+        event.target.focus();
+        event.target.select();
+      });
+    }
+  };
+
+  return (
+    <div
+      className="flex items-center border-b px-3"
+      cmdk-input-wrapper=""
+      ref={rootRef}
+    >
+      <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+      <CommandPrimitive.Input
+        ref={ref}
+        onBlur={handleBlur}
+        className={cn(
+          "flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
+          className,
+        )}
+        {...props}
+      />
+    </div>
+  );
+});
 
 CommandInput.displayName = CommandPrimitive.Input.displayName;
 
