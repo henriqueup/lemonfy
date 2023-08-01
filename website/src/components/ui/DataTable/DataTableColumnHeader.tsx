@@ -9,6 +9,7 @@ interface Props<TData> {
 }
 
 export function DataTableColumnHeader<TData>({ column, title }: Props<TData>) {
+  const sortingEnabled = column.getCanSort();
   const isSorted = column.getIsSorted();
 
   const handleClick = () => {
@@ -23,7 +24,7 @@ export function DataTableColumnHeader<TData>({ column, title }: Props<TData>) {
   return (
     <Button variant="ghost" onClick={handleClick} className="-ml-4">
       {title}
-      <SortIcon isSorted={isSorted} />
+      {sortingEnabled ? <SortIcon isSorted={isSorted} /> : null}
     </Button>
   );
 }
