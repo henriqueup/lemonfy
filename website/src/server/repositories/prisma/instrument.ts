@@ -36,6 +36,21 @@ class InstrumentPrismaRepository implements IInstrumentRepository {
     }
   }
 
+  async update(instrument: Instrument): Promise<void> {
+    const instrumentId = instrument.id;
+    if (instrumentId === undefined)
+      throw new Error("Instrument must have an id to be updated.");
+
+    await this.prisma.instrumentTuning.deleteMany({
+      where: { instrumentId },
+    });
+
+    await this.prisma.instrument.update({
+      where: { id: instrumentId },
+      data: mapInstrumentToCreateInput(instrument),
+    });
+  }
+
   async list(): Promise<InstrumentInfo[]> {
     const instruments = await this.prisma.instrument.findMany({
       include: instrumentIncludes,

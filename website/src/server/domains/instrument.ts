@@ -21,8 +21,7 @@ class InstrumentDomain implements IInstrumentDomain {
       return this.InstrumentRepository.create(instrument);
     }
 
-    // TODO
-    // await this.InstrumentRepository.update(instrument);
+    await this.InstrumentRepository.update(instrument);
     return instrument.id;
   }
 

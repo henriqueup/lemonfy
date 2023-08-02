@@ -66,7 +66,8 @@ class SongPrismaRepository implements ISongRepository {
 
   async update(song: Song) {
     const songId = song.id;
-    if (songId === undefined) throw new Error("Song must have an id.");
+    if (songId === undefined)
+      throw new Error("Song must have an id to be updated.");
 
     await this.prisma.song.update({
       where: { id: songId },
@@ -125,10 +126,10 @@ const songIncludes = Prisma.validator<Prisma.SongInclude>()({
           notes: {
             orderBy: [
               {
-                trackIndex: "asc",
+                trackIndex: Prisma.SortOrder.asc,
               },
               {
-                start: "asc",
+                start: Prisma.SortOrder.asc,
               },
             ],
           },

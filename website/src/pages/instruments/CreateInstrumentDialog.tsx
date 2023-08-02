@@ -89,7 +89,7 @@ const CreateInstrumentDialog: FunctionComponent<Props> = ({
 }) => {
   const form = useForm<Form>({
     resolver: zodResolver(FormSchema),
-    values: dataToLoad,
+    values: dataToLoad ?? defaultValues,
     defaultValues,
   });
 
@@ -106,7 +106,7 @@ const CreateInstrumentDialog: FunctionComponent<Props> = ({
     onSuccess: async () => {
       toast({
         variant: "success",
-        title: "Instrument created successfully.",
+        title: "Instrument saved successfully.",
       });
       handleOpenChange(false);
       await onSaveSuccess();
@@ -165,7 +165,8 @@ const CreateInstrumentDialog: FunctionComponent<Props> = ({
   };
 
   const handleOpenChange = (open: boolean) => {
-    form.reset(defaultValues);
+    form.reset(dataToLoad ?? defaultValues);
+
     onOpenChange(open);
   };
 
@@ -178,7 +179,9 @@ const CreateInstrumentDialog: FunctionComponent<Props> = ({
             className="space-y-8"
           >
             <DialogHeader>
-              <DialogTitle>Create an Instrument</DialogTitle>
+              <DialogTitle>
+                {dataToLoad ? "Edit Instrument" : "Create an Instrument"}
+              </DialogTitle>
             </DialogHeader>
             <FormField
               control={form.control}
