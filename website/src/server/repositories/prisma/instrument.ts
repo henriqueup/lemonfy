@@ -75,9 +75,8 @@ const mapInstrumentToCreateInput = (
 
 const mapInstrumentTuningToCreateInput = (pitches: Pitch[]) => {
   return {
-    connectOrCreate: pitches.map(pitch => ({
-      where: { pitch: pitch.key },
-      create: { pitch: pitch.key },
+    create: pitches.map(pitch => ({
+      pitch: pitch.key,
     })),
   };
 };

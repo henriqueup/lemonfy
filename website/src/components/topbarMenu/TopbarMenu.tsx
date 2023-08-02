@@ -8,6 +8,7 @@ import FileMenu from "@/components/topbarMenu/FileMenu";
 import EditMenu from "@/components/topbarMenu/EditMenu";
 import CursorMenu from "@/components/topbarMenu/CursorMenu";
 import { setGlobalLoading } from "@/store/global/globalActions";
+import PagesMenu from "@/components/topbarMenu/PagesMenu";
 
 const TopbarMenu: FunctionComponent = () => {
   const router = useRouter();
@@ -24,6 +25,7 @@ const TopbarMenu: FunctionComponent = () => {
         <Logo height={30} width={30} />
       </div>
       <FileMenu />
+      <PagesMenu />
       <EditMenu />
       <CursorMenu />
       <div className="flex flex-grow justify-end">

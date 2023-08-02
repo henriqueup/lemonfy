@@ -108,7 +108,7 @@ const CreateInstrumentDialog: FunctionComponent<Props> = ({
         variant: "success",
         title: "Instrument created successfully.",
       });
-      onOpenChange(false);
+      handleOpenChange(false);
       await onSaveSuccess();
     },
   });
@@ -155,6 +155,8 @@ const CreateInstrumentDialog: FunctionComponent<Props> = ({
   ) => {
     form.setValue("tuning", []);
     form.setValue("type", type);
+
+    if (type === "Key") form.setValue("isFretted", false);
   };
 
   const handleSubmit = (values: Form) => {
@@ -277,8 +279,16 @@ const CreateInstrumentDialog: FunctionComponent<Props> = ({
                     <div className="flex flex-row items-end space-x-3 space-y-0 pb-3 pt-4">
                       <FormControl>
                         <Checkbox
-                          checked={field.value}
+                          checked={
+                            field.value && form.getValues().type !== "Key"
+                          }
                           onCheckedChange={field.onChange}
+                          disabled={form.getValues().type === "Key"}
+                          title={
+                            form.getValues().type === "Key"
+                              ? "Key Instruments can't have frets."
+                              : undefined
+                          }
                         />
                       </FormControl>
                       <div className="leading-none">

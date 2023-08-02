@@ -103,7 +103,7 @@ And finally, it can also be used as a showcase of my skills.
       - <s>Fix tuning scroll and popover position</s>
     - Add data table
     - Add update and delete
-      - Fix Tuning table
+      - <s>Fix Tuning table</s>
   - Add Instrument to song creation in Editor
 - <s>Add modal component</s>
 - Add Bar copy/paste

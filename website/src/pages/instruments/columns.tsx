@@ -59,13 +59,11 @@ export const instrumentColumns = (
     enableMultiSort: true,
   },
   {
-    accessorKey: "isFretted",
+    accessorKey: "trackCount",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Is Fretted" />
+      <DataTableColumnHeader column={column} title="Track Count" />
     ),
-    cell: ({ row }) => <Checkbox checked={row.getValue("isFretted")} />,
-    enableMultiSort: false,
-    enableSorting: false,
+    enableMultiSort: true,
   },
   {
     accessorKey: "tuning",
@@ -80,6 +78,15 @@ export const instrumentColumns = (
           .join(", ")}
       </div>
     ),
+    enableMultiSort: false,
+    enableSorting: false,
+  },
+  {
+    accessorKey: "isFretted",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Is Fretted" />
+    ),
+    cell: ({ row }) => <Checkbox checked={row.getValue("isFretted")} />,
     enableMultiSort: false,
     enableSorting: false,
   },
