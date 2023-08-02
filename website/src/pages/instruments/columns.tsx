@@ -5,10 +5,11 @@ import InstrumentTableRowActions from "@/pages/instruments/InstrumentTableRowAct
 import { DataTableColumnHeader } from "@/components/ui/DataTable/DataTableColumnHeader";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { type ColumnMetaData } from "@/components/ui/DataTable/DataTable";
-import { Pitch } from "@/server/entities/pitch";
+import type { Pitch } from "@/server/entities/pitch";
 
 export const instrumentColumns = (
   revalidateData: () => Promise<void>,
+  handleEditClick: (instrument: InstrumentInfo) => void,
 ): ColumnDef<InstrumentInfo>[] => [
   {
     id: "select",
@@ -87,7 +88,9 @@ export const instrumentColumns = (
     cell: ({ row, table }) => (
       <InstrumentTableRowActions
         instrument={row.original}
-        table={{ ...table, revalidateData }}
+        table={table}
+        revalidateData={revalidateData}
+        onEditClick={handleEditClick}
       />
     ),
     meta: {

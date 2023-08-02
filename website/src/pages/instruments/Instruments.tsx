@@ -1,5 +1,6 @@
 import { type NextPage } from "next";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Plus } from "lucide-react";
 
 import CreateInstrumentDialog from "@/pages/instruments/CreateInstrumentDialog";
 import { setGlobalLoading } from "@/store/global/globalActions";
@@ -9,32 +10,38 @@ import { type InstrumentInfo } from "@/server/entities/instrument";
 import { DataTable } from "@/components/ui/DataTable";
 import { instrumentColumns } from "@/pages/instruments/columns";
 import InstrumentTableToolbar from "@/pages/instruments/InstrumentTableToolbar";
+import { Button } from "@/components/ui/Button";
 
 const Instruments: NextPage = () => {
-  const handleFinishedListingInstruments = () => {
-    setGlobalLoading(false);
-  };
+  const [isInstrumentDialogOpen, setIsInstrumentDialogOpen] = useState(false);
+  const [instrumentToEdit, setInstrumentToEdit] = useState<
+    InstrumentInfo | undefined
+  >(undefined);
 
   useEffect(() => {
     setGlobalLoading(true);
   }, []);
 
   const listInstrumentsQuery = api.instrument.list.useQuery(undefined, {
-    onSuccess: handleFinishedListingInstruments,
+    onSettled: () => setGlobalLoading(false),
     onError: error => {
       toast({
         variant: "destructive",
         title: "Error when fetching Instruments",
         description: error.message,
       });
-      handleFinishedListingInstruments();
     },
   });
 
-  const handleRowClick = async (instrument: InstrumentInfo) => {
-    setGlobalLoading(true);
-    // await router.push(`/editor/${instrument.id}`);
-    setGlobalLoading(false);
+  const handleRowClick = (instrument: InstrumentInfo) => {
+    setIsInstrumentDialogOpen(true);
+    setInstrumentToEdit(instrument);
+  };
+
+  const handleDialogOpenChange = (open: boolean) => {
+    if (!open) setInstrumentToEdit(undefined);
+
+    setIsInstrumentDialogOpen(open);
   };
 
   const revalidateInstruments = async () => {
@@ -47,11 +54,16 @@ const Instruments: NextPage = () => {
     <div className="flex h-full flex-col items-center space-y-4 bg-inherit p-4 pt-10 text-inherit">
       <div className="flex w-3/5 justify-between">
         <h1 className="mb-4 text-xl">Instruments</h1>
-        <CreateInstrumentDialog />
+        <Button
+          variant="success"
+          onClick={() => setIsInstrumentDialogOpen(true)}
+        >
+          <Plus className="mr-1 h-4 w-4" /> Create Instrument
+        </Button>
       </div>
       <div className="w-3/5">
         <DataTable
-          columns={instrumentColumns(revalidateInstruments)}
+          columns={instrumentColumns(revalidateInstruments, handleRowClick)}
           data={instruments ?? []}
           rowProps={{
             className: "cursor-pointer",
@@ -61,6 +73,12 @@ const Instruments: NextPage = () => {
           initialVisibility={{ select: false }}
         />
       </div>
+      <CreateInstrumentDialog
+        isOpen={isInstrumentDialogOpen}
+        onOpenChange={handleDialogOpenChange}
+        onSaveSuccess={revalidateInstruments}
+        dataToLoad={instrumentToEdit}
+      />
     </div>
   );
 };

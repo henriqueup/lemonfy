@@ -45,6 +45,12 @@ class InstrumentPrismaRepository implements IInstrumentRepository {
       InstrumentInfoSchema.parse(mapInstrumentModelToEntity(instrument)),
     );
   }
+
+  async deleteMany(instrumentIds: string[]): Promise<void> {
+    await this.prisma.instrument.deleteMany({
+      where: { id: { in: instrumentIds } },
+    });
+  }
 }
 
 export const instrumentIncludes = Prisma.validator<Prisma.InstrumentInclude>()({

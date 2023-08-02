@@ -14,9 +14,9 @@ export const instrumentRouter = createTRPCRouter({
   // get: publicProcedure.input(z.string().cuid()).query(({ input, ctx }) => {
   //   return ctx.domainWrapper.Instrument.get(input);
   // }),
-  // deleteMany: publicProcedure
-  //   .input(z.array(z.string().cuid()))
-  //   .mutation(({ input, ctx }) => {
-  //     void ctx.domainWrapper.Instrument.deleteMany(input);
-  //   }),
+  deleteMany: publicProcedure
+    .input(z.array(z.string().cuid()))
+    .mutation(({ input, ctx }) => {
+      void ctx.domainWrapper.Instrument.deleteMany(input);
+    }),
 });

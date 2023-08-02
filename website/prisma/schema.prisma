@@ -48,9 +48,9 @@ model Instrument {
 }
 
 model InstrumentTuning {
-    pitch        String     @id
-    Instrument   Instrument @relation(fields: [instrumentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    instrumentId String
+    pitch        String      @id
+    Instrument   Instrument? @relation(fields: [instrumentId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+    instrumentId String?
 }
 
 model Sheet {

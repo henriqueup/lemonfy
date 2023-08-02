@@ -15,5 +15,5 @@ export interface IInstrumentRepository {
   // TODO:
   // get: (instrumentId: string) => Promise<Instrument | null>;
   // update: (instrument: Instrument) => Promise<void>;
-  // deleteMany: (instrumentIds: string[]) => Promise<void>;
+  deleteMany: (instrumentIds: string[]) => Promise<void>;
 }

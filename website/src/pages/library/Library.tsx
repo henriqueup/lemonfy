@@ -13,23 +13,18 @@ import { setGlobalLoading } from "@/store/global/globalActions";
 const Library: NextPage = () => {
   const router = useRouter();
 
-  const handleFinishedListingSongs = () => {
-    setGlobalLoading(false);
-  };
-
   useEffect(() => {
     setGlobalLoading(true);
   }, []);
 
   const listSongsQuery = api.song.list.useQuery(undefined, {
-    onSuccess: handleFinishedListingSongs,
+    onSettled: () => setGlobalLoading(false),
     onError: error => {
       toast({
         variant: "destructive",
         title: "Error when fetching Songs",
         description: error.message,
       });
-      handleFinishedListingSongs();
     },
   });
 

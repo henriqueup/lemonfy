@@ -6,7 +6,7 @@ export interface IInstrumentDomain {
   list: () => Promise<InstrumentInfo[]>;
   // TODO
   // get: (instrumentId: string) => Promise<Instrument>;
-  // deleteMany: (instrumentIds: string[]) => Promise<void>;
+  deleteMany: (instrumentIds: string[]) => Promise<void>;
 }
 
 class InstrumentDomain implements IInstrumentDomain {
@@ -28,6 +28,10 @@ class InstrumentDomain implements IInstrumentDomain {
 
   list(): Promise<InstrumentInfo[]> {
     return this.InstrumentRepository.list();
+  }
+
+  deleteMany(instrumentIds: string[]) {
+    return this.InstrumentRepository.deleteMany(instrumentIds);
   }
 }
 

@@ -1,6 +1,6 @@
-import { type FunctionComponent, useMemo, useState } from "react";
+import { type FunctionComponent, useMemo } from "react";
 import type { z } from "zod";
-import { ChevronsUpDown, Info, Plus } from "lucide-react";
+import { ChevronsUpDown, Info } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -10,7 +10,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/Dialog";
 import { Button } from "@/components/ui/Button";
 import {
@@ -53,6 +52,7 @@ import {
 } from "@/components/ui/Command";
 import {
   BaseInstrumentSchema,
+  type InstrumentInfo,
   instrumentRefineCallback,
 } from "@/server/entities/instrument";
 import {
@@ -63,9 +63,7 @@ import { api } from "@/utils/api";
 import { setGlobalLoading } from "@/store/global/globalActions";
 import { toast } from "@/hooks/useToast";
 
-const FormSchema = BaseInstrumentSchema.omit({ id: true }).superRefine(
-  instrumentRefineCallback,
-);
+const FormSchema = BaseInstrumentSchema.superRefine(instrumentRefineCallback);
 type Form = z.infer<typeof FormSchema>;
 
 const defaultValues: Form = {
@@ -76,14 +74,26 @@ const defaultValues: Form = {
   tuning: [],
 };
 
-const CreateInstrumentDialog: FunctionComponent = () => {
-  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+type Props = {
+  isOpen: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+  onSaveSuccess: () => Promise<void>;
+  dataToLoad?: InstrumentInfo;
+};
+
+const CreateInstrumentDialog: FunctionComponent<Props> = ({
+  isOpen,
+  onOpenChange,
+  onSaveSuccess,
+  dataToLoad,
+}) => {
   const form = useForm<Form>({
     resolver: zodResolver(FormSchema),
+    values: dataToLoad,
     defaultValues,
   });
 
-  const createInstrumentMutation = api.instrument.save.useMutation({
+  const saveInstrumentMutation = api.instrument.save.useMutation({
     useErrorBoundary: error => !error.data?.isBusinessException,
     onSettled: () => setGlobalLoading(false),
     onError: error => {
@@ -93,12 +103,13 @@ const CreateInstrumentDialog: FunctionComponent = () => {
           title: error.message,
         });
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       toast({
         variant: "success",
         title: "Instrument created successfully.",
       });
-      setIsDialogOpen(false);
+      onOpenChange(false);
+      await onSaveSuccess();
     },
   });
 
@@ -148,21 +159,16 @@ const CreateInstrumentDialog: FunctionComponent = () => {
 
   const handleSubmit = (values: Form) => {
     setGlobalLoading(true);
-    createInstrumentMutation.mutate(values);
+    saveInstrumentMutation.mutate(values);
   };
 
   const handleOpenChange = (open: boolean) => {
     form.reset(defaultValues);
-    setIsDialogOpen(open);
+    onOpenChange(open);
   };
 
   return (
-    <Dialog onOpenChange={handleOpenChange} open={isDialogOpen}>
-      <DialogTrigger asChild>
-        <Button variant="success" onClick={() => setIsDialogOpen(true)}>
-          <Plus className="mr-1 h-4 w-4" /> Create Instrument
-        </Button>
-      </DialogTrigger>
+    <Dialog onOpenChange={handleOpenChange} open={isOpen}>
       <DialogContent>
         <Form {...form}>
           <form

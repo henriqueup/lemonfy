@@ -102,6 +102,8 @@ And finally, it can also be used as a showcase of my skills.
       - <s>Integrate creation with backend</s>
       - <s>Fix tuning scroll and popover position</s>
     - Add data table
+    - Add update and delete
+      - Fix Tuning table
   - Add Instrument to song creation in Editor
 - <s>Add modal component</s>
 - Add Bar copy/paste

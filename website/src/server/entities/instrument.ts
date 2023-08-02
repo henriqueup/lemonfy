@@ -16,11 +16,11 @@ export const instrumentRefineCallback = (
   value: z.infer<typeof BaseInstrumentSchema>,
   ctx: z.RefinementCtx,
 ) => {
-  console.log(value);
   if (
     (value.type !== "Key" && value.tuning.length !== value.trackCount) ||
     (value.type === "Key" && value.tuning.length !== 1)
   ) {
+    console.log(value);
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       path: ["tuning"],

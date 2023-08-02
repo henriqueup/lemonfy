@@ -61,7 +61,8 @@ export const songColumns = (
     cell: ({ row, table }) => (
       <SongTableRowActions
         song={row.original}
-        table={{ ...table, revalidateData }}
+        table={table}
+        revalidateData={revalidateData}
       />
     ),
     meta: {
