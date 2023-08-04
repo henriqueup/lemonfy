@@ -54,6 +54,7 @@ import {
   BaseInstrumentSchema,
   type InstrumentInfo,
   instrumentRefineCallback,
+  type InstrumentType,
 } from "@/server/entities/instrument";
 import {
   FrequencyDictionary,
@@ -150,9 +151,7 @@ const CreateInstrumentDialog: FunctionComponent<Props> = ({
     }
   };
 
-  const handleSelectType = (
-    type: z.infer<typeof BaseInstrumentSchema.shape.type>,
-  ) => {
+  const handleSelectType = (type: InstrumentType) => {
     form.setValue("tuning", []);
     form.setValue("type", type);
 

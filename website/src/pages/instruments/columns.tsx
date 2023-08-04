@@ -56,6 +56,9 @@ export const instrumentColumns = (
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Type" />
     ),
+    filterFn: (row, id, value: string[]) => {
+      return !value.length || value.includes(row.getValue(id));
+    },
     enableMultiSort: true,
   },
   {

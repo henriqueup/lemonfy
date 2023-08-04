@@ -51,6 +51,7 @@ interface DataTableProps<TData, TValue> {
   rowProps?: RowProps<TData>;
   Toolbar?: FunctionComponent<DataTableToolbarProps<TData>>;
   initialVisibility?: VisibilityState;
+  initialSorting?: SortingState;
 }
 
 export function DataTable<TData, TValue>({
@@ -59,8 +60,9 @@ export function DataTable<TData, TValue>({
   rowProps,
   Toolbar,
   initialVisibility = {},
+  initialSorting = [],
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [sorting, setSorting] = useState<SortingState>(initialSorting);
   const [globalFilter, setGlobalFilter] = useState<string>("");
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] =

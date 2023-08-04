@@ -71,6 +71,7 @@ const Instruments: NextPage = () => {
           }}
           Toolbar={InstrumentTableToolbar}
           initialVisibility={{ select: false }}
+          initialSorting={[{ id: "name", desc: false }]}
         />
       </div>
       <CreateInstrumentDialog

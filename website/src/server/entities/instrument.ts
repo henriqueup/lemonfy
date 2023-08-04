@@ -3,10 +3,20 @@ import { z } from "zod";
 import SheetModule, { SheetSchema } from "@entities/sheet";
 import { type Pitch, PitchSchema } from "@/server/entities/pitch";
 
+export const INSTRUMENT_TYPES = [
+  "String",
+  "Key",
+  "Wind",
+  "Percussion",
+] as const;
+export const DISABLED_INSTRUMENT_TYPES = ["Wind", "Percussion"];
+
+const InstrumentTypeSchema = z.enum(INSTRUMENT_TYPES);
+
 export const BaseInstrumentSchema = z.object({
   id: z.string().cuid().optional(),
   name: z.string().min(1),
-  type: z.enum(["String", "Key", "Wind", "Percussion"]),
+  type: InstrumentTypeSchema,
   trackCount: z.number().int().min(1),
   tuning: z.array(PitchSchema),
   isFretted: z.boolean(),
@@ -42,6 +52,7 @@ export const InstrumentSchema = BaseInstrumentSchema.merge(
   }),
 ).superRefine(instrumentRefineCallback);
 
+export type InstrumentType = z.infer<typeof InstrumentTypeSchema>;
 export type InstrumentInfo = z.infer<typeof InstrumentInfoSchema>;
 export type Instrument = z.infer<typeof InstrumentSchema>;
 
