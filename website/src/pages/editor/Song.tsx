@@ -4,9 +4,10 @@ import { Edit } from "lucide-react";
 import { Plus } from "src/icons";
 import { getCurrentSheet, useEditorStore } from "@/store/editor";
 import { cn } from "src/styles/utils";
-import { addSheet } from "@/store/editor/songActions";
+import { addInstrument } from "@/store/editor/songActions";
 import SheetEditor from "./SheetEditor";
-import SheetMenu from "./SheetMenu";
+import InstrumentMenu from "./InstrumentMenu";
+import { type Instrument } from "@/server/entities/instrument";
 
 interface Props {
   openSongMenu: () => void;
@@ -15,11 +16,11 @@ interface Props {
 const Song: FunctionComponent<Props> = ({ openSongMenu }: Props) => {
   const song = useEditorStore(state => state.song);
   const currentSheet = getCurrentSheet();
-  const [sheetMenuIsOpen, setSheetMenuIsOpen] = useState(false);
+  const [instrumentMenuIsOpen, setInstrumentMenuIsOpen] = useState(false);
 
-  const handleAddSheet = (trackCount: number) => {
-    addSheet(trackCount);
-    setSheetMenuIsOpen(false);
+  const handleAddInstrument = (instrument: Instrument) => {
+    addInstrument(instrument);
+    setInstrumentMenuIsOpen(false);
   };
 
   if (!song) return null;
@@ -45,7 +46,7 @@ const Song: FunctionComponent<Props> = ({ openSongMenu }: Props) => {
                 "mt-4 flex cursor-pointer content-center justify-center",
                 "rounded-full border p-4",
               )}
-              onClick={() => setSheetMenuIsOpen(true)}
+              onClick={() => setInstrumentMenuIsOpen(true)}
             >
               <Plus />
             </div>
@@ -53,10 +54,10 @@ const Song: FunctionComponent<Props> = ({ openSongMenu }: Props) => {
         ) : (
           <SheetEditor />
         )}
-        {sheetMenuIsOpen ? (
-          <SheetMenu
-            onAdd={handleAddSheet}
-            onClose={() => setSheetMenuIsOpen(false)}
+        {instrumentMenuIsOpen ? (
+          <InstrumentMenu
+            onAdd={handleAddInstrument}
+            onClose={() => setInstrumentMenuIsOpen(false)}
           />
         ) : null}
       </fieldset>

@@ -7,6 +7,7 @@ import {
   useEditorStore,
 } from "@/store/editor/editorStore";
 import { produceUndoneableAction } from "@/utils/immer";
+import { type Instrument } from "@/server/entities/instrument";
 
 export const loadSong = (song: Song) =>
   useEditorStore.setState({ song, currentInstrumentIndex: 0 });
@@ -39,15 +40,17 @@ export const saveSong = (songId: string) =>
     }),
   );
 
-export const addSheet = (trackCount: number) =>
+export const addInstrument = (instrument: Instrument) =>
   useEditorStore.setState(state =>
     produceUndoneableAction(state, draft => {
       if (draft.song === undefined) return;
 
-      const newSheet = SheetModule.createSheet(trackCount);
-
       handleStorableAction(draft);
-      draft.song.instruments.push(newSheet);
+
+      const sheet = SheetModule.createSheet(instrument.trackCount);
+      instrument.sheet = sheet;
+
+      draft.song.instruments.push(instrument);
       draft.currentInstrumentIndex = draft.song.instruments.length - 1;
     }),
   );

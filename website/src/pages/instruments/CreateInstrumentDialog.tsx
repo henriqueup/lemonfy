@@ -78,7 +78,7 @@ const defaultValues: Form = {
 type Props = {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  onSaveSuccess: () => Promise<void>;
+  onSaveSuccess: (instrumentId: string) => Promise<void>;
   dataToLoad?: InstrumentInfo;
 };
 
@@ -104,13 +104,13 @@ const CreateInstrumentDialog: FunctionComponent<Props> = ({
           title: error.message,
         });
     },
-    onSuccess: async () => {
+    onSuccess: async instrumentId => {
       toast({
         variant: "success",
         title: "Instrument saved successfully.",
       });
       handleOpenChange(false);
-      await onSaveSuccess();
+      await onSaveSuccess(instrumentId);
     },
   });
 

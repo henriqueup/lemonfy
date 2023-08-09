@@ -8,7 +8,7 @@ import * as SheetModule from "@entities/sheet";
 import * as SongModule from "@entities/song";
 import * as MockUtilsModule from "src/mocks/utils/moduleUtils";
 import {
-  addSheet,
+  addInstrument,
   setSong,
   loadSong,
   saveSong,
@@ -125,7 +125,7 @@ describe("Save Song", () => {
 
 describe("Add Sheet", () => {
   it("Does nothing with undefined Song", () => {
-    addSheet(8);
+    addInstrument(8);
 
     expect(useEditorStore.getState()).toMatchObject(INITIAL_STATE);
   });
@@ -138,7 +138,7 @@ describe("Add Sheet", () => {
     }));
     sheetModuleWithMocks.createSheet.mockImplementation(() => sheet);
 
-    addSheet(8);
+    addInstrument(8);
 
     expect(SheetModule.default.createSheet).toBeCalledTimes(1);
     expect(SheetModule.default.createSheet).toBeCalledWith(8);
@@ -161,7 +161,7 @@ describe("Add Sheet", () => {
     }));
     sheetModuleWithMocks.createSheet.mockImplementation(() => sheet);
 
-    addSheet(8);
+    addInstrument(8);
 
     expect(SheetModule.default.createSheet).toBeCalledTimes(1);
     expect(SheetModule.default.createSheet).toBeCalledWith(8);

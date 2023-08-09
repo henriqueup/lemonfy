@@ -105,8 +105,10 @@ And finally, it can also be used as a showcase of my skills.
     - <s>Add update and delete</s>
       - <s>Fix Tuning table</s>
   - Add Instrument to song creation in Editor
+    - Exhibit Instrument info on the Editor
   - Make note adding take the instrument into account
 - <s>Add modal component</s>
+- TD: change creation inputs to forms
 - Add Bar copy/paste
 - Add mouse support
   - Drag playback cursor

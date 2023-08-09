@@ -13,8 +13,10 @@ export function DataTableColumnHeader<TData>({ column, title }: Props<TData>) {
   const isSorted = column.getIsSorted();
 
   const handleClick = () => {
+    if (!sortingEnabled) return;
+
     if (isSorted === "desc") {
-      column.toggleSorting(undefined);
+      column.clearSorting();
       return;
     }
 

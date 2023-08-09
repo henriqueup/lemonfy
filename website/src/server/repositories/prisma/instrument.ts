@@ -54,6 +54,7 @@ class InstrumentPrismaRepository implements IInstrumentRepository {
   async list(): Promise<InstrumentInfo[]> {
     const instruments = await this.prisma.instrument.findMany({
       include: instrumentIncludes,
+      orderBy: { name: Prisma.SortOrder.asc },
     });
 
     return instruments.map(instrument =>
