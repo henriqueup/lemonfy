@@ -1,5 +1,12 @@
 import { type FunctionComponent, useState, useMemo } from "react";
-import { Check, ChevronDown, Loader, MoreHorizontal } from "lucide-react";
+import {
+  Check,
+  ChevronDown,
+  ExternalLink,
+  Loader,
+  MoreHorizontal,
+  Plus,
+} from "lucide-react";
 
 import { FixedSideMenu } from "src/components";
 import { api } from "@/utils/api";
@@ -21,6 +28,7 @@ import {
   CommandList,
 } from "@/components/ui/Command";
 import CreateInstrumentDialog from "@/pages/instruments/CreateInstrumentDialog";
+import { useRouter } from "next/router";
 
 type Props = {
   onAdd: (instrument: Instrument) => void;
@@ -30,6 +38,7 @@ type Props = {
 const maxInstrumentsInSearch = 10;
 
 const InstrumentMenu: FunctionComponent<Props> = ({ onAdd, onClose }) => {
+  const router = useRouter();
   const [isInstrumentDialogOpen, setIsInstrumentDialogOpen] = useState(false);
   const [instrumentSearchValue, setInstrumentSearchValue] = useState("");
   const [selectedInstrument, setSelectedInstrument] = useState<
@@ -78,79 +87,87 @@ const InstrumentMenu: FunctionComponent<Props> = ({ onAdd, onClose }) => {
           <h3 className="m-auto">Add Instrument</h3>
         </div>
         <div className="mt-5 flex w-3/4 flex-col items-center gap-5">
-          <div className="flex w-full flex-col items-center gap-1.5">
-            <Label htmlFor="type-filter" className="ml-1 w-full">
-              Instrument
-            </Label>
-            <Popover modal>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  className={cn(
-                    "w-full justify-between",
-                    !selectedInstrument && "text-muted-foreground",
-                  )}
-                >
-                  <span className="max-w-5/6 overflow-x-hidden text-ellipsis whitespace-nowrap">
-                    {selectedInstrument
-                      ? selectedInstrument.name
-                      : "Select an Instrument"}
-                  </span>
-                  {listInstrumentsQuery.isLoading ? (
-                    <Loader className="ml-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="p-0">
-                <Command shouldFilter={false}>
-                  <CommandInput
-                    placeholder="Search Instruments..."
-                    value={instrumentSearchValue}
-                    onValueChange={setInstrumentSearchValue}
-                  />
-                  <CommandEmpty>No Instrument found.</CommandEmpty>
-                  <CommandList>
-                    {filteredInstruments
-                      .slice(0, maxInstrumentsInSearch)
-                      .map(instrument => (
-                        <CommandItem
-                          value={instrument.name}
-                          key={instrument.id}
-                          onSelect={() => setSelectedInstrument(instrument)}
-                        >
-                          <span
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              selectedInstrument?.id === instrument.id
-                                ? "opacity-100"
-                                : "opacity-0",
-                            )}
+          <div className="flex w-full items-end gap-1.5">
+            <div className="flex w-full flex-grow flex-col items-center gap-1.5">
+              <Label htmlFor="type-filter" className="ml-1 w-full">
+                Instrument
+              </Label>
+              <Popover modal>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    className={cn(
+                      "w-full justify-between",
+                      !selectedInstrument && "text-muted-foreground",
+                    )}
+                  >
+                    <span className="max-w-5/6 overflow-x-hidden text-ellipsis whitespace-nowrap">
+                      {selectedInstrument
+                        ? selectedInstrument.name
+                        : "Select an Instrument"}
+                    </span>
+                    {listInstrumentsQuery.isLoading ? (
+                      <Loader className="ml-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="p-0">
+                  <Command shouldFilter={false}>
+                    <CommandInput
+                      placeholder="Search Instruments..."
+                      value={instrumentSearchValue}
+                      onValueChange={setInstrumentSearchValue}
+                    />
+                    <CommandEmpty>No Instrument found.</CommandEmpty>
+                    <CommandList>
+                      {filteredInstruments
+                        .slice(0, maxInstrumentsInSearch)
+                        .map(instrument => (
+                          <CommandItem
+                            value={instrument.name}
+                            key={instrument.id}
+                            onSelect={() => setSelectedInstrument(instrument)}
                           >
-                            <Check className="h-4 w-4" />
-                          </span>
-                          <span>{instrument.name}</span>
-                        </CommandItem>
-                      ))}
-                    {filteredInstruments.length > maxInstrumentsInSearch ? (
-                      <div className="flex w-full items-center justify-center">
-                        <MoreHorizontal />
-                      </div>
-                    ) : null}
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
+                            <span
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                selectedInstrument?.id === instrument.id
+                                  ? "opacity-100"
+                                  : "opacity-0",
+                              )}
+                            >
+                              <Check className="h-4 w-4" />
+                            </span>
+                            <span>{instrument.name}</span>
+                          </CommandItem>
+                        ))}
+                      {filteredInstruments.length > maxInstrumentsInSearch ? (
+                        <div className="flex w-full items-center justify-center">
+                          <MoreHorizontal />
+                        </div>
+                      ) : null}
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            </div>
+            <Button
+              className="px-2 py-0"
+              onClick={() => setIsInstrumentDialogOpen(true)}
+            >
+              <Plus />
+            </Button>
           </div>
           <div className="flex w-full gap-3">
             <Button
               className="w-1/2"
               variant="secondary"
-              onClick={() => setIsInstrumentDialogOpen(true)}
+              onClick={() => void router.push("/instruments")}
             >
-              Create Instrument
+              Go to Instruments <ExternalLink className="ml-2 h-5 w-5" />
             </Button>
             <Button
               className="w-1/2"

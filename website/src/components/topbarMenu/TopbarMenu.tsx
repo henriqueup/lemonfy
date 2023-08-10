@@ -15,8 +15,12 @@ const TopbarMenu: FunctionComponent = () => {
 
   const handleLogoClick = async () => {
     setGlobalLoading(true);
-    await router.push("/library");
-    setGlobalLoading(false);
+
+    try {
+      await router.push("/library");
+    } finally {
+      setGlobalLoading(false);
+    }
   };
 
   return (
