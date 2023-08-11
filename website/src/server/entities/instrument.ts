@@ -13,8 +13,8 @@ export const DISABLED_INSTRUMENT_TYPES = ["Wind", "Percussion"];
 
 const InstrumentTypeSchema = z.enum(INSTRUMENT_TYPES);
 
-export const BaseInstrumentSchema = z.object({
-  id: z.string().cuid().optional(),
+const BaseInstrumentSchema = z.object({
+  id: z.string().cuid(),
   name: z.string().min(1),
   type: InstrumentTypeSchema,
   trackCount: z.number().int().min(1),
@@ -23,12 +23,12 @@ export const BaseInstrumentSchema = z.object({
 });
 
 export const instrumentRefineCallback = (
-  value: z.infer<typeof BaseInstrumentSchema>,
+  value: Partial<z.infer<typeof BaseInstrumentSchema>>,
   ctx: z.RefinementCtx,
 ) => {
   if (
-    (value.type !== "Key" && value.tuning.length !== value.trackCount) ||
-    (value.type === "Key" && value.tuning.length !== 1)
+    (value.type !== "Key" && value.tuning?.length !== value.trackCount) ||
+    (value.type === "Key" && value.tuning?.length !== 1)
   ) {
     console.log(value);
     ctx.addIssue({
@@ -46,6 +46,11 @@ export const InstrumentInfoSchema = BaseInstrumentSchema.merge(
   }),
 ).superRefine(instrumentRefineCallback);
 
+export const InstrumentCreateSchema = BaseInstrumentSchema.merge(
+  z.object({
+    id: z.string().cuid().optional(),
+  }),
+);
 export const InstrumentSchema = BaseInstrumentSchema.merge(
   z.object({
     sheet: SheetSchema.optional(),
@@ -54,6 +59,7 @@ export const InstrumentSchema = BaseInstrumentSchema.merge(
 
 export type InstrumentType = z.infer<typeof InstrumentTypeSchema>;
 export type InstrumentInfo = z.infer<typeof InstrumentInfoSchema>;
+export type InstrumentCreate = z.infer<typeof InstrumentCreateSchema>;
 export type Instrument = z.infer<typeof InstrumentSchema>;
 
 interface IInstrumentModule {

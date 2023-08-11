@@ -1,4 +1,8 @@
-import type { Instrument, InstrumentInfo } from "@/server/entities/instrument";
+import type {
+  Instrument,
+  InstrumentCreate,
+  InstrumentInfo,
+} from "@/server/entities/instrument";
 import type { Song, SongInfo } from "@entities/song";
 
 export interface ISongRepository {
@@ -10,7 +14,7 @@ export interface ISongRepository {
 }
 
 export interface IInstrumentRepository {
-  create: (instrument: Instrument) => Promise<string>;
+  create: (instrument: InstrumentCreate) => Promise<string>;
   list: () => Promise<InstrumentInfo[]>;
   // TODO:
   // get: (instrumentId: string) => Promise<Instrument | null>;

@@ -51,7 +51,7 @@ import {
   CommandList,
 } from "@/components/ui/Command";
 import {
-  BaseInstrumentSchema,
+  InstrumentCreateSchema,
   type InstrumentInfo,
   instrumentRefineCallback,
   type InstrumentType,
@@ -64,7 +64,7 @@ import { api } from "@/utils/api";
 import { setGlobalLoading } from "@/store/global/globalActions";
 import { toast } from "@/hooks/useToast";
 
-const FormSchema = BaseInstrumentSchema.superRefine(instrumentRefineCallback);
+const FormSchema = InstrumentCreateSchema.superRefine(instrumentRefineCallback);
 type Form = z.infer<typeof FormSchema>;
 
 const defaultValues: Form = {

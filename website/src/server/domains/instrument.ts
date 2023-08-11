@@ -1,8 +1,12 @@
 import type { IInstrumentRepository } from "@domains/repositories";
-import type { Instrument, InstrumentInfo } from "@entities/instrument";
+import type {
+  Instrument,
+  InstrumentCreate,
+  InstrumentInfo,
+} from "@entities/instrument";
 
 export interface IInstrumentDomain {
-  save: (instrument: Instrument) => Promise<string>;
+  save: (instrument: InstrumentCreate) => Promise<string>;
   list: () => Promise<InstrumentInfo[]>;
   // TODO
   // get: (instrumentId: string) => Promise<Instrument>;
@@ -16,12 +20,12 @@ class InstrumentDomain implements IInstrumentDomain {
     this.InstrumentRepository = instrumentRepository;
   }
 
-  async save(instrument: Instrument) {
+  async save(instrument: InstrumentCreate) {
     if (instrument.id === undefined) {
       return this.InstrumentRepository.create(instrument);
     }
 
-    await this.InstrumentRepository.update(instrument);
+    await this.InstrumentRepository.update(instrument as Instrument);
     return instrument.id;
   }
 

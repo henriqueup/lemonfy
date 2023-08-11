@@ -13,7 +13,7 @@ export const MyApp: AppType = ({ Component, pageProps }) => {
     <div className="h-screen bg-background text-popover-foreground">
       <ErrorBoundary>
         <TopbarMenu />
-        <div className="h-full bg-inherit pt-8 text-inherit">
+        <div className="h-[calc(100%_-_32px)] bg-inherit text-inherit">
           <Component {...pageProps} />
         </div>
         <Toaster />

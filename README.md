@@ -104,8 +104,8 @@ And finally, it can also be used as a showcase of my skills.
     - <s>Add data table</s>
     - <s>Add update and delete</s>
       - <s>Fix Tuning table</s>
-  - Add Instrument to song creation in Editor
-    - Exhibit Instrument info on the Editor
+  - <s>Add Instrument to song creation in Editor</s>
+    - <s>Exhibit Instrument info on the Editor</s>
   - Make note adding take the instrument into account
 - <s>Add modal component</s>
 - TD: change creation inputs to forms
@@ -115,6 +115,8 @@ And finally, it can also be used as a showcase of my skills.
 - Add automatic save
 - Add component animations
 - Add multiple Instrument support
+  - <s>Add tabs to editor</s>
+  - Add playback with multiple instruments
 - Add metronome
 - Migrate to App Router
   - Remove tRPC?

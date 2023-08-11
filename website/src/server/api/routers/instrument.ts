@@ -1,12 +1,14 @@
 import { z } from "zod";
 
-import { InstrumentSchema } from "@entities/instrument";
+import { InstrumentCreateSchema } from "@entities/instrument";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const instrumentRouter = createTRPCRouter({
-  save: publicProcedure.input(InstrumentSchema).mutation(({ input, ctx }) => {
-    return ctx.domainWrapper.Instrument.save(input);
-  }),
+  save: publicProcedure
+    .input(InstrumentCreateSchema)
+    .mutation(({ input, ctx }) => {
+      return ctx.domainWrapper.Instrument.save(input);
+    }),
   list: publicProcedure.input(z.undefined()).query(async ({ ctx }) => {
     return ctx.domainWrapper.Instrument.list();
   }),
