@@ -9,7 +9,7 @@ import {
 } from "@entities/song";
 import type { Instrument } from "@/server/entities/instrument";
 import { default as SheetModule, type Sheet } from "@entities/sheet";
-import { default as BarModule, type Bar } from "@entities/bar";
+import { createBar, type Bar } from "@entities/bar";
 import { createNote, type Note } from "@entities/note";
 import { createPitchFromKey } from "@entities/pitch";
 import { BusinessException } from "@/utils/exceptions";
@@ -254,7 +254,7 @@ const mapBarModelToEntity = (
   trackCount: number,
   model: Prisma.BarGetPayload<null>,
 ): Bar => {
-  const bar = BarModule.createBar(
+  const bar = createBar(
     trackCount,
     model.beatCount,
     model.dibobinador,

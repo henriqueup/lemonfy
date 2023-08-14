@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { TimeEvaluation } from "src/utils/timeEvaluation";
-import { default as BarModule, BarSchema } from "./bar";
+import { BarSchema, createBar, fillBarTrack, sumBarsCapacity } from "./bar";
 import { type Note, NoteSchema } from "./note";
 
 export const SheetSchema = z.object({
@@ -81,9 +81,9 @@ const SheetModule: ISheetModule = {
         );
     }
 
-    const newBarStart = BarModule.sumBarsCapacity(previousBars);
+    const newBarStart = sumBarsCapacity(previousBars);
     const newBarIndex = index === undefined ? sheet.bars.length : index + 1;
-    const newBar = BarModule.createBar(
+    const newBar = createBar(
       sheet.trackCount,
       beatCount,
       dibobinador,
@@ -286,7 +286,7 @@ const fillBarTrackInSheet = (
     return;
   }
 
-  BarModule.fillBarTrack(targetBar, sheetTrack, trackIndex);
+  fillBarTrack(targetBar, sheetTrack, trackIndex);
 };
 
 export default SheetModule;

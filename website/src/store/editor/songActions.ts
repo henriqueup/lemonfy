@@ -54,3 +54,10 @@ export const addInstrument = (instrument: Instrument) =>
       draft.currentInstrumentIndex = draft.song.instruments.length - 1;
     }),
   );
+
+export const setCurrentInstrumentIndex = (instrumentIndex: number) =>
+  useEditorStore.setState(state =>
+    produce(state, draft => {
+      draft.currentInstrumentIndex = instrumentIndex;
+    }),
+  );

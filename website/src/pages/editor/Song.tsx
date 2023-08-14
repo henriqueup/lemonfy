@@ -4,7 +4,10 @@ import { Edit } from "lucide-react";
 import { Plus } from "src/icons";
 import { getCurrentSheet, useEditorStore } from "@/store/editor";
 import { cn } from "src/styles/utils";
-import { addInstrument } from "@/store/editor/songActions";
+import {
+  addInstrument,
+  setCurrentInstrumentIndex,
+} from "@/store/editor/songActions";
 import SheetEditor from "./SheetEditor";
 import InstrumentMenu from "./InstrumentMenu";
 import { type Instrument } from "@/server/entities/instrument";
@@ -16,6 +19,9 @@ interface Props {
 
 const Song: FunctionComponent<Props> = ({ openSongMenu }: Props) => {
   const song = useEditorStore(state => state.song);
+  const currentInstrumentIndex = useEditorStore(
+    state => state.currentInstrumentIndex,
+  );
   const currentSheet = getCurrentSheet();
   const [instrumentMenuIsOpen, setInstrumentMenuIsOpen] = useState(false);
 
@@ -55,7 +61,9 @@ const Song: FunctionComponent<Props> = ({ openSongMenu }: Props) => {
         </div>
       ) : (
         <Tabs
-          defaultValue={`${song.instruments[0]?.id ?? ""}-0`}
+          defaultValue={`${
+            song.instruments[currentInstrumentIndex ?? 0]?.id ?? ""
+          }-0`}
           className="flex h-full flex-col bg-inherit"
         >
           <TabsList className="z-10 w-min items-end justify-start rounded-b-none pb-0">
@@ -64,7 +72,7 @@ const Song: FunctionComponent<Props> = ({ openSongMenu }: Props) => {
                 key={`${instrument.id}-${i}`}
                 value={`${instrument.id}-${i}`}
                 className="rounded-b-none"
-                onClick={() => console.log("set curret sheet")}
+                onClick={() => setCurrentInstrumentIndex(i)}
               >
                 {instrument.name}
               </TabsTrigger>

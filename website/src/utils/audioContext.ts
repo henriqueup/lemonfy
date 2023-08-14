@@ -1,4 +1,4 @@
-import BarModule, { type Bar } from "@entities/bar";
+import { setBarTimesInSeconds, type Bar, cropBar } from "@entities/bar";
 import { type Note } from "@entities/note";
 import SheetModule, { type Sheet } from "@entities/sheet";
 import { play } from "@/store/player/playerActions";
@@ -24,7 +24,7 @@ const getBarsAfterStart = (sheet: Sheet, start: number): Bar[] => {
   const firstBar = barsAfterStart[0];
 
   if (firstBar !== undefined && firstBar.start < start)
-    BarModule.cropBar(firstBar, start);
+    cropBar(firstBar, start);
 
   return barsAfterStart;
 };
@@ -98,7 +98,7 @@ export const playSong = (
     if (bar === undefined) throw new Error(`Invalid bar at index ${i}.`);
 
     bar.start = Math.max(0, bar.start - start);
-    BarModule.setBarTimesInSeconds(bar);
+    setBarTimesInSeconds(bar);
     if (bar.startInSeconds == undefined)
       throw new Error(`Invalid bar at ${i}: undefined startInSeconds.`);
 

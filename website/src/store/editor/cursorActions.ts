@@ -2,7 +2,7 @@ import { produce } from "immer";
 
 import { getCurrentSheet, useEditorStore } from "./editorStore";
 import { NOTE_DURATIONS } from "@entities/note";
-import BarModule from "@entities/bar";
+import { findBarNoteByTime } from "@entities/bar";
 import { TimeEvaluation } from "src/utils/timeEvaluation";
 
 export const increaseCursorTrackIndex = () =>
@@ -68,7 +68,7 @@ export const increaseCursorPosition = () =>
       )
         return;
 
-      const nextNote = BarModule.findBarNoteByTime(
+      const nextNote = findBarNoteByTime(
         barWithCursor,
         draft.cursor.trackIndex,
         draft.cursor.position,
@@ -104,7 +104,7 @@ export const decreaseCursorPosition = () =>
       const barWithCursor = currentSheet.bars[draft.cursor.barIndex];
       if (barWithCursor === undefined) return;
 
-      const previousNote = BarModule.findBarNoteByTime(
+      const previousNote = findBarNoteByTime(
         barWithCursor,
         draft.cursor.trackIndex,
         draft.cursor.position,

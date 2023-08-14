@@ -6,7 +6,7 @@ import {
 } from "react";
 
 import { SECONDS_PER_MINUTE } from "src/utils/timeEvaluation";
-import { default as BarModule, type Bar } from "@entities/bar";
+import { convertDurationInBarToSeconds, type Bar } from "@entities/bar";
 
 interface Props {
   bar: Bar;
@@ -27,12 +27,14 @@ const Cursor: FunctionComponent<Props> = ({
     (divElement: HTMLDivElement | null) => {
       if (!isPlaying || isPaused || divElement === null) return;
 
-      const totalBarDurationInSeconds = BarModule.convertDurationInBarToSeconds(
+      const totalBarDurationInSeconds = convertDurationInBarToSeconds(
         bar,
         bar.capacity,
       );
-      const remainingBarDurationInSeconds =
-        BarModule.convertDurationInBarToSeconds(bar, bar.capacity - position);
+      const remainingBarDurationInSeconds = convertDurationInBarToSeconds(
+        bar,
+        bar.capacity - position,
+      );
       const startPosition =
         totalBarDurationInSeconds - remainingBarDurationInSeconds;
       const startPositionPercentage =

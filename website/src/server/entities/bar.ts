@@ -19,184 +19,152 @@ export const BarSchema = z.object({
 
 export type Bar = z.infer<typeof BarSchema>;
 
-interface IBarModule {
-  createBar: (
-    trackCount: number,
-    beatCount: number,
-    dibobinador: number,
-    start: number,
-    tempo: number,
-    index: number,
-  ) => Bar;
-  findBarNoteByTime: (
-    bar: Bar,
-    trackIndex: number,
-    time: number,
-    lookForward?: boolean,
-    shouldContainTime?: boolean,
-  ) => Note | null;
+export const createBar = (
+  trackCount: number,
+  beatCount: number,
+  dibobinador: number,
+  start: number,
+  tempo: number,
+  index: number,
+): Bar => {
+  return BarSchema.parse({
+    trackCount,
+    beatCount,
+    dibobinador,
+    start: toPrecision(start),
+    capacity: toPrecision(beatCount / dibobinador),
+    tempo,
+    tracks: Array.from({ length: trackCount }, (): Note[] => []),
+    timeRatio: tempo / SECONDS_PER_MINUTE,
+    index,
+  });
+};
 
-  sumBarsCapacity: (bars: Bar[]) => number;
-  convertDurationInBarToSeconds: (bar: Bar, duration: number) => number;
-  setBarTimesInSeconds: (bar: Bar) => void;
-  fillBarTrack: (bar: Bar, track: Note[], trackIndex: number) => void;
-  cropBar: (bar: Bar, start: number) => void;
-}
+export const findBarNoteByTime = (
+  bar: Bar,
+  trackIndex: number,
+  time: number,
+  lookForward = true,
+  shouldContainTime = true,
+): Note | null => {
+  const track = [...getTrackFromIndex(bar, trackIndex)];
 
-const BarModule: IBarModule = {
-  createBar: (
-    trackCount: number,
-    beatCount: number,
-    dibobinador: number,
-    start: number,
-    tempo: number,
-    index: number,
-  ): Bar => {
-    return BarSchema.parse({
-      trackCount,
-      beatCount,
-      dibobinador,
-      start: toPrecision(start),
-      capacity: toPrecision(beatCount / dibobinador),
-      tempo,
-      tracks: Array.from({ length: trackCount }, (): Note[] => []),
-      timeRatio: tempo / SECONDS_PER_MINUTE,
-      index,
-    });
-  },
+  if (!lookForward) track.reverse();
 
-  findBarNoteByTime: (
-    bar: Bar,
-    trackIndex: number,
-    time: number,
-    lookForward = true,
-    shouldContainTime = true,
-  ): Note | null => {
-    const track = [...getTrackFromIndex(bar, trackIndex)];
-
-    if (!lookForward) track.reverse();
-
-    const targetNote = track.find(note => {
-      const noteEnd = note.start + note.duration;
-      if (lookForward)
-        return (
-          (TimeEvaluation.IsSmallerOrEqualTo(note.start, time) &&
-            TimeEvaluation.IsSmallerThan(time, noteEnd)) ||
-          (!shouldContainTime && TimeEvaluation.IsSmallerThan(time, note.start))
-        );
-
+  const targetNote = track.find(note => {
+    const noteEnd = note.start + note.duration;
+    if (lookForward)
       return (
-        (TimeEvaluation.IsSmallerThan(note.start, time) &&
-          TimeEvaluation.IsSmallerOrEqualTo(time, noteEnd)) ||
-        (!shouldContainTime && TimeEvaluation.IsSmallerThan(noteEnd, time))
+        (TimeEvaluation.IsSmallerOrEqualTo(note.start, time) &&
+          TimeEvaluation.IsSmallerThan(time, noteEnd)) ||
+        (!shouldContainTime && TimeEvaluation.IsSmallerThan(time, note.start))
       );
-    });
 
-    return targetNote ?? null;
-  },
-
-  sumBarsCapacity: (bars: Bar[]): number => {
-    return toPrecision(
-      bars.reduce(
-        (currentCapacity, currentBar) => currentCapacity + currentBar.capacity,
-        0,
-      ),
+    return (
+      (TimeEvaluation.IsSmallerThan(note.start, time) &&
+        TimeEvaluation.IsSmallerOrEqualTo(time, noteEnd)) ||
+      (!shouldContainTime && TimeEvaluation.IsSmallerThan(noteEnd, time))
     );
-  },
+  });
 
-  convertDurationInBarToSeconds: (bar: Bar, duration: number): number => {
-    return toPrecision((duration * bar.dibobinador) / bar.timeRatio);
-  },
+  return targetNote ?? null;
+};
 
-  setBarTimesInSeconds: (bar: Bar): void => {
-    const notes = bar.tracks.flat();
-    bar.startInSeconds = BarModule.convertDurationInBarToSeconds(
-      bar,
-      bar.start,
+export const sumBarsCapacity = (bars: Bar[]): number => {
+  return toPrecision(
+    bars.reduce(
+      (currentCapacity, currentBar) => currentCapacity + currentBar.capacity,
+      0,
+    ),
+  );
+};
+
+export const convertDurationInBarToSeconds = (
+  bar: Bar,
+  duration: number,
+): number => {
+  return toPrecision((duration * bar.dibobinador) / bar.timeRatio);
+};
+
+export const setBarTimesInSeconds = (bar: Bar): void => {
+  const notes = bar.tracks.flat();
+  bar.startInSeconds = convertDurationInBarToSeconds(bar, bar.start);
+
+  for (let i = 0; i < notes.length; i++) {
+    const note = notes[i];
+    if (note === undefined)
+      throw new Error(`The note at index ${i} should exist.`);
+
+    note.durationInSeconds = convertDurationInBarToSeconds(bar, note.duration);
+    note.startInSeconds = convertDurationInBarToSeconds(bar, note.start);
+  }
+};
+
+export const fillBarTrack = (
+  bar: Bar,
+  track: Note[],
+  trackIndex: number,
+): void => {
+  const barEnd = bar.start + bar.capacity;
+  const notesInsideBar = track.filter(
+    note =>
+      TimeEvaluation.IsGreaterThan(note.start + note.duration, bar.start) &&
+      TimeEvaluation.IsSmallerThan(note.start, barEnd),
+  );
+  if (notesInsideBar.length === 0) {
+    bar.tracks[trackIndex] = [];
+    return;
+  }
+
+  const firstNote = notesInsideBar[0];
+  if (firstNote === undefined) throw Error("Invalid first Note of track.");
+
+  const lastNote = notesInsideBar[notesInsideBar.length - 1];
+  if (lastNote === undefined) throw Error("Invalid last Note of track.");
+
+  const trackWithoutExtremityNotes = notesInsideBar
+    .filter((_, i) => i !== 0 && i !== notesInsideBar.length - 1)
+    .map(trackNote =>
+      createNote(trackNote.duration, trackNote.start, trackNote.pitch),
     );
+  const barTrack = trackWithoutExtremityNotes;
 
-    for (let i = 0; i < notes.length; i++) {
-      const note = notes[i];
-      if (note === undefined)
-        throw new Error(`The note at index ${i} should exist.`);
+  const actualFirstNote = getActualFirstNote(bar, firstNote);
+  barTrack.splice(0, 0, actualFirstNote);
 
-      note.durationInSeconds = BarModule.convertDurationInBarToSeconds(
-        bar,
-        note.duration,
-      );
-      note.startInSeconds = BarModule.convertDurationInBarToSeconds(
-        bar,
-        note.start,
-      );
-    }
-  },
+  if (lastNote !== firstNote) {
+    const actualLastNote = getActualLastNote(bar, lastNote);
+    barTrack.push(actualLastNote);
+  }
 
-  fillBarTrack: (bar: Bar, track: Note[], trackIndex: number): void => {
-    const barEnd = bar.start + bar.capacity;
-    const notesInsideBar = track.filter(
-      note =>
-        TimeEvaluation.IsGreaterThan(note.start + note.duration, bar.start) &&
-        TimeEvaluation.IsSmallerThan(note.start, barEnd),
-    );
-    if (notesInsideBar.length === 0) {
-      bar.tracks[trackIndex] = [];
-      return;
-    }
+  barTrack.forEach(note => {
+    note.start -= bar.start;
+  });
+  bar.tracks[trackIndex] = barTrack;
+};
 
-    const firstNote = notesInsideBar[0];
-    if (firstNote === undefined) throw Error("Invalid first Note of track.");
+export const cropBar = (bar: Bar, start: number): void => {
+  if (bar.start >= start || bar.start + bar.capacity <= start) return;
 
-    const lastNote = notesInsideBar[notesInsideBar.length - 1];
-    if (lastNote === undefined) throw Error("Invalid last Note of track.");
+  const startAdjustedToBar = start - bar.start;
+  for (let i = 0; i < bar.tracks.length; i++) {
+    const track = bar.tracks[i];
+    if (track === undefined) throw new Error(`Invalid bar track at ${i}.`);
 
-    const trackWithoutExtremityNotes = notesInsideBar
-      .filter((_, i) => i !== 0 && i !== notesInsideBar.length - 1)
-      .map(trackNote =>
-        createNote(trackNote.duration, trackNote.start, trackNote.pitch),
-      );
-    const barTrack = trackWithoutExtremityNotes;
+    const noteToCrop = findBarNoteByTime(bar, i, startAdjustedToBar);
+    const croppedNote = noteToCrop;
 
-    const actualFirstNote = getActualFirstNote(bar, firstNote);
-    barTrack.splice(0, 0, actualFirstNote);
-
-    if (lastNote !== firstNote) {
-      const actualLastNote = getActualLastNote(bar, lastNote);
-      barTrack.push(actualLastNote);
+    if (croppedNote !== null && croppedNote.start < startAdjustedToBar) {
+      croppedNote.duration -= startAdjustedToBar - croppedNote.start;
+      croppedNote.start = startAdjustedToBar;
     }
 
-    barTrack.forEach(note => {
-      note.start -= bar.start;
-    });
-    bar.tracks[trackIndex] = barTrack;
-  },
+    bar.tracks[i] = track
+      .filter(note => note.start >= startAdjustedToBar)
+      .map(note => ({ ...note, start: note.start - startAdjustedToBar }));
+  }
 
-  cropBar: (bar: Bar, start: number): void => {
-    if (bar.start >= start || bar.start + bar.capacity <= start) return;
-
-    const startAdjustedToBar = start - bar.start;
-    for (let i = 0; i < bar.tracks.length; i++) {
-      const track = bar.tracks[i];
-      if (track === undefined) throw new Error(`Invalid bar track at ${i}.`);
-
-      const noteToCrop = BarModule.findBarNoteByTime(
-        bar,
-        i,
-        startAdjustedToBar,
-      );
-      const croppedNote = noteToCrop;
-
-      if (croppedNote !== null && croppedNote.start < startAdjustedToBar) {
-        croppedNote.duration -= startAdjustedToBar - croppedNote.start;
-        croppedNote.start = startAdjustedToBar;
-      }
-
-      bar.tracks[i] = track
-        .filter(note => note.start >= startAdjustedToBar)
-        .map(note => ({ ...note, start: note.start - startAdjustedToBar }));
-    }
-
-    bar.capacity -= startAdjustedToBar;
-  },
+  bar.capacity -= startAdjustedToBar;
 };
 
 const getTrackFromIndex = (bar: Bar, trackIndex: number) => {
@@ -262,8 +230,6 @@ const getActualLastNote = (bar: Bar, lastNote: Note) => {
     false,
   );
 };
-
-export default BarModule;
 
 /*
 sources

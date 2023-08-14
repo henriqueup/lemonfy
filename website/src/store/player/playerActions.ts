@@ -1,6 +1,6 @@
 import { type Draft, produce } from "immer";
 
-import { default as BarModule, type Bar } from "@entities/bar";
+import { type Bar, convertDurationInBarToSeconds } from "@entities/bar";
 import { getCurrentSheet, useEditorStore } from "@/store/editor";
 import {
   INITIAL_STATE,
@@ -18,7 +18,7 @@ const createNextBarTimeout = (
     return undefined;
   }
 
-  const barDurationInSeconds = BarModule.convertDurationInBarToSeconds(
+  const barDurationInSeconds = convertDurationInBarToSeconds(
     barWithCursor,
     barWithCursor.capacity - startPosition,
   );
@@ -105,7 +105,7 @@ export const pause = () =>
 
       const timeElapsed =
         (new Date().getTime() - draft.currentTimeoutStartTime.getTime()) / 1000;
-      const totalBarTime = BarModule.convertDurationInBarToSeconds(
+      const totalBarTime = convertDurationInBarToSeconds(
         barWithCursor,
         barWithCursor.capacity,
       );
