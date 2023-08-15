@@ -1,24 +1,10 @@
 import {
-  createNote,
   getHigherNoteDuration,
   getLowerNoteDuration,
   type NoteDurationName,
 } from "@entities/note";
 import { getHigherOctave, getLowerOctave, type Octave } from "@entities/octave";
-import { createPitch, type PitchName } from "@entities/pitch";
 import { useEditorStore } from "./editorStore";
-
-export const setNoteToAdd = (
-  duration: number,
-  pitchName: PitchName,
-  octave: Octave,
-) =>
-  useEditorStore.setState(() => {
-    const pitch = createPitch(pitchName, octave);
-    const noteToAdd = createNote(duration, -1, pitch);
-
-    return { noteToAdd };
-  });
 
 export const setSelectedOctave = (octave: Octave) =>
   useEditorStore.setState(() => ({ selectedOctave: octave }));
