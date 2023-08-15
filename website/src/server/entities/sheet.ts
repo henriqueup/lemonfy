@@ -12,198 +12,173 @@ export const SheetSchema = z.object({
 
 export type Sheet = z.infer<typeof SheetSchema>;
 
-interface ISheetModule {
-  findSheetNoteByTime: (
-    sheet: Sheet,
-    trackIndex: number,
-    time: number,
-    lookForward?: boolean,
-  ) => Note | null;
+export const createSheet = (trackCount: number): Sheet => {
+  const newSheet: Sheet = {
+    bars: [],
+    tracks: [],
+    trackCount,
+  };
 
-  createSheet: (trackCount: number) => Sheet;
-  addBarToSheet: (
-    sheet: Sheet,
-    beatCount: number,
-    dibobinador: number,
-    tempo: number,
-    index?: number,
-  ) => void;
-  addNoteToSheet: (sheet: Sheet, trackIndex: number, noteToAdd: Note) => void;
-  removeNotesFromSheet: (
-    sheet: Sheet,
-    trackIndex: number,
-    notesToRemove: Note[],
-  ) => void;
-  fillBarTracksInSheet: (sheet: Sheet, trackIndex: number) => void;
-  fillBarsInSheet: (sheet: Sheet) => void;
-  removeBarInSheetByIndex: (sheet: Sheet, barIndex: number) => void;
-}
+  for (let i = 0; i < trackCount; i++) {
+    newSheet.tracks[i] = [];
+  }
 
-const SheetModule: ISheetModule = {
-  createSheet: (trackCount: number): Sheet => {
-    const newSheet: Sheet = {
-      bars: [],
-      tracks: [],
-      trackCount,
-    };
+  return SheetSchema.parse(newSheet);
+};
 
-    for (let i = 0; i < trackCount; i++) {
-      newSheet.tracks[i] = [];
-    }
+export const addBarToSheet = (
+  sheet: Sheet,
+  beatCount: number,
+  dibobinador: number,
+  tempo: number,
+  index?: number,
+) => {
+  let previousBars = sheet.bars;
+  if (index != undefined)
+    previousBars = previousBars.filter((_, i) => i <= index);
 
-    return SheetSchema.parse(newSheet);
-  },
+  const barBeforeNewBar = previousBars[previousBars.length - 1];
 
-  addBarToSheet: (
-    sheet: Sheet,
-    beatCount: number,
-    dibobinador: number,
-    tempo: number,
-    index?: number,
-  ) => {
-    let previousBars = sheet.bars;
-    if (index != undefined)
-      previousBars = previousBars.filter((_, i) => i <= index);
-
-    const barBeforeNewBar = previousBars[previousBars.length - 1];
-
-    if (barBeforeNewBar !== undefined) {
-      const lastNotesOfBarBeforeNewBar = barBeforeNewBar.tracks.map(
-        track => track[track.length - 1],
-      );
-      const lastNotesWithSustain = lastNotesOfBarBeforeNewBar.filter(
-        note => note?.hasSustain,
-      );
-
-      if (lastNotesWithSustain.length > 0)
-        throw new Error(
-          "The previous bar can't have any notes with sustain for a new bar to be added after it.",
-        );
-    }
-
-    const newBarStart = sumBarsCapacity(previousBars);
-    const newBarIndex = index === undefined ? sheet.bars.length : index + 1;
-    const newBar = createBar(
-      sheet.trackCount,
-      beatCount,
-      dibobinador,
-      newBarStart,
-      tempo,
-      newBarIndex,
+  if (barBeforeNewBar !== undefined) {
+    const lastNotesOfBarBeforeNewBar = barBeforeNewBar.tracks.map(
+      track => track[track.length - 1],
+    );
+    const lastNotesWithSustain = lastNotesOfBarBeforeNewBar.filter(
+      note => note?.hasSustain,
     );
 
-    sheet.bars.splice(newBarIndex, 0, newBar);
+    if (lastNotesWithSustain.length > 0)
+      throw new Error(
+        "The previous bar can't have any notes with sustain for a new bar to be added after it.",
+      );
+  }
 
-    const followingBars = sheet.bars.filter((_, i) => i > newBarIndex);
-    followingBars.forEach(bar => {
-      bar.index += 1;
-    });
-  },
+  const newBarStart = sumBarsCapacity(previousBars);
+  const newBarIndex = index === undefined ? sheet.bars.length : index + 1;
+  const newBar = createBar(
+    sheet.trackCount,
+    beatCount,
+    dibobinador,
+    newBarStart,
+    tempo,
+    newBarIndex,
+  );
 
-  addNoteToSheet: (sheet: Sheet, trackIndex: number, noteToAdd: Note) => {
-    const targetTrack = getTrackFromIndex(sheet, trackIndex);
-    const notesBeforeNoteToAdd = targetTrack.filter(note =>
-      TimeEvaluation.IsSmallerThan(note.start, noteToAdd.start),
-    );
+  sheet.bars.splice(newBarIndex, 0, newBar);
 
-    let noteToAddIndex = 0;
-    if (notesBeforeNoteToAdd.length > 0) {
-      const lastNoteBeforeNoteToAdd =
-        notesBeforeNoteToAdd[notesBeforeNoteToAdd.length - 1];
+  const followingBars = sheet.bars.filter((_, i) => i > newBarIndex);
+  followingBars.forEach(bar => {
+    bar.index += 1;
+  });
+};
 
-      if (lastNoteBeforeNoteToAdd === undefined)
-        throw new Error(
-          `Note at index ${notesBeforeNoteToAdd.length - 1} should exist.`,
-        );
+export const addNoteToSheet = (
+  sheet: Sheet,
+  trackIndex: number,
+  noteToAdd: Note,
+) => {
+  const targetTrack = getTrackFromIndex(sheet, trackIndex);
+  const notesBeforeNoteToAdd = targetTrack.filter(note =>
+    TimeEvaluation.IsSmallerThan(note.start, noteToAdd.start),
+  );
 
-      noteToAddIndex = targetTrack.indexOf(lastNoteBeforeNoteToAdd) + 1;
-    }
+  let noteToAddIndex = 0;
+  if (notesBeforeNoteToAdd.length > 0) {
+    const lastNoteBeforeNoteToAdd =
+      notesBeforeNoteToAdd[notesBeforeNoteToAdd.length - 1];
 
-    const resultingTrack = [
-      ...targetTrack.slice(0, noteToAddIndex),
-      noteToAdd,
-      ...targetTrack.slice(noteToAddIndex),
-    ];
-    adjustNoteStartsAfterNewNote(resultingTrack, noteToAdd, noteToAddIndex);
+    if (lastNoteBeforeNoteToAdd === undefined)
+      throw new Error(
+        `Note at index ${notesBeforeNoteToAdd.length - 1} should exist.`,
+      );
 
-    sheet.tracks[trackIndex] = resultingTrack;
-    addExtraBarsIfNeeded(sheet, trackIndex);
-  },
+    noteToAddIndex = targetTrack.indexOf(lastNoteBeforeNoteToAdd) + 1;
+  }
 
-  findSheetNoteByTime: (
-    sheet: Sheet,
-    trackIndex: number,
-    time: number,
-    lookForward = true,
-  ): Note | null => {
-    const track = getTrackFromIndex(sheet, trackIndex);
+  const resultingTrack = [
+    ...targetTrack.slice(0, noteToAddIndex),
+    noteToAdd,
+    ...targetTrack.slice(noteToAddIndex),
+  ];
+  adjustNoteStartsAfterNewNote(resultingTrack, noteToAdd, noteToAddIndex);
 
-    const targetNote = track.find(note => {
-      const noteEnd = note.start + note.duration;
-      if (lookForward)
-        return (
-          TimeEvaluation.IsSmallerOrEqualTo(note.start, time) &&
-          TimeEvaluation.IsSmallerThan(time, noteEnd)
-        );
+  sheet.tracks[trackIndex] = resultingTrack;
+  addExtraBarsIfNeeded(sheet, trackIndex);
+};
 
+export const findSheetNoteByTime = (
+  sheet: Sheet,
+  trackIndex: number,
+  time: number,
+  lookForward = true,
+): Note | null => {
+  const track = getTrackFromIndex(sheet, trackIndex);
+
+  const targetNote = track.find(note => {
+    const noteEnd = note.start + note.duration;
+    if (lookForward)
       return (
-        TimeEvaluation.IsSmallerThan(note.start, time) &&
-        TimeEvaluation.IsSmallerOrEqualTo(time, noteEnd)
+        TimeEvaluation.IsSmallerOrEqualTo(note.start, time) &&
+        TimeEvaluation.IsSmallerThan(time, noteEnd)
       );
-    });
 
-    return targetNote ?? null;
-  },
-
-  removeNotesFromSheet: (
-    sheet: Sheet,
-    trackIndex: number,
-    notesToRemove: Note[],
-  ): void => {
-    const track = getTrackFromIndex(sheet, trackIndex);
-
-    sheet.tracks[trackIndex] = track.filter(
-      note => !notesToRemove.includes(note),
+    return (
+      TimeEvaluation.IsSmallerThan(note.start, time) &&
+      TimeEvaluation.IsSmallerOrEqualTo(time, noteEnd)
     );
-  },
+  });
 
-  fillBarTracksInSheet: (sheet: Sheet, trackIndex: number) => {
-    for (let i = 0; i < sheet.bars.length; i++) {
-      fillBarTrackInSheet(sheet, i, trackIndex);
-    }
-  },
+  return targetNote ?? null;
+};
 
-  fillBarsInSheet: (sheet: Sheet) => {
-    for (let i = 0; i < sheet.tracks.length; i++) {
-      SheetModule.fillBarTracksInSheet(sheet, i);
-    }
-  },
+export const removeNotesFromSheet = (
+  sheet: Sheet,
+  trackIndex: number,
+  notesToRemove: Note[],
+): void => {
+  const track = getTrackFromIndex(sheet, trackIndex);
 
-  removeBarInSheetByIndex: (sheet: Sheet, barIndex: number) => {
-    const barToRemove = sheet.bars[barIndex];
-    if (barToRemove === undefined)
-      throw new Error(`Invalid bar at index ${barIndex}.`);
+  sheet.tracks[trackIndex] = track.filter(
+    note => !notesToRemove.includes(note),
+  );
+};
 
-    sheet.bars.splice(barIndex, 1);
+export const fillBarTracksInSheet = (sheet: Sheet, trackIndex: number) => {
+  for (let i = 0; i < sheet.bars.length; i++) {
+    fillBarTrackInSheet(sheet, i, trackIndex);
+  }
+};
 
-    // decrease index of all following bars
-    for (let i = barIndex; i < sheet.bars.length; i++) {
-      const bar = sheet.bars[i];
-      if (bar === undefined) throw new Error(`Invalid bar at index ${i}.`);
+export const fillBarsInSheet = (sheet: Sheet) => {
+  for (let i = 0; i < sheet.tracks.length; i++) {
+    fillBarTracksInSheet(sheet, i);
+  }
+};
 
-      bar.index -= 1;
-    }
+export const removeBarInSheetByIndex = (sheet: Sheet, barIndex: number) => {
+  const barToRemove = sheet.bars[barIndex];
+  if (barToRemove === undefined)
+    throw new Error(`Invalid bar at index ${barIndex}.`);
 
-    sheet.tracks = sheet.tracks.map(track =>
-      track.filter(
-        note =>
-          note.start + note.duration <= barToRemove.start ||
-          note.start >= barToRemove.start + barToRemove.capacity,
-      ),
-    );
+  sheet.bars.splice(barIndex, 1);
 
-    SheetModule.fillBarsInSheet(sheet);
-  },
+  // decrease index of all following bars
+  for (let i = barIndex; i < sheet.bars.length; i++) {
+    const bar = sheet.bars[i];
+    if (bar === undefined) throw new Error(`Invalid bar at index ${i}.`);
+
+    bar.index -= 1;
+  }
+
+  sheet.tracks = sheet.tracks.map(track =>
+    track.filter(
+      note =>
+        note.start + note.duration <= barToRemove.start ||
+        note.start >= barToRemove.start + barToRemove.capacity,
+    ),
+  );
+
+  fillBarsInSheet(sheet);
 };
 
 const getTrackFromIndex = (sheet: Sheet, trackIndex: number) => {
@@ -232,12 +207,7 @@ const addExtraBarsIfNeeded = (sheet: Sheet, trackIndex: number) => {
   let lastBarEnd = lastBar.start + lastBar.capacity;
 
   while (lastNoteEnd > lastBarEnd) {
-    SheetModule.addBarToSheet(
-      sheet,
-      lastBar.beatCount,
-      lastBar.dibobinador,
-      lastBar.tempo,
-    );
+    addBarToSheet(sheet, lastBar.beatCount, lastBar.dibobinador, lastBar.tempo);
 
     lastBar = sheet.bars[sheet.bars.length - 1];
     if (lastBar === undefined) return;
@@ -288,5 +258,3 @@ const fillBarTrackInSheet = (
 
   fillBarTrack(targetBar, sheetTrack, trackIndex);
 };
-
-export default SheetModule;

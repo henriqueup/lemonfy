@@ -14,23 +14,12 @@ import {
   getMockSheetWithBars,
   getMockSheetWithGap,
 } from "src/mocks/entities/sheet";
-import * as BarModule from "@entities/bar";
-import * as MockUtilsModule from "src/mocks/utils/moduleUtils";
 import { createNoteMock } from "src/mocks/entities/note";
 import { NOTE_DURATIONS } from "@entities/note";
 import { getMockSong } from "@/mocks/entities/song";
+import { findBarNoteByTime } from "@/server/entities/bar";
 
-jest.mock<typeof BarModule.default>("@entities/bar", () => {
-  const mockUtils = jest.requireActual<typeof MockUtilsModule>(
-    "src/mocks/utils/moduleUtils",
-  );
-  return mockUtils.mockModuleFunctions(
-    jest.requireActual<typeof BarModule>("@entities/bar").default,
-  );
-});
-const barModuleWithMocks = MockUtilsModule.getModuleWithMocks(
-  BarModule.default,
-);
+jest.mock("@entities/bar");
 
 describe("Increase track index", () => {
   it("Does nothing with undefined Sheet", () => {
@@ -238,7 +227,7 @@ describe("Increase cursor position", () => {
   });
 
   it("Increases position without next Note but with Note within selected duration", () => {
-    barModuleWithMocks.findBarNoteByTime.mockImplementation(() =>
+    (findBarNoteByTime as jest.Mock).mockImplementation(() =>
       createNoteMock(NOTE_DURATIONS["QUARTER"], 2 / 4),
     );
     useEditorStore.setState(state => ({
@@ -257,7 +246,7 @@ describe("Increase cursor position", () => {
   });
 
   it("Increases position with next Note smaller than selected duration", () => {
-    barModuleWithMocks.findBarNoteByTime.mockImplementation(() =>
+    (findBarNoteByTime as jest.Mock).mockImplementation(() =>
       createNoteMock(NOTE_DURATIONS["QUARTER"], 0),
     );
     useEditorStore.setState(state => ({
@@ -277,7 +266,7 @@ describe("Increase cursor position", () => {
   });
 
   it("Increases position with next Note longer than selected duration", () => {
-    barModuleWithMocks.findBarNoteByTime.mockImplementation(() =>
+    (findBarNoteByTime as jest.Mock).mockImplementation(() =>
       createNoteMock(NOTE_DURATIONS["QUARTER"], 0),
     );
     useEditorStore.setState(state => ({
@@ -297,7 +286,7 @@ describe("Increase cursor position", () => {
   });
 
   it("Increases position with cursor inside Note", () => {
-    barModuleWithMocks.findBarNoteByTime.mockImplementation(() =>
+    (findBarNoteByTime as jest.Mock).mockImplementation(() =>
       createNoteMock(NOTE_DURATIONS["QUARTER"], 0),
     );
     useEditorStore.setState(state => ({
@@ -318,10 +307,6 @@ describe("Increase cursor position", () => {
 });
 
 describe("Decrease cursor position", () => {
-  beforeEach(() => {
-    MockUtilsModule.restoreMocks(barModuleWithMocks);
-  });
-
   it("Does nothing with undefined Sheet", () => {
     decreaseCursorPosition();
 
@@ -382,7 +367,7 @@ describe("Decrease cursor position", () => {
   });
 
   it("Decreases position without previous Note but with Note within selected duration", () => {
-    barModuleWithMocks.findBarNoteByTime.mockImplementation(() =>
+    (findBarNoteByTime as jest.Mock).mockImplementation(() =>
       createNoteMock(NOTE_DURATIONS["QUARTER"], 0),
     );
     useEditorStore.setState(state => ({
@@ -401,7 +386,7 @@ describe("Decrease cursor position", () => {
   });
 
   it("Decreases position with previous Note smaller than selected duration", () => {
-    barModuleWithMocks.findBarNoteByTime.mockImplementation(() =>
+    (findBarNoteByTime as jest.Mock).mockImplementation(() =>
       createNoteMock(NOTE_DURATIONS["QUARTER"], 2 / 4),
     );
     useEditorStore.setState(state => ({
@@ -421,7 +406,7 @@ describe("Decrease cursor position", () => {
   });
 
   it("Decreases position with previous Note longer than selected duration", () => {
-    barModuleWithMocks.findBarNoteByTime.mockImplementation(() =>
+    (findBarNoteByTime as jest.Mock).mockImplementation(() =>
       createNoteMock(NOTE_DURATIONS["QUARTER"], 2 / 4),
     );
     useEditorStore.setState(state => ({
@@ -441,7 +426,7 @@ describe("Decrease cursor position", () => {
   });
 
   it("Decreases position with cursor inside Note", () => {
-    barModuleWithMocks.findBarNoteByTime.mockImplementation(() =>
+    (findBarNoteByTime as jest.Mock).mockImplementation(() =>
       createNoteMock(NOTE_DURATIONS["QUARTER"], 2 / 4),
     );
     useEditorStore.setState(state => ({

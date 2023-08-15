@@ -66,7 +66,8 @@ And finally, it can also be used as a showcase of my skills.
         - <s>Use row selection</s>
         - <s>Fix selection jumping to next song after deletion</s>
   - Create server tests
-    - Fix existing tests and mocking
+    - Actually add server unit tests
+    - <s>Fix existing tests and mocking</s>
 - <s>Fix float issue</s>
   - <s>Maybe something like: Number((0.009033203125).toFixed(8))</s>
 - <s>Add player pages</s>
@@ -97,7 +98,7 @@ And finally, it can also be used as a showcase of my skills.
     - <s>sheet</s>
   - <s>Add classes in layers</s>
   - <s>Adjust Song classes</s>
-  - Add Instrument management page
+  - <s>Add Instrument management page</s>
     - <s>Add creation dialog</s>
       - <s>Integrate creation with backend</s>
       - <s>Fix tuning scroll and popover position</s>

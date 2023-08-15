@@ -1,6 +1,6 @@
 import { setBarTimesInSeconds, type Bar, cropBar } from "@entities/bar";
 import { type Note } from "@entities/note";
-import SheetModule, { type Sheet } from "@entities/sheet";
+import { fillBarsInSheet, type Sheet } from "@entities/sheet";
 import { play } from "@/store/player/playerActions";
 import { toPrecision } from "src/utils/numbers";
 
@@ -88,7 +88,7 @@ export const playSong = (
   start = 0,
 ): void => {
   const sheetCopyForPlayback = createSheetCopy(sheet);
-  SheetModule.fillBarsInSheet(sheetCopyForPlayback);
+  fillBarsInSheet(sheetCopyForPlayback);
 
   const barsAfterStart = getBarsAfterStart(sheetCopyForPlayback, start);
 

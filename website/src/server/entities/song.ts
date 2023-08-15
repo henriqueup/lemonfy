@@ -23,19 +23,11 @@ export const SongSchema = BaseSongSchema.merge(
 export type SongInfo = z.infer<typeof SongInfoSchema>;
 export type Song = z.infer<typeof SongSchema>;
 
-interface ISongModule {
-  createSong: (name: string, artist: string, id?: string) => Song;
-}
-
-const SongModule: ISongModule = {
-  createSong: (name: string, artist: string, id?: string) => {
-    return SongSchema.parse({
-      id,
-      name,
-      artist,
-      instruments: [],
-    });
-  },
+export const createSong = (name: string, artist: string, id?: string) => {
+  return SongSchema.parse({
+    id,
+    name,
+    artist,
+    instruments: [],
+  });
 };
-
-export default SongModule;

@@ -4,8 +4,6 @@ import {
   getEmptyMockSheet,
   getMockSheetWithBars,
 } from "src/mocks/entities/sheet";
-import * as BarModule from "@entities/bar";
-import * as MockUtilsModule from "src/mocks/utils/moduleUtils";
 import { INITIAL_STATE, usePlayerStore } from "@/store/player";
 import { pause, play, stop, windUp } from "@/store/player/playerActions";
 import { AudioNodeMock } from "@/mocks/window";
@@ -26,17 +24,7 @@ beforeEach(() => {
   clearTimeoutSpy.mockClear();
 });
 
-jest.mock<typeof BarModule.default>("@entities/bar", () => {
-  const mockUtils = jest.requireActual<typeof MockUtilsModule>(
-    "src/mocks/utils/moduleUtils",
-  );
-  return mockUtils.mockModuleFunctions(
-    jest.requireActual<typeof BarModule>("@entities/bar").default,
-  );
-});
-const barModuleWithMocks = MockUtilsModule.getModuleWithMocks(
-  BarModule.default,
-);
+jest.mock("@entities/bar");
 
 describe("Play", () => {
   it("Does nothing with undefined Sheet", () => {
@@ -78,9 +66,6 @@ describe("Play", () => {
   });
 
   it("Creates timeouts for each Bar", () => {
-    barModuleWithMocks.convertDurationInBarToSeconds.mockImplementation(
-      (_, duration) => duration,
-    );
     const sheet = getMockSheetWithBars();
     useEditorStore.setState(() => ({
       song: getMockSong([sheet]),
@@ -242,9 +227,6 @@ describe("Pause", () => {
   });
 
   it("Sets state to paused", () => {
-    barModuleWithMocks.convertDurationInBarToSeconds.mockImplementation(
-      (_, duration) => duration,
-    );
     usePlayerStore.setState(state => ({
       isPlaying: true,
       currentTimeoutStartTime: referenceDate,

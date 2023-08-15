@@ -1,5 +1,5 @@
 import type { ISongRepository } from "@domains/repositories";
-import SheetModule from "@entities/sheet";
+import { fillBarsInSheet } from "@entities/sheet";
 import type { Instrument } from "@entities/instrument";
 import type { Song, SongInfo } from "@entities/song";
 import { BusinessException } from "@/utils/exceptions";
@@ -39,7 +39,7 @@ class SongDomain implements ISongDomain {
     if (result === null) throw new Error(`No Song with id: ${songId}.`);
 
     result.instruments.forEach(instrument => {
-      if (instrument.sheet) SheetModule.fillBarsInSheet(instrument.sheet);
+      if (instrument.sheet) fillBarsInSheet(instrument.sheet);
     });
     return result;
   }

@@ -2,13 +2,13 @@ import { Prisma, type PrismaClient } from "@prisma/client";
 
 import type { ISongRepository } from "@domains/repositories";
 import {
-  default as SongModule,
+  createSong,
   type Song,
   type SongInfo,
   SongInfoSchema,
 } from "@entities/song";
 import type { Instrument } from "@/server/entities/instrument";
-import { default as SheetModule, type Sheet } from "@entities/sheet";
+import { createSheet, type Sheet } from "@entities/sheet";
 import { createBar, type Bar } from "@entities/bar";
 import { createNote, type Note } from "@entities/note";
 import { createPitchFromKey } from "@entities/pitch";
@@ -209,13 +209,11 @@ const mapNotesToCreateInput = (tracks: Note[][]) => {
 const mapSongModelToInfoEntity = (
   model: Prisma.SongGetPayload<null>,
 ): SongInfo => {
-  return SongInfoSchema.parse(
-    SongModule.createSong(model.name, model.artist, model.id),
-  );
+  return SongInfoSchema.parse(createSong(model.name, model.artist, model.id));
 };
 
 const mapSongModelToEntity = (model: SongModel): Song => {
-  const song = SongModule.createSong(model.name, model.artist, model.id);
+  const song = createSong(model.name, model.artist, model.id);
   song.instruments = model.instruments.map(songInstrument =>
     mapSongInstrumentModelToEntity(songInstrument),
   );
@@ -236,7 +234,7 @@ const mapSongInstrumentModelToEntity = (
 };
 
 const mapSheetModelToEntity = (model: SheetModel): Sheet => {
-  const sheet = SheetModule.createSheet(model.trackCount);
+  const sheet = createSheet(model.trackCount);
 
   sheet.bars = model.bars.map(bar =>
     mapBarModelToEntity(model.trackCount, bar),

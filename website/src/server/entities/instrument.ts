@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import SheetModule, { SheetSchema } from "@entities/sheet";
+import { SheetSchema, createSheet } from "@entities/sheet";
 import { type Pitch, PitchSchema } from "@/server/entities/pitch";
 
 export const INSTRUMENT_TYPES = [
@@ -82,7 +82,7 @@ const InstrumentModule: IInstrumentModule = {
     isFretted: boolean,
     id?: string,
   ) => {
-    const sheet = SheetModule.createSheet(trackCount);
+    const sheet = createSheet(trackCount);
 
     return InstrumentSchema.parse({
       id,

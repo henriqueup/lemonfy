@@ -1,7 +1,7 @@
 import { produce } from "immer";
 
-import SheetModule from "@entities/sheet";
-import SongModule, { SongSchema, type Song } from "@entities/song";
+import { createSheet } from "@entities/sheet";
+import { createSong, SongSchema, type Song } from "@entities/song";
 import {
   handleStorableAction,
   useEditorStore,
@@ -15,7 +15,7 @@ export const loadSong = (song: Song) =>
 export const setSong = (name: string, artist: string) =>
   useEditorStore.setState(state =>
     produceUndoneableAction(state, draft => {
-      let song = SongModule.createSong(name, artist);
+      let song = createSong(name, artist);
 
       if (draft.song !== undefined) {
         song = {
@@ -47,7 +47,7 @@ export const addInstrument = (instrument: Instrument) =>
 
       handleStorableAction(draft);
 
-      const sheet = SheetModule.createSheet(instrument.trackCount);
+      const sheet = createSheet(instrument.trackCount);
       instrument.sheet = sheet;
 
       draft.song.instruments.push(instrument);

@@ -1,8 +1,13 @@
+import { getMockInsturment } from "@/mocks/entities/instrument";
 import { getCompleteMoonlightSonataMockSheet } from "@/mocks/entities/sheet";
 import { getMockSong } from "@/mocks/entities/song";
 import { NOTE_DURATIONS, createNote } from "@/server/entities/note";
 import { createPitch } from "@/server/entities/pitch";
-import SheetModule from "@/server/entities/sheet";
+import {
+  addNoteToSheet,
+  fillBarTracksInSheet,
+  removeNotesFromSheet,
+} from "@/server/entities/sheet";
 import { handleChangeHistory, produceUndoneableAction } from "@/utils/immer";
 
 jest.unmock("immer");
@@ -10,7 +15,9 @@ jest.unmock("immer");
 describe("Undo", () => {
   it("Does nothing with no previous patches", () => {
     const song = getMockSong();
-    song.instruments[0] = getCompleteMoonlightSonataMockSheet();
+    song.instruments[0] = getMockInsturment(
+      getCompleteMoonlightSonataMockSheet(),
+    );
 
     const undoResult = handleChangeHistory(song, "undo");
     const redoResult = handleChangeHistory(undoResult, "redo");
@@ -21,24 +28,26 @@ describe("Undo", () => {
 
   it("Undoes and redos same tagged patches", () => {
     const song = getMockSong();
-    song.instruments[0] = getCompleteMoonlightSonataMockSheet();
+    song.instruments[0] = getMockInsturment(
+      getCompleteMoonlightSonataMockSheet(),
+    );
 
     // remove some notes
     const songAfterFirstChange = produceUndoneableAction(song, draft => {
-      SheetModule.removeNotesFromSheet(draft.instruments[0]!, 2, [
-        draft.instruments[0]!.tracks[2]![2]!,
-        draft.instruments[0]!.tracks[2]![3]!,
+      removeNotesFromSheet(draft.instruments[0]!.sheet!, 2, [
+        draft.instruments[0]!.sheet!.tracks[2]![2]!,
+        draft.instruments[0]!.sheet!.tracks[2]![3]!,
       ]);
 
-      SheetModule.fillBarTracksInSheet(draft.instruments[0]!, 2);
+      fillBarTracksInSheet(draft.instruments[0]!.sheet!, 2);
     });
 
     // add a note
     const songAfterSecondChange = produceUndoneableAction(
       songAfterFirstChange,
       draft => {
-        SheetModule.addNoteToSheet(
-          draft.instruments[0]!,
+        addNoteToSheet(
+          draft.instruments[0]!.sheet!,
           2,
           createNote(
             NOTE_DURATIONS.EIGHTH_TRIPLET,
@@ -47,7 +56,7 @@ describe("Undo", () => {
           ),
         );
 
-        SheetModule.fillBarTracksInSheet(draft.instruments[0]!, 2);
+        fillBarTracksInSheet(draft.instruments[0]!.sheet!, 2);
       },
     );
 

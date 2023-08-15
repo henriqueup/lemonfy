@@ -1,7 +1,14 @@
 import { createNote, type Note } from "@entities/note";
 import { type Octave } from "@entities/octave";
 import { createPitch, type PitchName } from "@entities/pitch";
-import SheetModule from "@entities/sheet";
+import {
+  addBarToSheet,
+  addNoteToSheet,
+  fillBarTracksInSheet,
+  findSheetNoteByTime,
+  removeBarInSheetByIndex,
+  removeNotesFromSheet,
+} from "@entities/sheet";
 import {
   useEditorStore,
   getCurrentSheet,
@@ -17,7 +24,7 @@ export const addBar = (beatCount: number, dibobinador: number, tempo: number) =>
       const currentSheet = getCurrentSheet(draft);
       if (currentSheet === undefined) return;
 
-      SheetModule.addBarToSheet(currentSheet, beatCount, dibobinador, tempo);
+      addBarToSheet(currentSheet, beatCount, dibobinador, tempo);
       handleStorableAction(draft);
     }),
   );
@@ -33,7 +40,7 @@ export const addCopyOfCurrentBar = () =>
       const currentBar = currentSheet.bars[draft.cursor.barIndex];
       if (currentBar === undefined) return;
 
-      SheetModule.addBarToSheet(
+      addBarToSheet(
         currentSheet,
         currentBar.beatCount,
         currentBar.dibobinador,
@@ -63,12 +70,8 @@ export const addNote = (
       const pitch = createPitch(pitchName, octave);
       const noteToAdd = createNote(duration, startOfNoteToAdd, pitch);
 
-      SheetModule.addNoteToSheet(
-        currentSheet,
-        draft.cursor.trackIndex,
-        noteToAdd,
-      );
-      SheetModule.fillBarTracksInSheet(currentSheet, draft.cursor.trackIndex);
+      addNoteToSheet(currentSheet, draft.cursor.trackIndex, noteToAdd);
+      fillBarTracksInSheet(currentSheet, draft.cursor.trackIndex);
       handleStorableAction(draft);
 
       const endOfAddedNote = draft.cursor.position + noteToAdd.duration;
@@ -84,10 +87,10 @@ export const removeNoteFromBar = (noteToRemove: Note) =>
       const currentSheet = getCurrentSheet(draft);
       if (currentSheet === undefined) return;
 
-      SheetModule.removeNotesFromSheet(currentSheet, draft.cursor.trackIndex, [
+      removeNotesFromSheet(currentSheet, draft.cursor.trackIndex, [
         noteToRemove,
       ]);
-      SheetModule.fillBarTracksInSheet(currentSheet, draft.cursor.trackIndex);
+      fillBarTracksInSheet(currentSheet, draft.cursor.trackIndex);
       handleStorableAction(draft);
     }),
   );
@@ -103,7 +106,7 @@ export const removeNextNoteFromBar = (lookForward = true) =>
       const barWithCursor = currentSheet.bars[draft.cursor.barIndex];
       if (barWithCursor === undefined) return;
 
-      const noteToRemove = SheetModule.findSheetNoteByTime(
+      const noteToRemove = findSheetNoteByTime(
         currentSheet,
         draft.cursor.trackIndex,
         barWithCursor.start + draft.cursor.position,
@@ -111,10 +114,10 @@ export const removeNextNoteFromBar = (lookForward = true) =>
       );
       if (noteToRemove === null) return;
 
-      SheetModule.removeNotesFromSheet(currentSheet, draft.cursor.trackIndex, [
+      removeNotesFromSheet(currentSheet, draft.cursor.trackIndex, [
         noteToRemove,
       ]);
-      SheetModule.fillBarTracksInSheet(currentSheet, draft.cursor.trackIndex);
+      fillBarTracksInSheet(currentSheet, draft.cursor.trackIndex);
       handleStorableAction(draft);
 
       if (lookForward) {
@@ -145,7 +148,7 @@ export const removeBarFromSheetByIndex = (barIndex: number) =>
       const currentSheet = getCurrentSheet(draft);
       if (currentSheet === undefined) return;
 
-      SheetModule.removeBarInSheetByIndex(currentSheet, barIndex);
+      removeBarInSheetByIndex(currentSheet, barIndex);
       handleStorableAction(draft);
     }),
   );
