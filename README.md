@@ -1,6 +1,6 @@
 # Lemonfy
 
-The Lemonfy Project, create and playback songs with a sheet-like interface.
+The Lemonfy Project: create and playback songs with an intuitive sheet-like interface.
 Inspired by the [Songsterr app](https://www.songsterr.com/).
 
 This project was created with the main goal of practicing software engineering on my own terms.
@@ -119,5 +119,5 @@ And finally, it can also be used as a showcase of my skills.
   - <s>Add tabs to editor</s>
   - Add playback with multiple instruments
 - Add metronome
-- Migrate to App Router
+- Migrate to App Router?
   - Remove tRPC?

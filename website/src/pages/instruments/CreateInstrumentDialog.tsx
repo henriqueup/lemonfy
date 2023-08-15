@@ -53,7 +53,6 @@ import {
 import {
   InstrumentCreateSchema,
   type InstrumentInfo,
-  instrumentRefineCallback,
   type InstrumentType,
 } from "@/server/entities/instrument";
 import {
@@ -64,8 +63,7 @@ import { api } from "@/utils/api";
 import { setGlobalLoading } from "@/store/global/globalActions";
 import { toast } from "@/hooks/useToast";
 
-const FormSchema = InstrumentCreateSchema.superRefine(instrumentRefineCallback);
-type Form = z.infer<typeof FormSchema>;
+type Form = z.infer<typeof InstrumentCreateSchema>;
 
 const defaultValues: Form = {
   name: "",
@@ -89,7 +87,7 @@ const CreateInstrumentDialog: FunctionComponent<Props> = ({
   dataToLoad,
 }) => {
   const form = useForm<Form>({
-    resolver: zodResolver(FormSchema),
+    resolver: zodResolver(InstrumentCreateSchema),
     values: dataToLoad ?? defaultValues,
     defaultValues,
   });

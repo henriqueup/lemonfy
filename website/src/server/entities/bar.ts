@@ -139,6 +139,8 @@ export const fillBarTrack = (
 
   barTrack.forEach(note => {
     note.start -= bar.start;
+    // when the difference between the Note's start and the Bar's start is below the TOLERANCE
+    if (note.start < 0) note.start = 0;
   });
   bar.tracks[trackIndex] = barTrack;
 };

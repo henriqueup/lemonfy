@@ -82,11 +82,12 @@ class SongPrismaRepository implements ISongRepository {
       song.instruments,
     );
 
-    const sheetCreatePromises = songInstrumentsCreate.create.map(
+    const instrumentCreatePromises = songInstrumentsCreate.create.map(
       songInstrumentCreate =>
         this.prisma.songInstrument.create({
           data: {
             Instrument: songInstrumentCreate.Instrument,
+            Sheet: songInstrumentCreate.Sheet,
             Song: {
               connect: {
                 id: songId,
@@ -96,7 +97,7 @@ class SongPrismaRepository implements ISongRepository {
         }),
     );
 
-    await Promise.all(sheetCreatePromises);
+    await Promise.all(instrumentCreatePromises);
   }
 
   async deleteMany(songIds: string[]): Promise<void> {

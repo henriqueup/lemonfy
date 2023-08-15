@@ -11,6 +11,7 @@ import {
   setSong,
   loadSong,
   saveSong,
+  setCurrentInstrumentIndex,
 } from "@/store/editor/songActions";
 import { type Song } from "@entities/song";
 import { getMockInsturment } from "@/mocks/entities/instrument";
@@ -99,14 +100,14 @@ describe("Save Song", () => {
   });
 });
 
-describe("Add Sheet", () => {
+describe("Add Instrument", () => {
   it("Does nothing with undefined Song", () => {
     addInstrument(getMockInsturment());
 
     expect(useEditorStore.getState()).toMatchObject(INITIAL_STATE);
   });
 
-  it("Adds first Sheet", () => {
+  it("Adds first Instrument", () => {
     const sheet = getEmptyMockSheet();
     const song: Song = { name: "", artist: "", instruments: [] };
     useEditorStore.setState(() => ({
@@ -127,7 +128,7 @@ describe("Add Sheet", () => {
     });
   });
 
-  it("Adds Sheet with previous Sheets", () => {
+  it("Adds Instrument with previous Instruments", () => {
     const initialSheet = getEmptyMockSheet();
     const sheet = getMockSheetWithBars();
     const song: Song = {
@@ -151,6 +152,17 @@ describe("Add Sheet", () => {
       isDirty: true,
       song,
       currentInstrumentIndex: 1,
+    });
+  });
+});
+
+describe("Set Current Instrument Index", () => {
+  it("Sets state to received value", () => {
+    setCurrentInstrumentIndex(8);
+
+    expect(useEditorStore.getState()).toMatchObject({
+      ...INITIAL_STATE,
+      currentInstrumentIndex: 8,
     });
   });
 });

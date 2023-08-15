@@ -22,7 +22,7 @@ const BaseInstrumentSchema = z.object({
   isFretted: z.boolean(),
 });
 
-export const instrumentRefineCallback = (
+const instrumentRefineCallback = (
   value: Partial<z.infer<typeof BaseInstrumentSchema>>,
   ctx: z.RefinementCtx,
 ) => {
@@ -30,7 +30,6 @@ export const instrumentRefineCallback = (
     (value.type !== "Key" && value.tuning?.length !== value.trackCount) ||
     (value.type === "Key" && value.tuning?.length !== 1)
   ) {
-    console.log(value);
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       path: ["tuning"],
@@ -40,19 +39,17 @@ export const instrumentRefineCallback = (
   }
 };
 
-export const InstrumentInfoSchema = BaseInstrumentSchema.merge(
-  z.object({
-    id: z.string().cuid(),
-  }),
-).superRefine(instrumentRefineCallback);
-
-export const InstrumentCreateSchema = BaseInstrumentSchema.merge(
-  z.object({
-    id: z.string().cuid().optional(),
-  }),
+export const InstrumentInfoSchema = BaseInstrumentSchema.superRefine(
+  instrumentRefineCallback,
 );
 export const InstrumentSchema = BaseInstrumentSchema.merge(
   z.object({
+    sheet: SheetSchema.optional(),
+  }),
+).superRefine(instrumentRefineCallback);
+export const InstrumentCreateSchema = BaseInstrumentSchema.merge(
+  z.object({
+    id: z.string().cuid().optional(),
     sheet: SheetSchema.optional(),
   }),
 ).superRefine(instrumentRefineCallback);
@@ -62,38 +59,23 @@ export type InstrumentInfo = z.infer<typeof InstrumentInfoSchema>;
 export type InstrumentCreate = z.infer<typeof InstrumentCreateSchema>;
 export type Instrument = z.infer<typeof InstrumentSchema>;
 
-interface IInstrumentModule {
-  createInstrument: (
-    name: string,
-    type: string,
-    trackCount: number,
-    tuning: Pitch[],
-    isFretted: boolean,
-    id?: string,
-  ) => Instrument;
-}
+export const createInstrument = (
+  name: string,
+  type: string,
+  trackCount: number,
+  tuning: Pitch[],
+  isFretted: boolean,
+  id?: string,
+): InstrumentCreate => {
+  const sheet = createSheet(trackCount);
 
-const InstrumentModule: IInstrumentModule = {
-  createInstrument: (
-    name: string,
-    type: string,
-    trackCount: number,
-    tuning: Pitch[],
-    isFretted: boolean,
-    id?: string,
-  ) => {
-    const sheet = createSheet(trackCount);
-
-    return InstrumentSchema.parse({
-      id,
-      name,
-      type,
-      trackCount,
-      tuning,
-      isFretted,
-      sheet,
-    });
-  },
+  return InstrumentCreateSchema.parse({
+    id,
+    name,
+    type,
+    trackCount,
+    tuning,
+    isFretted,
+    sheet,
+  });
 };
-
-export default InstrumentModule;

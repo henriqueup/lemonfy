@@ -1,10 +1,13 @@
 import { Prisma, type PrismaClient } from "@prisma/client";
 
 import type { IInstrumentRepository } from "@domains/repositories";
-import InstrumentModule, {
+import {
+  createInstrument,
   type InstrumentInfo,
   type Instrument,
   InstrumentInfoSchema,
+  type InstrumentCreate,
+  InstrumentSchema,
 } from "@/server/entities/instrument";
 import { type Pitch, createPitchFromKey } from "@entities/pitch";
 import { BusinessException } from "@/utils/exceptions";
@@ -16,7 +19,7 @@ class InstrumentPrismaRepository implements IInstrumentRepository {
     this.prisma = prisma;
   }
 
-  async create(instrument: Instrument) {
+  async create(instrument: InstrumentCreate) {
     try {
       const result = await this.prisma.instrument.create({
         data: mapInstrumentToCreateInput(instrument),
@@ -78,7 +81,7 @@ type InstrumentModel = Prisma.InstrumentGetPayload<{
 }>;
 
 const mapInstrumentToCreateInput = (
-  instrument: Instrument,
+  instrument: InstrumentCreate,
 ): Prisma.InstrumentCreateInput => {
   return {
     name: instrument.name,
@@ -100,13 +103,15 @@ const mapInstrumentTuningToCreateInput = (pitches: Pitch[]) => {
 export const mapInstrumentModelToEntity = (
   model: InstrumentModel,
 ): Instrument => {
-  return InstrumentModule.createInstrument(
-    model.name,
-    model.type,
-    model.trackCount,
-    model.InstrumentTuning.map(tuning => createPitchFromKey(tuning.pitch)),
-    model.isFretted,
-    model.id,
+  return InstrumentSchema.parse(
+    createInstrument(
+      model.name,
+      model.type,
+      model.trackCount,
+      model.InstrumentTuning.map(tuning => createPitchFromKey(tuning.pitch)),
+      model.isFretted,
+      model.id,
+    ),
   );
 };
 
