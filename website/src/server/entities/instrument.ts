@@ -1,7 +1,13 @@
 import { z } from "zod";
 
-import { SheetSchema, createSheet } from "@entities/sheet";
-import { type Pitch, PitchSchema } from "@/server/entities/pitch";
+import { SheetSchema, addNoteToSheet, createSheet } from "@entities/sheet";
+import {
+  type Pitch,
+  NON_SILENT_PITCH_NAMES,
+  NonSilentPitchSchema,
+  createPitch,
+} from "@/server/entities/pitch";
+import { createNote, type Note } from "@/server/entities/note";
 
 export const INSTRUMENT_TYPES = [
   "String",
@@ -18,7 +24,7 @@ const BaseInstrumentSchema = z.object({
   name: z.string().min(1),
   type: InstrumentTypeSchema,
   trackCount: z.number().int().min(1),
-  tuning: z.array(PitchSchema),
+  tuning: z.array(NonSilentPitchSchema),
   isFretted: z.boolean(),
 });
 
@@ -78,4 +84,49 @@ export const createInstrument = (
     isFretted,
     sheet,
   });
+};
+
+export const addNoteToFrettedInstrument = (
+  instrument: Instrument,
+  trackIndex: number,
+  fret: number,
+  duration: number,
+  start: number,
+): void => {
+  if (!instrument.isFretted) throw new Error("Instrument must be fretted.");
+
+  if (trackIndex >= instrument.trackCount) {
+    throw new Error("Invalid track index.");
+  }
+
+  const basePitch = NonSilentPitchSchema.parse(instrument.tuning[trackIndex]);
+
+  const indexOfBasePitch = NON_SILENT_PITCH_NAMES.indexOf(basePitch.name);
+  const octavesHigher = Math.floor(
+    (fret + indexOfBasePitch) / NON_SILENT_PITCH_NAMES.length,
+  );
+  const targetNameIndex =
+    (fret + indexOfBasePitch) % NON_SILENT_PITCH_NAMES.length;
+
+  const targetNote = createNote(
+    duration,
+    start,
+    createPitch(
+      NON_SILENT_PITCH_NAMES[targetNameIndex]!,
+      basePitch.octave + octavesHigher,
+    ),
+  );
+  addNoteToInstrument(instrument, trackIndex, targetNote);
+};
+
+export const addNoteToInstrument = (
+  instrument: Instrument,
+  trackIndex: number,
+  note: Note,
+): void => {
+  if (instrument.sheet === undefined) {
+    throw new Error("Instrument must have a Sheet.");
+  }
+
+  addNoteToSheet(instrument.sheet, trackIndex, note);
 };

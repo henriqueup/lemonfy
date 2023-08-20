@@ -108,6 +108,7 @@ And finally, it can also be used as a showcase of my skills.
   - <s>Add Instrument to song creation in Editor</s>
     - <s>Exhibit Instrument info on the Editor</s>
   - Make note adding take the instrument into account
+    - Enable note adding by fret
 - <s>Add modal component</s>
 - TD: change creation inputs to forms
 - Add Bar copy/paste

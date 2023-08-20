@@ -57,6 +57,7 @@ import {
 } from "@/server/entities/instrument";
 import {
   FrequencyDictionary,
+  NonSilentPitchSchema,
   createPitchFromKey,
 } from "@/server/entities/pitch";
 import { api } from "@/utils/api";
@@ -119,7 +120,7 @@ const CreateInstrumentDialog: FunctionComponent<Props> = ({
 
     return pitchKeys.map(key => ({
       label: key,
-      value: createPitchFromKey(key),
+      value: NonSilentPitchSchema.parse(createPitchFromKey(key)),
     }));
   }, []);
 

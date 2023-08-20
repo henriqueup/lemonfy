@@ -14,7 +14,7 @@ import {
   setCurrentInstrumentIndex,
 } from "@/store/editor/songActions";
 import { type Song } from "@entities/song";
-import { getMockInsturment } from "@/mocks/entities/instrument";
+import { getMockInstrument } from "@/mocks/entities/instrument";
 
 jest.mock("@entities/song");
 jest.mock("@entities/sheet");
@@ -50,7 +50,7 @@ describe("Load Song", () => {
     const song: Song = {
       name: "Test song",
       artist: "Me",
-      instruments: [getMockInsturment(sheet1), getMockInsturment(sheet2)],
+      instruments: [getMockInstrument(sheet1), getMockInstrument(sheet2)],
     };
 
     loadSong(song);
@@ -102,7 +102,7 @@ describe("Save Song", () => {
 
 describe("Add Instrument", () => {
   it("Does nothing with undefined Song", () => {
-    addInstrument(getMockInsturment());
+    addInstrument(getMockInstrument());
 
     expect(useEditorStore.getState()).toMatchObject(INITIAL_STATE);
   });
@@ -115,7 +115,7 @@ describe("Add Instrument", () => {
     }));
     (createSheet as jest.Mock).mockImplementation(() => sheet);
 
-    addInstrument(getMockInsturment());
+    addInstrument(getMockInstrument());
 
     expect(createSheet).toBeCalledTimes(1);
     expect(createSheet).toBeCalledWith(8);
@@ -134,7 +134,7 @@ describe("Add Instrument", () => {
     const song: Song = {
       name: "",
       artist: "",
-      instruments: [getMockInsturment(initialSheet)],
+      instruments: [getMockInstrument(initialSheet)],
     };
     useEditorStore.setState(() => ({
       song,
@@ -142,7 +142,7 @@ describe("Add Instrument", () => {
     }));
     (createSheet as jest.Mock).mockImplementation(() => sheet);
 
-    addInstrument(getMockInsturment());
+    addInstrument(getMockInstrument());
 
     expect(createSheet).toBeCalledTimes(1);
     expect(createSheet).toBeCalledWith(8);

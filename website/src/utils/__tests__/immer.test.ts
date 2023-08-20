@@ -1,4 +1,4 @@
-import { getMockInsturment } from "@/mocks/entities/instrument";
+import { getMockInstrument } from "@/mocks/entities/instrument";
 import { getCompleteMoonlightSonataMockSheet } from "@/mocks/entities/sheet";
 import { getMockSong } from "@/mocks/entities/song";
 import { NOTE_DURATIONS, createNote } from "@/server/entities/note";
@@ -15,7 +15,7 @@ jest.unmock("immer");
 describe("Undo", () => {
   it("Does nothing with no previous patches", () => {
     const song = getMockSong();
-    song.instruments[0] = getMockInsturment(
+    song.instruments[0] = getMockInstrument(
       getCompleteMoonlightSonataMockSheet(),
     );
 
@@ -28,7 +28,7 @@ describe("Undo", () => {
 
   it("Undoes and redos same tagged patches", () => {
     const song = getMockSong();
-    song.instruments[0] = getMockInsturment(
+    song.instruments[0] = getMockInstrument(
       getCompleteMoonlightSonataMockSheet(),
     );
 

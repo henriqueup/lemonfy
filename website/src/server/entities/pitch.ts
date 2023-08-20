@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { OctaveSchema, type Octave } from "./octave";
 
-export const PITCH_NAMES = [
+export const NON_SILENT_PITCH_NAMES = [
   "C",
   "C#",
   "D",
@@ -14,10 +14,11 @@ export const PITCH_NAMES = [
   "A",
   "A#",
   "B",
-  "X",
 ] as const;
+export const PITCH_NAMES = [...NON_SILENT_PITCH_NAMES, "X"] as const;
 
 export const PitchNameSchema = z.enum(PITCH_NAMES);
+const NonSilentPitchNameSchema = z.enum(NON_SILENT_PITCH_NAMES);
 export type PitchName = z.infer<typeof PitchNameSchema>;
 
 export const PitchKeySchema = z.custom<`${PitchName}${Octave}`>(
@@ -33,6 +34,11 @@ export const PitchSchema = z.object({
   key: PitchKeySchema,
   frequency: z.number().min(0),
 });
+export const NonSilentPitchSchema = PitchSchema.merge(
+  z.object({
+    name: NonSilentPitchNameSchema,
+  }),
+);
 export type Pitch = z.infer<typeof PitchSchema>;
 
 const getPitchKey = (name: PitchName, octave: Octave): PitchKey =>
@@ -50,8 +56,9 @@ const getPitchNameAndOctave = (key: PitchKey): [PitchName, Octave] => {
   ];
 };
 
-export const createPitch = (name: PitchName, octave: Octave): Pitch => {
-  const key = getPitchKey(name, octave);
+export const createPitch = (name: PitchName, octave: number): Pitch => {
+  const parsedOctave = OctaveSchema.parse(octave);
+  const key = getPitchKey(name, parsedOctave);
 
   return PitchSchema.parse({
     name,
