@@ -14,7 +14,6 @@ import {
 import { useShortcuts, type ShortcutDictionary } from "@/hooks/useShortcuts";
 import { getCurrentSheet, useEditorStore } from "@/store/editor";
 import { type PitchName, PITCH_NAMES } from "@entities/pitch";
-import { NOTE_DURATIONS } from "@entities/note";
 import {
   decreaseSelectedNoteDuration,
   decreaseSelectedOctave,
@@ -31,19 +30,16 @@ import NoteDurationMenu from "@/components/topbarMenu/NoteDurationMenu";
 
 const EditMenu: FunctionComponent = () => {
   const currentSheet = useEditorStore(getCurrentSheet);
-  const selectedOctave = useEditorStore(state => state.selectedOctave);
-  const selectedDuration = useEditorStore(state => state.selectedNoteDuration);
 
   const notesData = useMemo(
     () =>
       PITCH_NAMES.map(pitchName => ({
-        callback: () =>
-          addNote(NOTE_DURATIONS[selectedDuration], pitchName, selectedOctave),
+        callback: () => addNote(pitchName),
         label: pitchName,
         shortcutLabel: getShortcutLabelFromPitchName(pitchName),
         shortcutCode: `notes.add.${pitchName}` as const,
       })),
-    [selectedDuration, selectedOctave],
+    [],
   );
 
   useShortcuts({

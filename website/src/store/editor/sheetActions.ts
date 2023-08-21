@@ -1,4 +1,4 @@
-import { createNote, type Note } from "@entities/note";
+import { createNote, NOTE_DURATIONS, type Note } from "@entities/note";
 import { type Octave } from "@entities/octave";
 import { createPitch, type PitchName } from "@entities/pitch";
 import {
@@ -15,6 +15,7 @@ import {
   handleStorableAction,
 } from "./editorStore";
 import { produceUndoneableAction } from "@/utils/immer";
+import { addNoteToFrettedInstrument } from "@/server/entities/instrument";
 
 export const addBar = (beatCount: number, dibobinador: number, tempo: number) =>
   useEditorStore.setState(state =>
@@ -51,11 +52,7 @@ export const addCopyOfCurrentBar = () =>
     }),
   );
 
-export const addNote = (
-  duration: number,
-  pitchName: PitchName,
-  octave: Octave,
-) =>
+export const addNote = (pitchName: PitchName) =>
   useEditorStore.setState(state =>
     produceUndoneableAction(state, draft => {
       if (draft.song === undefined) return;
@@ -67,14 +64,53 @@ export const addNote = (
       if (barWithCursor === undefined) return;
 
       const startOfNoteToAdd = barWithCursor.start + draft.cursor.position;
-      const pitch = createPitch(pitchName, octave);
-      const noteToAdd = createNote(duration, startOfNoteToAdd, pitch);
+      const pitch = createPitch(pitchName, draft.selectedOctave);
+      const noteToAdd = createNote(
+        NOTE_DURATIONS[draft.selectedNoteDuration],
+        startOfNoteToAdd,
+        pitch,
+      );
 
       addNoteToSheet(currentSheet, draft.cursor.trackIndex, noteToAdd);
       fillBarTracksInSheet(currentSheet, draft.cursor.trackIndex);
       handleStorableAction(draft);
 
       const endOfAddedNote = draft.cursor.position + noteToAdd.duration;
+      draft.cursor.position = Math.min(endOfAddedNote, barWithCursor.capacity);
+    }),
+  );
+
+export const addNoteByFret = (fret: number) =>
+  useEditorStore.setState(state =>
+    produceUndoneableAction(state, draft => {
+      if (
+        draft.song === undefined ||
+        draft.currentInstrumentIndex === undefined
+      ) {
+        return;
+      }
+
+      const currentInstrument =
+        draft.song.instruments[draft.currentInstrumentIndex];
+
+      if (!currentInstrument?.sheet) return;
+
+      const barWithCursor = currentInstrument.sheet.bars[draft.cursor.barIndex];
+      if (barWithCursor === undefined) return;
+
+      const startOfNoteToAdd = barWithCursor.start + draft.cursor.position;
+      addNoteToFrettedInstrument(
+        currentInstrument,
+        draft.cursor.trackIndex,
+        fret,
+        NOTE_DURATIONS[draft.selectedNoteDuration],
+        startOfNoteToAdd,
+      );
+      fillBarTracksInSheet(currentInstrument.sheet, draft.cursor.trackIndex);
+      handleStorableAction(draft);
+
+      const endOfAddedNote =
+        draft.cursor.position + NOTE_DURATIONS[draft.selectedNoteDuration];
       draft.cursor.position = Math.min(endOfAddedNote, barWithCursor.capacity);
     }),
   );

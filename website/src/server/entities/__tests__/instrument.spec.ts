@@ -20,9 +20,9 @@ jest.mock("@/server/entities/sheet");
 describe("Create Instrument", () => {
   it("Creates generic Instrument with valid values", () => {
     const tuning = [
-      createPitch("X", 0),
-      createPitch("X", 0),
-      createPitch("X", 0),
+      createPitch("D", 0),
+      createPitch("D", 0),
+      createPitch("D", 0),
     ];
     const newInstrument = createInstrument(
       "Test instrument",
@@ -40,7 +40,7 @@ describe("Create Instrument", () => {
   });
 
   it("Creates Key Instrument with valid values", () => {
-    const tuning = [createPitch("X", 0)];
+    const tuning = [createPitch("D", 0)];
     const newInstrument = createInstrument(
       "Test instrument",
       "Key",
@@ -57,7 +57,7 @@ describe("Create Instrument", () => {
   });
 
   it("Fails to create generic Instrument with invalid tuning", () => {
-    const tuning = [createPitch("X", 0), createPitch("X", 0)];
+    const tuning = [createPitch("D", 0), createPitch("D", 0)];
 
     expect(() =>
       createInstrument("Test instrument", "Percussion", 3, tuning, false),
@@ -75,9 +75,9 @@ describe("Create Instrument", () => {
 
   it("Fails to create Key Instrument with invalid tuning", () => {
     const tuning = [
-      createPitch("X", 0),
-      createPitch("X", 0),
-      createPitch("X", 0),
+      createPitch("D", 0),
+      createPitch("D", 0),
+      createPitch("D", 0),
     ];
 
     expect(() =>

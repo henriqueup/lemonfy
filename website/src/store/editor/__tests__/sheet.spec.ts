@@ -21,17 +21,20 @@ import {
   addBar,
   addCopyOfCurrentBar,
   addNote,
+  addNoteByFret,
   removeBarFromSheetByIndex,
   removeNextNoteFromBar,
   removeNoteFromBar,
 } from "@/store/editor/sheetActions";
 import { createBarMock } from "src/mocks/entities/bar";
 import { getMockSong } from "@/mocks/entities/song";
+import { addNoteToFrettedInstrument } from "@/server/entities/instrument";
 
 jest.mock("@/utils/immer");
 jest.mock("@entities/sheet");
 jest.mock("@entities/note");
 jest.mock("@entities/pitch");
+jest.mock("@entities/instrument");
 
 // initial state must be restored because of the mock used for immer
 const preservedInitialState = structuredClone(INITIAL_STATE);
@@ -145,7 +148,7 @@ describe("Add copy of current Bar", () => {
 
 describe("Add Note", () => {
   it("Does nothing with undefined Song", () => {
-    addNote(4, "B", 2);
+    addNote("B");
 
     expect(useEditorStore.getState()).toMatchObject(INITIAL_STATE);
   });
@@ -157,7 +160,7 @@ describe("Add Note", () => {
       song,
     }));
 
-    addNote(4, "B", 2);
+    addNote("B");
 
     expect(useEditorStore.getState()).toMatchObject({ ...INITIAL_STATE, song });
   });
@@ -170,12 +173,13 @@ describe("Add Note", () => {
       currentInstrumentIndex: 0,
     }));
 
-    addNote(4, "B", 2);
+    addNote("B");
 
-    expect(getCurrentSheet()).toMatchObject(sheet);
-    expect(useEditorStore.getState().cursor).toMatchObject(
-      INITIAL_STATE.cursor,
-    );
+    expect(useEditorStore.getState()).toMatchObject({
+      ...INITIAL_STATE,
+      song,
+      currentInstrumentIndex: 0,
+    });
   });
 
   it.each<[NoteDurationName, number]>([
@@ -199,6 +203,7 @@ describe("Add Note", () => {
       useEditorStore.setState(() => ({
         song,
         currentInstrumentIndex: 0,
+        selectedOctave: 2,
       }));
 
       (addNoteToSheet as jest.Mock).mockImplementation((sheet: Sheet) =>
@@ -208,7 +213,7 @@ describe("Add Note", () => {
         sheet.bars[0]!.tracks[0]!.push(note),
       );
 
-      addNote(4, "B", 2);
+      addNote("B");
 
       expect(addNoteToSheet).toBeCalledTimes(1);
       expect(addNoteToSheet).toBeCalledWith(sheet, 0, note);
@@ -233,6 +238,7 @@ describe("Add Note", () => {
           ...INITIAL_STATE.cursor,
           position: expectedPosition,
         },
+        selectedOctave: 2,
       });
     },
   );
@@ -262,6 +268,7 @@ describe("Add Note", () => {
           ...INITIAL_STATE.cursor,
           barIndex: 1,
         },
+        selectedOctave: 2,
       }));
 
       (addNoteToSheet as jest.Mock).mockImplementation((sheet: Sheet) =>
@@ -271,7 +278,7 @@ describe("Add Note", () => {
         sheet.bars[1]!.tracks[0]!.push(note),
       );
 
-      addNote(4, "B", 2);
+      addNote("B");
 
       expect(addNoteToSheet).toBeCalledTimes(1);
       expect(addNoteToSheet).toBeCalledWith(sheet, 0, note);
@@ -297,9 +304,121 @@ describe("Add Note", () => {
           barIndex: 1,
           position: expectedPosition,
         },
+        selectedOctave: 2,
       });
     },
   );
+});
+
+describe("Add Note by fret", () => {
+  it("Does nothing with undefined Song", () => {
+    addNoteByFret(4);
+
+    expect(useEditorStore.getState()).toMatchObject(INITIAL_STATE);
+  });
+
+  it("Does nothing with undefined Instrument index", () => {
+    const sheet = getEmptyMockSheet();
+    const song = getMockSong([sheet]);
+    useEditorStore.setState(() => ({
+      song,
+    }));
+
+    addNoteByFret(4);
+
+    expect(useEditorStore.getState()).toMatchObject({ ...INITIAL_STATE, song });
+  });
+
+  it("Does nothing with undefined Instrument", () => {
+    const sheet = getEmptyMockSheet();
+    const song = getMockSong([sheet]);
+    useEditorStore.setState(() => ({
+      song,
+      currentInstrumentIndex: 4,
+    }));
+
+    addNoteByFret(4);
+
+    expect(useEditorStore.getState()).toMatchObject({
+      ...INITIAL_STATE,
+      song,
+      currentInstrumentIndex: 4,
+    });
+  });
+
+  it("Does nothing with undefined Sheet", () => {
+    const song = getMockSong([]);
+    useEditorStore.setState(() => ({
+      song,
+      currentInstrumentIndex: 0,
+    }));
+
+    addNoteByFret(4);
+
+    expect(useEditorStore.getState()).toMatchObject({
+      ...INITIAL_STATE,
+      song,
+      currentInstrumentIndex: 0,
+    });
+  });
+
+  it("Does nothing with undefined Bar", () => {
+    const sheet = getEmptyMockSheet();
+    const song = getMockSong([sheet]);
+    useEditorStore.setState(() => ({
+      song,
+      currentInstrumentIndex: 0,
+    }));
+
+    addNoteByFret(4);
+
+    expect(useEditorStore.getState()).toMatchObject({
+      ...INITIAL_STATE,
+      song,
+      currentInstrumentIndex: 0,
+    });
+  });
+
+  it("Adds Note to Instrument", () => {
+    const sheet = getMockSheetWithBars();
+    const song = getMockSong([sheet]);
+    useEditorStore.setState(() => ({
+      song,
+      currentInstrumentIndex: 0,
+      cursor: {
+        barIndex: 1,
+        trackIndex: 2,
+        position: 1 / 4,
+      },
+      selectedNoteDuration: "HALF",
+    }));
+
+    addNoteByFret(4);
+
+    expect(addNoteToFrettedInstrument).toHaveBeenCalledTimes(1);
+    expect(addNoteToFrettedInstrument).toHaveBeenCalledWith(
+      song.instruments[0],
+      2,
+      4,
+      NOTE_DURATIONS["HALF"],
+      3 / 4 + 1 / 4,
+    );
+    expect(fillBarTracksInSheet).toBeCalledTimes(1);
+    expect(fillBarTracksInSheet).toBeCalledWith(sheet, 2);
+
+    expect(useEditorStore.getState()).toMatchObject({
+      ...INITIAL_STATE,
+      isDirty: true,
+      song,
+      currentInstrumentIndex: 0,
+      cursor: {
+        barIndex: 1,
+        trackIndex: 2,
+        position: 1 / 4 + 1 / 2,
+      },
+      selectedNoteDuration: "HALF",
+    });
+  });
 });
 
 describe("Remove Note from Bar", () => {
@@ -310,7 +429,7 @@ describe("Remove Note from Bar", () => {
     expect(useEditorStore.getState()).toMatchObject(INITIAL_STATE);
   });
 
-  it("Does nothing with undefined Sheet index", () => {
+  it("Does nothing with undefined Instrument index", () => {
     const sheet = getEmptyMockSheet();
     const song = getMockSong([sheet]);
     useEditorStore.setState(() => ({
@@ -370,7 +489,7 @@ describe("Remove next Note from Bar", () => {
   );
 
   it.each([true, false])(
-    "Does nothing with undefined Sheet index looking forward %p",
+    "Does nothing with undefined Instrument index looking forward %p",
     (lookForward: boolean) => {
       const sheet = getEmptyMockSheet();
       const song = getMockSong([sheet]);
