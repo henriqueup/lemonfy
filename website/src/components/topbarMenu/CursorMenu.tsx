@@ -26,28 +26,28 @@ const CursorMenu: FunctionComponent = () => {
 
   useShortcuts({
     "cursor.track.above": {
-      callback: decreaseCursorTrackIndex,
+      onKeyDown: decreaseCursorTrackIndex,
     },
     "cursor.track.under": {
-      callback: increaseCursorTrackIndex,
+      onKeyDown: increaseCursorTrackIndex,
     },
     "cursor.bar.left": {
-      callback: decreaseCursorBarIndex,
+      onKeyDown: decreaseCursorBarIndex,
     },
     "cursor.bar.right": {
-      callback: increaseCursorBarIndex,
+      onKeyDown: increaseCursorBarIndex,
     },
     "cursor.position.left": {
-      callback: decreaseCursorPosition,
+      onKeyDown: decreaseCursorPosition,
     },
     "cursor.position.right": {
-      callback: increaseCursorPosition,
+      onKeyDown: increaseCursorPosition,
     },
     "cursor.position.startOfBar": {
-      callback: moveCursorToStartOfBar,
+      onKeyDown: moveCursorToStartOfBar,
     },
     "cursor.position.endOfBar": {
-      callback: moveCursorToEndOfBar,
+      onKeyDown: moveCursorToEndOfBar,
     },
   });
 

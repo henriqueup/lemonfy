@@ -56,16 +56,16 @@ const FileMenu: FunctionComponent = () => {
 
   useShortcuts({
     "new.song": {
-      callback: handleNewSong,
+      onKeyDown: handleNewSong,
     },
     "save.song": {
-      callback: () => void handleSaveSong(),
+      onKeyDown: () => void handleSaveSong(),
     },
     undo: {
-      callback: undo,
+      onKeyDown: undo,
     },
     redo: {
-      callback: redo,
+      onKeyDown: redo,
     },
   });
 

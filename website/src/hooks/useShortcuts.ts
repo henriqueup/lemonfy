@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from "react";
 
+export const DIGITS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
 const SHORTCUTS = {
   ALT_ArrowUp: "duration.raise",
   ALT_ArrowDown: "duration.lower",
@@ -33,6 +34,16 @@ const SHORTCUTS = {
   CTRL_SHIFT_S: "new.song",
   CTRL_z: "undo",
   CTRL_SHIFT_Z: "redo",
+  "0": "notes.add.0",
+  "1": "notes.add.1",
+  "2": "notes.add.2",
+  "3": "notes.add.3",
+  "4": "notes.add.4",
+  "5": "notes.add.5",
+  "6": "notes.add.6",
+  "7": "notes.add.7",
+  "8": "notes.add.8",
+  "9": "notes.add.9",
 } as const;
 
 type ShortcutKey = keyof typeof SHORTCUTS;
@@ -42,7 +53,8 @@ const isShortcutKey = (key: string): key is ShortcutKey =>
   SHORTCUTS.hasOwnProperty(key);
 
 type Shortcut = {
-  callback: () => void;
+  onKeyDown?: () => void;
+  onKeyUp?: () => void;
 };
 
 export type ShortcutDictionary = {
@@ -50,22 +62,45 @@ export type ShortcutDictionary = {
 };
 
 const useShortcuts = (shortcutDictionary: ShortcutDictionary) => {
-  const getShortcutKey = (event: KeyboardEvent): ShortcutKey | undefined => {
-    const keys: string[] = [];
+  const handleDigit = useCallback((event: KeyboardEvent): string => {
+    const digitPrefix = "Digit";
 
-    if (event.ctrlKey) keys.push("CTRL");
-    if (event.shiftKey) keys.push("SHIFT");
-    if (event.altKey) keys.push("ALT");
+    if (event.code.startsWith(digitPrefix)) {
+      return event.code.substring(digitPrefix.length);
+    }
 
-    keys.push(event.key);
+    return event.key;
+  }, []);
 
-    const resultingKey = keys.join("_");
-    // console.log(resultingKey);
-    if (isShortcutKey(resultingKey)) return resultingKey;
-  };
+  const getShortcutKey = useCallback(
+    (event: KeyboardEvent): ShortcutKey | undefined => {
+      const keys: string[] = [];
 
-  const handleKeyDown = useCallback(
-    (event: KeyboardEvent) => {
+      if (event.ctrlKey) keys.push("CTRL");
+      if (event.shiftKey) keys.push("SHIFT");
+      if (event.altKey) keys.push("ALT");
+
+      keys.push(handleDigit(event));
+
+      const resultingKey = keys.join("_");
+      console.log(resultingKey);
+      if (isShortcutKey(resultingKey)) return resultingKey;
+    },
+    [handleDigit],
+  );
+
+  const getRoleFromEventTarget = useCallback(
+    (eventTarget: HTMLElement): string | null => {
+      const roleAttribute = eventTarget.attributes.getNamedItem("role");
+      if (roleAttribute === null) return null;
+
+      return roleAttribute.value;
+    },
+    [],
+  );
+
+  const getShortcut = useCallback(
+    (event: KeyboardEvent): Shortcut | undefined => {
       if (
         !(event.target instanceof HTMLElement) ||
         event.target instanceof HTMLInputElement
@@ -80,29 +115,42 @@ const useShortcuts = (shortcutDictionary: ShortcutDictionary) => {
       if (shortcutKey === undefined) return;
 
       const shortcutCode = SHORTCUTS[shortcutKey];
-      const shortcut = shortcutDictionary[shortcutCode];
-      if (shortcut === undefined) return;
-
-      event.preventDefault();
-      shortcut.callback();
+      return shortcutDictionary[shortcutCode];
     },
-    [shortcutDictionary],
+    [getRoleFromEventTarget, getShortcutKey, shortcutDictionary],
   );
 
-  const getRoleFromEventTarget = (eventTarget: HTMLElement): string | null => {
-    const roleAttribute = eventTarget.attributes.getNamedItem("role");
-    if (roleAttribute === null) return null;
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      const shortcut = getShortcut(event);
+      if (!shortcut?.onKeyDown) return;
 
-    return roleAttribute.value;
-  };
+      event.preventDefault();
+      shortcut.onKeyDown();
+    },
+    [getShortcut],
+  );
+
+  const handleKeyUp = useCallback(
+    (event: KeyboardEvent) => {
+      const shortcut = getShortcut(event);
+      if (!shortcut?.onKeyUp) return;
+
+      event.preventDefault();
+      shortcut.onKeyUp();
+    },
+    [getShortcut],
+  );
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keyup", handleKeyUp);
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keyup", handleKeyUp);
     };
-  }, [handleKeyDown]);
+  }, [handleKeyDown, handleKeyUp]);
 };
 
 export { useShortcuts };

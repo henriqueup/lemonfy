@@ -11,7 +11,11 @@ import {
   MenubarSubTrigger,
   MenubarTrigger,
 } from "@/components/ui/Menubar";
-import { useShortcuts, type ShortcutDictionary } from "@/hooks/useShortcuts";
+import {
+  useShortcuts,
+  type ShortcutDictionary,
+  DIGITS,
+} from "@/hooks/useShortcuts";
 import { getCurrentSheet, useEditorStore } from "@/store/editor";
 import { type PitchName, PITCH_NAMES } from "@entities/pitch";
 import {
@@ -23,15 +27,22 @@ import {
 import {
   addCopyOfCurrentBar,
   addNote,
+  addNoteByFret,
   removeNextNoteFromBar,
 } from "@/store/editor/sheetActions";
 import OctaveMenu from "@/components/topbarMenu/OctaveMenu";
 import NoteDurationMenu from "@/components/topbarMenu/NoteDurationMenu";
 
+const getShortcutLabelFromPitchName = (pitchName: PitchName): string => {
+  if (pitchName.length === 1) return pitchName;
+
+  return `⇧${pitchName.charAt(0)}`;
+};
+
 const EditMenu: FunctionComponent = () => {
   const currentSheet = useEditorStore(getCurrentSheet);
 
-  const notesData = useMemo(
+  const notesDataByName = useMemo(
     () =>
       PITCH_NAMES.map(pitchName => ({
         callback: () => addNote(pitchName),
@@ -41,35 +52,54 @@ const EditMenu: FunctionComponent = () => {
       })),
     [],
   );
+  const notesDataByFret = useMemo(
+    () =>
+      DIGITS.map(fret => ({
+        callback: () => addNoteByFret(fret),
+        label: fret,
+        shortcutCode: `notes.add.${fret}` as const,
+      })),
+    [],
+  );
 
   useShortcuts({
-    ...notesData.reduce((shortcuts: ShortcutDictionary, noteData) => {
+    ...notesDataByName.reduce((shortcuts: ShortcutDictionary, noteData) => {
       shortcuts[noteData.shortcutCode] = {
-        callback: noteData.callback,
+        onKeyDown: noteData.callback,
       };
 
       return shortcuts;
     }, {}),
+    ...notesDataByFret.reduce((shortcuts: ShortcutDictionary, noteData) => {
+      shortcuts[noteData.shortcutCode] = {
+        onKeyDown: noteData.callback,
+      };
+
+      return shortcuts;
+    }, {}),
+    "notes.add.4": {
+      onKeyDown: () => addNoteByFret(4),
+    },
     "octave.lower": {
-      callback: decreaseSelectedOctave,
+      onKeyDown: decreaseSelectedOctave,
     },
     "octave.raise": {
-      callback: increaseSelectedOctave,
+      onKeyDown: increaseSelectedOctave,
     },
     "duration.lower": {
-      callback: decreaseSelectedNoteDuration,
+      onKeyDown: decreaseSelectedNoteDuration,
     },
     "duration.raise": {
-      callback: increaseSelectedNoteDuration,
+      onKeyDown: increaseSelectedNoteDuration,
     },
     "notes.remove.previous": {
-      callback: () => removeNextNoteFromBar(false),
+      onKeyDown: () => removeNextNoteFromBar(false),
     },
     "notes.remove.next": {
-      callback: removeNextNoteFromBar,
+      onKeyDown: removeNextNoteFromBar,
     },
     "bars.add.copy": {
-      callback: addCopyOfCurrentBar,
+      onKeyDown: addCopyOfCurrentBar,
     },
   });
 
@@ -82,7 +112,7 @@ const EditMenu: FunctionComponent = () => {
             Add Note
           </MenubarSubTrigger>
           <MenubarSubContent>
-            {notesData.map(noteData => (
+            {notesDataByName.map(noteData => (
               <MenubarItem
                 key={`menu-${noteData.label}`}
                 keepOpen
@@ -115,12 +145,6 @@ const EditMenu: FunctionComponent = () => {
       </MenubarContent>
     </MenubarMenu>
   );
-};
-
-const getShortcutLabelFromPitchName = (pitchName: PitchName): string => {
-  if (pitchName.length === 1) return pitchName;
-
-  return `⇧${pitchName.charAt(0)}`;
 };
 
 export default EditMenu;
