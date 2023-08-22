@@ -49,7 +49,7 @@ const Song: FunctionComponent<Props> = ({ openSongMenu }: Props) => {
         <div className="flex justify-center">
           <div
             role="button"
-            aria-label="New Sheet"
+            aria-label="Add Instrument"
             className={cn(
               "mt-4 flex cursor-pointer content-center justify-center",
               "rounded-full border p-4",

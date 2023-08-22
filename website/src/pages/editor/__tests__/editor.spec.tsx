@@ -90,7 +90,7 @@ describe("Navigation", () => {
     await createSong();
 
     expect(
-      rendered.getByRole("group", { name: "Test song - Me" }),
+      rendered.getByRole("heading", { name: "Test song - Me" }),
     ).toBeInTheDocument();
     expect(
       rendered.getByRole("button", { name: "New Sheet" }),
@@ -132,21 +132,27 @@ describe("Navigation", () => {
     expect(rendered.getByText("Test song - You")).toBeInTheDocument();
   });
 
-  it("Opens new sheet menu on click", async () => {
+  it("Opens new instrument menu on click", async () => {
     await createSong();
 
-    const newSheetMenuButton = rendered.getByRole("button", {
-      name: "New Sheet",
+    const addInstrumentMenuButton = rendered.getByRole("button", {
+      name: "Add Instrument",
     });
-    await act(() => user.click(newSheetMenuButton));
+    await act(() => user.click(addInstrumentMenuButton));
 
     expect(
-      rendered.getByRole("heading", { name: "New Sheet" }),
+      rendered.getByRole("heading", { name: "Add Instrument" }),
+    ).toBeInTheDocument();
+    expect(rendered.getByRole("combobox")).toBeInTheDocument();
+    expect(
+      rendered.getByRole("button", { name: "New Instrument" }),
     ).toBeInTheDocument();
     expect(
-      rendered.getByPlaceholderText("Number of Tracks"),
+      rendered.getByRole("button", { name: "Go to Instruments" }),
     ).toBeInTheDocument();
-    expect(rendered.getByRole("button", { name: "Add" })).toBeInTheDocument();
+    expect(
+      rendered.getByRole("button", { name: "Add to Song" }),
+    ).toBeInTheDocument();
   });
 
   it("Creates new sheet", async () => {

@@ -156,6 +156,7 @@ const InstrumentMenu: FunctionComponent<Props> = ({ onAdd, onClose }) => {
             </div>
             <Button
               className="px-2 py-0"
+              title="New Instrument"
               onClick={() => setIsInstrumentDialogOpen(true)}
             >
               <Plus />
