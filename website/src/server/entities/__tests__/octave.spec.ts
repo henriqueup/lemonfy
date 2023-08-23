@@ -2,9 +2,9 @@ import { getHigherOctave, getLowerOctave, type Octave } from "@entities/octave";
 
 describe("Get higher octave", () => {
   it("Gets same Octave from highest Octave", () => {
-    const higherOctave = getHigherOctave(5);
+    const higherOctave = getHigherOctave(8);
 
-    expect(higherOctave).toBe<Octave>(5);
+    expect(higherOctave).toBe<Octave>(8);
   });
 
   it("Gets higher Octave", () => {

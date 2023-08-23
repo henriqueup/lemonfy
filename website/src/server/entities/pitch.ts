@@ -24,7 +24,7 @@ export type PitchName = z.infer<typeof PitchNameSchema>;
 export const PitchKeySchema = z.custom<`${PitchName}${Octave}`>(
   (value: unknown) =>
     typeof value === "string" &&
-    (/^[ACDFG]#?[0-5]$/.test(value) || /^[EBX][0-5]$/.test(value)),
+    (/^[ACDFG]#?[0-8]$/.test(value) || /^[EBX][0-8]$/.test(value)),
 );
 export type PitchKey = z.infer<typeof PitchKeySchema>;
 
@@ -57,7 +57,19 @@ const getPitchNameAndOctave = (key: PitchKey): [PitchName, Octave] => {
 };
 
 export const createPitch = (name: PitchName, octave: number): Pitch => {
-  const parsedOctave = OctaveSchema.parse(octave);
+  const parsedOctave = OctaveSchema.parse(octave, {
+    errorMap: (issue, ctx) => {
+      if (issue.code === "invalid_union") {
+        return {
+          message: `Octave: Expected a number from 0 to 8, instead got '${
+            ctx.data as string
+          }'.`,
+        };
+      }
+
+      return { message: ctx.defaultError };
+    },
+  });
   const key = getPitchKey(name, parsedOctave);
 
   return PitchSchema.parse({
@@ -160,4 +172,43 @@ export const FrequencyDictionary: Record<PitchKey, number> = {
   "A5": 880.0,
   "A#5": 932.33,
   "B5": 987.77,
+  "X6": 0,
+  "C6": 1046.50,
+  "C#6": 1108.73,
+  "D6": 1174.66,
+  "D#6": 1244.51,
+  "E6": 1318.51,
+  "F6": 1396.91,
+  "F#6": 1479.98,
+  "G6": 1567.98,
+  "G#6": 1661.22,
+  "A6": 1760.00,
+  "A#6": 1864.66,
+  "B6": 1975.53,
+  "X7": 0,
+  "C7": 2093.00,
+  "C#7": 2217.46,
+  "D7": 2349.32,
+  "D#7": 2489.02,
+  "E7": 2637.02,
+  "F7": 2793.83,
+  "F#7": 2959.96,
+  "G7": 3135.96,
+  "G#7": 3322.44,
+  "A7": 3520.00,
+  "A#7": 3729.31,
+  "B7": 3951.07,
+  "X8": 0,
+  "C8": 4186.01,
+  "C#8": 4434.92,
+  "D8": 4698.63,
+  "D#8": 4978.03,
+  "E8": 5274.04,
+  "F8": 5587.65,
+  "F#8": 5919.91,
+  "G8": 6271.93,
+  "G#8": 6644.88,
+  "A8": 7040.00,
+  "A#8": 7458.62,
+  "B8": 7902.13,
 } as const;

@@ -19,6 +19,7 @@ import {
 import { getCurrentSheet, useEditorStore } from "@/store/editor";
 import { type PitchName, PITCH_NAMES } from "@entities/pitch";
 import {
+  concatToTypedFret,
   decreaseSelectedNoteDuration,
   decreaseSelectedOctave,
   increaseSelectedNoteDuration,
@@ -28,6 +29,7 @@ import {
   addCopyOfCurrentBar,
   addNote,
   addNoteByFret,
+  addTypedFretNote,
   removeNextNoteFromBar,
 } from "@/store/editor/sheetActions";
 import OctaveMenu from "@/components/topbarMenu/OctaveMenu";
@@ -55,9 +57,11 @@ const EditMenu: FunctionComponent = () => {
   const notesDataByFret = useMemo(
     () =>
       DIGITS.map(fret => ({
-        callback: () => addNoteByFret(fret),
+        noteCallback: () => addNoteByFret(fret),
+        typeCallback: () => concatToTypedFret(fret.toString()),
         label: fret,
-        shortcutCode: `notes.add.${fret}` as const,
+        noteShortcutCode: `notes.add.${fret}` as const,
+        typeShortcutCode: `type.fret.${fret}` as const,
       })),
     [],
   );
@@ -70,15 +74,21 @@ const EditMenu: FunctionComponent = () => {
 
       return shortcuts;
     }, {}),
-    ...notesDataByFret.reduce((shortcuts: ShortcutDictionary, noteData) => {
-      shortcuts[noteData.shortcutCode] = {
-        onKeyDown: noteData.callback,
-      };
+    ...notesDataByFret.reduce(
+      (shortcuts: ShortcutDictionary, noteDataByFret) => {
+        shortcuts[noteDataByFret.noteShortcutCode] = {
+          onKeyDown: noteDataByFret.noteCallback,
+        };
+        shortcuts[noteDataByFret.typeShortcutCode] = {
+          onKeyDown: noteDataByFret.typeCallback,
+        };
 
-      return shortcuts;
-    }, {}),
-    "notes.add.4": {
-      onKeyDown: () => addNoteByFret(4),
+        return shortcuts;
+      },
+      {},
+    ),
+    "release.shift": {
+      onKeyUp: addTypedFretNote,
     },
     "octave.lower": {
       onKeyDown: decreaseSelectedOctave,

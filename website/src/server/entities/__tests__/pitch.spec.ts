@@ -17,6 +17,6 @@ describe("Create Pitch", () => {
   });
 
   it("Fails with invalid Octave", () => {
-    expect(() => createPitch("E", 8)).toThrow(/invalid_union/);
+    expect(() => createPitch("E", 9)).toThrow(/invalid_union/);
   });
 });

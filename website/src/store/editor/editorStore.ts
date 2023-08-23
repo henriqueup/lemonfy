@@ -19,6 +19,7 @@ export interface EditorStore {
   currentInstrumentIndex: number | undefined;
   selectedOctave: Octave;
   selectedNoteDuration: NoteDurationName;
+  typedFret: string;
   noteToAdd: Note | null;
   cursor: Cursor;
   isDirty: boolean;
@@ -29,6 +30,7 @@ export const INITIAL_STATE: EditorStore = {
   currentInstrumentIndex: undefined,
   selectedOctave: 0,
   selectedNoteDuration: "LONG",
+  typedFret: "",
   noteToAdd: null,
   cursor: {
     trackIndex: 0,

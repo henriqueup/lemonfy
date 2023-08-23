@@ -1,4 +1,6 @@
 import {
+  clearTypedFret,
+  concatToTypedFret,
   decreaseSelectedNoteDuration,
   decreaseSelectedOctave,
   increaseSelectedNoteDuration,
@@ -11,7 +13,7 @@ import {
   getLowerNoteDuration,
   type NoteDurationName,
 } from "@entities/note";
-import { useEditorStore } from "@/store/editor";
+import { INITIAL_STATE, useEditorStore } from "@/store/editor";
 
 jest.mock("@entities/note");
 
@@ -74,5 +76,31 @@ describe("Selected Note Duration", () => {
     expect(
       useEditorStore.getState().selectedNoteDuration,
     ).toBe<NoteDurationName>("HALF_TRIPLET");
+  });
+});
+
+describe("Typed fret", () => {
+  it("Concats values to typed fret", () => {
+    concatToTypedFret("1");
+
+    expect(useEditorStore.getState()).toMatchObject({
+      ...INITIAL_STATE,
+      typedFret: "1",
+    });
+
+    concatToTypedFret("abc");
+
+    expect(useEditorStore.getState()).toMatchObject({
+      ...INITIAL_STATE,
+      typedFret: "1abc",
+    });
+  });
+
+  it("Clears typed fret", () => {
+    useEditorStore.setState({ typedFret: "123" });
+
+    clearTypedFret();
+
+    expect(useEditorStore.getState()).toMatchObject(INITIAL_STATE);
   });
 });

@@ -1,4 +1,6 @@
+import { useToast } from "@/hooks/useToast";
 import { useCallback, useEffect } from "react";
+import { ZodError } from "zod";
 
 export const DIGITS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
 const SHORTCUTS = {
@@ -44,6 +46,17 @@ const SHORTCUTS = {
   "7": "notes.add.7",
   "8": "notes.add.8",
   "9": "notes.add.9",
+  SHIFT_0: "type.fret.0",
+  SHIFT_1: "type.fret.1",
+  SHIFT_2: "type.fret.2",
+  SHIFT_3: "type.fret.3",
+  SHIFT_4: "type.fret.4",
+  SHIFT_5: "type.fret.5",
+  SHIFT_6: "type.fret.6",
+  SHIFT_7: "type.fret.7",
+  SHIFT_8: "type.fret.8",
+  SHIFT_9: "type.fret.9",
+  Shift: "release.shift",
 } as const;
 
 type ShortcutKey = keyof typeof SHORTCUTS;
@@ -62,6 +75,24 @@ export type ShortcutDictionary = {
 };
 
 const useShortcuts = (shortcutDictionary: ShortcutDictionary) => {
+  const { toast } = useToast();
+
+  const handleError = useCallback(
+    (error: unknown) => {
+      if (error instanceof ZodError) {
+        const errorMessages = error.flatten().formErrors;
+
+        errorMessages.forEach(errorMessage =>
+          toast({ variant: "destructive", title: errorMessage }),
+        );
+        return;
+      }
+
+      throw error;
+    },
+    [toast],
+  );
+
   const handleDigit = useCallback((event: KeyboardEvent): string => {
     const digitPrefix = "Digit";
 
@@ -83,7 +114,7 @@ const useShortcuts = (shortcutDictionary: ShortcutDictionary) => {
       keys.push(handleDigit(event));
 
       const resultingKey = keys.join("_");
-      console.log(resultingKey);
+      // console.log(resultingKey);
       if (isShortcutKey(resultingKey)) return resultingKey;
     },
     [handleDigit],
@@ -126,9 +157,14 @@ const useShortcuts = (shortcutDictionary: ShortcutDictionary) => {
       if (!shortcut?.onKeyDown) return;
 
       event.preventDefault();
-      shortcut.onKeyDown();
+
+      try {
+        shortcut.onKeyDown();
+      } catch (error) {
+        handleError(error);
+      }
     },
-    [getShortcut],
+    [getShortcut, handleError],
   );
 
   const handleKeyUp = useCallback(
@@ -137,9 +173,14 @@ const useShortcuts = (shortcutDictionary: ShortcutDictionary) => {
       if (!shortcut?.onKeyUp) return;
 
       event.preventDefault();
-      shortcut.onKeyUp();
+
+      try {
+        shortcut.onKeyUp();
+      } catch (error) {
+        handleError(error);
+      }
     },
-    [getShortcut],
+    [getShortcut, handleError],
   );
 
   useEffect(() => {

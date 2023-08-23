@@ -31,3 +31,11 @@ export const decreaseSelectedNoteDuration = () =>
   useEditorStore.setState(state => ({
     selectedNoteDuration: getLowerNoteDuration(state.selectedNoteDuration),
   }));
+
+export const concatToTypedFret = (valueToConcat: string) =>
+  useEditorStore.setState(state => ({
+    typedFret: `${state.typedFret}${valueToConcat}`,
+  }));
+
+export const clearTypedFret = () =>
+  useEditorStore.setState(() => ({ typedFret: "" }));

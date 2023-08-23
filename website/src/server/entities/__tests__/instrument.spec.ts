@@ -175,10 +175,19 @@ describe("Adds Note to fretted Instrument", () => {
   it("Throws with invalid Octave", () => {
     const instrument = getMockInstrument();
     instrument.isFretted = true;
-    instrument.tuning[2] = NonSilentPitchSchema.parse(createPitchFromKey("E5"));
+    instrument.tuning[2] = NonSilentPitchSchema.parse(createPitchFromKey("E8"));
 
     expect(() =>
       addNoteToFrettedInstrument(instrument, 2, 18, NOTE_DURATIONS.EIGHTH, 0),
     ).toThrow(/invalid_union/);
+  });
+
+  it("Throws with Instrument without a Sheet", () => {
+    const instrument = getMockInstrument();
+    const note = createNoteMock(NOTE_DURATIONS.EIGHTH, 0);
+
+    expect(() => addNoteToInstrument(instrument, 8, note)).toThrow(
+      "Instrument must have a Sheet.",
+    );
   });
 });

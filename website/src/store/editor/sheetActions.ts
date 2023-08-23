@@ -1,5 +1,4 @@
 import { createNote, NOTE_DURATIONS, type Note } from "@entities/note";
-import { type Octave } from "@entities/octave";
 import { createPitch, type PitchName } from "@entities/pitch";
 import {
   addBarToSheet,
@@ -16,6 +15,7 @@ import {
 } from "./editorStore";
 import { produceUndoneableAction } from "@/utils/immer";
 import { addNoteToFrettedInstrument } from "@/server/entities/instrument";
+import { clearTypedFret } from "@/store/editor/noteToAddActions";
 
 export const addBar = (beatCount: number, dibobinador: number, tempo: number) =>
   useEditorStore.setState(state =>
@@ -114,6 +114,20 @@ export const addNoteByFret = (fret: number) =>
       draft.cursor.position = Math.min(endOfAddedNote, barWithCursor.capacity);
     }),
   );
+
+export const addTypedFretNote = () => {
+  const typedFret = useEditorStore.getState().typedFret;
+
+  if (!typedFret) return;
+
+  const parsedTypedFret = Number(typedFret);
+  if (Number.isNaN(parsedTypedFret)) {
+    throw new Error(`Typed fret should be a number, got: '${typedFret}'.`);
+  }
+
+  clearTypedFret();
+  addNoteByFret(parsedTypedFret);
+};
 
 export const removeNoteFromBar = (noteToRemove: Note) =>
   useEditorStore.setState(state =>

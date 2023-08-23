@@ -7,6 +7,9 @@ const OCTAVES = [
   z.literal(3),
   z.literal(4),
   z.literal(5),
+  z.literal(6),
+  z.literal(7),
+  z.literal(8),
 ] as const;
 export const NUMBER_OF_OCTAVES = OCTAVES.length;
 

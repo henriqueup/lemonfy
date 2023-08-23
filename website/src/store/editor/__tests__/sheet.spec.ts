@@ -22,6 +22,7 @@ import {
   addCopyOfCurrentBar,
   addNote,
   addNoteByFret,
+  addTypedFretNote,
   removeBarFromSheetByIndex,
   removeNextNoteFromBar,
   removeNoteFromBar,
@@ -405,6 +406,53 @@ describe("Add Note by fret", () => {
     );
     expect(fillBarTracksInSheet).toBeCalledTimes(1);
     expect(fillBarTracksInSheet).toBeCalledWith(sheet, 2);
+
+    expect(useEditorStore.getState()).toMatchObject({
+      ...INITIAL_STATE,
+      isDirty: true,
+      song,
+      currentInstrumentIndex: 0,
+      cursor: {
+        barIndex: 1,
+        trackIndex: 2,
+        position: 1 / 4 + 1 / 2,
+      },
+      selectedNoteDuration: "HALF",
+    });
+  });
+});
+
+describe("Add typed fret Note", () => {
+  it("Does nothing with empty typed fret", () => {
+    addTypedFretNote();
+
+    expect(useEditorStore.getState()).toMatchObject(INITIAL_STATE);
+  });
+
+  it("Fails with non numeric typed fret", () => {
+    useEditorStore.setState({ typedFret: "a" });
+
+    expect(() => addTypedFretNote()).toThrow(
+      "Typed fret should be a number, got: 'a'.",
+    );
+  });
+
+  it("Successfully add Note and clears typed fret", () => {
+    const sheet = getMockSheetWithBars();
+    const song = getMockSong([sheet]);
+    useEditorStore.setState(() => ({
+      song,
+      currentInstrumentIndex: 0,
+      cursor: {
+        barIndex: 1,
+        trackIndex: 2,
+        position: 1 / 4,
+      },
+      selectedNoteDuration: "HALF",
+      typedFret: "4",
+    }));
+
+    addTypedFretNote();
 
     expect(useEditorStore.getState()).toMatchObject({
       ...INITIAL_STATE,
