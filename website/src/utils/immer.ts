@@ -18,12 +18,13 @@ const createPatchTag = (): string => new Date().toISOString();
 const popLastPatches = (patches: TaggedPatch[]): TaggedPatch[] => {
   const lastPatches: TaggedPatch[] = [];
 
-  let currentPatch = patches.pop();
+  let currentPatch = patches.at(-1);
   while (currentPatch !== undefined) {
     if (lastPatches.length && currentPatch.tag !== lastPatches[0]!.tag) break;
 
     lastPatches.push(currentPatch);
-    currentPatch = patches.pop();
+    patches.pop();
+    currentPatch = patches.at(-1);
   }
 
   return lastPatches;
