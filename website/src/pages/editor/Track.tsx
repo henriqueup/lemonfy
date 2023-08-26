@@ -3,17 +3,19 @@ import React, { type DragEvent, type FunctionComponent, useState } from "react";
 import { type Bar } from "@entities/bar";
 import { sumNotesDuration, type Note as NoteEntity } from "@entities/note";
 import { TimeEvaluation } from "src/utils/timeEvaluation";
-import { useEditorStore } from "@/store/editor";
+import { getCurrentInstrument, useEditorStore } from "@/store/editor";
 import { cn } from "src/styles/utils";
 import Cursor from "./Cursor";
 import Note from "./Note";
 import { usePlayerStore } from "@/store/player";
+import { getFretFromNote } from "@/server/entities/instrument";
 
 interface TrackProps {
   index: number;
   bar: Bar;
   track: NoteEntity[];
   handleAddNote: (note: NoteEntity) => void;
+  displayByFret?: boolean;
 }
 
 const Track: FunctionComponent<TrackProps> = ({
@@ -21,8 +23,10 @@ const Track: FunctionComponent<TrackProps> = ({
   bar,
   track,
   handleAddNote,
+  displayByFret,
 }) => {
   const [isShowingPreview, setIsShowingPreview] = useState(false);
+  const instrument = getCurrentInstrument();
   const noteToAdd = useEditorStore(state => state.noteToAdd);
   const cursor = useEditorStore(state => state.cursor);
   const isPlaying = usePlayerStore(state => state.isPlaying);
@@ -90,10 +94,27 @@ const Track: FunctionComponent<TrackProps> = ({
       </div> */}
       <div className="relative flex w-full bg-inherit">
         {track.map((note, i) => (
-          <Note key={i} note={note} barCapacity={bar.capacity} />
+          <Note
+            key={i}
+            note={note}
+            barCapacity={bar.capacity}
+            fret={
+              displayByFret && instrument
+                ? getFretFromNote(instrument, index, note)
+                : undefined
+            }
+          />
         ))}
         {isShowingPreview && noteToAdd !== null ? (
-          <Note note={noteToAdd} barCapacity={bar.capacity} />
+          <Note
+            note={noteToAdd}
+            barCapacity={bar.capacity}
+            fret={
+              displayByFret && instrument
+                ? getFretFromNote(instrument, index, noteToAdd)
+                : undefined
+            }
+          />
         ) : null}
         <div className="m-auto ml-0 mr-0 h-px flex-grow border" />
         {!isPlaying && isSelectedTrack && isSelectedBar ? (

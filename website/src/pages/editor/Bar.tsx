@@ -2,6 +2,7 @@ import { type FunctionComponent } from "react";
 
 import { type Bar as BarEntity } from "@entities/bar";
 import { type Note } from "@entities/note";
+import { type Instrument } from "@entities/instrument";
 // import { addNoteFromDrop } from "@/store/editor";
 import Track from "./Track";
 import { usePlayerStore } from "@/store/player";
@@ -12,9 +13,11 @@ import Cursor from "./Cursor";
 
 interface Props {
   bar: BarEntity;
+  displayByFret?: boolean;
+  instrument: Instrument;
 }
 
-const Bar: FunctionComponent<Props> = ({ bar }) => {
+const Bar: FunctionComponent<Props> = ({ bar, displayByFret, instrument }) => {
   const isPlaying = usePlayerStore(state => state.isPlaying);
   const isPaused = usePlayerStore(state => state.isPaused);
   const cursor = usePlayerStore(state => state.cursor);
@@ -35,13 +38,16 @@ const Bar: FunctionComponent<Props> = ({ bar }) => {
     >
       <div className="relative flex h-[100px] w-full flex-col justify-evenly bg-inherit">
         {bar.tracks.map((track, j) => (
-          <Track
-            key={j}
-            index={j}
-            bar={bar}
-            track={track}
-            handleAddNote={note => handleAddNote(0, j, note)}
-          />
+          <div className="flex gap-2 bg-inherit leading-none" key={j}>
+            <span>{instrument.tuning[j]?.key}</span>
+            <Track
+              index={j}
+              bar={bar}
+              track={track}
+              handleAddNote={note => handleAddNote(0, j, note)}
+              displayByFret={displayByFret}
+            />
+          </div>
         ))}
         {isPlaying && cursor.barIndex === bar.index && (
           <Cursor

@@ -4,9 +4,10 @@ import { type Note as NoteEntity } from "@entities/note";
 interface Props {
   note: NoteEntity;
   barCapacity: number;
+  fret?: number;
 }
 
-const Note: FunctionComponent<Props> = ({ note, barCapacity }) => {
+const Note: FunctionComponent<Props> = ({ note, barCapacity, fret }) => {
   const getNoteClassName = (): string | undefined => {
     if (
       (!note.isSustain && !note.hasSustain) ||
@@ -32,7 +33,7 @@ const Note: FunctionComponent<Props> = ({ note, barCapacity }) => {
         </div>
       ) : null}
       <div className={getNoteClassName()}>
-        <span>{note.pitch.key}</span>
+        <span>{fret !== undefined ? fret : note.pitch.key}</span>
       </div>
       {note.hasSustain ? (
         <div className="flex w-1/2 justify-end">

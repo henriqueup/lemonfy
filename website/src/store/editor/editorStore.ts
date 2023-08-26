@@ -7,6 +7,7 @@ import { type Octave } from "@entities/octave";
 import { type Sheet } from "@entities/sheet";
 import { type Song } from "@entities/song";
 import { handleChangeHistory } from "@/utils/immer";
+import { type Instrument } from "@/server/entities/instrument";
 
 export interface Cursor {
   trackIndex: number;
@@ -44,13 +45,18 @@ export const useEditorStore = create<EditorStore>()(
   devtools(() => INITIAL_STATE),
 );
 
-export const getCurrentSheet = (state?: EditorStore): Sheet | undefined => {
+export const getCurrentInstrument = (
+  state?: EditorStore,
+): Instrument | undefined => {
   const currentState = state ?? useEditorStore.getState();
 
   if (currentState.currentInstrumentIndex === undefined) return undefined;
 
-  return currentState.song?.instruments[currentState.currentInstrumentIndex]
-    ?.sheet;
+  return currentState.song?.instruments[currentState.currentInstrumentIndex];
+};
+
+export const getCurrentSheet = (state?: EditorStore): Sheet | undefined => {
+  return getCurrentInstrument(state)?.sheet;
 };
 
 export const reset = () => useEditorStore.setState(INITIAL_STATE);

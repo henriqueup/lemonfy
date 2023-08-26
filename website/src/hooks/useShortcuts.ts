@@ -1,4 +1,5 @@
 import { useToast } from "@/hooks/useToast";
+import { BusinessException } from "@/utils/exceptions";
 import { useCallback, useEffect } from "react";
 import { ZodError } from "zod";
 
@@ -79,6 +80,11 @@ const useShortcuts = (shortcutDictionary: ShortcutDictionary) => {
 
   const handleError = useCallback(
     (error: unknown) => {
+      if (error instanceof BusinessException) {
+        toast({ variant: "destructive", title: error.message });
+        return;
+      }
+
       if (error instanceof ZodError) {
         const errorMessages = error.flatten().formErrors;
 

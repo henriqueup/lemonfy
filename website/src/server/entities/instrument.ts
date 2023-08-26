@@ -8,6 +8,7 @@ import {
   createPitch,
 } from "@/server/entities/pitch";
 import { createNote, type Note } from "@/server/entities/note";
+import { BusinessException } from "@/utils/exceptions";
 
 export const INSTRUMENT_TYPES = [
   "String",
@@ -86,6 +87,57 @@ export const createInstrument = (
   });
 };
 
+const getNoteFromFret = (
+  instrument: Instrument,
+  trackIndex: number,
+  fret: number,
+  duration: number,
+  start: number,
+): Note => {
+  const trackTuning = NonSilentPitchSchema.parse(instrument.tuning[trackIndex]);
+
+  const indexOfTrackTuningPitch = NON_SILENT_PITCH_NAMES.indexOf(
+    trackTuning.name,
+  );
+  const octavesHigher = Math.floor(
+    (fret + indexOfTrackTuningPitch) / NON_SILENT_PITCH_NAMES.length,
+  );
+  const targetPitchIndex =
+    (fret + indexOfTrackTuningPitch) % NON_SILENT_PITCH_NAMES.length;
+
+  return createNote(
+    duration,
+    start,
+    createPitch(
+      NON_SILENT_PITCH_NAMES[targetPitchIndex]!,
+      trackTuning.octave + octavesHigher,
+    ),
+  );
+};
+
+export const getFretFromNote = (
+  instrument: Instrument,
+  trackIndex: number,
+  note: Note,
+): number => {
+  const trackTuning = NonSilentPitchSchema.parse(instrument.tuning[trackIndex]);
+  const indexOfTrackTuningPitch = NON_SILENT_PITCH_NAMES.indexOf(
+    trackTuning.name,
+  );
+  const indexOfOriginalNotePitch = NON_SILENT_PITCH_NAMES.indexOf(
+    NonSilentPitchSchema.parse(note.pitch).name,
+  );
+
+  const absoluteFretOfTrackTuning =
+    trackTuning.octave * NON_SILENT_PITCH_NAMES.length +
+    indexOfTrackTuningPitch;
+  const absoluteFretOfOriginalNote =
+    note.pitch.octave * NON_SILENT_PITCH_NAMES.length +
+    indexOfOriginalNotePitch;
+
+  return absoluteFretOfOriginalNote - absoluteFretOfTrackTuning;
+};
+
 export const addNoteToFrettedInstrument = (
   instrument: Instrument,
   trackIndex: number,
@@ -93,28 +145,19 @@ export const addNoteToFrettedInstrument = (
   duration: number,
   start: number,
 ): void => {
-  if (!instrument.isFretted) throw new Error("Instrument must be fretted.");
+  if (!instrument.isFretted)
+    throw new BusinessException("Instrument must be fretted.");
 
   if (trackIndex >= instrument.trackCount) {
-    throw new Error("Invalid track index.");
+    throw new BusinessException("Invalid track index.");
   }
 
-  const basePitch = NonSilentPitchSchema.parse(instrument.tuning[trackIndex]);
-
-  const indexOfBasePitch = NON_SILENT_PITCH_NAMES.indexOf(basePitch.name);
-  const octavesHigher = Math.floor(
-    (fret + indexOfBasePitch) / NON_SILENT_PITCH_NAMES.length,
-  );
-  const targetNameIndex =
-    (fret + indexOfBasePitch) % NON_SILENT_PITCH_NAMES.length;
-
-  const targetNote = createNote(
+  const targetNote = getNoteFromFret(
+    instrument,
+    trackIndex,
+    fret,
     duration,
     start,
-    createPitch(
-      NON_SILENT_PITCH_NAMES[targetNameIndex]!,
-      basePitch.octave + octavesHigher,
-    ),
   );
   addNoteToInstrument(instrument, trackIndex, targetNote);
 };
@@ -125,7 +168,17 @@ export const addNoteToInstrument = (
   note: Note,
 ): void => {
   if (instrument.sheet === undefined) {
-    throw new Error("Instrument must have a Sheet.");
+    throw new BusinessException("Instrument must have a Sheet.");
+  }
+
+  const fretOfNoteToAdd = getFretFromNote(instrument, trackIndex, note);
+
+  if (fretOfNoteToAdd < 0) {
+    throw new BusinessException(
+      `Invalid note ${note.pitch.key} for track ${
+        trackIndex + 1
+      }, which is tuned to ${instrument.tuning[trackIndex]!.key}.`,
+    );
   }
 
   addNoteToSheet(instrument.sheet, trackIndex, note);

@@ -2,7 +2,6 @@ import { createNote, NOTE_DURATIONS, type Note } from "@entities/note";
 import { createPitch, type PitchName } from "@entities/pitch";
 import {
   addBarToSheet,
-  addNoteToSheet,
   fillBarTracksInSheet,
   findSheetNoteByTime,
   removeBarInSheetByIndex,
@@ -12,9 +11,13 @@ import {
   useEditorStore,
   getCurrentSheet,
   handleStorableAction,
+  getCurrentInstrument,
 } from "./editorStore";
 import { produceUndoneableAction } from "@/utils/immer";
-import { addNoteToFrettedInstrument } from "@/server/entities/instrument";
+import {
+  addNoteToFrettedInstrument,
+  addNoteToInstrument,
+} from "@/server/entities/instrument";
 import { clearTypedFret } from "@/store/editor/noteToAddActions";
 
 export const addBar = (beatCount: number, dibobinador: number, tempo: number) =>
@@ -57,10 +60,10 @@ export const addNote = (pitchName: PitchName) =>
     produceUndoneableAction(state, draft => {
       if (draft.song === undefined) return;
 
-      const currentSheet = getCurrentSheet(draft);
-      if (currentSheet === undefined) return;
+      const currentInstrument = getCurrentInstrument(draft);
+      if (!currentInstrument?.sheet) return;
 
-      const barWithCursor = currentSheet.bars[draft.cursor.barIndex];
+      const barWithCursor = currentInstrument.sheet.bars[draft.cursor.barIndex];
       if (barWithCursor === undefined) return;
 
       const startOfNoteToAdd = barWithCursor.start + draft.cursor.position;
@@ -71,8 +74,12 @@ export const addNote = (pitchName: PitchName) =>
         pitch,
       );
 
-      addNoteToSheet(currentSheet, draft.cursor.trackIndex, noteToAdd);
-      fillBarTracksInSheet(currentSheet, draft.cursor.trackIndex);
+      addNoteToInstrument(
+        currentInstrument,
+        draft.cursor.trackIndex,
+        noteToAdd,
+      );
+      fillBarTracksInSheet(currentInstrument.sheet, draft.cursor.trackIndex);
       handleStorableAction(draft);
 
       const endOfAddedNote = draft.cursor.position + noteToAdd.duration;
@@ -83,15 +90,7 @@ export const addNote = (pitchName: PitchName) =>
 export const addNoteByFret = (fret: number) =>
   useEditorStore.setState(state =>
     produceUndoneableAction(state, draft => {
-      if (
-        draft.song === undefined ||
-        draft.currentInstrumentIndex === undefined
-      ) {
-        return;
-      }
-
-      const currentInstrument =
-        draft.song.instruments[draft.currentInstrumentIndex];
+      const currentInstrument = getCurrentInstrument(draft);
 
       if (!currentInstrument?.sheet) return;
 

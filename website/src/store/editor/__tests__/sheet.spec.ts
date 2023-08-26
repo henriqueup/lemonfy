@@ -6,7 +6,6 @@ import {
 } from "src/mocks/entities/sheet";
 import {
   addBarToSheet,
-  addNoteToSheet,
   fillBarTracksInSheet,
   findSheetNoteByTime,
   removeBarInSheetByIndex,
@@ -29,7 +28,10 @@ import {
 } from "@/store/editor/sheetActions";
 import { createBarMock } from "src/mocks/entities/bar";
 import { getMockSong } from "@/mocks/entities/song";
-import { addNoteToFrettedInstrument } from "@/server/entities/instrument";
+import {
+  addNoteToFrettedInstrument,
+  addNoteToInstrument,
+} from "@/server/entities/instrument";
 
 jest.mock("@/utils/immer");
 jest.mock("@entities/sheet");
@@ -207,28 +209,12 @@ describe("Add Note", () => {
         selectedOctave: 2,
       }));
 
-      (addNoteToSheet as jest.Mock).mockImplementation((sheet: Sheet) =>
-        sheet.tracks[0]!.push(note),
-      );
-      (fillBarTracksInSheet as jest.Mock).mockImplementation((sheet: Sheet) =>
-        sheet.bars[0]!.tracks[0]!.push(note),
-      );
-
       addNote("B");
 
-      expect(addNoteToSheet).toBeCalledTimes(1);
-      expect(addNoteToSheet).toBeCalledWith(sheet, 0, note);
+      expect(addNoteToInstrument).toBeCalledTimes(1);
+      expect(addNoteToInstrument).toBeCalledWith(song.instruments[0], 0, note);
       expect(fillBarTracksInSheet).toBeCalledTimes(1);
       expect(fillBarTracksInSheet).toBeCalledWith(sheet, 0);
-
-      expect(getCurrentSheet()).toMatchObject({
-        tracks: [[note], [], []],
-        bars: [
-          { ...sheet.bars[0], tracks: [[note], [], []] },
-          sheet.bars[1],
-          sheet.bars[2],
-        ],
-      });
 
       expect(useEditorStore.getState()).toMatchObject({
         ...INITIAL_STATE,
@@ -272,28 +258,12 @@ describe("Add Note", () => {
         selectedOctave: 2,
       }));
 
-      (addNoteToSheet as jest.Mock).mockImplementation((sheet: Sheet) =>
-        sheet.tracks[0]!.push(note),
-      );
-      (fillBarTracksInSheet as jest.Mock).mockImplementation((sheet: Sheet) =>
-        sheet.bars[1]!.tracks[0]!.push(note),
-      );
-
       addNote("B");
 
-      expect(addNoteToSheet).toBeCalledTimes(1);
-      expect(addNoteToSheet).toBeCalledWith(sheet, 0, note);
+      expect(addNoteToInstrument).toBeCalledTimes(1);
+      expect(addNoteToInstrument).toBeCalledWith(song.instruments[0], 0, note);
       expect(fillBarTracksInSheet).toBeCalledTimes(1);
       expect(fillBarTracksInSheet).toBeCalledWith(sheet, 0);
-
-      expect(getCurrentSheet()).toMatchObject({
-        tracks: [[note], [], []],
-        bars: [
-          sheet.bars[0],
-          { ...sheet.bars[1], tracks: [[note], [], []] },
-          sheet.bars[2],
-        ],
-      });
 
       expect(useEditorStore.getState()).toMatchObject({
         ...INITIAL_STATE,
