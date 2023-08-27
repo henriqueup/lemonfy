@@ -15,6 +15,8 @@ const SHORTCUTS = {
   CTRL_ArrowLeft: "cursor.bar.left",
   ArrowRight: "cursor.position.right",
   ArrowLeft: "cursor.position.left",
+  SHIFT_ArrowRight: "cursor.position.right.skip",
+  SHIFT_ArrowLeft: "cursor.position.left.skip",
   CTRL_SHIFT_ArrowRight: "cursor.position.endOfBar",
   CTRL_SHIFT_ArrowLeft: "cursor.position.startOfBar",
   c: "notes.add.C",

@@ -34,29 +34,36 @@ const Bar: FunctionComponent<Props> = ({ bar, displayByFret, instrument }) => {
     <div
       role="group"
       aria-label={`Bar ${bar.index}`}
-      className="flex rounded border bg-inherit p-4"
+      className="flex rounded border p-4"
     >
-      <div className="relative flex h-[100px] w-full flex-col justify-evenly bg-inherit">
-        {bar.tracks.map((track, j) => (
-          <div className="flex gap-2 bg-inherit leading-none" key={j}>
-            <span>{instrument.tuning[j]?.key}</span>
+      <div className="flex w-full gap-2">
+        <div className="flex h-[100px] flex-col justify-evenly">
+          {bar.tracks.map((_, j) => (
+            <span className="w-8 leading-none" key={j}>
+              {instrument.tuning[j]?.key}
+            </span>
+          ))}
+        </div>
+        <div className="relative flex h-[100px] grow flex-col justify-evenly">
+          {bar.tracks.map((track, j) => (
             <Track
+              key={j}
               index={j}
               bar={bar}
               track={track}
               handleAddNote={note => handleAddNote(0, j, note)}
               displayByFret={displayByFret}
             />
-          </div>
-        ))}
-        {isPlaying && cursor.barIndex === bar.index && (
-          <Cursor
-            bar={bar}
-            isPlaying={isPlaying}
-            isPaused={isPaused}
-            position={cursor.position}
-          />
-        )}
+          ))}
+          {isPlaying && cursor.barIndex === bar.index && (
+            <Cursor
+              bar={bar}
+              isPlaying={isPlaying}
+              isPaused={isPaused}
+              position={cursor.position}
+            />
+          )}
+        </div>
       </div>
       <div className="mb-2 ml-4 mt-2 flex flex-col items-center justify-between">
         <ButtonContainer onClick={handleRemoveBar}>

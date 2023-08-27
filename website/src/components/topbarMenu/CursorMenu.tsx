@@ -43,6 +43,12 @@ const CursorMenu: FunctionComponent = () => {
     "cursor.position.right": {
       onKeyDown: increaseCursorPosition,
     },
+    "cursor.position.left.skip": {
+      onKeyDown: () => decreaseCursorPosition(true),
+    },
+    "cursor.position.right.skip": {
+      onKeyDown: () => increaseCursorPosition(true),
+    },
     "cursor.position.startOfBar": {
       onKeyDown: moveCursorToStartOfBar,
     },
@@ -61,7 +67,7 @@ const CursorMenu: FunctionComponent = () => {
         <MenubarItem
           disabled={disableCursorActions}
           keepOpen
-          onClick={decreaseCursorPosition}
+          onClick={() => decreaseCursorPosition()}
         >
           Previous Note
           <MenubarShortcut>🠜</MenubarShortcut>
@@ -69,7 +75,7 @@ const CursorMenu: FunctionComponent = () => {
         <MenubarItem
           disabled={disableCursorActions}
           keepOpen
-          onClick={increaseCursorPosition}
+          onClick={() => increaseCursorPosition()}
         >
           Next Note
           <MenubarShortcut>🠞</MenubarShortcut>

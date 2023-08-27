@@ -37,9 +37,9 @@ const SheetEditor: FunctionComponent = () => {
   };
 
   return (
-    <div className="h-full w-full rounded rounded-tl-none bg-inherit px-2">
+    <div className="h-full w-full rounded rounded-tl-none px-2">
       <PlaybackMenu />
-      <div className="h-full rounded bg-inherit pr-1 pt-1">
+      <div className="h-full rounded pr-1 pt-1">
         <div className="flex w-full items-center">
           <div className="flex w-1/2 items-center justify-start gap-3">
             {instrument.isFretted ? (
@@ -87,7 +87,7 @@ const SheetEditor: FunctionComponent = () => {
             />
           </div>
         </div>
-        <div className="mt-2 grid max-h-full grid-cols-2 gap-2 overflow-y-auto bg-inherit">
+        <div className="mt-2 grid max-h-full grid-cols-2 gap-2 overflow-y-auto">
           {bars.map((bar, i) => (
             <Bar
               key={i}

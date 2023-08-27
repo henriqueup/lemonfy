@@ -111,9 +111,12 @@ And finally, it can also be used as a showcase of my skills.
     - <s>Enable note adding by fret</s>
   - Add Key Instruments view
 - Minor fixes/adjustments
-  - Cursor movement
+  - <s>Close Instruments dropdown when selecting</s>
+  - <s>Fix track alignment</s>
+  - <s>Cursor movement</s>
   - Add Instrument deletion
-  - Change Instrument tab when adding a new one
+  - <s>Change Instrument tab when adding a new one</s>
+  - <s>Remove bg-inherits</s>
 - <s>Add modal component</s>
 - TD: change creation inputs to forms
 - Add Bar copy/paste

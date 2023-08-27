@@ -24,7 +24,8 @@ export type OptionObject = {
   value: string;
 };
 type Option = number | string | OptionObject;
-const isOptionObject = (option: Option): option is OptionObject => typeof option === "object";
+const isOptionObject = (option: Option): option is OptionObject =>
+  typeof option === "object";
 
 interface Props {
   label: string;
@@ -35,7 +36,9 @@ interface Props {
   disableClear?: boolean;
 }
 
-const Select: FunctionComponent<Props & Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "onChange">> = ({
+const Select: FunctionComponent<
+  Props & Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "onChange">
+> = ({
   label,
   value,
   options,
@@ -52,8 +55,14 @@ const Select: FunctionComponent<Props & Omit<FieldsetHTMLAttributes<HTMLFieldSet
   const filteredOptions = useMemo(
     () =>
       options
-        .map(option => (isOptionObject(option) ? option : { key: option, value: option.toString() }))
-        .filter(option => option.value.toLowerCase().startsWith(filterValue.toLowerCase())),
+        .map(option =>
+          isOptionObject(option)
+            ? option
+            : { key: option, value: option.toString() },
+        )
+        .filter(option =>
+          option.value.toLowerCase().startsWith(filterValue.toLowerCase()),
+        ),
     [options, filterValue],
   );
 
@@ -144,7 +153,7 @@ const Select: FunctionComponent<Props & Omit<FieldsetHTMLAttributes<HTMLFieldSet
       <div className="flex cursor-pointer items-center pb-2 pt-2">
         <input
           placeholder={placeholder || label}
-          className="w-full cursor-pointer bg-inherit focus-visible:outline-none"
+          className="w-full cursor-pointer focus-visible:outline-none"
           value={fieldsetHasFocus ? filterValue : ownValue}
           onInput={handleChangeInput}
           onFocus={event => event.target.select()}
@@ -164,9 +173,13 @@ const Select: FunctionComponent<Props & Omit<FieldsetHTMLAttributes<HTMLFieldSet
         <ButtonContainer
           aria-label={`${optionsIsOpen ? "Collapse" : "Expand"} options`}
           onKeyDown={
-            optionsIsOpen ? handleKeyDown("Enter", handleChevronUp) : handleKeyDown("Enter", handleClickFieldset)
+            optionsIsOpen
+              ? handleKeyDown("Enter", handleChevronUp)
+              : handleKeyDown("Enter", handleClickFieldset)
           }
-          onClick={event => (optionsIsOpen ? handleChevronUp(event) : handleClickFieldset())}
+          onClick={event =>
+            optionsIsOpen ? handleChevronUp(event) : handleClickFieldset()
+          }
           tabIndex={0}
         >
           {optionsIsOpen ? (

@@ -40,6 +40,8 @@ const maxInstrumentsInSearch = 10;
 const InstrumentMenu: FunctionComponent<Props> = ({ onAdd, onClose }) => {
   const router = useRouter();
   const [isInstrumentDialogOpen, setIsInstrumentDialogOpen] = useState(false);
+  const [isInstrumentDropdownOpen, setIsInstrumentDropdownOpen] =
+    useState(false);
   const [instrumentSearchValue, setInstrumentSearchValue] = useState("");
   const [selectedInstrument, setSelectedInstrument] = useState<
     Instrument | undefined
@@ -74,6 +76,11 @@ const InstrumentMenu: FunctionComponent<Props> = ({ onAdd, onClose }) => {
     setSelectedInstrument(newInstrument);
   };
 
+  const handleSelectInstrument = (instrument: Instrument) => {
+    setSelectedInstrument(instrument);
+    setIsInstrumentDropdownOpen(false);
+  };
+
   const handleClickAdd = () => {
     if (selectedInstrument === undefined) return;
 
@@ -82,7 +89,7 @@ const InstrumentMenu: FunctionComponent<Props> = ({ onAdd, onClose }) => {
 
   return (
     <FixedSideMenu label="Instrument Menu" rightSide onClose={onClose}>
-      <div className="flex flex-col items-center bg-inherit">
+      <div className="flex flex-col items-center">
         <div className="m-auto mb-2 mt-2 flex w-full justify-center">
           <h3 className="m-auto">Add Instrument</h3>
         </div>
@@ -92,7 +99,11 @@ const InstrumentMenu: FunctionComponent<Props> = ({ onAdd, onClose }) => {
               <Label htmlFor="type-filter" className="ml-1 w-full">
                 Instrument
               </Label>
-              <Popover modal>
+              <Popover
+                modal
+                open={isInstrumentDropdownOpen}
+                onOpenChange={open => setIsInstrumentDropdownOpen(open)}
+              >
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
@@ -101,6 +112,7 @@ const InstrumentMenu: FunctionComponent<Props> = ({ onAdd, onClose }) => {
                       "w-full justify-between",
                       !selectedInstrument && "text-muted-foreground",
                     )}
+                    onClick={() => setIsInstrumentDropdownOpen(true)}
                   >
                     <span className="max-w-5/6 overflow-x-hidden text-ellipsis whitespace-nowrap">
                       {selectedInstrument
@@ -129,7 +141,7 @@ const InstrumentMenu: FunctionComponent<Props> = ({ onAdd, onClose }) => {
                           <CommandItem
                             value={instrument.name}
                             key={instrument.id}
-                            onSelect={() => setSelectedInstrument(instrument)}
+                            onSelect={() => handleSelectInstrument(instrument)}
                           >
                             <span
                               className={cn(

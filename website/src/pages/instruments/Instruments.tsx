@@ -51,7 +51,7 @@ const Instruments: NextPage = () => {
   const instruments = listInstrumentsQuery.data;
 
   return (
-    <div className="flex h-full flex-col items-center space-y-4 bg-inherit p-4 pt-10 text-inherit">
+    <div className="flex h-full flex-col items-center space-y-4 p-4 pt-10 text-inherit">
       <div className="flex w-3/5 justify-between">
         <h1 className="mb-4 text-xl">Instruments</h1>
         <Button

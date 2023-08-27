@@ -21,7 +21,7 @@ const Fieldset: FunctionComponent<
       role={otherProps.role ?? "group"}
       aria-label={otherProps["aria-label"] ?? label}
       className={cn(
-        "relative rounded-lg border bg-inherit pl-1 pr-1",
+        "relative rounded-lg border pl-1 pr-1",
         hasError &&
           "border-red-600 text-red-600 dark:border-red-600 dark:text-red-600",
         otherProps.className,
@@ -31,7 +31,7 @@ const Fieldset: FunctionComponent<
         <legend
           role="presentation"
           className={cn(
-            "absolute z-10 bg-inherit text-sm",
+            "absolute z-10 text-sm",
             "-top-[calc(theme(fontSize.sm[1].lineHeight)_/_2)]",
           )}
         >

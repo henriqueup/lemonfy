@@ -31,14 +31,14 @@ const Tooltip: FunctionComponent<
   return (
     <div
       {...otherProps}
-      className={cn(otherProps.className, "relative bg-inherit")}
+      className={cn(otherProps.className, "relative")}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleClose}
     >
       {children}
       {content ? (
         <FloatingContainer
-          className="z-20 bg-inherit"
+          className="z-20"
           isOpen={isOpen}
           onClose={handleClose}
         >

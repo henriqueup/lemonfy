@@ -35,7 +35,7 @@ const Editor: FunctionComponent<EditorProps> = ({ songToLoad }) => {
 
   return (
     <>
-      <div className="h-full bg-inherit text-inherit">
+      <div className="h-full text-inherit">
         {loadedSong === undefined ? (
           <div className="flex justify-center">
             <div

@@ -197,17 +197,36 @@ describe("Increase cursor position", () => {
   });
 
   it("Increases position without next Note and no Note within selected duration", () => {
-    useEditorStore.setState(state => ({
+    (findBarNoteByTime as jest.Mock).mockImplementation(() =>
+      createNoteMock(NOTE_DURATIONS["EIGHTH"], 5 / 8),
+    );
+    useEditorStore.setState(() => ({
       song: getMockSong([getMockSheetWithGap()]),
       currentInstrumentIndex: 0,
-      cursor: { ...state.cursor, position: 1 / 4 },
       selectedNoteDuration: "HALF",
     }));
     increaseCursorPosition();
 
     expect(useEditorStore.getState().cursor).toStrictEqual<Cursor>({
       ...INITIAL_STATE.cursor,
-      position: 3 / 4,
+      position: 2 / 4,
+    });
+  });
+
+  it("Increases position without next Note and no Note within selected duration but with skip", () => {
+    (findBarNoteByTime as jest.Mock).mockImplementation(() =>
+      createNoteMock(NOTE_DURATIONS["EIGHTH"], 5 / 8),
+    );
+    useEditorStore.setState(() => ({
+      song: getMockSong([getMockSheetWithGap()]),
+      currentInstrumentIndex: 0,
+      selectedNoteDuration: "HALF",
+    }));
+    increaseCursorPosition(true);
+
+    expect(useEditorStore.getState().cursor).toStrictEqual<Cursor>({
+      ...INITIAL_STATE.cursor,
+      position: 5 / 8,
     });
   });
 
@@ -338,6 +357,9 @@ describe("Decrease cursor position", () => {
   });
 
   it("Decreases position without previous Note and no Note within selected duration", () => {
+    (findBarNoteByTime as jest.Mock).mockImplementation(() =>
+      createNoteMock(NOTE_DURATIONS["EIGHTH"], 0),
+    );
     useEditorStore.setState(state => ({
       song: getMockSong([getMockSheetWithGap()]),
       currentInstrumentIndex: 0,
@@ -349,6 +371,24 @@ describe("Decrease cursor position", () => {
     expect(useEditorStore.getState().cursor).toStrictEqual<Cursor>({
       ...INITIAL_STATE.cursor,
       position: 1 / 4,
+    });
+  });
+
+  it("Decreases position without previous Note and no Note within selected duration but with skip", () => {
+    (findBarNoteByTime as jest.Mock).mockImplementation(() =>
+      createNoteMock(NOTE_DURATIONS["EIGHTH"], 0),
+    );
+    useEditorStore.setState(state => ({
+      song: getMockSong([getMockSheetWithGap()]),
+      currentInstrumentIndex: 0,
+      cursor: { ...state.cursor, position: 3 / 4 },
+      selectedNoteDuration: "HALF",
+    }));
+    decreaseCursorPosition(true);
+
+    expect(useEditorStore.getState().cursor).toStrictEqual<Cursor>({
+      ...INITIAL_STATE.cursor,
+      position: 1 / 8,
     });
   });
 

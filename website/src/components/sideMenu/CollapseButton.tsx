@@ -20,7 +20,7 @@ const CollapseButton: FunctionComponent<Props> = ({
       role="button"
       aria-label={isOpen ? `Close ${menuLabel}` : `Open ${menuLabel}`}
       className={cn(
-        "absolute top-[calc(50%_-_16px)] flex h-8 w-6 cursor-pointer items-center justify-center rounded border bg-inherit",
+        "absolute top-[calc(50%_-_16px)] flex h-8 w-6 cursor-pointer items-center justify-center rounded border",
         rightSide ? "border-r-0" : "border-l-0",
         rightSide ? "right-full" : "left-full",
       )}

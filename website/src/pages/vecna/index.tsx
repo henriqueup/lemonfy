@@ -14,7 +14,7 @@ const Vecna: NextPage = () => {
   return (
     <div className="h-full bg-black">
       <h1 className="text-stone-600 dark:text-stone-400">VECNA</h1>
-      <div className="w-1/4 bg-inherit p-4">
+      <div className="w-1/4 p-4">
         <TextField
           label="Test Text Field"
           value={textValue}
@@ -23,7 +23,7 @@ const Vecna: NextPage = () => {
           }}
         />
       </div>
-      <div className="w-1/4 bg-inherit p-4">
+      <div className="w-1/4 p-4">
         <NumberField
           label="Test Number Field"
           value={numberValue}

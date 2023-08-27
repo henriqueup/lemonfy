@@ -39,7 +39,7 @@ const SongMenu: FunctionComponent<Props> = ({
 
   return (
     <FixedSideMenu label="Song Menu" rightSide onClose={onClose}>
-      <div className="flex flex-col bg-inherit">
+      <div className="flex flex-col">
         <div className="m-auto mb-2 mt-2 flex w-full justify-center">
           <h3 className="m-auto">
             {loadedSong === undefined ? "Create Song" : "Edit Song"}

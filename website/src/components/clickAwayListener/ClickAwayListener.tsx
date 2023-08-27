@@ -1,11 +1,20 @@
-import { useCallback, useEffect, useRef, type FunctionComponent, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  type FunctionComponent,
+  type ReactNode,
+} from "react";
 
 interface Props {
   onClickAway: () => void;
   children: ReactNode;
 }
 
-const ClickAwayListener: FunctionComponent<Props> = ({ onClickAway, children }) => {
+const ClickAwayListener: FunctionComponent<Props> = ({
+  onClickAway,
+  children,
+}) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const handleMousedown = useCallback(
@@ -25,11 +34,7 @@ const ClickAwayListener: FunctionComponent<Props> = ({ onClickAway, children }) 
     return () => document.removeEventListener("mousedown", handleMousedown);
   }, [handleMousedown]);
 
-  return (
-    <div className="bg-inherit" ref={wrapperRef}>
-      {children}
-    </div>
-  );
+  return <div ref={wrapperRef}>{children}</div>;
 };
 
 export default ClickAwayListener;

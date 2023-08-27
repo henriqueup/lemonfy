@@ -55,7 +55,7 @@ export const decreaseCursorBarIndex = () =>
     }),
   );
 
-export const increaseCursorPosition = () =>
+export const increaseCursorPosition = (skipEmptySpace?: boolean) =>
   useEditorStore.setState(state =>
     produce(state, draft => {
       const currentSheet = getCurrentSheet(draft);
@@ -77,7 +77,11 @@ export const increaseCursorPosition = () =>
       );
       let amountToIncrease = NOTE_DURATIONS[draft.selectedNoteDuration];
 
-      if (nextNote) {
+      if (
+        nextNote &&
+        (skipEmptySpace ||
+          nextNote.start < draft.cursor.position + amountToIncrease)
+      ) {
         amountToIncrease =
           nextNote.start + nextNote.duration - draft.cursor.position;
 
@@ -93,7 +97,7 @@ export const increaseCursorPosition = () =>
     }),
   );
 
-export const decreaseCursorPosition = () =>
+export const decreaseCursorPosition = (skipEmptySpace?: boolean) =>
   useEditorStore.setState(state =>
     produce(state, draft => {
       const currentSheet = getCurrentSheet(draft);
@@ -113,7 +117,12 @@ export const decreaseCursorPosition = () =>
       );
       let amountToDecrease = NOTE_DURATIONS[draft.selectedNoteDuration];
 
-      if (previousNote) {
+      if (
+        previousNote &&
+        (skipEmptySpace ||
+          previousNote.start + previousNote.duration >
+            draft.cursor.position - amountToDecrease)
+      ) {
         amountToDecrease = draft.cursor.position - previousNote.start;
 
         const previousNoteEnd = previousNote.start + previousNote.duration;

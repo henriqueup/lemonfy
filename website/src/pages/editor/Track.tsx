@@ -81,7 +81,7 @@ const Track: FunctionComponent<TrackProps> = ({
       onDragLeave={event => handleDragLeave(event)}
       onDragOver={event => handleDragOver(event)}
       onDrop={handleDrop}
-      className="mb-0.5 mt-0.5 flex h-full w-full bg-inherit"
+      className="mb-0.5 mt-0.5 flex h-full w-full"
     >
       {/* <div className="flex p-2">
         <div
@@ -92,7 +92,7 @@ const Track: FunctionComponent<TrackProps> = ({
           )}
         />
       </div> */}
-      <div className="relative flex w-full bg-inherit">
+      <div className="relative flex w-full">
         {track.map((note, i) => (
           <Note
             key={i}

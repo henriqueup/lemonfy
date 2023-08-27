@@ -8,13 +8,19 @@ type Props = {
   onClose: () => void;
 };
 
-const ValuesSchema = BarSchema.pick({ beatCount: true, dibobinador: true, tempo: true });
+const ValuesSchema = BarSchema.pick({
+  beatCount: true,
+  dibobinador: true,
+  tempo: true,
+});
 type Values = z.infer<typeof ValuesSchema>;
 
 const BarMenu: FunctionComponent<Props> = ({ onAdd, onClose }) => {
   const [values, setValues] = useState<Partial<Values>>({});
   const parseResult = ValuesSchema.safeParse(values);
-  const parseErrors = !parseResult.success ? parseResult.error.formErrors.fieldErrors : {};
+  const parseErrors = !parseResult.success
+    ? parseResult.error.formErrors.fieldErrors
+    : {};
 
   const handleClickAdd = () => {
     if (!parseResult.success) return;
@@ -25,8 +31,8 @@ const BarMenu: FunctionComponent<Props> = ({ onAdd, onClose }) => {
 
   return (
     <FixedSideMenu label="Bar Menu" rightSide onClose={onClose}>
-      <div className="flex flex-col bg-inherit">
-        <div className="m-auto mt-2 mb-2 flex w-full justify-center">
+      <div className="flex flex-col">
+        <div className="m-auto mb-2 mt-2 flex w-full justify-center">
           <h3 className="m-auto">New Bar</h3>
         </div>
         <NumberField

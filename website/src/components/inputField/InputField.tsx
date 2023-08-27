@@ -109,7 +109,7 @@ const GeneralInputField: FunctionComponent<
             autoFocus={autoFocus}
             {...inputProps}
             placeholder={placeholder || label}
-            className="w-full cursor-text bg-inherit pl-1 placeholder:text-inherit focus-visible:outline-none"
+            className="w-full cursor-text bg-background pl-1 placeholder:text-inherit focus-visible:outline-none"
             value={value === undefined ? "" : value}
             onInput={handleChangeInput}
             onFocus={event => event.target.select()}
