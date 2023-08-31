@@ -55,6 +55,29 @@ export const addInstrument = (instrument: Instrument) =>
     }),
   );
 
+export const removeInstrumentByIndex = (instrumentIndex: number) =>
+  useEditorStore.setState(state =>
+    produceUndoneableAction(state, draft => {
+      if (draft.song === undefined) return;
+
+      const removedInstruments = draft.song.instruments.splice(
+        instrumentIndex,
+        1,
+      );
+
+      if (removedInstruments.length) {
+        handleStorableAction(draft);
+
+        if (
+          draft.currentInstrumentIndex &&
+          draft.currentInstrumentIndex >= draft.song.instruments.length
+        ) {
+          draft.currentInstrumentIndex -= 1;
+        }
+      }
+    }),
+  );
+
 export const setCurrentInstrumentIndex = (instrumentIndex: number) =>
   useEditorStore.setState(state =>
     produce(state, draft => {

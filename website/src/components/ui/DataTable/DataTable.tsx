@@ -1,4 +1,9 @@
-import { useState, type MouseEvent, type FunctionComponent } from "react";
+import {
+  useState,
+  type MouseEvent,
+  type FunctionComponent,
+  type HTMLAttributes,
+} from "react";
 import {
   type ColumnDef,
   flexRender,
@@ -22,6 +27,7 @@ import {
   TableRow,
 } from "@/components/ui/Table";
 import { DataTablePagination } from "@/components/ui/DataTable/DataTablePagination";
+import { cn } from "@/styles/utils";
 
 export type ColumnMetaData = {
   cellProps?: {
@@ -48,6 +54,7 @@ export interface DataTableToolbarProps<TData> {
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  tableProps?: HTMLAttributes<HTMLTableElement>;
   rowProps?: RowProps<TData>;
   Toolbar?: FunctionComponent<DataTableToolbarProps<TData>>;
   initialVisibility?: VisibilityState;
@@ -57,6 +64,7 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
   data,
+  tableProps,
   rowProps,
   Toolbar,
   initialVisibility = {},
@@ -96,9 +104,9 @@ export function DataTable<TData, TValue>({
           table={table}
         />
       ) : null}
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
+      <div className={cn("rounded-md border", tableProps?.className)}>
+        <Table {...tableProps}>
+          <TableHeader className="sticky top-0">
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id} className="hover:bg-inherit">
                 {headerGroup.headers.map(header => {

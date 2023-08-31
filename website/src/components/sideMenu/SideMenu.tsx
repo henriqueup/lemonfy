@@ -50,7 +50,7 @@ const BaseSideMenu: FunctionComponent<Props> = ({
       <div
         aria-label={label}
         className={cn(
-          "fixed top-0 z-40 h-screen rounded",
+          "fixed top-0 z-40 h-screen rounded bg-background",
           rightSide ? "right-0 border-l" : "left-0 border-r",
           checkIsOpen() ? "w-1/4" : "border-l-0 border-r-0",
         )}

@@ -65,6 +65,9 @@ const Instruments: NextPage = () => {
         <DataTable
           columns={instrumentColumns(revalidateInstruments, handleRowClick)}
           data={instruments ?? []}
+          tableProps={{
+            className: "max-h-[70vh] overflow-auto",
+          }}
           rowProps={{
             className: "cursor-pointer",
             onClick: (_event, row) => void handleRowClick(row.original),

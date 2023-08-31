@@ -24,7 +24,7 @@ const TopbarMenu: FunctionComponent = () => {
   };
 
   return (
-    <Menubar className="w-screen">
+    <Menubar className="w-full">
       <div className="cursor-pointer" onClick={() => void handleLogoClick()}>
         <Logo height={30} width={30} />
       </div>

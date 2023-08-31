@@ -66,9 +66,21 @@ class InstrumentPrismaRepository implements IInstrumentRepository {
   }
 
   async deleteMany(instrumentIds: string[]): Promise<void> {
-    await this.prisma.instrument.deleteMany({
-      where: { id: { in: instrumentIds } },
-    });
+    try {
+      await this.prisma.instrument.deleteMany({
+        where: { id: { in: instrumentIds } },
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === "P2003") {
+          throw new BusinessException(
+            `Instrument can't be deleted since it is used in at least one Song.`,
+          );
+        }
+      }
+
+      throw error;
+    }
   }
 }
 

@@ -19,6 +19,6 @@ export const instrumentRouter = createTRPCRouter({
   deleteMany: publicProcedure
     .input(z.array(z.string().cuid()))
     .mutation(({ input, ctx }) => {
-      void ctx.domainWrapper.Instrument.deleteMany(input);
+      return ctx.domainWrapper.Instrument.deleteMany(input);
     }),
 });

@@ -1,11 +1,12 @@
-import { type FunctionComponent, useState } from "react";
-import { Edit } from "lucide-react";
+import { type FunctionComponent, useState, type MouseEvent } from "react";
+import { Edit, X } from "lucide-react";
 
 import { Plus } from "src/icons";
 import { getCurrentSheet, useEditorStore } from "@/store/editor";
 import { cn } from "src/styles/utils";
 import {
   addInstrument,
+  removeInstrumentByIndex,
   setCurrentInstrumentIndex,
 } from "@/store/editor/songActions";
 import SheetEditor from "./SheetEditor";
@@ -28,6 +29,14 @@ const Song: FunctionComponent<Props> = ({ openSongMenu }: Props) => {
   const handleAddInstrument = (instrument: Instrument) => {
     addInstrument(instrument);
     setInstrumentMenuIsOpen(false);
+  };
+
+  const handleClickRemoveInstrument = (
+    event: MouseEvent,
+    instrumentIndex: number,
+  ) => {
+    event.stopPropagation();
+    removeInstrumentByIndex(instrumentIndex);
   };
 
   if (!song) return null;
@@ -71,10 +80,14 @@ const Song: FunctionComponent<Props> = ({ openSongMenu }: Props) => {
               <TabsTrigger
                 key={`${instrument.id}-${i}`}
                 value={`${instrument.id}-${i}`}
-                className="rounded-b-none"
+                className="flex items-center gap-2 rounded-b-none pr-2"
                 onClick={() => setCurrentInstrumentIndex(i)}
               >
                 {instrument.name}
+                <X
+                  className="mb-1 ml-1 h-3 w-3 rounded-full hover:bg-muted"
+                  onClick={event => handleClickRemoveInstrument(event, i)}
+                />
               </TabsTrigger>
             ))}
             <div
@@ -89,7 +102,7 @@ const Song: FunctionComponent<Props> = ({ openSongMenu }: Props) => {
               <TabsContent
                 key={`${instrument.id}-${i}`}
                 value={`${instrument.id}-${i}`}
-                className="mt-0 h-full rounded bg-background"
+                className="mt-0 h-full rounded rounded-tl-none bg-background"
               >
                 <SheetEditor />
               </TabsContent>
