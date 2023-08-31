@@ -1,3 +1,4 @@
+import { produce } from "immer";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
@@ -25,4 +26,9 @@ export const INITIAL_STATE: PlayerStore = {
   audioNodes: [],
 };
 
-export const usePlayerStore = create<PlayerStore>()(devtools(() => INITIAL_STATE));
+export const usePlayerStore = create<PlayerStore>()(
+  devtools(() => INITIAL_STATE),
+);
+
+export const reset = () =>
+  usePlayerStore.setState(state => produce(state, () => INITIAL_STATE));

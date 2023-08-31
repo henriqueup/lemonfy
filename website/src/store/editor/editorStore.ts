@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { type Draft } from "immer";
+import { produce, type Draft } from "immer";
 
 import { type NoteDurationName, type Note } from "@entities/note";
 import { type Octave } from "@entities/octave";
@@ -59,7 +59,8 @@ export const getCurrentSheet = (state?: EditorStore): Sheet | undefined => {
   return getCurrentInstrument(state)?.sheet;
 };
 
-export const reset = () => useEditorStore.setState(INITIAL_STATE);
+export const reset = () =>
+  useEditorStore.setState(state => produce(state, () => INITIAL_STATE));
 
 export const handleStorableAction = (draft: Draft<EditorStore>): void => {
   draft.isDirty = true;

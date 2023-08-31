@@ -2,7 +2,8 @@ import { type FunctionComponent, useState, useEffect } from "react";
 
 import { Plus } from "src/icons";
 import { cn } from "src/styles/utils";
-import { reset, useEditorStore } from "@/store/editor";
+import { reset as resetEditorStore, useEditorStore } from "@/store/editor";
+import { reset as resetPlayerStore } from "@/store/player";
 import { setSong, loadSong } from "@/store/editor/songActions";
 import { type Song as SongEntity } from "@entities/song";
 import SongMenu from "./SongMenu";
@@ -19,7 +20,10 @@ const Editor: FunctionComponent<EditorProps> = ({ songToLoad }) => {
   const isDirty = useEditorStore(state => state.isDirty);
 
   useEffect(() => {
-    return () => reset();
+    return () => {
+      resetEditorStore();
+      resetPlayerStore();
+    };
   }, []);
 
   useEffect(() => {

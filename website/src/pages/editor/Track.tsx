@@ -97,7 +97,7 @@ const Track: FunctionComponent<TrackProps> = ({
           <Note
             key={i}
             note={note}
-            barCapacity={bar.capacity}
+            bar={bar}
             fret={
               displayByFret && instrument
                 ? getFretFromNote(instrument, index, note)
@@ -108,7 +108,7 @@ const Track: FunctionComponent<TrackProps> = ({
         {isShowingPreview && noteToAdd !== null ? (
           <Note
             note={noteToAdd}
-            barCapacity={bar.capacity}
+            bar={bar}
             fret={
               displayByFret && instrument
                 ? getFretFromNote(instrument, index, noteToAdd)
