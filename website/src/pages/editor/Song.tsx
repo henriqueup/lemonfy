@@ -43,7 +43,7 @@ const Song: FunctionComponent<Props> = ({ openSongMenu }: Props) => {
 
   return (
     <div className="flex h-full flex-col gap-3 p-2 text-inherit">
-      <div className="flex">
+      <div className="flex h-6">
         <div
           className="flex cursor-pointer items-center gap-2"
           onClick={openSongMenu}
@@ -73,9 +73,9 @@ const Song: FunctionComponent<Props> = ({ openSongMenu }: Props) => {
           value={`${song.instruments[currentInstrumentIndex ?? 0]?.id ?? ""}-${
             currentInstrumentIndex ?? 0
           }`}
-          className="flex h-full flex-col"
+          className="flex h-[calc(100%_-_24px)] flex-col"
         >
-          <TabsList className="z-10 h-fit w-min max-w-full items-end justify-start overflow-x-auto rounded-b-none pb-0 pt-2">
+          <TabsList className="z-10 h-10 w-min max-w-full items-end justify-start overflow-x-auto rounded-b-none pb-0 pt-2">
             {song.instruments.map((instrument, i) => (
               <TabsTrigger
                 key={`${instrument.id}-${i}`}
@@ -97,7 +97,7 @@ const Song: FunctionComponent<Props> = ({ openSongMenu }: Props) => {
               <Plus />
             </div>
           </TabsList>
-          <div className="mt-[-4px] h-full rounded bg-muted p-1">
+          <div className="mt-[-4px] h-[calc(100%_-_40px)] rounded bg-muted p-1">
             {song.instruments.map((instrument, i) => (
               <TabsContent
                 key={`${instrument.id}-${i}`}

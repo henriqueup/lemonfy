@@ -14,6 +14,7 @@ const NOTE_DURATION_NAMES = [
   "EIGHTH",
   "EIGHTH_TRIPLET",
   "SIXTEENTH",
+  "THIRTY_SECOND",
 ] as const;
 
 export const NoteDurationNameSchema = z.enum(NOTE_DURATION_NAMES);
@@ -30,6 +31,7 @@ export const NOTE_DURATIONS: Record<NoteDurationName, number> = {
   EIGHTH: 1 / 8,
   EIGHTH_TRIPLET: 1 / 12,
   SIXTEENTH: 1 / 16,
+  THIRTY_SECOND: 1 / 32,
 } as const;
 
 const getNextNoteDuration = (
