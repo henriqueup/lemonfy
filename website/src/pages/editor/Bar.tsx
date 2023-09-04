@@ -1,4 +1,4 @@
-import { type FunctionComponent } from "react";
+import { useRef, type FunctionComponent, useMemo, useEffect } from "react";
 
 import { type Bar as BarEntity } from "@entities/bar";
 import { type Note } from "@entities/note";
@@ -6,6 +6,7 @@ import { type Instrument } from "@entities/instrument";
 // import { addNoteFromDrop } from "@/store/editor";
 import Track from "./Track";
 import { usePlayerStore } from "@/store/player";
+import { useEditorStore } from "@/store/editor";
 import { Trash } from "src/icons";
 import { removeBarFromSheetByIndex } from "@/store/editor/sheetActions";
 import { ButtonContainer } from "src/components";
@@ -18,9 +19,31 @@ interface Props {
 }
 
 const Bar: FunctionComponent<Props> = ({ bar, displayByFret, instrument }) => {
+  const barRef = useRef<HTMLDivElement>(null);
+
   const isPlaying = usePlayerStore(state => state.isPlaying);
   const isPaused = usePlayerStore(state => state.isPaused);
-  const cursor = usePlayerStore(state => state.cursor);
+  const playerCursor = usePlayerStore(state => state.cursor);
+  const editorCursor = useEditorStore(state => state.cursor);
+
+  const hasPlayerCursor = useMemo(
+    () => isPlaying && playerCursor.barIndex === bar.index,
+    [isPlaying, playerCursor.barIndex, bar.index],
+  );
+  const hasEditorCursor = useMemo(
+    () => editorCursor.barIndex === bar.index,
+    [editorCursor.barIndex, bar.index],
+  );
+
+  useEffect(() => {
+    if (hasPlayerCursor || hasEditorCursor) {
+      barRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "nearest",
+      });
+    }
+  }, [hasPlayerCursor, hasEditorCursor]);
 
   const handleAddNote = (barIndex: number, trackIndex: number, note: Note) => {
     // addNoteFromDrop(barIndex, trackIndex, note);
@@ -35,6 +58,7 @@ const Bar: FunctionComponent<Props> = ({ bar, displayByFret, instrument }) => {
       role="group"
       aria-label={`Bar ${bar.index}`}
       className="flex rounded border p-4"
+      ref={barRef}
     >
       <div className="flex w-full gap-2">
         <div className="flex h-[100px] flex-col justify-evenly">
@@ -55,14 +79,14 @@ const Bar: FunctionComponent<Props> = ({ bar, displayByFret, instrument }) => {
               displayByFret={displayByFret}
             />
           ))}
-          {isPlaying && cursor.barIndex === bar.index && (
+          {hasPlayerCursor ? (
             <Cursor
               bar={bar}
               isPlaying={isPlaying}
               isPaused={isPaused}
-              position={cursor.position}
+              position={playerCursor.position}
             />
-          )}
+          ) : null}
         </div>
       </div>
       <div className="mb-2 ml-4 mt-2 flex flex-col items-center justify-between">

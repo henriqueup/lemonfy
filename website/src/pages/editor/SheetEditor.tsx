@@ -39,8 +39,8 @@ const SheetEditor: FunctionComponent = () => {
   return (
     <div className="h-full w-full rounded rounded-tl-none px-2">
       <PlaybackMenu />
-      <div className="flex h-full flex-col overflow-y-auto rounded pr-1">
-        <div className="sticky top-0 z-10 flex w-full items-center bg-background">
+      <div className="flex h-full flex-col rounded pr-1">
+        <div className="flex w-full items-center">
           <div className="flex w-1/2 items-center justify-start gap-3">
             {instrument.isFretted ? (
               <>
@@ -87,28 +87,30 @@ const SheetEditor: FunctionComponent = () => {
             />
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-2 pt-2 lg:grid-cols-3 2xl:grid-cols-4">
-          {bars.map((bar, i) => (
-            <div key={`bar-${i}`} className="relative">
-              <span className="absolute -top-2 left-3 bg-background px-1 leading-none">{`${
-                i + 1
-              }`}</span>
-              <Bar
-                bar={bar}
-                instrument={instrument}
-                displayByFret={displayByFret}
-              />
+        <div className="flex flex-col overflow-y-auto">
+          <div className="grid grid-cols-2 gap-2 pt-2 lg:grid-cols-3 2xl:grid-cols-4">
+            {bars.map((bar, i) => (
+              <div key={`bar-${i}`} className="relative">
+                <span className="absolute -top-2 left-3 bg-background px-1 leading-none">{`${
+                  i + 1
+                }`}</span>
+                <Bar
+                  bar={bar}
+                  instrument={instrument}
+                  displayByFret={displayByFret}
+                />
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-center py-2">
+            <div
+              role="button"
+              aria-label="New Bar"
+              className="flex cursor-pointer content-center justify-center rounded-full border p-1"
+              onClick={() => setBarMenuIsOpen(true)}
+            >
+              <Plus height={24} width={24} />
             </div>
-          ))}
-        </div>
-        <div className="flex justify-center py-2">
-          <div
-            role="button"
-            aria-label="New Bar"
-            className="flex cursor-pointer content-center justify-center rounded-full border p-1"
-            onClick={() => setBarMenuIsOpen(true)}
-          >
-            <Plus height={24} width={24} />
           </div>
         </div>
       </div>

@@ -7,6 +7,11 @@ This project was created with the main goal of practicing software engineering o
 Besides that, it is also a chance to experience different stacks, frameworks, languages etc.
 And finally, it can also be used as a showcase of my skills.
 
+Refs:
+
+- https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Advanced_techniques
+- https://web.dev/audio-scheduling/
+
 ## Dev notes
 
 ### Storybook with pnpm
