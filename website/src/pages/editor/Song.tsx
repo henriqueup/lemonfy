@@ -73,7 +73,7 @@ const Song: FunctionComponent<Props> = ({ openSongMenu }: Props) => {
           value={`${song.instruments[currentInstrumentIndex ?? 0]?.id ?? ""}-${
             currentInstrumentIndex ?? 0
           }`}
-          className="flex h-[calc(100%_-_24px)] flex-col"
+          className="flex h-[calc(100%_-_36px)] flex-col"
         >
           <TabsList className="z-10 h-10 w-min max-w-full items-end justify-start overflow-x-auto rounded-b-none pb-0 pt-2">
             {song.instruments.map((instrument, i) => (

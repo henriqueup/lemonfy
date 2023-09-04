@@ -87,7 +87,7 @@ const SheetEditor: FunctionComponent = () => {
             />
           </div>
         </div>
-        <div className="mt-2 grid grid-cols-2 gap-2 lg:grid-cols-3 2xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2 pt-2 lg:grid-cols-3 2xl:grid-cols-4">
           {bars.map((bar, i) => (
             <div key={`bar-${i}`} className="relative">
               <span className="absolute -top-2 left-3 bg-background px-1 leading-none">{`${
@@ -101,11 +101,11 @@ const SheetEditor: FunctionComponent = () => {
             </div>
           ))}
         </div>
-        <div className="flex justify-center pb-2">
+        <div className="flex justify-center py-2">
           <div
             role="button"
             aria-label="New Bar"
-            className="mt-4 flex cursor-pointer content-center justify-center rounded-full border p-1"
+            className="flex cursor-pointer content-center justify-center rounded-full border p-1"
             onClick={() => setBarMenuIsOpen(true)}
           >
             <Plus height={24} width={24} />
