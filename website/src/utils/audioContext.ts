@@ -1,7 +1,5 @@
 import { setBarTimesInSeconds, type Bar, cropBar } from "@entities/bar";
 import { type Note } from "@entities/note";
-import { fillBarsInSheet, type Sheet } from "@entities/sheet";
-import { play } from "@/store/player/playerActions";
 import { toPrecision } from "src/utils/numbers";
 
 const addGainNode = (audioContext: AudioContext) => {
@@ -12,21 +10,9 @@ const addGainNode = (audioContext: AudioContext) => {
   return node;
 };
 
-const createSheetCopy = (originalSheet: Sheet): Sheet => {
-  const newSheet = JSON.parse(JSON.stringify(originalSheet)) as Sheet;
-  return newSheet;
-};
-
-const getBarsAfterStart = (sheet: Sheet, start: number): Bar[] => {
-  const barsAfterStart = sheet.bars.filter(
-    bar => bar.start > start || bar.start + bar.capacity > start,
-  );
-  const firstBar = barsAfterStart[0];
-
-  if (firstBar !== undefined && firstBar.start < start)
-    cropBar(firstBar, start);
-
-  return barsAfterStart;
+const createBarCopy = (originalBar: Bar): Bar => {
+  const newBar = JSON.parse(JSON.stringify(originalBar)) as Bar;
+  return newBar;
 };
 
 const addNotesToAudioContext = (
@@ -82,31 +68,22 @@ const addNotesToAudioContext = (
   return audioNodes;
 };
 
-export const playSong = (
-  sheet: Sheet,
+export const createBarAudioNodes = (
+  bar: Bar | undefined,
   audioContext: AudioContext,
-  start = 0,
-): void => {
-  const sheetCopyForPlayback = createSheetCopy(sheet);
-  fillBarsInSheet(sheetCopyForPlayback);
+  startOffset: number,
+  durationToCrop = 0,
+): AudioNode[] => {
+  if (!bar) return [];
 
-  const barsAfterStart = getBarsAfterStart(sheetCopyForPlayback, start);
+  const barCopy = createBarCopy(bar);
+  cropBar(barCopy, barCopy.start + durationToCrop);
+  barCopy.start = startOffset;
 
-  const audioNodes: AudioNode[] = [];
-  for (let i = 0; i < barsAfterStart.length; i++) {
-    const bar = barsAfterStart[i];
-    if (bar === undefined) throw new Error(`Invalid bar at index ${i}.`);
+  setBarTimesInSeconds(barCopy);
+  if (barCopy.startInSeconds == undefined)
+    throw new Error(`Invalid bar: undefined startInSeconds.`);
 
-    bar.start = Math.max(0, bar.start - start);
-    setBarTimesInSeconds(bar);
-    if (bar.startInSeconds == undefined)
-      throw new Error(`Invalid bar at ${i}: undefined startInSeconds.`);
-
-    const barNotes = bar.tracks.flat();
-    audioNodes.push(
-      ...addNotesToAudioContext(audioContext, barNotes, bar.startInSeconds),
-    );
-  }
-
-  play(audioNodes);
+  const barNotes = barCopy.tracks.flat();
+  return addNotesToAudioContext(audioContext, barNotes, barCopy.startInSeconds);
 };

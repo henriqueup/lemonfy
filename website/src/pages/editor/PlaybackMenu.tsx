@@ -1,10 +1,8 @@
-import { type FunctionComponent } from "react";
+import { useState, type FunctionComponent } from "react";
 
-import { getCurrentSheet, useEditorStore } from "@/store/editor";
 import { usePlayerStore } from "@/store/player";
-import { pause, stop, windUp } from "@/store/player/playerActions";
+import { pause, play, stop, windUp } from "@/store/player/playerActions";
 import { ButtonContainer } from "src/components";
-import { useAudioContext } from "src/hooks";
 import {
   Pause,
   Play,
@@ -14,24 +12,18 @@ import {
   WindUp,
   WindUpFull,
 } from "src/icons";
-import { playSong } from "src/utils/audioContext";
 
 const PlaybackMenu: FunctionComponent = () => {
-  const audioContext = useAudioContext();
-  const currentSheet = getCurrentSheet();
-  const cursor = useEditorStore(state => state.cursor);
+  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const isPlaying = usePlayerStore(state => state.isPlaying);
   const isPaused = usePlayerStore(state => state.isPaused);
 
   const handlePlay = () => {
-    if (!audioContext || currentSheet === undefined || (isPlaying && !isPaused))
-      return;
+    void audioContext?.close();
+    const newAudioContext = new AudioContext();
 
-    const barWithCursor = currentSheet.bars[cursor.barIndex];
-    if (barWithCursor === undefined)
-      throw new Error(`Invalid bar at ${cursor.barIndex}.`);
-
-    playSong(currentSheet, audioContext, barWithCursor.start + cursor.position);
+    setAudioContext(newAudioContext);
+    play(newAudioContext);
   };
 
   return (

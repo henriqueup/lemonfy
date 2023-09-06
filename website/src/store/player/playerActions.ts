@@ -7,8 +7,10 @@ import {
   type PlayerStore,
   usePlayerStore,
 } from "@/store/player";
+import { createBarAudioNodes } from "@/utils/audioContext";
 
 const createNextBarTimeout = (
+  audioContext: AudioContext,
   originalDraft: Draft<PlayerStore>,
   barWithCursor: Bar | undefined,
   startPosition = 0,
@@ -31,21 +33,38 @@ const createNextBarTimeout = (
 
         const nextBarIndex = draft.cursor.barIndex + 1;
         const nextBar = currentSheet.bars[nextBarIndex];
+        const secondNextBar = currentSheet.bars[nextBarIndex + 1];
 
         const startTime = new Date();
-        const timeout = createNextBarTimeout(draft, nextBar);
+        const timeout = createNextBarTimeout(audioContext, draft, nextBar);
         if (timeout === undefined) return;
 
         draft.currentTimeoutStartTime = startTime;
         draft.cursor.barIndex = nextBarIndex;
         draft.cursor.position = 0;
         draft.nextBarTimeout = timeout;
+
+        if (nextBar) {
+          //for each note, 2 audio nodes are created
+          const audioNodesFromPreviousBarCount =
+            (barWithCursor?.tracks.flat().length ?? 0) * 2;
+
+          draft.audioNodes = draft.audioNodes
+            .slice(audioNodesFromPreviousBarCount)
+            .concat(
+              createBarAudioNodes(
+                secondNextBar,
+                audioContext,
+                nextBar.capacity,
+              ),
+            );
+        }
       }),
     );
   }, barDurationInSeconds * 1000);
 };
 
-export const play = (audioNodes: AudioNode[]) => {
+export const play = (audioContext: AudioContext) => {
   usePlayerStore.setState(state =>
     produce(state, draft => {
       const currentSheet = getCurrentSheet();
@@ -54,9 +73,28 @@ export const play = (audioNodes: AudioNode[]) => {
 
       const editorCursor = useEditorStore.getState().cursor;
       const barWithCursor = currentSheet.bars[editorCursor.barIndex];
+      const nextBar = currentSheet.bars[editorCursor.barIndex + 1];
+
+      let audioNodes = createBarAudioNodes(
+        barWithCursor,
+        audioContext,
+        0,
+        editorCursor.position,
+      );
+
+      if (barWithCursor) {
+        audioNodes = audioNodes.concat(
+          createBarAudioNodes(
+            nextBar,
+            audioContext,
+            barWithCursor.capacity - editorCursor.position,
+          ),
+        );
+      }
       const startTime = new Date();
 
       const timeout = createNextBarTimeout(
+        audioContext,
         draft,
         barWithCursor,
         editorCursor.position,
@@ -131,7 +169,7 @@ export const pause = () =>
 const stopCallback = (draft: Draft<PlayerStore>) => {
   clearPlayback(draft);
 
-  draft.audioNodes = INITIAL_STATE.audioNodes;
+  draft.audioNodes = [];
   draft.currentTimeoutStartTime = INITIAL_STATE.currentTimeoutStartTime;
 
   draft.cursor.barIndex = INITIAL_STATE.cursor.barIndex;
