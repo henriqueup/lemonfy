@@ -1,9 +1,7 @@
 import { useRef, type FunctionComponent, useMemo, useEffect } from "react";
 
 import { type Bar as BarEntity } from "@entities/bar";
-import { type Note } from "@entities/note";
 import { type Instrument } from "@entities/instrument";
-// import { addNoteFromDrop } from "@/store/editor";
 import Track from "./Track";
 import { usePlayerStore } from "@/store/player";
 import { useEditorStore } from "@/store/editor";
@@ -45,10 +43,6 @@ const Bar: FunctionComponent<Props> = ({ bar, displayByFret, instrument }) => {
     }
   }, [hasPlayerCursor, hasEditorCursor]);
 
-  const handleAddNote = (barIndex: number, trackIndex: number, note: Note) => {
-    // addNoteFromDrop(barIndex, trackIndex, note);
-  };
-
   const handleRemoveBar = () => {
     removeBarFromSheetByIndex(bar.index);
   };
@@ -75,7 +69,6 @@ const Bar: FunctionComponent<Props> = ({ bar, displayByFret, instrument }) => {
               index={j}
               bar={bar}
               track={track}
-              handleAddNote={note => handleAddNote(0, j, note)}
               displayByFret={displayByFret}
             />
           ))}
