@@ -161,3 +161,16 @@ export const moveCursorToStartOfBar = () =>
       draft.cursor.position = 0;
     }),
   );
+
+export const setCursor = (
+  trackIndex: number,
+  barIndex: number,
+  position: number,
+) =>
+  useEditorStore.setState(state =>
+    produce(state, draft => {
+      draft.cursor.trackIndex = trackIndex;
+      draft.cursor.barIndex = barIndex;
+      draft.cursor.position = position;
+    }),
+  );

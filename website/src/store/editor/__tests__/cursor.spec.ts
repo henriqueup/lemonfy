@@ -8,6 +8,7 @@ import {
   increaseCursorTrackIndex,
   moveCursorToEndOfBar,
   moveCursorToStartOfBar,
+  setCursor,
 } from "@/store/editor/cursorActions";
 import {
   getEmptyMockSheet,
@@ -552,6 +553,18 @@ describe("Move cursor to start of Bar", () => {
     expect(useEditorStore.getState().cursor).toStrictEqual<Cursor>({
       ...INITIAL_STATE.cursor,
       barIndex: 1,
+    });
+  });
+});
+
+describe("Sets cursor", () => {
+  it("Sets all cursor values", () => {
+    setCursor(3, 1, 1 / 2);
+
+    expect(useEditorStore.getState().cursor).toStrictEqual<Cursor>({
+      trackIndex: 3,
+      barIndex: 1,
+      position: 1 / 2,
     });
   });
 });

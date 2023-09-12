@@ -17,7 +17,7 @@ interface Props {
 }
 
 const Bar: FunctionComponent<Props> = ({ bar, displayByFret, instrument }) => {
-  const barRef = useRef<HTMLDivElement>(null);
+  const barContainerRef = useRef<HTMLDivElement>(null);
 
   const isPlaying = usePlayerStore(state => state.isPlaying);
   const isPaused = usePlayerStore(state => state.isPaused);
@@ -35,7 +35,7 @@ const Bar: FunctionComponent<Props> = ({ bar, displayByFret, instrument }) => {
 
   useEffect(() => {
     if (hasPlayerCursor || hasEditorCursor) {
-      barRef.current?.scrollIntoView({
+      barContainerRef.current?.scrollIntoView({
         behavior: "smooth",
         block: "center",
         inline: "nearest",
@@ -52,7 +52,7 @@ const Bar: FunctionComponent<Props> = ({ bar, displayByFret, instrument }) => {
       role="group"
       aria-label={`Bar ${bar.index}`}
       className="flex rounded border p-4"
-      ref={barRef}
+      ref={barContainerRef}
     >
       <div className="flex w-full gap-2">
         <div className="flex h-[100px] flex-col justify-evenly">
