@@ -27,8 +27,10 @@ beforeEach(() => {
 jest.mock("@entities/bar");
 
 describe("Play", () => {
+  const mockAudioContext = new AudioContext();
+
   it("Does nothing with undefined Sheet", () => {
-    play([]);
+    play(mockAudioContext);
 
     expect(usePlayerStore.getState()).toMatchObject(INITIAL_STATE);
   });
@@ -38,14 +40,12 @@ describe("Play", () => {
       song: getMockSong([getEmptyMockSheet()]),
       currentInstrumentIndex: 0,
     });
-    play([]);
+    play(mockAudioContext);
 
     expect(usePlayerStore.getState()).toMatchObject(INITIAL_STATE);
   });
 
   it("Loads with audioNodes and editor cursor", () => {
-    const mockAudioNodes = [new AudioNodeMock()];
-
     const sheet = getMockSheetWithBars();
     useEditorStore.setState({
       song: getMockSong([sheet]),
@@ -55,14 +55,14 @@ describe("Play", () => {
 
     const dateAtStart = new Date(referenceDate);
     jest.setSystemTime(dateAtStart);
-    play(mockAudioNodes);
+    play(mockAudioContext);
 
     expect(usePlayerStore.getState().cursor.barIndex).toBe(2);
     expect(usePlayerStore.getState().cursor.position).toBe(1 / 4);
     expect(usePlayerStore.getState().currentTimeoutStartTime).toStrictEqual(
       dateAtStart,
     );
-    expect(usePlayerStore.getState().audioNodes).toBe(mockAudioNodes);
+    expect(usePlayerStore.getState().audioNodes).toEqual([]);
   });
 
   it("Creates timeouts for each Bar", () => {
@@ -74,7 +74,7 @@ describe("Play", () => {
 
     const dateAtStart = new Date(referenceDate);
     jest.setSystemTime(dateAtStart);
-    play([]);
+    play(mockAudioContext);
 
     expect(setTimeout).toHaveBeenCalledTimes(1);
     expect(setTimeout).toHaveBeenLastCalledWith(
