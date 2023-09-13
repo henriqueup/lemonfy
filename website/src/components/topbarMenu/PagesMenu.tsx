@@ -5,6 +5,7 @@ import {
   MenubarContent,
   MenubarItem,
   MenubarMenu,
+  MenubarSeparator,
   MenubarTrigger,
 } from "@/components/ui/Menubar";
 
@@ -24,6 +25,10 @@ const PagesMenu: FunctionComponent = () => {
         </MenubarItem>
         <MenubarItem onClick={() => handleRedirect("/instruments")}>
           Instruments
+        </MenubarItem>
+        <MenubarSeparator />
+        <MenubarItem onClick={() => handleRedirect("/about-me")}>
+          About Me
         </MenubarItem>
       </MenubarContent>
     </MenubarMenu>

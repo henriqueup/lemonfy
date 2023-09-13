@@ -126,9 +126,8 @@ Refs:
 - TD: change creation inputs to forms
 - Add Bar copy/paste
 - Add mouse support
-  - Drag playback cursor
+  - <s>Drag playback cursor</s>
 - Add automatic save
-- Add component animations
 - Add multiple Instrument support
   - <s>Add tabs to editor</s>
   - Add playback with multiple instruments
