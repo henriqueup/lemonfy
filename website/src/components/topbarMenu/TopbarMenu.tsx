@@ -17,7 +17,7 @@ const TopbarMenu: FunctionComponent = () => {
     setGlobalLoading(true);
 
     try {
-      await router.push("/library");
+      await router.push("/");
     } finally {
       setGlobalLoading(false);
     }

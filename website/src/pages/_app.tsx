@@ -1,4 +1,5 @@
 import { type AppType } from "next/app";
+import Head from "next/head";
 
 import "../styles/globals.css";
 import { api } from "../utils/api";
@@ -11,6 +12,9 @@ export const MyApp: AppType = ({ Component, pageProps }) => {
 
   return (
     <div className="h-screen bg-background text-popover-foreground">
+      <Head>
+        <title>Lemonfy</title>
+      </Head>
       <ErrorBoundary>
         <TopbarMenu />
         <div className="h-[calc(100%_-_32px)] text-inherit">
