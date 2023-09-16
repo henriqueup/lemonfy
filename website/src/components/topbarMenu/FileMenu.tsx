@@ -9,7 +9,7 @@ import {
   MenubarTrigger,
 } from "@/components/ui/Menubar";
 import { useShortcuts, useToast } from "@/hooks";
-import { redo, undo, useEditorStore } from "@/store/editor";
+import { useEditorStore } from "@/store/editor";
 import { api } from "@/utils/api";
 import { saveSong } from "@/store/editor/songActions";
 import { setGlobalLoading } from "@/store/global/globalActions";
@@ -55,12 +55,6 @@ const FileMenu: FunctionComponent = () => {
     },
     "save.song": {
       onKeyDown: () => void handleSaveSong(),
-    },
-    undo: {
-      onKeyDown: undo,
-    },
-    redo: {
-      onKeyDown: redo,
     },
   });
 

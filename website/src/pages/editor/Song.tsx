@@ -48,7 +48,7 @@ const Song: FunctionComponent<Props> = ({ openSongMenu }: Props) => {
           className="flex cursor-pointer items-center gap-2"
           onClick={openSongMenu}
         >
-          <h1 className="flex">
+          <h1 className="flex text-xl">
             {`${song.name} - ${song.artist}`}{" "}
             <Edit size={16} className="ml-2 mt-1" />
           </h1>

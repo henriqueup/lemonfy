@@ -69,7 +69,7 @@ const Home: NextPage<HomeProps> = ({ miauBuffer, vecnaBuffer }) => {
                     <iframe
                       width="100%"
                       height="100%"
-                      src="https://www.youtube.com/embed/vlaL057ReFc?si=x3n59sld4swLuWGk"
+                      src="https://www.youtube.com/embed/JZ5fAAQY2ek?si=EQC0YVdyu9uuc5X3"
                       title="YouTube video player"
                       frameBorder="0"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -273,7 +273,7 @@ const Home: NextPage<HomeProps> = ({ miauBuffer, vecnaBuffer }) => {
                       alt="profile"
                       width="256"
                       height="256"
-                      className="rounded-full"
+                      className="rounded-[100%]"
                     />
                     <p className="indent-8">
                       This site is the product of combining two things that are

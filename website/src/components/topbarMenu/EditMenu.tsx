@@ -16,7 +16,7 @@ import {
   type ShortcutDictionary,
   DIGITS,
 } from "@/hooks/useShortcuts";
-import { getCurrentSheet, useEditorStore } from "@/store/editor";
+import { getCurrentSheet, redo, undo, useEditorStore } from "@/store/editor";
 import { type PitchName, PITCH_NAMES } from "@entities/pitch";
 import {
   concatToTypedFret,
@@ -111,6 +111,12 @@ const EditMenu: FunctionComponent = () => {
     "bars.add.copy": {
       onKeyDown: addCopyOfCurrentBar,
     },
+    undo: {
+      onKeyDown: undo,
+    },
+    redo: {
+      onKeyDown: redo,
+    },
   });
 
   return (
@@ -152,6 +158,13 @@ const EditMenu: FunctionComponent = () => {
         <MenubarSeparator />
         <OctaveMenu disabled={currentSheet === undefined} />
         <NoteDurationMenu disabled={currentSheet === undefined} />
+        <MenubarSeparator />
+        <MenubarItem onClick={undo}>
+          Undo <MenubarShortcut>⌘Z</MenubarShortcut>
+        </MenubarItem>
+        <MenubarItem onClick={redo}>
+          Redo <MenubarShortcut>⌘⇧Z</MenubarShortcut>
+        </MenubarItem>
       </MenubarContent>
     </MenubarMenu>
   );
