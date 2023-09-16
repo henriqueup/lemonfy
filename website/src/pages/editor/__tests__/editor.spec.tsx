@@ -32,6 +32,7 @@ jest.mock("next/router", () => ({
 let mockGainNode: GainNodeMock;
 let mockOscillatorNode: OscillatorNodeMock;
 let mockAnimation: AnimationMock;
+// eslint-disable-next-line no-var
 var mockAudioContext = new AudioContextMock();
 jest.mock("src/hooks/useAudioContext", () => ({
   useAudioContext: () => mockAudioContext,
@@ -347,7 +348,7 @@ describe("Song playback", () => {
 });
 
 describe("Song loading", () => {
-  it("Loads up with song to load", async () => {
+  it("Loads up with song to load", () => {
     const sheet = getCompleteMoonlightSonataMockSheet();
     const songToLoad = getMockSong([sheet]);
 

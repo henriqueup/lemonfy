@@ -37,7 +37,8 @@
     "**/*.cjs",
     "**/*.mjs",
     "./jest-setup.ts",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    ".eslintrc.json"
   ],
   "exclude": ["node_modules"]
 }
