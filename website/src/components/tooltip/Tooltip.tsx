@@ -14,7 +14,11 @@ interface Props {
 }
 
 const Tooltip: FunctionComponent<
-  Props & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>
+  Props &
+    Omit<
+      DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
+      "content"
+    >
 > = ({ content, children, ...otherProps }) => {
   const [isOpen, setIsOpen] = useState(false);
 
