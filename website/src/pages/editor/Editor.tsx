@@ -9,6 +9,7 @@ import { type Song as SongEntity } from "@entities/song";
 import SongMenu from "./SongMenu";
 import Song from "./Song";
 import UnsavedChangesDialog from "@/components/UnsavedChangesDialog";
+import { setGlobalLoading } from "@/store/global/globalActions";
 
 export interface EditorProps {
   songToLoad?: SongEntity;
@@ -30,6 +31,7 @@ const Editor: FunctionComponent<EditorProps> = ({ songToLoad }) => {
     if (songToLoad === undefined) return;
 
     loadSong(songToLoad);
+    setGlobalLoading(false);
   }, [songToLoad]);
 
   const handleSaveSong = (name: string, artist: string) => {
