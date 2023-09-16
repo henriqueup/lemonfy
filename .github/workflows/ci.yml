@@ -8,6 +8,9 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./website
 
     steps:
       - name: Setup pnpm
@@ -17,9 +20,6 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v2
-
-      - name: Go to website dir
-        run: cd website/
 
       - name: Install Dependencies
         run: pnpm install
