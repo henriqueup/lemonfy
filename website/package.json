@@ -10,7 +10,7 @@
     "postinstall": "prisma generate",
     "lint": "next lint",
     "start": "next start",
-    "types:check": "tsc --build"
+    "types:check": "tsc --noEmit"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.1",
