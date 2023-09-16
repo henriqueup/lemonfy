@@ -9,6 +9,8 @@
 const config = {
   reactStrictMode: true,
 
+  pageExtensions: ["page.tsx", "page.ts"],
+
   i18n: {
     locales: ["en"],
     defaultLocale: "en",

@@ -22,7 +22,7 @@ import Editor from "src/pages/editor/Editor";
 import { getCompleteMoonlightSonataMockSheet } from "@/mocks/entities/sheet";
 import { getMockSong } from "@/mocks/entities/song";
 import { mockUseRouter } from "@/mocks/next/router";
-import { MyApp } from "@/pages/_app";
+import { MyApp } from "@/pages/_app.page";
 
 jest.unmock("immer");
 jest.mock("next/router", () => ({
