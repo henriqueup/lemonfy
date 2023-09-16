@@ -44,7 +44,8 @@ const Editor: FunctionComponent<EditorProps> = ({ songToLoad }) => {
           <div className="flex justify-center">
             <div
               role="button"
-              aria-label="New Song"
+              aria-label="Add Song"
+              title="Add Song"
               className={cn(
                 "mt-4 flex cursor-pointer content-center justify-center",
                 "rounded-full border p-4",

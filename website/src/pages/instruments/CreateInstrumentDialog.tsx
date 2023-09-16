@@ -218,7 +218,9 @@ const CreateInstrumentDialog: FunctionComponent<Props> = ({
                       </FormControl>
                       <SelectContent>
                         <SelectItem value="String">String</SelectItem>
-                        <SelectItem value="Key">Key</SelectItem>
+                        <SelectItem value="Key" disabled>
+                          Key
+                        </SelectItem>
                         <SelectItem value="Wind" disabled>
                           Wind
                         </SelectItem>

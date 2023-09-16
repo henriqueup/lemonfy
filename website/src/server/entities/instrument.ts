@@ -16,7 +16,7 @@ export const INSTRUMENT_TYPES = [
   "Wind",
   "Percussion",
 ] as const;
-export const DISABLED_INSTRUMENT_TYPES = ["Wind", "Percussion"];
+export const DISABLED_INSTRUMENT_TYPES = ["Key", "Wind", "Percussion"];
 
 const InstrumentTypeSchema = z.enum(INSTRUMENT_TYPES);
 
