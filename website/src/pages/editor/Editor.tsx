@@ -4,9 +4,9 @@ import { Plus } from "src/icons";
 import { cn } from "src/styles/utils";
 import { reset as resetEditorStore, useEditorStore } from "@/store/editor";
 import { reset as resetPlayerStore } from "@/store/player";
-import { setSong, loadSong } from "@/store/editor/songActions";
+import { setSong, loadSong, addInstrument } from "@/store/editor/songActions";
 import { type Song as SongEntity } from "@entities/song";
-import SongMenu from "./SongMenu";
+import SongMenu, { type SongForm } from "./SongMenu";
 import Song from "./Song";
 import UnsavedChangesDialog from "@/components/UnsavedChangesDialog";
 import { setGlobalLoading } from "@/store/global/globalActions";
@@ -34,8 +34,13 @@ const Editor: FunctionComponent<EditorProps> = ({ songToLoad }) => {
     setGlobalLoading(false);
   }, [songToLoad]);
 
-  const handleSaveSong = (name: string, artist: string) => {
-    setSong(name, artist);
+  const handleSaveSong = (songForm: SongForm) => {
+    setSong(songForm.name, songForm.artist);
+
+    if (songForm.instrument) {
+      addInstrument(songForm.instrument);
+    }
+
     setSongMenuIsOpen(false);
   };
 

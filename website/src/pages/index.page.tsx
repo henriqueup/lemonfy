@@ -58,7 +58,7 @@ const Home: NextPage<HomeProps> = ({ miauBuffer, vecnaBuffer }) => {
             <Accordion
               className="w-full"
               type="multiple"
-              defaultValue={["item-2", "item-4"]}
+              defaultValue={["item-1"]}
             >
               <AccordionItem value="item-1">
                 <AccordionTrigger className="text-lemon">

@@ -113,7 +113,7 @@ const Song: FunctionComponent<Props> = ({ openSongMenu }: Props) => {
       )}
       {instrumentMenuIsOpen ? (
         <InstrumentMenu
-          onAdd={handleAddInstrument}
+          onSubmit={handleAddInstrument}
           onClose={() => setInstrumentMenuIsOpen(false)}
         />
       ) : null}
