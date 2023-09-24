@@ -37,35 +37,35 @@ const Home: NextPage<HomeProps> = ({ miauBuffer, vecnaBuffer }) => {
   );
 
   return (
-    <div className="m-auto flex h-full w-4/5 flex-col items-center pl-2 pr-2">
+    <div className="m-auto flex h-full w-full flex-col items-center pl-2 pr-2 lg:w-4/5">
       <div className="flex w-full flex-col items-center gap-4 p-8">
         <div className="flex w-full flex-col gap-2 py-2">
-          <h1 className="py-2 text-4xl">
+          <h1 className="py-2 text-3xl lg:text-4xl">
             Welcome to <span className="text-lemon">Lemonfy</span>
           </h1>
-          <div>
-            <p className="indent-8">
+          <div className="text-sm lg:text-lg">
+            <p className="indent-4 lg:indent-8">
               This is a software built to provide creation and learning of both{" "}
               <span className="text-lemon">music</span> and{" "}
               <span className="text-lemon">software</span>.
             </p>
-            <p className="indent-8">
+            <p className="indent-4 lg:indent-8">
               Song notations for any user to learn how to play and a lot of
               software for myself to learn how to code!
             </p>
           </div>
-          <div className="flex w-4/5 flex-col pl-8">
+          <div className="flex w-full flex-col lg:w-4/5 lg:pl-8">
             <Accordion
               className="w-full"
               type="multiple"
-              defaultValue={["item-2", "item-4"]}
+              defaultValue={["item-1"]}
             >
               <AccordionItem value="item-1">
                 <AccordionTrigger className="text-lemon">
                   Quick video demo
                 </AccordionTrigger>
                 <AccordionContent>
-                  <div className="h-[630px] w-[1120px]">
+                  <div className="h-[210px] w-full lg:h-[630px] lg:w-[1120px]">
                     <iframe
                       width="100%"
                       height="100%"
@@ -83,7 +83,7 @@ const Home: NextPage<HomeProps> = ({ miauBuffer, vecnaBuffer }) => {
                   Library
                 </AccordionTrigger>
                 <AccordionContent>
-                  <div className="flex w-3/5 flex-col gap-2 px-4">
+                  <div className="flex w-full flex-col gap-2 px-1 lg:w-3/5 lg:px-4">
                     <p>
                       This is the main page where Songs are listed and it&apos;s
                       possible to update or delete them, as well as create new
@@ -100,7 +100,7 @@ const Home: NextPage<HomeProps> = ({ miauBuffer, vecnaBuffer }) => {
                   Instruments
                 </AccordionTrigger>
                 <AccordionContent>
-                  <div className="flex w-3/5 flex-col gap-2 px-4">
+                  <div className="flex w-full flex-col gap-2 px-1 lg:w-3/5 lg:px-4">
                     <p>
                       This page should be used to manage available Instruments
                       that are used when creating Songs. It contains a list of
@@ -113,10 +113,10 @@ const Home: NextPage<HomeProps> = ({ miauBuffer, vecnaBuffer }) => {
                         &apos;Type&apos;, &apos;Track Count&apos;, &apos;Is
                         Fretted&apos; and &apos;Tuning&apos;.
                       </p>
-                      <ul className="flex list-decimal flex-col gap-1 px-8 marker:text-lemon">
+                      <ul className="flex list-decimal flex-col gap-1 px-4 marker:text-lemon lg:px-8">
                         <li>
                           <p className="text-lemon">Type:</p>
-                          <div className="flex flex-col gap-2 px-4">
+                          <div className="flex flex-col gap-2 px-1 lg:px-4">
                             <p>
                               The type of an Instrument dictates some of
                               it&apos;s basic properties, such as how many
@@ -133,7 +133,7 @@ const Home: NextPage<HomeProps> = ({ miauBuffer, vecnaBuffer }) => {
                         </li>
                         <li>
                           <p className="text-lemon">Track Count:</p>
-                          <div className="flex flex-col gap-2 px-4">
+                          <div className="flex flex-col gap-2 px-1 lg:px-4">
                             <p>
                               This is a number that indicates how many
                               &apos;channels&apos; of audio the Instrument can
@@ -145,7 +145,7 @@ const Home: NextPage<HomeProps> = ({ miauBuffer, vecnaBuffer }) => {
                         </li>
                         <li>
                           <p className="text-lemon">Is Fretted:</p>
-                          <div className="flex flex-col gap-2 px-4">
+                          <div className="flex flex-col gap-2 px-1 lg:px-4">
                             <p>
                               This is a true or false flag that indicates
                               whether of not the Instrument differentiates
@@ -164,7 +164,7 @@ const Home: NextPage<HomeProps> = ({ miauBuffer, vecnaBuffer }) => {
                         </li>
                         <li>
                           <p className="text-lemon">Tuning:</p>
-                          <div className="flex flex-col gap-2 px-4">
+                          <div className="flex flex-col gap-2 px-1 lg:px-4">
                             <p>
                               The Instrument&apos;s tuning is represented as a
                               list of base pitches which are produced when one
@@ -183,16 +183,16 @@ const Home: NextPage<HomeProps> = ({ miauBuffer, vecnaBuffer }) => {
                   Editor
                 </AccordionTrigger>
                 <AccordionContent>
-                  <div className="flex w-3/5 flex-col gap-2 px-4">
+                  <div className="flex w-full flex-col gap-2 px-1 lg:w-3/5 lg:px-4">
                     <p>
                       This is page where the magic happens. It will be used to
                       create, edit and playback Songs. The complete procces of
                       Song creation should take the following steps:
                     </p>
-                    <ul className="flex list-decimal flex-col gap-1 px-8 marker:text-lemon">
+                    <ul className="flex list-decimal flex-col gap-1 px-4 marker:text-lemon lg:px-8">
                       <li>
                         <p className="text-lemon">Create Song:</p>
-                        <div className="flex flex-col gap-2 px-4">
+                        <div className="flex flex-col gap-2 px-1 lg:px-4">
                           <p>
                             Here the basic Song information -name and artist-
                             should be provided.
@@ -201,7 +201,7 @@ const Home: NextPage<HomeProps> = ({ miauBuffer, vecnaBuffer }) => {
                       </li>
                       <li>
                         <p className="text-lemon">Add Instrument:</p>
-                        <div className="flex flex-col gap-2 px-4">
+                        <div className="flex flex-col gap-2 px-1 lg:px-4">
                           <p>
                             You can&apos;t have a Song without Instruments. To
                             add one, it should be selected from the list of
@@ -213,7 +213,7 @@ const Home: NextPage<HomeProps> = ({ miauBuffer, vecnaBuffer }) => {
                       </li>
                       <li>
                         <p className="text-lemon">Add Bars:</p>
-                        <div className="flex flex-col gap-2 px-4">
+                        <div className="flex flex-col gap-2 px-1 lg:px-4">
                           <p>
                             From here the actual structure of the Song can begin
                             to take shape. The basic measure of a Song&apos;s
@@ -242,7 +242,7 @@ const Home: NextPage<HomeProps> = ({ miauBuffer, vecnaBuffer }) => {
                       </li>
                       <li>
                         <p className="text-lemon">Add Notes:</p>
-                        <div className="flex flex-col gap-2 px-4">
+                        <div className="flex flex-col gap-2 px-1 lg:px-4">
                           <p>
                             At last, Notes can be added to the Bars so that some
                             sound can be made! These will define 3 basic values:
@@ -267,7 +267,7 @@ const Home: NextPage<HomeProps> = ({ miauBuffer, vecnaBuffer }) => {
                   About Me
                 </AccordionTrigger>
                 <AccordionContent>
-                  <div className="m-auto flex w-3/5 flex-col items-center gap-2">
+                  <div className="m-auto flex w-full flex-col items-center gap-2 lg:w-3/5">
                     <Image
                       src="/profile.jpg"
                       alt="profile"
@@ -275,7 +275,7 @@ const Home: NextPage<HomeProps> = ({ miauBuffer, vecnaBuffer }) => {
                       height="256"
                       className="rounded-[100%]"
                     />
-                    <p className="indent-8">
+                    <p className="indent-4 lg:indent-8">
                       This site is the product of combining two things that are
                       a huge part of my life:{" "}
                       <span className="text-lemon">software</span> and{" "}
@@ -288,7 +288,7 @@ const Home: NextPage<HomeProps> = ({ miauBuffer, vecnaBuffer }) => {
                       my attention, the software called{" "}
                       <a href="https://www.songsterr.com/">Songsterr</a>.
                     </p>
-                    <p className="indent-8">
+                    <p className="indent-4 lg:indent-8">
                       {" "}
                       Eventually, my high school graduation came around and,
                       though I considered adventuring in a carreer in music, the

@@ -1,69 +1,100 @@
-import { type FunctionComponent, useState } from "react";
-import type { z } from "zod";
-import { BarSchema } from "@entities/bar";
-import { Button, FixedSideMenu, NumberField } from "src/components";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { type FunctionComponent } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/Form";
+import { Input } from "@/components/ui/Input";
+import { FixedSideMenu } from "src/components";
+import { Button } from "@/components/ui/Button";
+
+const BarFormSchema = z.object({
+  beatCount: z.coerce.number().int().min(1),
+  dibobinador: z.coerce.number().int().min(1),
+  tempo: z.coerce.number().int().min(1),
+});
+type BarForm = z.infer<typeof BarFormSchema>;
 
 type Props = {
   onAdd: (beatCount: number, dibobinador: number, tempo: number) => void;
   onClose: () => void;
 };
 
-const ValuesSchema = BarSchema.pick({
-  beatCount: true,
-  dibobinador: true,
-  tempo: true,
-});
-type Values = z.infer<typeof ValuesSchema>;
-
 const BarMenu: FunctionComponent<Props> = ({ onAdd, onClose }) => {
-  const [values, setValues] = useState<Partial<Values>>({});
-  const parseResult = ValuesSchema.safeParse(values);
-  const parseErrors = !parseResult.success
-    ? parseResult.error.formErrors.fieldErrors
-    : {};
+  const form = useForm<BarForm>({
+    resolver: zodResolver(BarFormSchema),
+  });
 
-  const handleClickAdd = () => {
-    if (!parseResult.success) return;
-
-    const parsedData = parseResult.data;
-    onAdd(parsedData.beatCount, parsedData.dibobinador, parsedData.tempo);
+  const handleSubmit = (formValues: BarForm) => {
+    onAdd(formValues.beatCount, formValues.dibobinador, formValues.tempo);
   };
 
   return (
     <FixedSideMenu label="Bar Menu" rightSide onClose={onClose}>
-      <div className="flex flex-col">
+      <div className="flex flex-col items-center">
         <div className="m-auto mb-2 mt-2 flex w-full justify-center">
           <h3 className="m-auto">New Bar</h3>
         </div>
-        <NumberField
-          autoFocus
-          label="Number of Beats"
-          value={values.beatCount}
-          errors={parseErrors.beatCount}
-          onChange={value => setValues({ ...values, beatCount: value })}
-          className="mt-4 w-1/2 self-center"
-        />
-        <NumberField
-          label="Dibobinador"
-          value={values.dibobinador}
-          errors={parseErrors.dibobinador}
-          onChange={value => setValues({ ...values, dibobinador: value })}
-          className="mt-4 w-1/2 self-center"
-        />
-        <NumberField
-          label="Tempo"
-          value={values.tempo}
-          errors={parseErrors.tempo}
-          onChange={value => setValues({ ...values, tempo: value })}
-          className="mt-4 w-1/2 self-center"
-        />
-        <Button
-          variant="success"
-          text="Add"
-          disabled={!parseResult.success}
-          onClick={handleClickAdd}
-          className="mt-6 w-2/5 self-center"
-        />
+        <div className="mt-5 flex w-3/4 flex-col items-center">
+          <Form {...form}>
+            <form
+              onSubmit={event => void form.handleSubmit(handleSubmit)(event)}
+              className="w-full space-y-4"
+            >
+              <FormField
+                control={form.control}
+                name="beatCount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Number of Beats</FormLabel>
+                    <FormControl>
+                      <Input {...field} autoFocus type="number" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="dibobinador"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Dibobinador</FormLabel>
+                    <FormControl>
+                      <Input {...field} type="number" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="tempo"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tempo</FormLabel>
+                    <FormControl>
+                      <Input {...field} type="number" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="flex justify-end pt-2">
+                <Button className="w-1/2" type="submit" variant="success">
+                  Add
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </div>
       </div>
     </FixedSideMenu>
   );

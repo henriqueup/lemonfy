@@ -110,12 +110,12 @@ Refs:
     - <s>Add data table</s>
     - <s>Add update and delete</s>
       - <s>Fix Tuning table</s>
+      - Handle FK constraint failure
   - <s>Add Instrument to song creation in Editor</s>
     - <s>Exhibit Instrument info on the Editor</s>
   - <s>Make note adding take the instrument into account</s>
     - <s>Enable note adding by fret</s>
-  - Add Key Instruments view
-- Minor fixes/adjustments
+- <s>Minor fixes/adjustments</s>
   - <s>Close Instruments dropdown when selecting</s>
   - <s>Fix track alignment</s>
   - <s>Cursor movement</s>
@@ -123,7 +123,15 @@ Refs:
   - <s>Change Instrument tab when adding a new one</s>
   - <s>Remove bg-inherits</s>
 - <s>Add modal component</s>
+- <s>Deploy</s>
+  - <s>Setup PlanetScale</s>
+  - <s>Setup Vercel</s>
+  - <s>Setup CI workflow</s>
+  - Setup SSG fallback
+    - Add Incremental Static Regeneration
+  - Debug and fix Song deletion
 - TD: change creation inputs to forms
+- Add Key Instruments view
 - Add Bar copy/paste
 - Add mouse support
   - <s>Drag playback cursor</s>
