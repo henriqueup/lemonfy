@@ -72,8 +72,8 @@ const Cursor: FunctionComponent<Props> = ({
       className="absolute top-[-2px] flex h-[calc(100%_+_4px)] w-[9px]"
       ref={cursorRef}
     >
-      <div className="w-1/2 rounded-sm border-2 border-l-0 border-solid border-lime-600" />
-      <div className="w-1/2 rounded-sm border-2 border-r-0 border-solid border-lime-600" />
+      <div className="w-1/2 rounded-sm border-2 border-l-0 border-solid border-lemon" />
+      <div className="w-1/2 rounded-sm border-2 border-r-0 border-solid border-lemon" />
     </div>
   );
 };

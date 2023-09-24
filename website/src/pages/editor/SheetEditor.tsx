@@ -88,7 +88,7 @@ const SheetEditor: FunctionComponent = () => {
           </div>
         </div>
         <div className="flex flex-col overflow-y-auto">
-          <div className="grid grid-cols-2 gap-2 pt-2 lg:grid-cols-3 2xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-2 pt-2 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
             {bars.map((bar, i) => (
               <div key={`bar-${i}`} className="relative">
                 <span className="absolute -top-2 left-3 bg-background px-1 leading-none">{`${
@@ -107,10 +107,10 @@ const SheetEditor: FunctionComponent = () => {
               role="button"
               aria-label="Add Bar"
               title="Add Bar"
-              className="flex cursor-pointer content-center justify-center rounded-full border p-1"
+              className="flex cursor-pointer content-center justify-center rounded-full border border-lemon p-1"
               onClick={() => setBarMenuIsOpen(true)}
             >
-              <Plus height={24} width={24} />
+              <Plus className="stroke-lemon" height={24} width={24} />
             </div>
           </div>
         </div>

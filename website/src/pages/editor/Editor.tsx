@@ -55,11 +55,11 @@ const Editor: FunctionComponent<EditorProps> = ({ songToLoad }) => {
               title="Add Song"
               className={cn(
                 "mt-4 flex cursor-pointer content-center justify-center",
-                "rounded-full border p-4",
+                "rounded-full border border-lemon p-4",
               )}
               onClick={() => setSongMenuIsOpen(true)}
             >
-              <Plus />
+              <Plus className="stroke-lemon" />
             </div>
           </div>
         ) : (

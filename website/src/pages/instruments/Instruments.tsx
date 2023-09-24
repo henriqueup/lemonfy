@@ -52,16 +52,17 @@ const Instruments: NextPage = () => {
 
   return (
     <div className="flex h-full flex-col items-center space-y-4 p-4 pt-10 text-inherit">
-      <div className="flex w-3/5 justify-between">
+      <div className="flex w-full justify-between lg:w-3/5">
         <h1 className="mb-4 text-xl">Instruments</h1>
         <Button
           variant="success"
           onClick={() => setIsInstrumentDialogOpen(true)}
         >
-          <Plus className="mr-1 h-4 w-4" /> Create Instrument
+          Create Instrument
+          <Plus className="ml-1" />
         </Button>
       </div>
-      <div className="w-3/5">
+      <div className="w-full lg:w-3/5">
         <DataTable
           columns={instrumentColumns(revalidateInstruments, handleRowClick)}
           data={instruments ?? []}
