@@ -20,10 +20,16 @@ const FileMenu: FunctionComponent = () => {
   const song = useEditorStore(state => state.song);
 
   const saveSongMutation = api.song.save.useMutation({
-    useErrorBoundary: error => !error.data?.isBusinessException,
+    useErrorBoundary: error =>
+      !error.data?.isBusinessException && error.data?.httpStatus !== 504,
     onSettled: () => setGlobalLoading(false),
     onError: error => {
-      if (error.data?.isBusinessException)
+      if (error.data?.httpStatus === 504) {
+        toast({
+          variant: "destructive",
+          title: "Connection error, please try again in a few minutes.",
+        });
+      } else if (error.data?.isBusinessException)
         toast({
           variant: "destructive",
           title: error.message,
