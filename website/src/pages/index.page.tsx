@@ -256,6 +256,14 @@ const Home: NextPage<HomeProps> = ({ miauBuffer, vecnaBuffer }) => {
                             the time signature of the Bar which contains the
                             Note.
                           </p>
+                          <p>
+                            When working with Instruments that have frets, Notes
+                            can be added in a simpler, numeric way. Simply
+                            pressing the number of the desired Note&apos;s fret
+                            and the Pitch Name and Octave are already
+                            calculated. To use multiple digit fret numbers, keep
+                            the ⇧Shift key pressed.
+                          </p>
                         </div>
                       </li>
                     </ul>
