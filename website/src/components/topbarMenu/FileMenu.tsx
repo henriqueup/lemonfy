@@ -20,8 +20,10 @@ const FileMenu: FunctionComponent = () => {
   const song = useEditorStore(state => state.song);
 
   const saveSongMutation = api.song.save.useMutation({
-    useErrorBoundary: error =>
-      !error.data?.isBusinessException && error.data?.httpStatus !== 504,
+    useErrorBoundary: error => {
+      console.error("Error when saving Song.", error, new Date());
+      return !error.data?.isBusinessException && error.data?.httpStatus !== 504;
+    },
     onSettled: () => setGlobalLoading(false),
     onError: error => {
       console.error("Error when saving Song.", error, new Date());
@@ -49,6 +51,7 @@ const FileMenu: FunctionComponent = () => {
     if (song === undefined) return;
 
     setGlobalLoading(true);
+    console.log("Attempting to save Song.");
     saveSongMutation.mutate(song);
   };
 
