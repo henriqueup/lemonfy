@@ -35,6 +35,7 @@ export const getStaticProps = async (
 
   return {
     props: { songToLoad: song },
+    revalidate: 10,
   };
 };
 

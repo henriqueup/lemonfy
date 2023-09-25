@@ -129,6 +129,10 @@ Refs:
   - <s>Setup CI workflow</s>
   - Setup SSG fallback
     - Add Incremental Static Regeneration
+  - Figure out a work around for Vercel's 10s limit
+    - <s>Temporary fix: handle error before boundary</s>
+    - Understand why it takes so long
+    - Maybe create diff logic or break requests with optimism
   - Debug and fix Song deletion
 - TD: change creation inputs to forms
 - Add Key Instruments view
