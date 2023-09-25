@@ -24,6 +24,7 @@ const FileMenu: FunctionComponent = () => {
       !error.data?.isBusinessException && error.data?.httpStatus !== 504,
     onSettled: () => setGlobalLoading(false),
     onError: error => {
+      console.error("Error when saving Song.", error, new Date());
       if (error.data?.httpStatus === 504) {
         toast({
           variant: "destructive",
