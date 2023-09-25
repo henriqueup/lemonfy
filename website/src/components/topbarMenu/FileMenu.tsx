@@ -1,5 +1,6 @@
 import { type FunctionComponent } from "react";
 import { useRouter } from "next/router";
+import { TRPCClientError } from "@trpc/client";
 
 import {
   MenubarContent,
@@ -20,23 +21,35 @@ const FileMenu: FunctionComponent = () => {
   const song = useEditorStore(state => state.song);
 
   const saveSongMutation = api.song.save.useMutation({
-    useErrorBoundary: error => {
-      console.error("Error when saving Song.", error, new Date());
-      return !error.data?.isBusinessException && error.data?.httpStatus !== 504;
-    },
+    useErrorBoundary: error => !(error instanceof TRPCClientError),
     onSettled: () => setGlobalLoading(false),
     onError: error => {
-      console.error("Error when saving Song.", error, new Date());
-      if (error.data?.httpStatus === 504) {
+      console.error("Error when saving Song.", error);
+
+      if (
+        error instanceof TRPCClientError &&
+        error.meta?.response instanceof Response &&
+        error.meta?.response.status === 504
+      ) {
         toast({
           variant: "destructive",
           title: "Connection error, please try again in a few minutes.",
         });
-      } else if (error.data?.isBusinessException)
+        return;
+      }
+
+      if (error.data?.isBusinessException) {
         toast({
           variant: "destructive",
           title: error.message,
         });
+        return;
+      }
+
+      toast({
+        variant: "destructive",
+        title: "Unexpected error when saving Song.",
+      });
     },
     onSuccess: songId => {
       saveSong(songId);
@@ -51,7 +64,6 @@ const FileMenu: FunctionComponent = () => {
     if (song === undefined) return;
 
     setGlobalLoading(true);
-    console.log("Attempting to save Song.");
     saveSongMutation.mutate(song);
   };
 
